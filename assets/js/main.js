@@ -59,42 +59,93 @@ function initTheme() {
     applyColorTheme(currentColorTheme);
   };
 
-  // Theme + color controls (top-right overlay)
-  const container = document.createElement('div');
-  container.id = 'theme-controls';
-  container.className = 'fixed top-16 right-3 z-50 flex items-center gap-2 px-3 py-2 rounded-full bg-white/90 shadow-lg text-xs font-semibold text-gray-800 hover:bg-white transition-colors';
-
-  const toggleBtn = document.createElement('button');
-  toggleBtn.type = 'button';
-  toggleBtn.className = 'px-2 py-1 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors';
-  toggleBtn.textContent = initial === 'dark' ? 'Light' : 'Dark';
-  toggleBtn.addEventListener('click', () => {
-    window.toggleTheme();
-    toggleBtn.textContent = window.currentTheme === 'dark' ? 'Light' : 'Dark';
-  });
-
-  // Simple accent theme cycle
-  const colorBtn = document.createElement('button');
-  colorBtn.type = 'button';
-  colorBtn.className = 'w-5 h-5 rounded-full border border-gray-300 overflow-hidden';
+  // Theme + color controls - Add to navigation if it exists, otherwise create floating controls
+  const nav = document.getElementById('nav');
   const themes = ['theme-purple', 'theme-blue', 'theme-emerald', 'theme-rose', 'theme-orange', 'theme-indigo'];
   const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || 'theme-purple';
   let colorIndex = themes.indexOf(storedTheme);
   if (colorIndex < 0) colorIndex = 0;
   applyColorTheme(themes[colorIndex]);
-  updateColorSwatch(colorBtn, themes[colorIndex]);
 
-  colorBtn.addEventListener('click', () => {
-    colorIndex = (colorIndex + 1) % themes.length;
-    const nextTheme = themes[colorIndex];
-    applyColorTheme(nextTheme);
-    updateColorSwatch(colorBtn, nextTheme);
-    localStorage.setItem('colorTheme', nextTheme);
-  });
+  if (nav) {
+    // Add controls to navigation bar
+    const controlsContainer = document.createElement('div');
+    controlsContainer.id = 'theme-controls';
+    controlsContainer.className = 'flex items-center gap-2 ml-4';
 
-  container.appendChild(toggleBtn);
-  container.appendChild(colorBtn);
-  document.body.appendChild(container);
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors';
+    toggleBtn.innerHTML = initial === 'dark' ? '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light' : '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark';
+    toggleBtn.title = 'Toggle Dark/Light Mode';
+    toggleBtn.addEventListener('click', () => {
+      window.toggleTheme();
+      toggleBtn.innerHTML = window.currentTheme === 'dark' ? '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light' : '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark';
+    });
+
+    const colorBtn = document.createElement('button');
+    colorBtn.type = 'button';
+    colorBtn.className = 'w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 overflow-hidden shadow-sm hover:shadow-md transition-all';
+    colorBtn.title = 'Change Theme Color (Click to cycle)';
+    updateColorSwatch(colorBtn, themes[colorIndex]);
+
+    colorBtn.addEventListener('click', () => {
+      colorIndex = (colorIndex + 1) % themes.length;
+      const nextTheme = themes[colorIndex];
+      applyColorTheme(nextTheme);
+      updateColorSwatch(colorBtn, nextTheme);
+      localStorage.setItem('colorTheme', nextTheme);
+    });
+
+    controlsContainer.appendChild(toggleBtn);
+    controlsContainer.appendChild(colorBtn);
+    
+    // Insert before social icons list
+    const socialList = nav.querySelector('ul.flex.gap-4');
+    if (socialList && socialList.parentElement) {
+      socialList.parentElement.insertBefore(controlsContainer, socialList);
+    } else {
+      // Fallback: find the flex container with items-center gap-4
+      const flexContainer = nav.querySelector('.flex.items-center.gap-4');
+      if (flexContainer) {
+        flexContainer.appendChild(controlsContainer);
+      } else {
+        // Last resort: append to nav
+        nav.appendChild(controlsContainer);
+      }
+    }
+  } else {
+    // Fallback: Create floating controls if nav doesn't exist
+    const container = document.createElement('div');
+    container.id = 'theme-controls';
+    container.className = 'fixed top-20 right-4 z-50 flex items-center gap-2 px-3 py-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700';
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'px-2 py-1 rounded-md border border-gray-300 hover:bg-gray-100 text-xs font-medium transition-colors';
+    toggleBtn.textContent = initial === 'dark' ? 'Light' : 'Dark';
+    toggleBtn.addEventListener('click', () => {
+      window.toggleTheme();
+      toggleBtn.textContent = window.currentTheme === 'dark' ? 'Light' : 'Dark';
+    });
+
+    const colorBtn = document.createElement('button');
+    colorBtn.type = 'button';
+    colorBtn.className = 'w-6 h-6 rounded-full border border-gray-300 overflow-hidden';
+    updateColorSwatch(colorBtn, themes[colorIndex]);
+
+    colorBtn.addEventListener('click', () => {
+      colorIndex = (colorIndex + 1) % themes.length;
+      const nextTheme = themes[colorIndex];
+      applyColorTheme(nextTheme);
+      updateColorSwatch(colorBtn, nextTheme);
+      localStorage.setItem('colorTheme', nextTheme);
+    });
+
+    container.appendChild(toggleBtn);
+    container.appendChild(colorBtn);
+    document.body.appendChild(container);
+  }
 }
 
 function applyTheme(theme) {
@@ -205,8 +256,9 @@ function applyColorTheme(name) {
     html[data-color-theme="${theme}"] *[class*="border-primary"] {
       border-color: ${colors.primary} !important;
     }
-    html[data-color-theme="${theme}"] .bg-primary,
-    html[data-color-theme="${theme}"] *[class*="bg-primary"] {
+    /* Don't apply theme colors to buttons - they use light/dark mode colors */
+    html[data-color-theme="${theme}"] .bg-primary:not(button):not(.btn-primary):not(a.bg-primary):not(button.bg-primary):not(a.button.bg-primary),
+    html[data-color-theme="${theme}"] *[class*="bg-primary"]:not(button):not(.btn-primary):not(a.bg-primary):not(button.bg-primary):not(a.button.bg-primary) {
       background-color: ${colors.primary} !important;
     }
     html[data-color-theme="${theme}"] .focus\\:ring-primary:focus,
@@ -222,35 +274,6 @@ function applyColorTheme(name) {
       --tw-gradient-to: ${colors.accent} !important;
       --tw-gradient-stops: var(--tw-gradient-from), ${colors.accent}, var(--tw-gradient-to) !important;
     }
-    /* Button styles with proper contrast - ALWAYS white text on colored buttons */
-    html[data-color-theme="${theme}"] .btn-primary,
-    html[data-color-theme="${theme}"] button.bg-primary,
-    html[data-color-theme="${theme}"] a.bg-primary,
-    html[data-color-theme="${theme}"] .bg-primary.text-white,
-    html[data-color-theme="${theme}"] button[class*="bg-primary"],
-    html[data-color-theme="${theme}"] a[class*="bg-primary"] {
-      background: linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%) !important;
-      color: #ffffff !important;
-      border-color: ${colors.primary} !important;
-    }
-    
-    html[data-color-theme="${theme}"] .btn-primary:hover,
-    html[data-color-theme="${theme}"] button.bg-primary:hover,
-    html[data-color-theme="${theme}"] a.bg-primary:hover,
-    html[data-color-theme="${theme}"] .bg-primary.text-white:hover,
-    html[data-color-theme="${theme}"] button[class*="bg-primary"]:hover,
-    html[data-color-theme="${theme}"] a[class*="bg-primary"]:hover {
-      background: linear-gradient(135deg, ${colors.accent} 0%, ${colors.primary} 100%) !important;
-      color: #ffffff !important;
-      opacity: 0.95;
-    }
-    
-    /* Regular buttons (not primary) - adapt to light/dark mode */
-    html[data-color-theme="${theme}"] button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
-    html[data-color-theme="${theme}"] a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more) {
-      color: ${text.body} !important;
-    }
-    
     /* Ensure text-white stays white */
     html[data-color-theme="${theme}"] .text-white,
     html[data-color-theme="${theme}"] button.text-white,
@@ -281,10 +304,15 @@ function applyColorTheme(name) {
 }
 
 function updateColorSwatch(el, theme) {
-  let color = '#667eea';
-  if (theme === 'theme-blue') color = '#3b82f6';
-  if (theme === 'theme-emerald') color = '#10b981';
-  el.style.background = color;
+  const colorMap = {
+    'theme-purple': '#667eea',
+    'theme-blue': '#3b82f6',
+    'theme-emerald': '#10b981',
+    'theme-rose': '#f43f5e',
+    'theme-orange': '#f97316',
+    'theme-indigo': '#6366f1'
+  };
+  el.style.background = colorMap[theme] || colorMap['theme-purple'];
 }
 
 /* ---------- VIEW MODE TOGGLE (CARD/LIST) ---------- */
@@ -320,8 +348,8 @@ function applyViewMode(mode) {
   if (!container) return;
   
   if (mode === 'list') {
-    container.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
-    container.classList.add('flex', 'flex-col', 'gap-4');
+    container.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-8');
+    container.classList.add('flex', 'flex-col');
     container.dataset.view = 'list';
   } else {
     container.classList.remove('flex', 'flex-col');
@@ -332,7 +360,8 @@ function applyViewMode(mode) {
   // Re-render projects with new view mode
   const urlParams = new URLSearchParams(window.location.search);
   const page = parseInt(urlParams.get('page')) || 1;
-  loadDashboardProjects("projects-grid", page, 9);
+  const perPage = page === 1 ? 9 : 12;
+  loadDashboardProjects("projects-grid", page, perPage);
 }
 
 function updateViewButtons(activeMode) {
@@ -362,6 +391,7 @@ function routePage() {
     const perPage = page === 1 ? 9 : 12; // First page: 9, others: 12
     
     loadDashboardProjects("projects-grid", page, perPage);
+    loadFeaturedProject(); // Load main featured project
     loadPinnedProjects(); // Load pinned/featured projects
     initViewModeToggle(); // Initialize view mode toggle
   }
@@ -445,6 +475,69 @@ async function loadProjects() {
   }
 }
 
+/* ---------- FEATURED PROJECT LOADING ---------- */
+async function loadFeaturedProject() {
+  const container = document.getElementById('featured-post');
+  if (!container) return;
+
+  const projects = await loadProjects();
+  const featured = projects.find(p => p.featured && p.id === 'used-car-price'); // Main featured project
+
+  if (!featured) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = createFeaturedProjectCard(featured);
+}
+
+function createFeaturedProjectCard(project) {
+  const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
+  const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
+
+  return `
+    <article class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden project-card group">
+      <div class="md:flex">
+        <div class="md:w-1/2 relative overflow-hidden">
+          <a href="project.html?id=${project.id}" class="block">
+            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+          </a>
+          <!-- Hover Popup Overlay for featured project -->
+          <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div class="text-center text-white p-6 max-w-md">
+              <h3 class="text-2xl font-bold mb-3">${project.title}</h3>
+              <p class="text-sm mb-4 opacity-90">
+                ${project.short_description || ''}
+              </p>
+              <div class="flex flex-wrap gap-3 justify-center text-sm">
+                <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
+                  Read Story / Project
+                </a>
+                ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors font-semibold">GitHub</a>` : ''}
+                ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors font-semibold">View Demo</a>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/2 p-8">
+          <div class="text-sm text-gray-500 mb-4">${project.date || ''}</div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">
+            <a href="project.html?id=${project.id}" class="hover:text-primary transition-colors">
+              ${project.title}
+            </a>
+          </h2>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            ${project.full_description || project.short_description || ''}
+          </p>
+          <a href="project.html?id=${project.id}" class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">
+            Full Story →
+          </a>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
 /* ---------- PINNED PROJECTS LOADING ---------- */
 async function loadPinnedProjects() {
   const container = document.getElementById('pinned-grid');
@@ -465,14 +558,15 @@ function createPinnedProjectCard(project) {
   const tags = (project.tools || []).slice(0, 3).map(t => 
     `<span class="px-2 py-1 text-xs bg-primary/10 text-primary rounded">${t}</span>`
   ).join('');
-  const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || '');
+  const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
+  const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
 
   return `
     <article class="bg-white rounded-lg shadow-lg overflow-hidden project-card animate-on-scroll group relative">
       <div class="md:flex">
         <div class="md:w-1/2 relative overflow-hidden">
           <a href="project.html?id=${project.id}" class="block">
-            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='assets/images/placeholder.png'; this.alt='${project.title} - Image not available';" loading="lazy">
+            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
           </a>
           <!-- Hover Popup Overlay -->
           <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -480,7 +574,7 @@ function createPinnedProjectCard(project) {
               <h4 class="text-xl font-bold mb-2">${project.title}</h4>
               <p class="text-sm mb-4 opacity-90 line-clamp-3">${project.short_description || ''}</p>
               <div class="flex flex-wrap gap-3 justify-center text-sm">
-                <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors">
+                <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
                   Read Story / Project
                 </a>
                 ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">GitHub</a>` : ''}
@@ -496,7 +590,7 @@ function createPinnedProjectCard(project) {
           </h3>
           <p class="text-gray-600 text-sm mb-4 line-clamp-3">${project.short_description || ''}</p>
           <div class="flex flex-wrap gap-2 mb-4">${tags}</div>
-          <a href="project.html?id=${project.id}" class="inline-block px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors text-sm font-semibold">
+          <a href="project.html?id=${project.id}" class="inline-block px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors text-sm font-bold">
             Read Story →
           </a>
         </div>
@@ -548,6 +642,17 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
     return;
   }
 
+  // Ensure grid classes are set for card view
+  if (viewMode !== 'list') {
+    el.classList.remove('flex', 'flex-col');
+    el.classList.add('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-8');
+    el.dataset.view = 'card';
+  } else {
+    el.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-8');
+    el.classList.add('flex', 'flex-col');
+    el.dataset.view = 'list';
+  }
+
   // Render based on view mode
   if (viewMode === 'list') {
     el.innerHTML = slice.map(createDashboardProjectList).join('');
@@ -580,44 +685,147 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
   renderPagination(list.length, page, perPage);
 }
 
-function createDashboardProjectCard(project) {
-  const tags = (project.tools || []).slice(0, 3).map(t => 
-    `<span class="px-2 py-1 text-xs bg-primary/10 text-primary rounded">${t}</span>`
+function createDashboardProjectCard(project, layoutClass = '') {
+  const tags = (project.tools || []).slice(0, 4).map(t => 
+    `<span class="px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">${t}</span>`
   ).join('');
 
-  const githubLink = project.github_url ? `<a href="${project.github_url}" target="_blank" class="flex items-center gap-2 text-sm text-gray-200 hover:text-white transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> GitHub</a>` : '';
-
-  const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || '');
+  const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
+  const fallbackImage = 'assets/images/thumbs/01.jpg';
+  
+  // Build action links
+  const links = [];
+  if (project.github_url) {
+    links.push(`<a href="${project.github_url}" target="_blank" class="project-link-icon" aria-label="GitHub" title="View on GitHub">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    </a>`);
+  }
+  if (project.demo_url) {
+    links.push(`<a href="${project.demo_url}" target="_blank" class="project-link-icon" aria-label="Demo" title="View Demo">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+    </a>`);
+  }
+  if (project.streamlit_url) {
+    links.push(`<a href="${project.streamlit_url}" target="_blank" class="project-link-icon" aria-label="Streamlit" title="View Streamlit App">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>
+    </a>`);
+  }
+  
   return `
-    <article class="bg-white rounded-lg shadow-md overflow-hidden project-card animate-on-scroll group relative">
-      <div class="relative overflow-hidden">
+    <article class="project-card-modern bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group relative ${layoutClass}">
+      <div class="relative overflow-hidden bg-gray-100">
         <a href="project.html?id=${project.id}" class="block">
-          <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='assets/images/placeholder.png'; this.alt='${project.title} - Image not available';" loading="lazy">
+          <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
         </a>
-        <!-- Hover Popup Overlay -->
-        <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+        <!-- Hover Popup Overlay (like featured section) -->
+        <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
           <div class="text-center text-white p-4 max-w-xs">
             <h4 class="text-xl font-bold mb-2">${project.title}</h4>
             <p class="text-sm mb-4 opacity-90 line-clamp-3">${project.short_description || ''}</p>
             <div class="flex flex-wrap gap-3 justify-center text-sm">
-              <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors">
+              <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
                 Read Story / Project
               </a>
-              ${githubLink}
+              ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">GitHub</a>` : ''}
               ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">View Demo</a>` : ''}
+              ${project.streamlit_url ? `<a href="${project.streamlit_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">Streamlit</a>` : ''}
             </div>
           </div>
         </div>
       </div>
       <div class="p-6">
-        <h3 class="text-xl font-bold text-gray-800 mb-2">
-          <a href="project.html?id=${project.id}" class="hover:text-primary transition-colors">${project.title}</a>
-        </h3>
-        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${project.short_description || ''}</p>
-        <div class="flex flex-wrap gap-2 mb-4">${tags}</div>
-        <a href="project.html?id=${project.id}" class="inline-block px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors text-sm font-semibold">
-          Read Story / Project →
-        </a>
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex-1">
+            <a href="project.html?id=${project.id}" class="block group-hover:text-primary transition-colors">
+              <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight">${project.title}</h3>
+            </a>
+            <p class="text-sm text-gray-600 leading-relaxed line-clamp-2 mb-4">${project.short_description || ''}</p>
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-2 mb-4">
+          ${tags || '<span class="text-xs text-gray-400">No tags</span>'}
+        </div>
+        
+        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+          <a href="project.html?id=${project.id}" class="text-sm font-semibold text-primary hover:text-accent transition-colors flex items-center gap-1">
+            View Project
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+          ${links.length > 0 ? `<div class="flex items-center gap-3">${links.join('')}</div>` : ''}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function createDashboardProjectList(project) {
+  const tags = (project.tools || []).slice(0, 4).map(t => 
+    `<span class="px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">${t}</span>`
+  ).join('');
+  
+  const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
+  const fallbackImage = 'assets/images/thumbs/01.jpg';
+  
+  // Build action links
+  const links = [];
+  if (project.github_url) {
+    links.push(`<a href="${project.github_url}" target="_blank" class="project-link-icon" aria-label="GitHub" title="View on GitHub">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    </a>`);
+  }
+  if (project.demo_url) {
+    links.push(`<a href="${project.demo_url}" target="_blank" class="project-link-icon" aria-label="Demo" title="View Demo">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+    </a>`);
+  }
+  if (project.streamlit_url) {
+    links.push(`<a href="${project.streamlit_url}" target="_blank" class="project-link-icon" aria-label="Streamlit" title="View Streamlit App">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>
+    </a>`);
+  }
+  
+  return `
+    <article class="bg-white rounded-lg shadow-md overflow-hidden project-card animate-on-scroll group relative mb-4">
+      <div class="md:flex">
+        <div class="md:w-2/5 relative overflow-hidden">
+          <a href="project.html?id=${project.id}" class="block">
+            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-48 md:h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+          </a>
+          <!-- Hover Popup Overlay -->
+          <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div class="text-center text-white p-4 max-w-xs">
+              <h4 class="text-lg font-bold mb-2">${project.title}</h4>
+              <p class="text-xs mb-3 opacity-90 line-clamp-2">${project.short_description || ''}</p>
+              <div class="flex flex-wrap gap-2 justify-center text-xs">
+                <a href="project.html?id=${project.id}" class="px-3 py-1.5 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
+                  Read Story
+                </a>
+                ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-3 py-1.5 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">GitHub</a>` : ''}
+                ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-3 py-1.5 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">Demo</a>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-3/5 p-4 md:p-5">
+          <div class="text-xs text-gray-500 mb-1">${project.date || ''}</div>
+          <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">
+            <a href="project.html?id=${project.id}" class="hover:text-primary transition-colors">${project.title}</a>
+          </h3>
+          <p class="text-gray-600 text-sm mb-3 line-clamp-2">${project.short_description || ''}</p>
+          <div class="flex flex-wrap gap-2 mb-3">${tags}</div>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+            <a href="project.html?id=${project.id}" class="text-sm font-semibold text-primary hover:text-accent transition-colors flex items-center gap-1">
+              View Project
+              <svg class="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            ${links.length > 0 ? `<div class="flex items-center gap-2">${links.join('')}</div>` : ''}
+          </div>
+        </div>
       </div>
     </article>
   `;
@@ -650,19 +858,19 @@ function renderPagination(total, currentPage, perPage) {
   let html = '';
   
   if (currentPage > 1) {
-    html += `<a href="${buildUrl(currentPage - 1)}" class="px-4 py-2 bg-white rounded hover:bg-gray-100 transition-colors">Prev</a>`;
+    html += `<a href="${buildUrl(currentPage - 1)}" class="px-4 py-2 bg-white rounded hover:bg-gray-100 transition-colors font-semibold">Prev</a>`;
   }
 
   for (let i = 1; i <= totalPages; i++) {
     if (i === currentPage) {
-      html += `<span class="px-4 py-2 bg-primary text-white rounded">${i}</span>`;
+      html += `<span class="px-4 py-2 bg-primary text-white rounded font-bold">${i}</span>`;
     } else {
-      html += `<a href="${buildUrl(i)}" class="px-4 py-2 bg-white rounded hover:bg-gray-100 transition-colors">${i}</a>`;
+      html += `<a href="${buildUrl(i)}" class="px-4 py-2 bg-white rounded hover:bg-gray-100 transition-colors font-semibold">${i}</a>`;
     }
   }
 
   if (currentPage < totalPages) {
-    html += `<a href="${buildUrl(currentPage + 1)}" class="px-4 py-2 bg-white rounded hover:bg-gray-100 transition-colors">Next</a>`;
+    html += `<a href="${buildUrl(currentPage + 1)}" class="px-4 py-2 bg-white rounded hover:bg-gray-100 transition-colors font-semibold">Next</a>`;
   }
 
   container.innerHTML = html;
@@ -706,7 +914,7 @@ function renderProject(project) {
         <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">${project.title}</h1>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">${project.short_description || ""}</p>
         <div class="flex gap-4 justify-center">
-          ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold">GitHub</a>` : ""}
+          ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">GitHub</a>` : ""}
           ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold">Live Demo</a>` : ""}
         </div>
       </div>
@@ -822,7 +1030,7 @@ function powerBiBlock(embedUrl, downloadPath, project = null) {
     return `<iframe src="${embedUrl}" width="100%" height="600" frameborder="0"></iframe>`;
   } else if (downloadPath) {
     const resolvedUrl = project ? resolveAssetUrl(project, downloadPath) : downloadPath;
-    return `<a href="${resolvedUrl}" download class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold">Download PBIX File</a>`;
+    return `<a href="${resolvedUrl}" download class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">Download PBIX File</a>`;
   }
   return "";
 }
@@ -847,9 +1055,10 @@ function galleryBlock(images, project = null) {
   const resolvedImages = project 
     ? images.map(img => resolveAssetUrl(project, img))
     : images;
+  const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
   return `
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      ${resolvedImages.map(img => `<img src="${img}" alt="Project image" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='assets/images/placeholder.png'; this.alt='Image not available';">`).join('')}
+      ${resolvedImages.map(img => `<img src="${img}" alt="Project image" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">`).join('')}
     </div>
   `;
 }

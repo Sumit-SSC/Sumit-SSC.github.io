@@ -3584,7 +3584,7 @@ input, select, textarea {
 		text-align: center;
 	}
 
-		#banner h2 {
+		#banner h1 {
 			-moz-transform: scale(1);
 			-webkit-transform: scale(1);
 			-ms-transform: scale(1);
@@ -3594,14 +3594,16 @@ input, select, textarea {
 			-ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
 			transition: transform 0.5s ease, opacity 0.5s ease;
 			display: inline-block;
-			font-size: 1.75em;
+			font-size: 3em;
+			font-weight: 900;
 			opacity: 1;
 			padding: 0.35em 1em;
 			position: relative;
 			z-index: 1;
+			letter-spacing: 0.05em;
 		}
 
-			#banner h2:before, #banner h2:after {
+			#banner h1:before, #banner h1:after {
 				-moz-transition: width 0.85s ease;
 				-webkit-transition: width 0.85s ease;
 				-ms-transition: width 0.85s ease;
@@ -3618,19 +3620,100 @@ input, select, textarea {
 				width: 100%;
 			}
 
+			#banner h1:before {
+				top: 0;
+				left: 0;
+				right: auto;
+			}
+
+			#banner h1:after {
+				bottom: 0;
+				right: 0;
+				left: auto;
+			}
+
+		#banner h2 {
+			-moz-transform: scale(1);
+			-webkit-transform: scale(1);
+			-ms-transform: scale(1);
+			transform: scale(1);
+			-moz-transition: -moz-transform 0.5s ease, opacity 0.5s ease;
+			-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+			-ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
+			transition: transform 0.5s ease, opacity 0.5s ease;
+			-moz-transition-delay: 0.4s;
+			-webkit-transition-delay: 0.4s;
+			-ms-transition-delay: 0.4s;
+			transition-delay: 0.4s;
+			display: inline-block;
+			font-size: 1.3em;
+			font-weight: 400;
+			opacity: 1;
+			padding: 0.35em 1em;
+			position: relative;
+			z-index: 1;
+			letter-spacing: 0.15em;
+		}
+
+			#banner h2:before, #banner h2:after {
+				-moz-transition: width 0.85s ease;
+				-webkit-transition: width 0.85s ease;
+				-ms-transition: width 0.85s ease;
+				transition: width 0.85s ease;
+				-moz-transition-delay: 0.65s;
+				-webkit-transition-delay: 0.65s;
+				-ms-transition-delay: 0.65s;
+				transition-delay: 0.65s;
+				background: #fff;
+				content: '';
+				display: block;
+				height: 2px;
+				position: absolute;
+				width: 100%;
+			}
+
 			#banner h2:before {
 				top: 0;
 				left: 0;
+				right: auto;
 			}
 
 			#banner h2:after {
 				bottom: 0;
 				right: 0;
+				left: auto;
 			}
 
-		#banner p {
+		#banner h3 {
 			letter-spacing: 0.225em;
 			text-transform: uppercase;
+			font-size: 0.9em;
+			margin: 1em 0;
+			opacity: 0.9;
+		}
+
+		#banner p {
+			letter-spacing: 0.1em;
+			text-transform: none;
+			font-style: italic;
+			font-size: 0.95em;
+			font-weight: 300;
+			line-height: 1.8;
+			max-width: 40em;
+			margin: 1.5em auto 0;
+			-moz-transition: -moz-transform 0.5s ease, opacity 0.5s ease;
+			-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+			-ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
+			transition: transform 0.5s ease, opacity 0.5s ease;
+			-moz-transition-delay: 0.8s;
+			-webkit-transition-delay: 0.8s;
+			-ms-transition-delay: 0.8s;
+			transition-delay: 0.8s;
+			-moz-transform: translateY(0);
+			-webkit-transform: translateY(0);
+			-ms-transform: translateY(0);
+			transform: translateY(0);
+			opacity: 1;
 		}
 
 			#banner p a {
@@ -3685,14 +3768,14 @@ input, select, textarea {
 
 		#banner:after {
 			pointer-events: none;
-			-moz-transition: opacity 3s ease-in-out;
-			-webkit-transition: opacity 3s ease-in-out;
-			-ms-transition: opacity 3s ease-in-out;
-			transition: opacity 3s ease-in-out;
-			-moz-transition-delay: 1.25s;
-			-webkit-transition-delay: 1.25s;
-			-ms-transition-delay: 1.25s;
-			transition-delay: 1.25s;
+			-moz-transition: opacity 2s ease-in-out;
+			-webkit-transition: opacity 2s ease-in-out;
+			-ms-transition: opacity 2s ease-in-out;
+			transition: opacity 2s ease-in-out;
+			-moz-transition-delay: 1.5s;
+			-webkit-transition-delay: 1.5s;
+			-ms-transition-delay: 1.5s;
+			transition-delay: 1.5s;
 			content: '';
 			background: #2e3842;
 			display: block;
@@ -3712,8 +3795,20 @@ input, select, textarea {
 				min-height: 0;
 			}
 
+				#banner h1 {
+					font-size: 2em;
+				}
+
 				#banner h2 {
-					font-size: 1.25em;
+					font-size: 1.1em;
+				}
+
+				#banner h3 {
+					font-size: 0.8em;
+				}
+
+				#banner p {
+					font-size: 0.85em;
 				}
 
 				#banner br {
@@ -3724,6 +3819,18 @@ input, select, textarea {
 					display: none;
 				}
 
+		}
+
+	body.is-preload #banner h1 {
+		-moz-transform: scale(0.95);
+		-webkit-transform: scale(0.95);
+		-ms-transform: scale(0.95);
+		transform: scale(0.95);
+		opacity: 0;
+	}
+
+		body.is-preload #banner h1:before, body.is-preload #banner h1:after {
+			width: 0;
 		}
 
 	body.is-preload #banner h2 {
@@ -3737,6 +3844,14 @@ input, select, textarea {
 		body.is-preload #banner h2:before, body.is-preload #banner h2:after {
 			width: 0;
 		}
+
+	body.is-preload #banner p {
+		-moz-transform: translateY(20px);
+		-webkit-transform: translateY(20px);
+		-ms-transform: translateY(20px);
+		transform: translateY(20px);
+		opacity: 0;
+	}
 
 	body.is-preload #banner .more {
 		-moz-transform: translateY(8.5em);

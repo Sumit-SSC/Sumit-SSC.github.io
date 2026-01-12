@@ -29,7 +29,7 @@ const NAV_CONFIG = {
     { 
       name: "Kaggle", 
       href: "https://www.kaggle.com/mitsu00", 
-      icon: `<i class="fab fa-kaggle w-5 h-5"></i>`
+      icon: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg>`
     },
     { 
       name: "Medium", 

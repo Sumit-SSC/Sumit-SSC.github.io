@@ -47,6 +47,87 @@
   animation: float infinite ease-in-out;
 }
 
+/* Theme Controls Styling */
+#theme-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#theme-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#theme-controls button:hover {
+  transform: scale(1.05);
+}
+
+#theme-controls button:active {
+  transform: scale(0.95);
+}
+
+/* Dark mode adjustments for theme controls */
+.dark-theme #theme-controls button {
+  border-color: rgba(75, 85, 99, 0.5);
+}
+
+.dark-theme #theme-controls button:hover {
+  background-color: rgba(55, 65, 81, 0.5);
+}
+
+/* Scroll Progress Bar */
+.scroll-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 4px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	z-index: 9999;
+	transition: width 0.1s ease-out;
+}
+
+/* Skills Page Styles */
+.skill-card {
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skill-card:hover {
+	transform: translateY(-5px);
+}
+
+.skill-bar {
+	transition: width 1s ease-out;
+}
+
+.skill-category {
+	margin-bottom: 4rem;
+}
+
+/* Modern Project Card Styles */
+.project-card-modern {
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card-modern:hover {
+	transform: translateY(-4px);
+}
+
+.project-link-icon {
+	color: #6b7280;
+	transition: color 0.2s ease;
+	padding: 0.25rem;
+	border-radius: 0.375rem;
+}
+
+.project-link-icon:hover {
+	color: #667eea;
+	background-color: #f3f4f6;
+}
+
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
@@ -194,11 +275,258 @@ body:not(.dark-theme) .text-gray-500 {
   position: relative;
 }
 
+/* Homepage body - static background image for entire page */
+body.homepage-body {
+  background-image: url("../images/com.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Translucent overlay for entire page - allows theme colors to show through */
+body.homepage-body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(139, 92, 246, 0.4) 100%);
+  z-index: 0;
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+
+/* Ensure content is above background */
+body.homepage-body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Main content area - semi-transparent white background for readability */
+body.homepage-body #main {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 0;
+}
+
+.dark-theme body.homepage-body #main {
+  background-color: rgba(15, 23, 42, 0.85);
+}
+
+/* Project cards - ensure they're readable */
+body.homepage-body .project-card-modern,
+body.homepage-body .project-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+}
+
+.dark-theme body.homepage-body .project-card-modern,
+.dark-theme body.homepage-body .project-card {
+  background-color: rgba(30, 41, 59, 0.95);
+}
+
+/* Navigation - ensure it's readable */
+body.homepage-body #nav {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.dark-theme body.homepage-body #nav {
+  background-color: rgba(15, 23, 42, 0.95);
+}
+
 /* Dashboard intro fade */
 .dashboard-intro {
   transition: opacity 0.5s ease, transform 0.5s ease;
   position: relative;
   z-index: 10;
+  background: transparent; /* No background on intro, uses body background */
+}
+
+/* Additional overlay for intro section - slightly more opaque for better text contrast */
+.dashboard-intro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 50%, rgba(139, 92, 246, 0.3) 100%);
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
+/* Dashboard intro typography - match index.html banner styling */
+.dashboard-intro-title {
+  -moz-transform: scale(1);
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -moz-transition: -moz-transform 0.5s ease, opacity 0.5s ease;
+  -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+  -ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  display: inline-block;
+  font-size: 3em;
+  font-weight: 900;
+  opacity: 1;
+  padding: 0.35em 1em;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.05em;
+}
+
+.dashboard-intro-subtitle {
+  -moz-transform: scale(1);
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -moz-transition: -moz-transform 0.5s ease, opacity 0.5s ease;
+  -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+  -ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  -moz-transition-delay: 0.4s;
+  -webkit-transition-delay: 0.4s;
+  -ms-transition-delay: 0.4s;
+  transition-delay: 0.4s;
+  display: inline-block;
+  font-size: 1.3em;
+  font-weight: 400;
+  opacity: 1;
+  padding: 0.35em 1em;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.15em;
+}
+
+.dashboard-intro-text {
+  letter-spacing: 0.1em;
+  text-transform: none;
+  font-style: italic;
+  font-size: 0.95em;
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 40em;
+  margin: 1.5em auto 0;
+  -moz-transition: -moz-transform 0.5s ease, opacity 0.5s ease;
+  -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+  -ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  -moz-transition-delay: 0.8s;
+  -webkit-transition-delay: 0.8s;
+  -ms-transition-delay: 0.8s;
+  transition-delay: 0.8s;
+  -moz-transform: translateY(0);
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+  opacity: 1;
+  position: relative;
+  z-index: 2;
+}
+
+/* Text colors - adapt to light/dark mode, not theme colors */
+body:not(.dark-theme) .dashboard-intro-title,
+body:not(.dark-theme) .dashboard-intro-subtitle,
+body:not(.dark-theme) .dashboard-intro-text {
+  color: #1f2937 !important; /* Dark text in light mode */
+}
+
+.dark-theme .dashboard-intro-title,
+.dark-theme .dashboard-intro-subtitle,
+.dark-theme .dashboard-intro-text {
+  color: #ffffff !important; /* White text in dark mode */
+}
+
+/* Preload states - match index.html */
+.dashboard-intro.is-preload .dashboard-intro-title {
+  -moz-transform: scale(0.95);
+  -webkit-transform: scale(0.95);
+  -ms-transform: scale(0.95);
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.dashboard-intro.is-preload .dashboard-intro-subtitle {
+  -moz-transform: scale(0.95);
+  -webkit-transform: scale(0.95);
+  -ms-transform: scale(0.95);
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.dashboard-intro.is-preload .dashboard-intro-text {
+  -moz-transform: translateY(20px);
+  -webkit-transform: translateY(20px);
+  -ms-transform: translateY(20px);
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+/* Mobile responsive - match index.html */
+@media screen and (max-width: 736px) {
+  .dashboard-intro-title {
+    font-size: 2em;
+  }
+
+  .dashboard-intro-subtitle {
+    font-size: 1.1em;
+  }
+
+  .dashboard-intro-text {
+    font-size: 0.85em;
+  }
+
+  .dashboard-intro .more {
+    display: none; /* Hide on mobile like index.html */
+  }
+}
+
+/* Theme color adaptation for page overlay */
+html[data-color-theme="theme-purple"] body.homepage-body::before {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
+}
+
+html[data-color-theme="theme-blue"] body.homepage-body::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(37, 99, 235, 0.4) 100%);
+}
+
+html[data-color-theme="theme-emerald"] body.homepage-body::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(5, 150, 105, 0.4) 100%);
+}
+
+html[data-color-theme="theme-rose"] body.homepage-body::before {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.4) 0%, rgba(225, 29, 72, 0.4) 100%);
+}
+
+html[data-color-theme="theme-orange"] body.homepage-body::before {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.4) 0%, rgba(234, 88, 12, 0.4) 100%);
+}
+
+html[data-color-theme="theme-indigo"] body.homepage-body::before {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4) 0%, rgba(79, 70, 229, 0.4) 100%);
+}
+
+/* Theme color adaptation for intro overlay */
+html[data-color-theme="theme-purple"] .dashboard-intro::before {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+}
+
+html[data-color-theme="theme-blue"] .dashboard-intro::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.3) 100%);
+}
+
+html[data-color-theme="theme-emerald"] .dashboard-intro::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.3) 100%);
+}
+
+html[data-color-theme="theme-rose"] .dashboard-intro::before {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.3) 0%, rgba(225, 29, 72, 0.3) 100%);
+}
+
+html[data-color-theme="theme-orange"] .dashboard-intro::before {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.3) 0%, rgba(234, 88, 12, 0.3) 100%);
+}
+
+html[data-color-theme="theme-indigo"] .dashboard-intro::before {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(79, 70, 229, 0.3) 100%);
 }
 
 /* Project card hover */
@@ -329,23 +657,23 @@ body:not(.dark-theme) .text-gray-500 {
   transform: translateY(0);
 }
 
-/* Spectral-style "more" button (like index.html) */
+/* Spectral-style "more" button (like index.html) - no box, clean design */
 .dashboard-intro .more {
   -moz-transition: -moz-transform 0.75s ease, opacity 0.75s ease;
   -webkit-transition: -webkit-transform 0.75s ease, opacity 0.75s ease;
   -ms-transition: -ms-transform 0.75s ease, opacity 0.75s ease;
   transition: transform 0.75s ease, opacity 0.75s ease;
-  -moz-transition-delay: 2.5s;
-  -webkit-transition-delay: 2.5s;
-  -ms-transition-delay: 2.5s;
-  transition-delay: 2.5s;
+  -moz-transition-delay: 3.5s;
+  -webkit-transition-delay: 3.5s;
+  -ms-transition-delay: 3.5s;
+  transition-delay: 3.5s;
   -moz-transform: translateY(0);
   -webkit-transform: translateY(0);
   -ms-transform: translateY(0);
   transform: translateY(0);
-  border: none;
+  border: none; /* No border/box */
   bottom: 0;
-  color: #ffffff !important; /* Always white text on intro section */
+  color: inherit; /* Inherit from parent, adapts to light/dark mode */
   font-size: 0.8em;
   height: 8.5em;
   left: 50%;
@@ -358,8 +686,21 @@ body:not(.dark-theme) .text-gray-500 {
   text-align: center;
   text-transform: uppercase;
   width: 16em;
-  z-index: 1;
+  z-index: 3; /* Above overlay */
+  background: transparent !important; /* No background box */
+  backdrop-filter: none !important; /* No blur/glow */
+  box-shadow: none !important; /* No shadow/glow */
   text-decoration: none;
+}
+
+/* Button text color adapts to light/dark mode - ensure visibility */
+body:not(.dark-theme) .dashboard-intro .more {
+  color: #1f2937 !important; /* Dark text in light mode */
+}
+
+.dark-theme .dashboard-intro .more {
+  color: #ffffff !important; /* White text in dark mode */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .dashboard-intro .more:after {
@@ -501,62 +842,174 @@ body:not(.dark-theme) .text-gray-500 {
   }
 }
 
-/* Button styles - Ensure visibility with white text */
-.btn-primary,
-button.bg-primary,
-a.bg-primary,
-.bg-primary.text-white,
-button[class*="bg-primary"],
-a[class*="bg-primary"] {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #ffffff !important;
+/* Button styles - shared base (colors handled per theme/mode) */
+/* Button styles - Light/Dark mode based, NO theme color interference */
+/* Light mode: Dark buttons with white text */
+/* Primary buttons - override theme colors, use light/dark mode colors */
+body:not(.dark-theme) .btn-primary,
+body:not(.dark-theme) button.bg-primary,
+body:not(.dark-theme) a.bg-primary,
+body:not(.dark-theme) .bg-primary.text-white,
+body:not(.dark-theme) button[class*="bg-primary"],
+body:not(.dark-theme) a[class*="bg-primary"],
+body:not(.dark-theme) button[type="submit"],
+body:not(.dark-theme) button[type="button"].bg-primary,
+body:not(.dark-theme) a.button.bg-primary,
+html[data-color-theme] body:not(.dark-theme) .btn-primary,
+html[data-color-theme] body:not(.dark-theme) button.bg-primary,
+html[data-color-theme] body:not(.dark-theme) a.bg-primary,
+html[data-color-theme] body:not(.dark-theme) button[class*="bg-primary"],
+html[data-color-theme] body:not(.dark-theme) a[class*="bg-primary"] {
+  background: #1f2937 !important; /* Dark gray/black background */
+  color: #ffffff !important; /* White text - always visible */
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
-  font-weight: 600;
+  font-weight: 700 !important;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
 }
 
-.btn-primary:hover,
-button.bg-primary:hover,
-a.bg-primary:hover,
-.bg-primary.text-white:hover,
-button[class*="bg-primary"]:hover,
-a[class*="bg-primary"]:hover {
+body:not(.dark-theme) .btn-primary:hover,
+body:not(.dark-theme) button.bg-primary:hover,
+body:not(.dark-theme) a.bg-primary:hover,
+body:not(.dark-theme) .bg-primary.text-white:hover,
+body:not(.dark-theme) button[class*="bg-primary"]:hover,
+body:not(.dark-theme) a[class*="bg-primary"]:hover,
+body:not(.dark-theme) button[type="submit"]:hover {
+  background: #111827 !important; /* Darker on hover */
+  color: #ffffff !important;
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-  opacity: 0.95;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode: Lighter buttons with dark text - override theme colors */
+.dark-theme .btn-primary,
+.dark-theme button.bg-primary,
+.dark-theme a.bg-primary,
+.dark-theme .bg-primary.text-white,
+.dark-theme button[class*="bg-primary"],
+.dark-theme a[class*="bg-primary"],
+.dark-theme button[type="submit"],
+.dark-theme button[type="button"].bg-primary,
+.dark-theme a.button.bg-primary,
+html[data-color-theme] .dark-theme .btn-primary,
+html[data-color-theme] .dark-theme button.bg-primary,
+html[data-color-theme] .dark-theme a.bg-primary,
+html[data-color-theme] .dark-theme button[class*="bg-primary"],
+html[data-color-theme] .dark-theme a[class*="bg-primary"] {
+  background: #f3f4f6 !important; /* Light gray background */
+  color: #111827 !important; /* Dark text - always visible */
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700 !important;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.dark-theme .btn-primary:hover,
+.dark-theme button.bg-primary:hover,
+.dark-theme a.bg-primary:hover,
+.dark-theme .bg-primary.text-white:hover,
+.dark-theme button[class*="bg-primary"]:hover,
+.dark-theme a[class*="bg-primary"]:hover,
+.dark-theme button[type="submit"]:hover {
+  background: #e5e7eb !important; /* Lighter on hover */
+  color: #111827 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+}
+
+/* View toggle buttons - ensure visibility */
+.view-toggle-btn,
+#view-card,
+#view-list,
+button.view-toggle-btn {
+  font-weight: 600 !important;
+  color: #374151 !important;
+  background-color: transparent !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.view-toggle-btn.active,
+#view-card.active,
+#view-list.active,
+.view-toggle-btn.bg-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-color: #667eea !important;
+}
+
+.dark-theme .view-toggle-btn:not(.active),
+.dark-theme #view-card:not(.active),
+.dark-theme #view-list:not(.active) {
+  color: #e5e7eb !important;
+  border-color: #475569 !important;
+}
+
+/* Pagination buttons - ensure visibility */
+#pagination a,
+#pagination button,
+#pagination span {
+  font-weight: 600 !important;
+  color: #374151 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+}
+
+#pagination a:hover,
+#pagination button:hover {
+  background-color: #f3f4f6 !important;
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+}
+
+#pagination span.bg-primary,
+#pagination .bg-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-color: #667eea !important;
+}
+
+.dark-theme #pagination a,
+.dark-theme #pagination button,
+.dark-theme #pagination span:not(.bg-primary) {
+  color: #e5e7eb !important;
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+.dark-theme #pagination a:hover,
+.dark-theme #pagination button:hover {
+  background-color: #334155 !important;
   color: #ffffff !important;
 }
 
-/* Force white text on all primary buttons */
-.bg-primary,
-button.bg-primary,
-a.bg-primary,
-.btn-primary,
-button[class*="bg-primary"],
-a[class*="bg-primary"] {
-  color: #ffffff !important;
-}
-
-.bg-primary:hover,
-button.bg-primary:hover,
-a.bg-primary:hover,
-.btn-primary:hover,
-button[class*="bg-primary"]:hover,
-a[class*="bg-primary"]:hover {
-  color: #ffffff !important;
-}
-
-/* Light mode - regular buttons and text should be dark */
-body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+/* Light mode - regular buttons and text should be dark and BOLD */
+body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn),
 body:not(.dark-theme) a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
 body:not(.dark-theme) .text-gray-800,
 body:not(.dark-theme) .text-gray-900 {
   color: #1f2937 !important;
+  font-weight: 600 !important; /* Make buttons bold */
+}
+
+body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn):hover {
+  color: #111827 !important;
+  font-weight: 700 !important; /* Even bolder on hover */
 }
 
 body:not(.dark-theme) .text-gray-600,
@@ -564,8 +1017,8 @@ body:not(.dark-theme) .text-gray-700 {
   color: #374151 !important;
 }
 
-/* Dark mode - regular buttons and text should be light */
-.dark-theme button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+/* Dark mode - regular buttons and text should be light and BOLD */
+.dark-theme button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn),
 .dark-theme a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
 .dark-theme .text-gray-800,
 .dark-theme .text-gray-900,
@@ -576,6 +1029,12 @@ body:not(.dark-theme) .text-gray-700 {
 .dark-theme h5,
 .dark-theme h6 {
   color: #f9fafb !important;
+  font-weight: 600 !important; /* Make buttons bold */
+}
+
+.dark-theme button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn):hover {
+  color: #ffffff !important;
+  font-weight: 700 !important; /* Even bolder on hover */
 }
 
 .dark-theme .text-gray-600,
@@ -672,127 +1131,25 @@ body:not(.dark-theme) .text-gray-700 {
   --color-accent-light: #6366f1;
 }
 
-/* Apply to buttons and progress bars with proper text contrast */
-[data-color-theme="theme-purple"] .btn-primary,
-[data-color-theme="theme-purple"] button.bg-primary,
-[data-color-theme="theme-purple"] a.bg-primary,
-[data-color-theme="theme-purple"] .bg-primary.text-white {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #ffffff !important;
-  border-color: #667eea !important;
-}
-
-[data-color-theme="theme-purple"] .btn-primary:hover,
-[data-color-theme="theme-purple"] button.bg-primary:hover,
-[data-color-theme="theme-purple"] a.bg-primary:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
-  color: #ffffff !important;
-  opacity: 0.95;
-}
-
+/* Apply theme colors only to progress bar (buttons use fixed palette per mode) */
 [data-color-theme="theme-purple"] .scroll-progress {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-[data-color-theme="theme-blue"] .btn-primary,
-[data-color-theme="theme-blue"] button.bg-primary,
-[data-color-theme="theme-blue"] a.bg-primary,
-[data-color-theme="theme-blue"] .bg-primary.text-white {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-  color: #ffffff !important;
-  border-color: #3b82f6 !important;
-}
-
-[data-color-theme="theme-blue"] .btn-primary:hover,
-[data-color-theme="theme-blue"] button.bg-primary:hover,
-[data-color-theme="theme-blue"] a.bg-primary:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
-  color: #ffffff !important;
-  opacity: 0.95;
 }
 
 [data-color-theme="theme-blue"] .scroll-progress {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
 }
 
-[data-color-theme="theme-emerald"] .btn-primary,
-[data-color-theme="theme-emerald"] button.bg-primary,
-[data-color-theme="theme-emerald"] a.bg-primary,
-[data-color-theme="theme-emerald"] .bg-primary.text-white {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  border-color: #10b981 !important;
-}
-
-[data-color-theme="theme-emerald"] .btn-primary:hover,
-[data-color-theme="theme-emerald"] button.bg-primary:hover,
-[data-color-theme="theme-emerald"] a.bg-primary:hover {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
-  color: #ffffff !important;
-  opacity: 0.95;
-}
-
 [data-color-theme="theme-emerald"] .scroll-progress {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
-[data-color-theme="theme-rose"] .btn-primary,
-[data-color-theme="theme-rose"] button.bg-primary,
-[data-color-theme="theme-rose"] a.bg-primary,
-[data-color-theme="theme-rose"] .bg-primary.text-white {
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
-  color: #ffffff !important;
-  border-color: #f43f5e !important;
-}
-
-[data-color-theme="theme-rose"] .btn-primary:hover,
-[data-color-theme="theme-rose"] button.bg-primary:hover,
-[data-color-theme="theme-rose"] a.bg-primary:hover {
-  background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%) !important;
-  color: #ffffff !important;
-  opacity: 0.95;
 }
 
 [data-color-theme="theme-rose"] .scroll-progress {
   background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
 }
 
-[data-color-theme="theme-orange"] .btn-primary,
-[data-color-theme="theme-orange"] button.bg-primary,
-[data-color-theme="theme-orange"] a.bg-primary,
-[data-color-theme="theme-orange"] .bg-primary.text-white {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
-  color: #ffffff !important;
-  border-color: #f97316 !important;
-}
-
-[data-color-theme="theme-orange"] .btn-primary:hover,
-[data-color-theme="theme-orange"] button.bg-primary:hover,
-[data-color-theme="theme-orange"] a.bg-primary:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%) !important;
-  color: #ffffff !important;
-  opacity: 0.95;
-}
-
 [data-color-theme="theme-orange"] .scroll-progress {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-}
-
-[data-color-theme="theme-indigo"] .btn-primary,
-[data-color-theme="theme-indigo"] button.bg-primary,
-[data-color-theme="theme-indigo"] a.bg-primary,
-[data-color-theme="theme-indigo"] .bg-primary.text-white {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
-  color: #ffffff !important;
-  border-color: #6366f1 !important;
-}
-
-[data-color-theme="theme-indigo"] .btn-primary:hover,
-[data-color-theme="theme-indigo"] button.bg-primary:hover,
-[data-color-theme="theme-indigo"] a.bg-primary:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
-  color: #ffffff !important;
-  opacity: 0.95;
 }
 
 [data-color-theme="theme-indigo"] .scroll-progress {

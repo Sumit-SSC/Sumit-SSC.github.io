@@ -10,9 +10,9 @@
     "tools": ["Python", "pandas", "scikit-learn", "XGBoost", "Streamlit"],
     "category": "Machine Learning",
     "date": "2024",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/projects/used-car-price.png",
     "images": [
-      "assets/images/placeholder.png"
+      "assets/images/projects/used-car-price.png"
     ],
     "video_url": "https://youtu.be/dQw4w9WgXcQ",
     "streamlit_url": "https://sumit-ml-capstone-project.streamlit.app/",
@@ -36,9 +36,9 @@
     "tools": ["SQL", "Python", "pandas", "XGBoost", "Power BI"],
     "category": "Decision Science",
     "date": "2024",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/projects/customer-churn.png",
     "images": [
-      "assets/images/fulls/04.jpg"
+      "assets/images/projects/customer-churn.png"
     ],
     "video_url": "",
     "streamlit_url": "",
@@ -62,7 +62,7 @@
     "tools": ["Power BI", "DAX", "SQL", "Excel"],
     "category": "Analytics Engineering",
     "date": "2024",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/05.jpg",
     "images": [
       "assets/images/fulls/05.jpg"
     ],
@@ -88,7 +88,7 @@
     "tools": ["SQL", "Python", "statsmodels", "A/B Testing"],
     "category": "Product Analytics",
     "date": "2025",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/02.jpg",
     "images": [
       "assets/images/fulls/02.jpg"
     ],
@@ -114,7 +114,7 @@
     "tools": ["Python", "scikit-learn", "OpenCV", "pandas", "numpy"],
     "category": "Machine Learning",
     "date": "2024",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/02.jpg",
     "images": [
       "assets/images/fulls/02.jpg"
     ],
@@ -140,7 +140,7 @@
     "tools": ["Python", "Power BI", "Excel", "pandas", "matplotlib"],
     "category": "Data Analysis",
     "date": "2024",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/06.jpg",
     "images": [
       "assets/images/fulls/06.jpg"
     ],
