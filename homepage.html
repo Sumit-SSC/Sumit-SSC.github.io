@@ -18,13 +18,14 @@
 		}
 	</script>
 	<link rel="stylesheet" href="assets/css/custom.css" />
+	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
 </head>
 <body class="bg-gray-50">
 	<!-- Scroll Progress Bar -->
 	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
 
 	<!-- Intro Section (Full Screen, Hides on Scroll) -->
-	<div id="intro" class="dashboard-intro min-h-screen bg-gradient-to-br from-primary via-accent to-purple-900 flex items-center justify-center text-white text-center px-6">
+	<div id="intro" class="dashboard-intro is-preload min-h-screen bg-gradient-to-br from-primary via-accent to-purple-900 flex items-center justify-center text-white text-center px-6 relative">
 		<div class="max-w-3xl">
 			<h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up">Sumit S. Chaure</h1>
 			<h2 class="text-2xl md:text-4xl mb-6 opacity-90">Data Science Portfolio</h2>
@@ -32,15 +33,7 @@
 				Explore my diverse collection of projects showcasing machine learning, data analysis, and more. 
 				Organized by project, each directory contains code, datasets, documentation, and resources.
 			</p>
-			<div class="flex flex-col items-center gap-4 intro-cta" style="opacity: 0;">
-				<!-- Arrow cue (HTML5 UP-style) -->
-				<a href="#main" class="section-arrow">
-					<span class="arrow-icon"></span>
-				</a>
-				<a href="#main" class="inline-block px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white font-semibold transition-all duration-300 hover:scale-105 border-2 border-white/30">
-					Explore
-				</a>
-			</div>
+			<a href="#main" class="more scrolly">Explore</a>
 		</div>
 	</div>
 
@@ -76,7 +69,7 @@
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
 						</a></li>
 						<li><a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="Kaggle">
-							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.825 23.859c-.022.092-.117.141-.235.141h-3.328c-.136 0-.19-.061-.17-.188.019-.13.028-.255.028-.383 0-1.701-.526-2.731-1.596-3.153-.34-.146-.771-.22-1.304-.22-.621 0-1.235.11-1.84.33-.604.218-1.12.54-1.545.963-.425.426-.75.942-.975 1.548-.226.606-.339 1.22-.339 1.841 0 .128.01.253.029.383.02.127-.034.188-.17.188H3.41c-.118 0-.213-.049-.235-.141-.021-.09-.01-.18.035-.27.044-.09.12-.15.23-.18.11-.03.22-.05.33-.06.11-.01.22-.02.33-.02.62 0 1.234-.11 1.84-.33.606-.218 1.12-.54 1.545-.963.425-.426.75-.942.975-1.548.226-.606.339-1.22.339-1.841 0-.11-.01-.22-.02-.33-.01-.11-.03-.22-.06-.33-.03-.11-.09-.186-.18-.23-.09-.045-.18-.056-.27-.035-.09.022-.141.117-.141.235v3.328c0 .136.061.19.188.17.13-.019.255-.028.383-.028 1.701 0 2.731.526 3.153 1.596.146.34.22.771.22 1.304 0 .621-.11 1.235-.33 1.84-.218.604-.54 1.12-.963 1.545-.426.425-.942.75-1.548.975-.606.226-1.22.339-1.841.339-.11 0-.22-.01-.33-.02-.11-.01-.22-.03-.33-.06-.11-.03-.186-.09-.23-.18-.045-.09-.056-.18-.035-.27.022-.092.117-.141.235-.141h3.328c.118 0 .213.049.235.141.021.09.01.18-.035.27-.044.09-.12.15-.23.18-.11.03-.22.05-.33.06-.11.01-.22.02-.33.02-.62 0-1.234-.11-1.84.33-.606.218-1.12.54-1.545.963-.425.426-.75.942-.975 1.548-.226.606-.339 1.22-.339 1.841 0 .11.01.22.02.33.01.11.03.22.06.33.03.11.09.186.18.23.09.045.18.056.27.035z"/></svg>
+							<i class="fab fa-kaggle w-5 h-5"></i>
 						</a></li>
 						<li><a href="mailto:sumitsc.work@gmail.com" class="text-gray-600 hover:text-primary transition-colors" aria-label="Email">
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -159,8 +152,8 @@
 			</div>
 			</article>
 
-			<!-- 3 Featured Projects Grid -->
-			<div id="pinned-grid" class="grid md:grid-cols-3 gap-8 mb-12"></div>
+			<!-- 2 Featured Projects Grid (2 columns) -->
+			<div id="pinned-grid" class="grid md:grid-cols-2 gap-8 mb-12"></div>
 		</section>
 
 		<!-- All Projects Section -->
@@ -191,7 +184,9 @@
 					<div class="flex flex-wrap gap-4">
 						<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-400 hover:text-primary transition-colors">LinkedIn</a>
 						<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-400 hover:text-primary transition-colors">GitHub</a>
-						<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-400 hover:text-primary transition-colors">Kaggle</a>
+						<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="Kaggle">
+						<i class="fab fa-kaggle"></i> Kaggle
+					</a>
 						<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-400 hover:text-primary transition-colors">Medium</a>
 					</div>
 				</div>
@@ -204,9 +199,9 @@
 					<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="GitHub">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
 					</a>
-					<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="Kaggle">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.825 23.859c-.022.092-.117.141-.235.141h-3.328c-.136 0-.19-.061-.17-.188.019-.13.028-.255.028-.383 0-1.701-.526-2.731-1.596-3.153-.34-.146-.771-.22-1.304-.22-.621 0-1.235.11-1.84.33-.604.218-1.12.54-1.545.963-.425.426-.75.942-.975 1.548-.226.606-.339 1.22-.339 1.841 0 .128.01.253.029.383.02.127-.034.188-.17.188H3.41c-.118 0-.213-.049-.235-.141-.021-.09-.01-.18.035-.27.044-.09.12-.15.23-.18.11-.03.22-.05.33-.06.11-.01.22-.02.33-.02.62 0 1.234-.11 1.84-.33.606-.218 1.12-.54 1.545-.963.425-.426.75-.942.975-1.548.226-.606.339-1.22.339-1.841 0-.11-.01-.22-.02-.33-.01-.11-.03-.22-.06-.33-.03-.11-.09-.186-.18-.23-.09-.045-.18-.056-.27-.035-.09.022-.141.117-.141.235v3.328c0 .136.061.19.188.17.13-.019.255-.028.383-.028 1.701 0 2.731.526 3.153 1.596.146.34.22.771.22 1.304 0 .621-.11 1.235-.33 1.84-.218.604-.54 1.12-.963 1.545-.426.425-.942.75-1.548.975-.606.226-1.22.339-1.841.339-.11 0-.22-.01-.33-.02-.11-.01-.22-.03-.33-.06-.11-.03-.186-.09-.23-.18-.045-.09-.056-.18-.035-.27.022-.092.117-.141.235-.141h3.328c.118 0 .213.049.235.141.021.09.01.18-.035.27-.044.09-.12.15-.23.18-.11.03-.22.05-.33.06-.11.01-.22.02-.33.02-.62 0-1.234.11-1.84.33-.606.218-1.12.54-1.545.963-.425.426-.75.942-.975 1.548-.226.606-.339 1.22-.339 1.841 0 .11.01.22.02.33.01.11.03.22.06.33.03.11.09.186.18.23.09.045.18.056.27.035z"/></svg>
-					</a>
+				<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="Kaggle">
+					<i class="fab fa-kaggle w-5 h-5"></i>
+				</a>
 					<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="Medium">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
 					</a>
@@ -216,6 +211,8 @@
 		</div>
 	</footer>
 
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
 	<script src="assets/js/main.js"></script>
 	<script>
 		// Smooth scroll to main section
@@ -281,15 +278,23 @@
 			});
 		}
 
-		// Delayed animation for intro CTA (arrow + button) - similar to index.html
+		// Remove is-preload class to trigger animation (like index.html)
 		window.addEventListener('load', function() {
 			setTimeout(function() {
-				const ctaContainer = document.querySelector('.intro-cta');
-				if (ctaContainer) {
-					ctaContainer.classList.add('visible');
+				const intro = document.getElementById('intro');
+				if (intro) {
+					intro.classList.remove('is-preload');
 				}
-			}, 2500); // 2.5 second delay (similar to index.html's 3.5s but slightly faster)
+			}, 100);
 		});
+
+		// Initialize scrolly for smooth scrolling (like index.html)
+		if (typeof jQuery !== 'undefined' && jQuery.fn.scrolly) {
+			jQuery('.scrolly').scrolly({
+				speed: 1500,
+				offset: 80
+			});
+		}
 	</script>
 </body>
 </html>

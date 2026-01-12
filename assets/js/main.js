@@ -222,12 +222,13 @@ function applyColorTheme(name) {
       --tw-gradient-to: ${colors.accent} !important;
       --tw-gradient-stops: var(--tw-gradient-from), ${colors.accent}, var(--tw-gradient-to) !important;
     }
-    /* Button styles with proper contrast */
+    /* Button styles with proper contrast - ALWAYS white text on colored buttons */
     html[data-color-theme="${theme}"] .btn-primary,
     html[data-color-theme="${theme}"] button.bg-primary,
     html[data-color-theme="${theme}"] a.bg-primary,
     html[data-color-theme="${theme}"] .bg-primary.text-white,
-    html[data-color-theme="${theme}"] button[class*="bg-primary"] {
+    html[data-color-theme="${theme}"] button[class*="bg-primary"],
+    html[data-color-theme="${theme}"] a[class*="bg-primary"] {
       background: linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%) !important;
       color: #ffffff !important;
       border-color: ${colors.primary} !important;
@@ -237,10 +238,31 @@ function applyColorTheme(name) {
     html[data-color-theme="${theme}"] button.bg-primary:hover,
     html[data-color-theme="${theme}"] a.bg-primary:hover,
     html[data-color-theme="${theme}"] .bg-primary.text-white:hover,
-    html[data-color-theme="${theme}"] button[class*="bg-primary"]:hover {
+    html[data-color-theme="${theme}"] button[class*="bg-primary"]:hover,
+    html[data-color-theme="${theme}"] a[class*="bg-primary"]:hover {
       background: linear-gradient(135deg, ${colors.accent} 0%, ${colors.primary} 100%) !important;
       color: #ffffff !important;
       opacity: 0.95;
+    }
+    
+    /* Regular buttons (not primary) - adapt to light/dark mode */
+    html[data-color-theme="${theme}"] button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+    html[data-color-theme="${theme}"] a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more) {
+      color: ${text.body} !important;
+    }
+    
+    /* Ensure text-white stays white */
+    html[data-color-theme="${theme}"] .text-white,
+    html[data-color-theme="${theme}"] button.text-white,
+    html[data-color-theme="${theme}"] a.text-white {
+      color: #ffffff !important;
+    }
+    
+    /* Text colors adapt to mode */
+    html[data-color-theme="${theme}"] .text-gray-900,
+    html[data-color-theme="${theme}"] button.text-gray-900:not(.bg-primary),
+    html[data-color-theme="${theme}"] a.text-gray-900:not(.bg-primary) {
+      color: ${text.heading} !important;
     }
     
     html[data-color-theme="${theme}"] .scroll-progress {
@@ -429,7 +451,7 @@ async function loadPinnedProjects() {
   if (!container) return;
 
   const projects = await loadProjects();
-  const pinned = projects.filter(p => p.featured && p.id !== 'used-car-price').slice(0, 3); // Exclude main featured, get 3 more
+  const pinned = projects.filter(p => p.featured && p.id !== 'used-car-price').slice(0, 2); // Exclude main featured, get 2 more for 2-column layout
 
   if (!pinned.length) {
     container.parentElement.style.display = 'none';
@@ -484,7 +506,7 @@ function createPinnedProjectCard(project) {
 }
 
 /* ---------- DASHBOARD PROJECTS LOADING ---------- */
-async function loadDashboardProjects(containerId, page = 1, perPage = 6) {
+async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
   const el = document.getElementById(containerId);
   if (!el) return;
 
@@ -530,14 +552,26 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 6) {
   if (viewMode === 'list') {
     el.innerHTML = slice.map(createDashboardProjectList).join('');
   } else {
-    // For page 1: 3 columns, for other pages: varied layouts (2-3 columns)
+    // For page 1: 3 columns uniform grid (after featured section)
     if (page === 1) {
       el.innerHTML = slice.map(createDashboardProjectCard).join('');
     } else {
-      // Varied layouts for subsequent pages - mix of 2-column and 3-column
+      // Varied Pinterest-style layouts for subsequent pages
       el.innerHTML = slice.map((project, index) => {
-        // Every 3rd item spans 2 columns for visual variety
-        const layoutClass = index % 3 === 0 ? 'md:col-span-2' : '';
+        // Create varied layouts: mix of 1, 2, and 3 column spans
+        // Pattern creates visual interest like Pinterest
+        const patterns = [
+          '',           // 1 column (default)
+          'md:col-span-2', // 2 columns
+          '',           // 1 column
+          'md:col-span-2', // 2 columns
+          '',           // 1 column
+          'md:col-span-2', // 2 columns
+          '',           // 1 column
+          'md:col-span-3', // 3 columns (wider)
+          '',           // 1 column
+        ];
+        const layoutClass = patterns[index % patterns.length];
         return createDashboardProjectCard(project, layoutClass);
       }).join('');
     }
@@ -745,9 +779,9 @@ function mediaBlock(title, content) {
 /**
  * Resolves asset URLs from project repositories or local paths
  * Supports:
- * - Full URLs (http/https) - used as-is
- * - GitHub repo assets - constructs raw.githubusercontent.com URL
- * - Local paths - used as-is
+ * - Full URLs (http/https)  → used as-is
+ * - GitHub repo assets      → constructs raw.githubusercontent.com URL
+ * - Local paths (assets/..) → used as-is
  */
 function resolveAssetUrl(project, assetPath) {
   if (!assetPath) return '';
@@ -769,14 +803,8 @@ function resolveAssetUrl(project, assetPath) {
     return `https://raw.githubusercontent.com/${repo}/${branch}/${cleanPath}`;
   }
   
-  // For local paths, ensure they work relative to root
-  // Convert old backup paths to assets paths (backward compatibility)
-  if (assetPath.startsWith('_backup_old_portfolio/')) {
-    // Replace backup path with assets path
-    return assetPath.replace('_backup_old_portfolio/', 'assets/');
-  }
-  
-  // Ensure local paths are relative to root
+  // Local paths – we now assume everything is in the new structure.
+  // Do not rewrite; just return as-is unless it's clearly a root path.
   // Don't modify paths that already start with ./, /, or are in assets/
   if (!assetPath.startsWith('./') && !assetPath.startsWith('/') && !assetPath.startsWith('assets/')) {
     return assetPath; // Use as-is

@@ -214,15 +214,26 @@ body:not(.dark-theme) .text-gray-500 {
 /* About page full-screen sections - Big Picture style */
 .about-section {
   min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   background-size: cover;
-  background-position: center;
+  background-position: center center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
-  overflow: hidden;
+  overflow: visible; /* Changed from hidden to visible to prevent cropping */
+  width: 100%;
+  box-sizing: border-box;
 }
+
+/* First section should account for header */
+#intro.about-section {
+  padding-top: 70px;
+  height: calc(100vh - 0px);
+}
+
 
 .about-section::before {
   content: '';
@@ -318,12 +329,69 @@ body:not(.dark-theme) .text-gray-500 {
   transform: translateY(0);
 }
 
-/* Big Picture style section arrows */
+/* Spectral-style "more" button (like index.html) */
+.dashboard-intro .more {
+  -moz-transition: -moz-transform 0.75s ease, opacity 0.75s ease;
+  -webkit-transition: -webkit-transform 0.75s ease, opacity 0.75s ease;
+  -ms-transition: -ms-transform 0.75s ease, opacity 0.75s ease;
+  transition: transform 0.75s ease, opacity 0.75s ease;
+  -moz-transition-delay: 2.5s;
+  -webkit-transition-delay: 2.5s;
+  -ms-transition-delay: 2.5s;
+  transition-delay: 2.5s;
+  -moz-transform: translateY(0);
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+  border: none;
+  bottom: 0;
+  color: #ffffff !important; /* Always white text on intro section */
+  font-size: 0.8em;
+  height: 8.5em;
+  left: 50%;
+  letter-spacing: 0.225em;
+  margin-left: -8.5em;
+  opacity: 1;
+  outline: 0;
+  padding-left: 0.225em;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  width: 16em;
+  z-index: 1;
+  text-decoration: none;
+}
+
+.dashboard-intro .more:after {
+  background-image: url("../images/arrow.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  bottom: 4em;
+  content: '';
+  display: block;
+  height: 1.5em;
+  left: 50%;
+  margin: 0 0 0 -0.75em;
+  position: absolute;
+  width: 1.5em;
+}
+
+/* Initial state - hidden */
+.dashboard-intro.is-preload .more {
+  -moz-transform: translateY(8.5em);
+  -webkit-transform: translateY(8.5em);
+  -ms-transform: translateY(8.5em);
+  transform: translateY(8.5em);
+  opacity: 0;
+}
+
+/* Big Picture style section arrows (for other pages) */
 .section-arrow {
   position: absolute;
   bottom: 2.5rem;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
+  transform: translateX(-50%);
   width: 3rem;
   height: 3rem;
   border-radius: 999px;
@@ -335,41 +403,15 @@ body:not(.dark-theme) .text-gray-500 {
   text-decoration: none;
   background: rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
-  transition: background 0.3s ease, transform 0.75s ease, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.75s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   z-index: 3;
-  opacity: 0;
-}
-
-.intro-cta.visible .section-arrow {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
 }
 
 .section-arrow:hover {
   background: rgba(102, 126, 234, 0.8);
-  transform: translateX(-50%) translateY(-4px) !important;
+  transform: translateX(-50%) translateY(-4px);
   border-color: #ffffff;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-}
-
-/* Intro CTA container animation */
-.intro-cta {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.75s ease 0s, transform 0.75s ease 0s;
-}
-
-.intro-cta.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.intro-cta.visible .section-arrow {
-  transition-delay: 0.2s;
-}
-
-.intro-cta.visible a:last-child {
-  transition-delay: 0.4s;
 }
 
 .section-arrow .arrow-icon {
@@ -433,13 +475,28 @@ body:not(.dark-theme) .text-gray-500 {
   width: 100%;
 }
 
-/* Varied Layout for Page 2+ */
+/* Varied Layout for Page 2+ (Pinterest-style) */
+#projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
 .projects-container .md\:col-span-2 {
   grid-column: span 2 / span 2;
 }
 
+.projects-container .md\:col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
 @media (max-width: 768px) {
-  .projects-container .md\:col-span-2 {
+  #projects-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .projects-container .md\:col-span-2,
+  .projects-container .md\:col-span-3 {
     grid-column: span 1 / span 1;
   }
 }
@@ -478,14 +535,59 @@ a[class*="bg-primary"]:hover {
 /* Force white text on all primary buttons */
 .bg-primary,
 button.bg-primary,
-a.bg-primary {
+a.bg-primary,
+.btn-primary,
+button[class*="bg-primary"],
+a[class*="bg-primary"] {
   color: #ffffff !important;
 }
 
 .bg-primary:hover,
 button.bg-primary:hover,
-a.bg-primary:hover {
+a.bg-primary:hover,
+.btn-primary:hover,
+button[class*="bg-primary"]:hover,
+a[class*="bg-primary"]:hover {
   color: #ffffff !important;
+}
+
+/* Light mode - regular buttons and text should be dark */
+body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+body:not(.dark-theme) a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+body:not(.dark-theme) .text-gray-800,
+body:not(.dark-theme) .text-gray-900 {
+  color: #1f2937 !important;
+}
+
+body:not(.dark-theme) .text-gray-600,
+body:not(.dark-theme) .text-gray-700 {
+  color: #374151 !important;
+}
+
+/* Dark mode - regular buttons and text should be light */
+.dark-theme button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+.dark-theme a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
+.dark-theme .text-gray-800,
+.dark-theme .text-gray-900,
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme h3,
+.dark-theme h4,
+.dark-theme h5,
+.dark-theme h6 {
+  color: #f9fafb !important;
+}
+
+.dark-theme .text-gray-600,
+.dark-theme .text-gray-700,
+.dark-theme p,
+.dark-theme body {
+  color: #e5e7eb !important;
+}
+
+.dark-theme .text-gray-400,
+.dark-theme .text-gray-500 {
+  color: #9ca3af !important;
 }
 
 /* Form styles */
@@ -992,6 +1094,9 @@ a.bg-primary:hover {
 @media (max-width: 768px) {
   .about-section {
     background-attachment: scroll;
+    height: auto;
+    min-height: 100vh;
+    padding-top: 70px;
   }
   
   .timeline-line {
