@@ -6,7 +6,7 @@
 // Navigation configuration - single source of truth
 const NAV_CONFIG = {
   brand: {
-    text: "DS-Portfolio",
+    text: "Analytics Portfolio",
     link: "index.html"
   },
   links: [

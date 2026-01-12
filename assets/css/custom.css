@@ -1012,6 +1012,22 @@ body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white)
   font-weight: 700 !important; /* Even bolder on hover */
 }
 
+/* Buttons with border-primary and text-primary - ensure high contrast */
+body:not(.dark-theme) button.border-primary.text-primary,
+body:not(.dark-theme) a.border-primary.text-primary {
+  color: #1f2937 !important; /* Dark text for visibility */
+  border-color: #1f2937 !important; /* Dark border */
+  font-weight: 700 !important;
+  background-color: transparent !important;
+}
+
+body:not(.dark-theme) button.border-primary.text-primary:hover,
+body:not(.dark-theme) a.border-primary.text-primary:hover {
+  background-color: #1f2937 !important; /* Dark background on hover */
+  color: #ffffff !important; /* White text on hover */
+  border-color: #1f2937 !important;
+}
+
 body:not(.dark-theme) .text-gray-600,
 body:not(.dark-theme) .text-gray-700 {
   color: #374151 !important;
@@ -1037,6 +1053,22 @@ body:not(.dark-theme) .text-gray-700 {
   font-weight: 700 !important; /* Even bolder on hover */
 }
 
+/* Buttons with border-primary and text-primary in dark mode - ensure high contrast */
+.dark-theme button.border-primary.text-primary,
+.dark-theme a.border-primary.text-primary {
+  color: #f3f4f6 !important; /* Light text for visibility */
+  border-color: #f3f4f6 !important; /* Light border */
+  font-weight: 700 !important;
+  background-color: transparent !important;
+}
+
+.dark-theme button.border-primary.text-primary:hover,
+.dark-theme a.border-primary.text-primary:hover {
+  background-color: #f3f4f6 !important; /* Light background on hover */
+  color: #111827 !important; /* Dark text on hover */
+  border-color: #f3f4f6 !important;
+}
+
 .dark-theme .text-gray-600,
 .dark-theme .text-gray-700,
 .dark-theme p,
@@ -1047,6 +1079,38 @@ body:not(.dark-theme) .text-gray-700 {
 .dark-theme .text-gray-400,
 .dark-theme .text-gray-500 {
   color: #9ca3af !important;
+}
+
+/* Additional button visibility rules - catch all buttons with theme colors */
+body:not(.dark-theme) button[class*="primary"]:not(.more):not(.view-toggle-btn),
+body:not(.dark-theme) a[class*="primary"]:not(.more) {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.dark-theme button[class*="primary"]:not(.more):not(.view-toggle-btn),
+.dark-theme a[class*="primary"]:not(.more) {
+  color: #111827 !important;
+  font-weight: 700 !important;
+}
+
+/* Ensure all buttons have visible text regardless of theme */
+button:not(.more):not(.view-toggle-btn),
+a.button:not(.more),
+button[type="button"]:not(.more):not(.view-toggle-btn),
+button[type="submit"]:not(.more),
+a[role="button"]:not(.more) {
+  font-weight: 600 !important;
+}
+
+body:not(.dark-theme) button:not(.more):not(.view-toggle-btn):not(.bg-primary):not(.btn-primary),
+body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
+  color: #1f2937 !important;
+}
+
+.dark-theme button:not(.more):not(.view-toggle-btn):not(.bg-primary):not(.btn-primary),
+.dark-theme a.button:not(.more):not(.bg-primary):not(.btn-primary) {
+  color: #f9fafb !important;
 }
 
 /* Form styles */
