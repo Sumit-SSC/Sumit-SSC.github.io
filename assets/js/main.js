@@ -556,7 +556,7 @@ async function loadPinnedProjects() {
 
 function createPinnedProjectCard(project) {
   const tags = (project.tools || []).slice(0, 3).map(t => 
-    `<span class="px-2 py-1 text-xs bg-primary/10 text-primary rounded">${t}</span>`
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
   ).join('');
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
@@ -687,7 +687,7 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
 
 function createDashboardProjectCard(project, layoutClass = '') {
   const tags = (project.tools || []).slice(0, 4).map(t => 
-    `<span class="px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">${t}</span>`
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
   ).join('');
 
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
@@ -763,7 +763,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
 
 function createDashboardProjectList(project) {
   const tags = (project.tools || []).slice(0, 4).map(t => 
-    `<span class="px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">${t}</span>`
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
   ).join('');
   
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');

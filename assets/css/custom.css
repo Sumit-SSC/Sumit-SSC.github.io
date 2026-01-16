@@ -99,6 +99,40 @@
 	transform: translateY(-5px);
 }
 
+/* Clickable tool tags in project cards */
+.project-card a[href*="filter"],
+.project-card-modern a[href*="filter"] {
+	display: inline-block;
+	text-decoration: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.project-card a[href*="filter"]:hover,
+.project-card-modern a[href*="filter"]:hover {
+	transform: scale(1.05);
+}
+
+/* Prevent tag clicks from triggering card hover/click */
+.project-card a[href*="filter"],
+.project-card-modern a[href*="filter"] {
+	position: relative;
+	z-index: 5;
+}
+
+/* Dark theme support for clickable tags */
+.dark-theme .project-card a[href*="filter"],
+.dark-theme .project-card-modern a[href*="filter"] {
+	color: #cbd5e1 !important;
+	background-color: #334155 !important;
+}
+
+.dark-theme .project-card a[href*="filter"]:hover,
+.dark-theme .project-card-modern a[href*="filter"]:hover {
+	background-color: #475569 !important;
+	color: #ffffff !important;
+}
+
 .skill-bar {
 	transition: width 1s ease-out;
 }
@@ -288,6 +322,27 @@ body:not(.dark-theme) .text-gray-500 {
 .dark-theme #header a:hover,
 .dark-theme header a:hover {
   color: #667eea !important; /* Primary color on hover */
+}
+
+/* Contact page header - ensure visibility in dark theme */
+.dark-theme header.bg-white {
+  background: rgba(17, 24, 39, 0.95) !important;
+}
+
+/* Contact page form - ensure inputs are visible in dark theme */
+.dark-theme .form-input {
+  color: #f3f4f6 !important;
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark-theme .form-input::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Contact page form labels - ensure visibility */
+.dark-theme label {
+  color: #e5e7eb !important;
 }
 
 /* Landing page specific */
@@ -761,16 +816,34 @@ html {
   animation-fill-mode: both;
 }
 
-/* Story timeline */
+/* Story timeline - 3-column grid layout */
 .story-item {
   opacity: 0;
   transform: translateY(50px);
   transition: opacity 0.8s ease, transform 0.8s ease;
+  min-height: 300px; /* Ensure consistent height */
+  padding: 2rem 0; /* Add padding to prevent cutoff */
 }
 
 .story-item.animated {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Timeline text boxes - ensure they don't get cut off */
+.story-item .bg-white,
+.story-item .dark\:bg-gray-800 {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Ensure images maintain aspect ratio */
+.story-item img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
 /* Spectral-style "more" button (like index.html) - no box, clean design */
@@ -1624,13 +1697,21 @@ body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
   background-color: #6366f1 !important;
 }
 
-/* Timeline line styles */
+/* Timeline line styles - Horizontal line in center column */
 .timeline-line {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  background: linear-gradient(to bottom, #667eea, #764ba2);
+  left: 33.333%;
+  right: 33.333%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  z-index: 1;
+}
+
+/* Ensure timeline dots are visible above the line */
+.story-item .absolute.z-10 {
+  z-index: 10;
 }
 
 /* Enhanced animations for demo page (sumitt.in style) */
@@ -1761,4 +1842,214 @@ body:not(.dark-theme) .skill-badge-active {
   .timeline-line {
     display: none;
   }
+}
+
+/* ===================================================
+   Comprehensive Theme Fixes - All Pages
+   =================================================== */
+
+/* Navigation bars - ensure visibility in both themes */
+.dark-theme nav.bg-white,
+.dark-theme header.bg-white {
+  background-color: #111827 !important;
+  border-color: #374151 !important;
+}
+
+/* All text elements - ensure visibility */
+.dark-theme .text-gray-800,
+.dark-theme .text-gray-900,
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme h3,
+.dark-theme h4,
+.dark-theme h5,
+.dark-theme h6 {
+  color: #f9fafb !important;
+}
+
+.dark-theme .text-gray-600,
+.dark-theme .text-gray-700,
+.dark-theme p,
+.dark-theme span:not(.text-primary):not(.text-white) {
+  color: #e5e7eb !important;
+}
+
+.dark-theme .text-gray-400,
+.dark-theme .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+/* Links - ensure visibility */
+.dark-theme a:not(.text-primary):not(.text-white):not(.hover\:text-primary) {
+  color: #a5b4fc !important;
+}
+
+.dark-theme a:not(.text-primary):not(.text-white):not(.hover\:text-primary):hover {
+  color: #c4b5fd !important;
+}
+
+/* Backgrounds - ensure proper contrast */
+.dark-theme .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark-theme .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+.dark-theme .bg-gray-100 {
+  background-color: #1e293b !important;
+}
+
+.dark-theme .bg-gray-200 {
+  background-color: #334155 !important;
+}
+
+/* Borders - ensure visibility */
+.dark-theme .border-gray-200,
+.dark-theme .border-gray-300 {
+  border-color: #475569 !important;
+}
+
+.dark-theme .border-gray-700 {
+  border-color: #64748b !important;
+}
+
+/* Cards and panels - ensure visibility */
+.dark-theme .skill-card,
+.dark-theme .project-card,
+.dark-theme .resume-panel {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+/* Buttons - ensure visibility */
+.dark-theme button:not(.btn-primary):not(.text-white):not(.more) {
+  color: #e5e7eb !important;
+  background-color: #334155 !important;
+}
+
+.dark-theme button:not(.btn-primary):not(.text-white):not(.more):hover {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+/* View toggle buttons */
+.dark-theme .view-toggle-btn:not(.active) {
+  color: #9ca3af !important;
+  background-color: transparent !important;
+}
+
+.dark-theme .view-toggle-btn.active {
+  color: #ffffff !important;
+  background-color: #667eea !important;
+}
+
+/* Input fields */
+.dark-theme input[type="text"],
+.dark-theme input[type="email"],
+.dark-theme textarea {
+  background-color: #1e293b !important;
+  color: #e5e7eb !important;
+  border-color: #475569 !important;
+}
+
+.dark-theme input[type="text"]::placeholder,
+.dark-theme input[type="email"]::placeholder,
+.dark-theme textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Footer */
+.dark-theme footer.bg-gray-800 {
+  background-color: #111827 !important;
+}
+
+.dark-theme footer .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* Project cards dynamically generated */
+.dark-theme .project-card-modern {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+.dark-theme .project-card-modern h3,
+.dark-theme .project-card-modern p {
+  color: #e5e7eb !important;
+}
+
+/* Skills page - skill bars */
+.dark-theme .skill-bar-container .bg-gray-200 {
+  background-color: #334155 !important;
+}
+
+/* Contact page form elements */
+.dark-theme .form-input,
+.dark-theme input,
+.dark-theme textarea {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  color: #e5e7eb !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+
+/* Ensure nothing is hidden */
+.dark-theme * {
+  visibility: visible !important;
+}
+
+/* Image embedded text - ensure contrast */
+.dark-theme img[alt*="text"],
+.dark-theme .image-text-overlay {
+  filter: brightness(1.1) contrast(1.2);
+}
+
+/* Giscus comments container */
+.dark-theme #giscus-container {
+  background-color: #1e293b !important;
+}
+
+.dark-theme #giscus-container h2 {
+  color: #f9fafb !important;
+}
+
+/* Table of contents */
+.dark-theme #toc-nav a {
+  color: #cbd5e1 !important;
+}
+
+.dark-theme #toc-nav a:hover {
+  color: #667eea !important;
+}
+
+/* Project navigation sidebar */
+.dark-theme #project-nav,
+.dark-theme #project-side {
+  background-color: #1e293b !important;
+}
+
+/* Resume page - PDF containers */
+.dark-theme .bg-gray-100 {
+  background-color: #1e293b !important;
+}
+
+/* Active filter display */
+.dark-theme #active-filter {
+  color: #e5e7eb !important;
+}
+
+/* Pagination */
+.dark-theme #pagination button {
+  color: #e5e7eb !important;
+  background-color: #334155 !important;
+}
+
+.dark-theme #pagination button:hover {
+  background-color: #475569 !important;
+}
+
+.dark-theme #pagination button.active {
+  background-color: #667eea !important;
+  color: #ffffff !important;
 }
