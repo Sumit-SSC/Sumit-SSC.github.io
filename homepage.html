@@ -40,7 +40,7 @@
 				Each project demonstrates end-to-end analytics workflows, from SQL queries to BI dashboards and actionable insights.
 			</p>
 		</div>
-		<a href="#main" class="more scrolly">Explore</a>
+		<a href="#featured-projects-section" class="more scrolly">Explore More</a>
 	</div>
 
 	<!-- Combined Header / Navigation -->
@@ -178,19 +178,6 @@
 	<script src="assets/js/jquery.scrolly.min.js"></script>
 	<script src="assets/js/main.js"></script>
 	<script>
-		// Smooth scroll to main section
-		document.querySelector('a[href="#main"]')?.addEventListener('click', (e) => {
-			e.preventDefault();
-			const main = document.getElementById('main');
-			if (main) {
-				// Single sticky header height so featured project isn't cut
-				const headerOffset = 80;
-				const elementPosition = main.getBoundingClientRect().top;
-				const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-				window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-			}
-		});
-
 		// Hide intro on scroll (smooth fade)
 		const intro = document.getElementById('intro');
 		let lastScroll = 0;
@@ -218,8 +205,8 @@
 			document.getElementById('scroll-progress').style.width = scrolled + '%';
 		});
 
-		// Smooth scroll for anchor links
-		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+		// Smooth scroll for anchor links (but not .scrolly - handled by jQuery scrolly)
+		document.querySelectorAll('a[href^="#"]:not(.scrolly)').forEach(anchor => {
 			anchor.addEventListener('click', function (e) {
 				e.preventDefault();
 				const target = document.querySelector(this.getAttribute('href'));
@@ -257,6 +244,33 @@
 				speed: 1500,
 				offset: 80
 			});
+		} else {
+			// Fallback: Use native smooth scroll if jQuery scrolly not available
+			document.querySelectorAll('.scrolly').forEach(function(anchor) {
+				anchor.addEventListener('click', function (e) {
+					e.preventDefault();
+					const targetId = this.getAttribute('href');
+					if (targetId && targetId.startsWith('#')) {
+						const target = document.querySelector(targetId);
+						if (target) {
+							const headerOffset = 80; // Account for sticky header
+							const elementPosition = target.getBoundingClientRect().top;
+							const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+							window.scrollTo({
+								top: offsetPosition,
+								behavior: 'smooth'
+							});
+						}
+					}
+				});
+			});
+		}
+		
+		// Make arrow clickable - ensure entire button area (including arrow) is clickable
+		const exploreButton = document.querySelector('.more.scrolly');
+		if (exploreButton) {
+			exploreButton.style.cursor = 'pointer';
+			// The arrow is part of the button via :after, so clicking it will trigger the button
 		}
 	</script>
 </body>

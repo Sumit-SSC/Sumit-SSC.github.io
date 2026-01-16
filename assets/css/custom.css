@@ -270,6 +270,26 @@ body:not(.dark-theme) .text-gray-500 {
   background: rgba(0, 0, 0, 0.75) !important;
 }
 
+/* About page header - ensure text is visible in dark theme */
+.dark-theme #header,
+.dark-theme header {
+  background: rgba(17, 24, 39, 0.95) !important; /* Dark gray background */
+}
+
+.dark-theme #header h1,
+.dark-theme header h1,
+.dark-theme #header a,
+.dark-theme header a,
+.dark-theme #header li a,
+.dark-theme header li a {
+  color: #e5e7eb !important; /* Light gray text */
+}
+
+.dark-theme #header a:hover,
+.dark-theme header a:hover {
+  color: #667eea !important; /* Primary color on hover */
+}
+
 /* Landing page specific */
 .landing-page {
   position: relative;
@@ -475,7 +495,19 @@ body:not(.dark-theme) .dashboard-intro-text {
   }
 
   .dashboard-intro .more {
-    display: none; /* Hide on mobile like index.html */
+    display: block !important; /* Show on mobile - keep visible */
+    font-size: 0.7em; /* Slightly smaller on mobile */
+    bottom: 1em; /* Closer to bottom on mobile */
+    width: 14em; /* Slightly narrower on mobile */
+    margin-left: -7em; /* Adjust centering */
+  }
+  
+  /* Ensure arrow is visible on mobile */
+  .dashboard-intro .more:after {
+    display: block !important;
+    height: 1.2em; /* Slightly smaller arrow on mobile */
+    width: 1.2em;
+    bottom: 3.5em; /* Adjust position for mobile */
   }
 }
 
@@ -550,10 +582,11 @@ html[data-color-theme="theme-indigo"] .dashboard-intro::before {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  overflow: visible; /* Changed from hidden to visible to prevent cropping */
+  background-attachment: fixed; /* Key Big Picture feature - fixed background creates parallax */
+  overflow: visible; /* Changed to visible to prevent arrow cutoff */
   width: 100%;
   box-sizing: border-box;
+  padding-bottom: 6rem; /* Add padding to prevent arrow cutoff */
 }
 
 /* First section should account for header */
@@ -567,22 +600,105 @@ html[data-color-theme="theme-indigo"] .dashboard-intro::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.8s ease;
+  backdrop-filter: blur(0px);
+}
+
+/* Darken overlay on scroll for better text readability */
+.about-section.visible::before {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Light theme - lighter overlay for better visibility */
+body:not(.dark-theme) .about-section::before {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body:not(.dark-theme) .about-section.visible::before {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .about-section .content {
   position: relative;
   z-index: 2;
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
 }
 
+/* Intro section - no background panel, just text (original style) */
+#intro.about-section .content {
+  background: none;
+  backdrop-filter: none;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* Other sections (What I Do, Who I Am) - with background panels for readability */
+.about-section:not(#intro) .content {
+  /* Add semi-transparent background for text readability - Big Picture style */
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  padding: 2rem 2.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Light theme - lighter background for better contrast (only for non-intro sections) */
+body:not(.dark-theme) .about-section:not(#intro) .content {
+  background: rgba(255, 255, 255, 0.85);
+  color: #1f2937 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+body:not(.dark-theme) .about-section:not(#intro) .content h2,
+body:not(.dark-theme) .about-section:not(#intro) .content h3,
+body:not(.dark-theme) .about-section:not(#intro) .content p {
+  color: #1f2937 !important;
+}
+
+/* Dark theme - keep dark background (only for non-intro sections) */
+.dark-theme .about-section:not(#intro) .content {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff !important;
+}
+
+.dark-theme .about-section:not(#intro) .content h2,
+.dark-theme .about-section:not(#intro) .content h3,
+.dark-theme .about-section:not(#intro) .content p {
+  color: #ffffff !important;
+}
+
+/* Text slides in from right (What I Do) */
+.about-section.slide-from-right .content {
+  transform: translateX(150px);
+}
+
+/* Text slides in from left (Who I Am) */
+.about-section.slide-from-left .content {
+  transform: translateX(-150px);
+}
+
+/* Center section (intro) slides up */
+.about-section.slide-from-center .content {
+  transform: translateY(80px);
+}
+
+/* Visible state - content slides into place */
 .about-section.visible .content {
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 1 !important;
+  transform: translateX(0) translateY(0) !important;
+}
+
+/* Smooth scrolling for Big Picture effect */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Parallax effect for background */
@@ -672,8 +788,8 @@ html[data-color-theme="theme-indigo"] .dashboard-intro::before {
   -ms-transform: translateY(0);
   transform: translateY(0);
   border: none; /* No border/box */
-  bottom: 0;
-  color: inherit; /* Inherit from parent, adapts to light/dark mode */
+  bottom: 2em; /* Position from bottom */
+  color: #000000 !important; /* Default dark - will be overridden by mode-specific rules */
   font-size: 0.8em;
   height: 8.5em;
   left: 50%;
@@ -686,21 +802,42 @@ html[data-color-theme="theme-indigo"] .dashboard-intro::before {
   text-align: center;
   text-transform: uppercase;
   width: 16em;
-  z-index: 3; /* Above overlay */
+  z-index: 10 !important; /* Above all content including overlay */
   background: transparent !important; /* No background box */
   backdrop-filter: none !important; /* No blur/glow */
   box-shadow: none !important; /* No shadow/glow */
   text-decoration: none;
+  pointer-events: auto !important; /* Ensure clickable */
+  cursor: pointer;
 }
 
-/* Button text color adapts to light/dark mode - ensure visibility */
-body:not(.dark-theme) .dashboard-intro .more {
-  color: #1f2937 !important; /* Dark text in light mode */
+/* Button text color - use dark, high-contrast colors for visibility (override ALL theme colors) */
+/* Light mode: Pure black text with white shadow for maximum contrast */
+body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme] body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme="theme-purple"] body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme="theme-blue"] body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme="theme-emerald"] body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme="theme-rose"] body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme="theme-orange"] body:not(.dark-theme) .dashboard-intro .more,
+html[data-color-theme="theme-indigo"] body:not(.dark-theme) .dashboard-intro .more {
+  color: #000000 !important; /* Pure black text - maximum contrast */
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 255, 255, 0.5) !important;
+  font-weight: 700 !important;
 }
 
-.dark-theme .dashboard-intro .more {
-  color: #ffffff !important; /* White text in dark mode */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+/* Dark mode: Pure white text with dark shadow for maximum contrast */
+.dark-theme .dashboard-intro .more,
+html[data-color-theme] .dark-theme .dashboard-intro .more,
+html[data-color-theme="theme-purple"] .dark-theme .dashboard-intro .more,
+html[data-color-theme="theme-blue"] .dark-theme .dashboard-intro .more,
+html[data-color-theme="theme-emerald"] .dark-theme .dashboard-intro .more,
+html[data-color-theme="theme-rose"] .dark-theme .dashboard-intro .more,
+html[data-color-theme="theme-orange"] .dark-theme .dashboard-intro .more,
+html[data-color-theme="theme-indigo"] .dark-theme .dashboard-intro .more {
+  color: #ffffff !important; /* Pure white text - maximum contrast */
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 1), 0 0 12px rgba(0, 0, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.9) !important;
+  font-weight: 700 !important;
 }
 
 .dashboard-intro .more:after {
@@ -716,6 +853,30 @@ body:not(.dark-theme) .dashboard-intro .more {
   margin: 0 0 0 -0.75em;
   position: absolute;
   width: 1.5em;
+  animation: bounce-arrow 2s ease-in-out infinite;
+  /* Make arrow darker and more visible */
+  filter: brightness(0) contrast(1.5) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Dark mode - make arrow white/bright */
+.dark-theme .dashboard-intro .more:after {
+  filter: brightness(0) invert(1) contrast(1.5) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+}
+
+/* Light mode - make arrow dark/black */
+body:not(.dark-theme) .dashboard-intro .more:after {
+  filter: brightness(0) contrast(2) drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+}
+
+@keyframes bounce-arrow {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 0.7;
+  }
 }
 
 /* Initial state - hidden */
@@ -725,42 +886,79 @@ body:not(.dark-theme) .dashboard-intro .more {
   -ms-transform: translateY(8.5em);
   transform: translateY(8.5em);
   opacity: 0;
+  pointer-events: none; /* Disable clicks when hidden */
 }
 
-/* Big Picture style section arrows (for other pages) */
+/* Pulse animation for Explore button text - only when visible */
+@keyframes pulse-text {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.dashboard-intro .more:not(.is-preload) {
+  animation: pulse-text 2s ease-in-out infinite;
+}
+
+/* Ensure button is visible after preload */
+.dashboard-intro:not(.is-preload) .more {
+  animation: pulse-text 2s ease-in-out infinite;
+}
+
+/* Big Picture style section arrows - matching HTML5 UP Big Picture theme */
 .section-arrow {
   position: absolute;
-  bottom: 2.5rem;
+  bottom: 3rem; /* Increased from 2.5rem to prevent cutoff */
   left: 50%;
   transform: translateX(-50%);
-  width: 3rem;
-  height: 3rem;
-  border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   text-decoration: none;
   background: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
-  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  z-index: 3;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 10;
+  cursor: pointer;
+  /* Ensure arrow is not cut off */
+  margin-bottom: 1rem;
 }
 
 .section-arrow:hover {
-  background: rgba(102, 126, 234, 0.8);
-  transform: translateX(-50%) translateY(-4px);
-  border-color: #ffffff;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateX(-50%) translateY(-8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
+.section-arrow:active {
+  transform: translateX(-50%) translateY(-6px);
+}
+
+/* Use arrow.svg instead of CSS triangle */
 .section-arrow .arrow-icon {
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 10px solid #ffffff;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-image: url('../images/arrow.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0) invert(1); /* Make arrow white */
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.section-arrow:hover .arrow-icon {
+  transform: translateY(3px);
 }
 
 /* Scroll progress bar */
@@ -952,8 +1150,9 @@ button.view-toggle-btn {
 .dark-theme .view-toggle-btn:not(.active),
 .dark-theme #view-card:not(.active),
 .dark-theme #view-list:not(.active) {
-  color: #e5e7eb !important;
-  border-color: #475569 !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Pagination buttons - ensure visibility */
@@ -987,15 +1186,17 @@ button.view-toggle-btn {
 .dark-theme #pagination a,
 .dark-theme #pagination button,
 .dark-theme #pagination span:not(.bg-primary) {
-  color: #e5e7eb !important;
-  background-color: #1e293b !important;
-  border-color: #475569 !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  font-weight: 600 !important;
 }
 
 .dark-theme #pagination a:hover,
 .dark-theme #pagination button:hover {
-  background-color: #334155 !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Light mode - regular buttons and text should be dark and BOLD */
@@ -1445,6 +1646,43 @@ body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
     opacity: 1;
     transform: translateY(0) scale(1) rotateX(0deg);
   }
+}
+
+/* Skill badges on resume page - ensure visibility in light/dark themes */
+body:not(.dark-theme) .skill-badge {
+  background-color: rgba(102, 126, 234, 0.1) !important;
+  color: #1f2937 !important;
+  border: 1px solid rgba(102, 126, 234, 0.3) !important;
+}
+
+body:not(.dark-theme) .skill-badge:hover {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border-color: #1f2937 !important;
+}
+
+body:not(.dark-theme) .skill-badge-active {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border-color: #1f2937 !important;
+}
+
+.dark-theme .skill-badge {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark-theme .skill-badge:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.dark-theme .skill-badge-active {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #ffffff !important;
 }
 
 @keyframes skill-badge-pop {

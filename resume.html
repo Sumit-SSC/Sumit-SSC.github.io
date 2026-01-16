@@ -73,7 +73,7 @@
 			<!-- Resume Toggle Section -->
 			<div class="bg-white rounded-lg shadow-lg p-6 mb-8">
 				<div class="flex gap-4 justify-center mb-6">
-					<button id="toggle-resume" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">
+					<button id="toggle-resume" class="btn-primary px-6 py-3 rounded-lg font-bold">
 						Toggle View
 					</button>
 				</div>
@@ -155,7 +155,7 @@
 			const badgesContainer = document.getElementById('skills-badges');
 			Array.from(allSkills).sort().forEach(skill => {
 				const badge = document.createElement('button');
-				badge.className = 'px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary hover:text-white transition-colors font-bold skill-badge';
+				badge.className = 'skill-badge px-4 py-2 rounded-full transition-colors font-bold';
 				badge.textContent = skill;
 				badge.dataset.skill = skill;
 				badge.addEventListener('click', () => filterProjectsBySkill(skill, projects));
@@ -185,13 +185,11 @@
 
 			// Highlight active skill badge
 			document.querySelectorAll('.skill-badge').forEach(b => {
-				b.classList.remove('bg-primary', 'text-white');
-				b.classList.add('bg-primary/10', 'text-primary');
+				b.classList.remove('skill-badge-active');
 			});
 			const activeBadge = document.querySelector(`[data-skill="${skill}"]`);
 			if (activeBadge) {
-				activeBadge.classList.remove('bg-primary/10', 'text-primary');
-				activeBadge.classList.add('bg-primary', 'text-white');
+				activeBadge.classList.add('skill-badge-active');
 			}
 		}
 

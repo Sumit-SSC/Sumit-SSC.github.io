@@ -3815,9 +3815,17 @@ input, select, textarea {
 					display: none;
 				}
 
-				#banner .more {
-					display: none;
-				}
+			#banner .more {
+				display: block !important; /* Show on mobile - keep visible */
+				font-size: 0.7em; /* Slightly smaller on mobile */
+				bottom: 1em; /* Closer to bottom on mobile */
+				width: 14em; /* Slightly narrower on mobile */
+				margin-left: -7em; /* Adjust centering */
+			}
+			
+			#banner .more:after {
+				display: block !important; /* Ensure arrow is visible on mobile */
+			}
 
 		}
 
