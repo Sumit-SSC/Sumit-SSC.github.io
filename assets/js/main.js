@@ -5,6 +5,14 @@
    - Form handling
    =================================================== */
 
+const FEATURED_ORDER = [
+  "fraud-intelligence-and-risk-analytics",
+  "e-commerce-product-analytics",
+  "churn-retention-analytics"
+];
+const FIRST_PAGE_COUNT = 3;
+const REST_PAGE_COUNT = 9;
+
 // Initialize on DOM ready
 (function() {
   if (document.readyState === 'loading') {
@@ -360,8 +368,7 @@ function applyViewMode(mode) {
   // Re-render projects with new view mode
   const urlParams = new URLSearchParams(window.location.search);
   const page = parseInt(urlParams.get('page')) || 1;
-  const perPage = page === 1 ? 9 : 12;
-  loadDashboardProjects("projects-grid", page, perPage);
+  loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
 }
 
 function updateViewButtons(activeMode) {
@@ -385,12 +392,10 @@ function updateViewButtons(activeMode) {
 function routePage() {
   // Load projects for dashboard
   if (document.getElementById("projects-grid")) {
-    // 9 per page for first page (3 columns x 3 rows), varied for next pages
     const urlParams = new URLSearchParams(window.location.search);
     const page = parseInt(urlParams.get('page')) || 1;
-    const perPage = page === 1 ? 9 : 12; // First page: 9, others: 12
     
-    loadDashboardProjects("projects-grid", page, perPage);
+    loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
     loadFeaturedProject(); // Load main featured project
     loadPinnedProjects(); // Load pinned/featured projects
     initViewModeToggle(); // Initialize view mode toggle
@@ -481,7 +486,8 @@ async function loadFeaturedProject() {
   if (!container) return;
 
   const projects = await loadProjects();
-  const featured = projects.find(p => p.featured && p.id === 'used-car-price'); // Main featured project
+  const orderedFeatured = getOrderedFeaturedProjects(projects);
+  const featured = orderedFeatured[0];
 
   if (!featured) {
     container.style.display = 'none';
@@ -544,7 +550,8 @@ async function loadPinnedProjects() {
   if (!container) return;
 
   const projects = await loadProjects();
-  const pinned = projects.filter(p => p.featured && p.id !== 'used-car-price').slice(0, 2); // Exclude main featured, get 2 more for 2-column layout
+  const orderedFeatured = getOrderedFeaturedProjects(projects);
+  const pinned = orderedFeatured.slice(1, 3);
 
   if (!pinned.length) {
     container.parentElement.style.display = 'none';
@@ -600,7 +607,7 @@ function createPinnedProjectCard(project) {
 }
 
 /* ---------- DASHBOARD PROJECTS LOADING ---------- */
-async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
+async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIRST_PAGE_COUNT, restPageCount = REST_PAGE_COUNT) {
   const el = document.getElementById(containerId);
   if (!el) return;
 
@@ -615,8 +622,8 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
     list = list.filter(p => (p.tools || []).includes(activeFilter));
   }
 
-  const start = (page - 1) * perPage;
-  const slice = list.slice(start, start + perPage);
+  const { start, end } = getPaginationSlice(list.length, page, firstPageCount, restPageCount);
+  const slice = list.slice(start, end);
   
   // Get current view mode
   const viewMode = el.dataset.view || currentViewMode || 'card';
@@ -638,7 +645,7 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
 
   if (!slice.length) {
     el.innerHTML = '<p class="text-gray-500 text-center py-8">No projects found for this filter.</p>';
-    renderPagination(list.length, page, perPage);
+    renderPagination(list.length, page, firstPageCount, restPageCount);
     return;
   }
 
@@ -682,7 +689,23 @@ async function loadDashboardProjects(containerId, page = 1, perPage = 9) {
     }
   }
   
-  renderPagination(list.length, page, perPage);
+  renderPagination(list.length, page, firstPageCount, restPageCount);
+}
+
+function getOrderedFeaturedProjects(projects) {
+  const featuredProjects = projects.filter(p => p.featured);
+  const ordered = FEATURED_ORDER.map(id => featuredProjects.find(p => p.id === id)).filter(Boolean);
+  const remaining = featuredProjects.filter(p => !FEATURED_ORDER.includes(p.id));
+  return [...ordered, ...remaining];
+}
+
+function getPaginationSlice(total, page, firstPageCount, restPageCount) {
+  if (page <= 1) {
+    return { start: 0, end: Math.min(firstPageCount, total) };
+  }
+  const start = firstPageCount + (page - 2) * restPageCount;
+  const end = Math.min(start + restPageCount, total);
+  return { start, end };
 }
 
 function createDashboardProjectCard(project, layoutClass = '') {
@@ -831,11 +854,13 @@ function createDashboardProjectList(project) {
   `;
 }
 
-function renderPagination(total, currentPage, perPage) {
+function renderPagination(total, currentPage, firstPageCount, restPageCount) {
   const container = document.getElementById('pagination');
   if (!container) return;
 
-  const totalPages = Math.ceil(total / perPage);
+  const totalPages = total <= firstPageCount
+    ? 1
+    : 1 + Math.ceil((total - firstPageCount) / restPageCount);
   if (totalPages <= 1) {
     container.innerHTML = '';
     return;
@@ -881,7 +906,7 @@ function renderPagination(total, currentPage, perPage) {
       e.preventDefault();
       const url = new URL(link.href);
       const page = parseInt(url.searchParams.get('page') || '1');
-      loadDashboardProjects('projects-grid', page, perPage);
+      loadDashboardProjects('projects-grid', page, firstPageCount, restPageCount);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 					});
 				});
@@ -927,9 +952,15 @@ function renderProject(project) {
   if (project.problem_statement) sections.push({ id: 'problem', title: 'Problem Statement', content: project.problem_statement });
   if (project.approach) sections.push({ id: 'approach', title: 'Approach / Methodology', content: project.approach });
   if (project.insights) sections.push({ id: 'insights', title: 'Insights & Outcomes', content: project.insights });
-  if (project.streamlit_url) sections.push({ id: 'streamlit', title: 'Streamlit App', content: streamlitEmbed(project.streamlit_url), isMedia: true });
-  if (project.powerbi_embed_url || project.pbix_download_path) sections.push({ id: 'powerbi', title: 'Power BI Dashboard', content: powerBiBlock(project.powerbi_embed_url, project.pbix_download_path, project), isMedia: true });
-  if (project.video_url) sections.push({ id: 'video', title: 'Video Walkthrough', content: videoEmbed(project.video_url), isMedia: true });
+  if (shouldShowAppsSection(project)) {
+    sections.push({ id: 'apps', title: 'Applications & Dashboards', content: appsSection(project), isMedia: true });
+  } else {
+    if (project.streamlit_url) sections.push({ id: 'streamlit', title: 'Streamlit App', content: streamlitEmbed(project.streamlit_url), isMedia: true });
+    if (project.powerbi_embed_url || project.pbix_download_path) sections.push({ id: 'powerbi', title: 'Power BI Dashboard', content: powerBiBlock(project.powerbi_embed_url, project.pbix_download_path, project), isMedia: true });
+    if (project.video_url) sections.push({ id: 'video', title: 'Video Walkthrough', content: videoEmbed(project.video_url), isMedia: true });
+  }
+  sections.push({ id: 'links', title: 'Links & Resources', content: linksSection(project) });
+  if (project.tools && project.tools.length) sections.push({ id: 'tech-stack', title: 'Tech Stack', content: toolsListSection(project.tools) });
   if (project.images && project.images.length > 0) sections.push({ id: 'gallery', title: 'Gallery', content: galleryBlock(project.images, project), isMedia: true });
   if (project.slide_pdf_path) sections.push({ id: 'slides', title: 'Slides / PDF', content: pdfEmbed(project.slide_pdf_path, project), isMedia: true });
 
@@ -967,8 +998,67 @@ function section(title, content, id = null, isMedia = false) {
   return `
     <section id="${sectionId}" class="mb-12 scroll-mt-24">
       <h2 class="text-3xl font-bold text-gray-800 mb-4">${title}</h2>
-      ${isMedia ? `<div class="bg-gray-100 rounded-lg p-4">${content}</div>` : `<p class="text-gray-600 leading-relaxed">${content}</p>`}
+      ${isMedia
+        ? `<div class="bg-gray-100 rounded-lg p-4">${content}</div>`
+        : `<div class="text-gray-600 leading-relaxed space-y-4">${content}</div>`}
     </section>
+  `;
+}
+
+function shouldShowAppsSection(project) {
+  return Boolean(project.show_apps_section);
+}
+
+function appsSection(project) {
+  const streamlitBlock = project.streamlit_url
+    ? streamlitEmbed(project.streamlit_url)
+    : `<div class="text-sm text-gray-600">Streamlit app link coming soon.</div>`;
+  const powerbiBlock = project.powerbi_embed_url || project.pbix_download_path
+    ? powerBiBlock(project.powerbi_embed_url, project.pbix_download_path, project)
+    : `<div class="text-sm text-gray-600">Power BI dashboard link coming soon.</div>`;
+  const videoBlock = project.video_url
+    ? videoEmbed(project.video_url)
+    : `<div class="text-sm text-gray-600">Video walkthrough coming soon.</div>`;
+
+  return `
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Streamlit App</h3>
+        ${streamlitBlock}
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Power BI Dashboard</h3>
+        ${powerbiBlock}
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Video Walkthrough</h3>
+        ${videoBlock}
+      </div>
+    </div>
+  `;
+}
+
+function linksSection(project) {
+  const links = [];
+  if (project.github_url) links.push(`<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-semibold">GitHub</a>`);
+  if (project.demo_url) links.push(`<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Live Demo</a>`);
+  if (project.streamlit_url) links.push(`<a href="${project.streamlit_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Streamlit</a>`);
+  if (project.powerbi_embed_url) links.push(`<a href="${project.powerbi_embed_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Power BI</a>`);
+  if (project.slide_pdf_path) links.push(`<a href="${resolveAssetUrl(project, project.slide_pdf_path)}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Slides</a>`);
+  if (project.video_url) links.push(`<a href="${project.video_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Video</a>`);
+
+  if (!links.length) {
+    return `<p class="text-sm text-gray-600">Links will be added here (GitHub, demo, dashboards, slides).</p>`;
+  }
+
+  return `<div class="flex flex-wrap gap-3">${links.join('')}</div>`;
+}
+
+function toolsListSection(tools) {
+  return `
+    <div class="flex flex-wrap gap-2">
+      ${tools.map(t => `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm">${t}</span>`).join('')}
+    </div>
   `;
 }
 
