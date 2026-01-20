@@ -159,8 +159,10 @@
 					<!-- Right: Contact Form -->
 					<div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20 dark:border-gray-700/50">
 						<h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Send a Message</h2>
-						<!-- TODO: Replace YOUR_FORM_ID with your actual Formspree form ID from https://formspree.io/forms -->
-						<form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="space-y-6">
+						<p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+							This form opens your default email app with the message pre-filled.
+						</p>
+						<form id="contact-form" class="space-y-6">
 							<div>
 								<label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Email <span class="text-red-500">*</span></label>
 								<input type="email" id="email" name="email" required class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
@@ -223,6 +225,29 @@
 			const scrolled = (winScroll / height) * 100;
 			document.getElementById('scroll-progress').style.width = scrolled + '%';
 		});
+
+		// Mailto-based form submit (no backend)
+		const contactForm = document.getElementById('contact-form');
+		if (contactForm) {
+			contactForm.addEventListener('submit', (event) => {
+				event.preventDefault();
+				const email = document.getElementById('email')?.value.trim();
+				const name = document.getElementById('name')?.value.trim();
+				const subject = document.getElementById('subject')?.value.trim();
+				const message = document.getElementById('message')?.value.trim();
+
+				const subjectText = subject || 'New message from portfolio contact form';
+				const bodyLines = [
+					name ? `Name: ${name}` : '',
+					email ? `Email: ${email}` : '',
+					'',
+					message || 'Hello Sumit,'
+				].filter(Boolean);
+
+				const mailto = `mailto:sumitsc.work@gmail.com?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
+				window.location.href = mailto;
+			});
+		}
 	</script>
 	<style>
 		@keyframes gradient-shift {
