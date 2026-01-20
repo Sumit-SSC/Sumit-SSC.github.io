@@ -21,6 +21,14 @@ Minimal, fast portfolio aimed at Senior Data Analyst / Decision Scientist / Prod
 └── data/projects.json
 ```
 
+## Documentation Index
+
+- **Site data:** `data/README.md`
+- **Static assets:** `assets/README.md`
+- **Docs and plans:** `docs/README.md`
+- **Legacy pages:** `legacy/README.md`
+- **Archived site:** `_backup_old_portfolio/README.md`
+
 ## Pages Overview
 
 ### 1. Landing Page (`index.html`)

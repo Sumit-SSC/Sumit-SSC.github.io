@@ -1,3 +1,10 @@
+# Backup Portfolio
+
+Archived version of the earlier portfolio site.
+
+## Purpose
+- Preserve the previous design and assets for reference.
+- Source for legacy project pages and PDFs.
 # Sumit-SC.github.io
 My portoflio page
 
