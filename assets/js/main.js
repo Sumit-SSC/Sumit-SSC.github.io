@@ -959,8 +959,6 @@ function renderProject(project) {
     if (project.powerbi_embed_url || project.pbix_download_path) sections.push({ id: 'powerbi', title: 'Power BI Dashboard', content: powerBiBlock(project.powerbi_embed_url, project.pbix_download_path, project), isMedia: true });
     if (project.video_url) sections.push({ id: 'video', title: 'Video Walkthrough', content: videoEmbed(project.video_url), isMedia: true });
   }
-  sections.push({ id: 'links', title: 'Links & Resources', content: linksSection(project) });
-  if (project.tools && project.tools.length) sections.push({ id: 'tech-stack', title: 'Tech Stack', content: toolsListSection(project.tools) });
   if (project.images && project.images.length > 0) sections.push({ id: 'gallery', title: 'Gallery', content: galleryBlock(project.images, project), isMedia: true });
   if (project.slide_pdf_path) sections.push({ id: 'slides', title: 'Slides / PDF', content: pdfEmbed(project.slide_pdf_path, project), isMedia: true });
 
@@ -997,10 +995,10 @@ function section(title, content, id = null, isMedia = false) {
   const sectionId = id || title.toLowerCase().replace(/\s+/g, '-');
   return `
     <section id="${sectionId}" class="mb-12 scroll-mt-24">
-      <h2 class="text-3xl font-bold text-gray-800 mb-4">${title}</h2>
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">${title}</h2>
       ${isMedia
-        ? `<div class="bg-gray-100 rounded-lg p-4">${content}</div>`
-        : `<div class="text-gray-600 leading-relaxed space-y-4">${content}</div>`}
+        ? `<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">${content}</div>`
+        : `<div class="text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">${content}</div>`}
     </section>
   `;
 }
@@ -1012,52 +1010,28 @@ function shouldShowAppsSection(project) {
 function appsSection(project) {
   const streamlitBlock = project.streamlit_url
     ? streamlitEmbed(project.streamlit_url)
-    : `<div class="text-sm text-gray-600">Streamlit app link coming soon.</div>`;
+    : `<div class="text-sm text-gray-600 dark:text-gray-300">Streamlit app link coming soon.</div>`;
   const powerbiBlock = project.powerbi_embed_url || project.pbix_download_path
     ? powerBiBlock(project.powerbi_embed_url, project.pbix_download_path, project)
-    : `<div class="text-sm text-gray-600">Power BI dashboard link coming soon.</div>`;
+    : `<div class="text-sm text-gray-600 dark:text-gray-300">Power BI dashboard link coming soon.</div>`;
   const videoBlock = project.video_url
     ? videoEmbed(project.video_url)
-    : `<div class="text-sm text-gray-600">Video walkthrough coming soon.</div>`;
+    : `<div class="text-sm text-gray-600 dark:text-gray-300">Video walkthrough coming soon.</div>`;
 
   return `
     <div class="space-y-6">
       <div>
-        <h3 class="text-xl font-semibold text-gray-800 mb-3">Streamlit App</h3>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Streamlit App</h3>
         ${streamlitBlock}
       </div>
       <div>
-        <h3 class="text-xl font-semibold text-gray-800 mb-3">Power BI Dashboard</h3>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Power BI Dashboard</h3>
         ${powerbiBlock}
       </div>
       <div>
-        <h3 class="text-xl font-semibold text-gray-800 mb-3">Video Walkthrough</h3>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Video Walkthrough</h3>
         ${videoBlock}
       </div>
-    </div>
-  `;
-}
-
-function linksSection(project) {
-  const links = [];
-  if (project.github_url) links.push(`<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-semibold">GitHub</a>`);
-  if (project.demo_url) links.push(`<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Live Demo</a>`);
-  if (project.streamlit_url) links.push(`<a href="${project.streamlit_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Streamlit</a>`);
-  if (project.powerbi_embed_url) links.push(`<a href="${project.powerbi_embed_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Power BI</a>`);
-  if (project.slide_pdf_path) links.push(`<a href="${resolveAssetUrl(project, project.slide_pdf_path)}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Slides</a>`);
-  if (project.video_url) links.push(`<a href="${project.video_url}" target="_blank" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-semibold">Video</a>`);
-
-  if (!links.length) {
-    return `<p class="text-sm text-gray-600">Links will be added here (GitHub, demo, dashboards, slides).</p>`;
-  }
-
-  return `<div class="flex flex-wrap gap-3">${links.join('')}</div>`;
-}
-
-function toolsListSection(tools) {
-  return `
-    <div class="flex flex-wrap gap-2">
-      ${tools.map(t => `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm">${t}</span>`).join('')}
     </div>
   `;
 }
