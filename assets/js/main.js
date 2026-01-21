@@ -242,7 +242,11 @@ function applyColorTheme(name) {
     html[data-color-theme="${theme}"] h5,
     html[data-color-theme="${theme}"] h6,
     html[data-color-theme="${theme}"] .text-gray-800,
-    html[data-color-theme="${theme}"] .text-gray-900 {
+    html[data-color-theme="${theme}"] .text-gray-900,
+    html[data-color-theme="${theme}"] .text-gray-100,
+    html[data-color-theme="${theme}"] .text-gray-200,
+    html[data-color-theme="${theme}"] .text-gray-300,
+    html[data-color-theme="${theme}"] .text-white {
       color: ${text.heading} !important;
     }
     
@@ -400,6 +404,11 @@ function routePage() {
   if (document.getElementById("projects-grid")) {
     const urlParams = new URLSearchParams(window.location.search);
     const page = parseInt(urlParams.get('page')) || 1;
+    const activeFilter = urlParams.get('filter');
+    const featuredSection = document.getElementById('featured-projects-section');
+    if (featuredSection) {
+      featuredSection.style.display = (page > 1 || activeFilter) ? 'none' : '';
+    }
     
     loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
     loadFeaturedProject(); // Load main featured project
@@ -817,7 +826,7 @@ function createDashboardProjectList(project) {
   }
   
   return `
-    <article class="bg-white rounded-lg shadow-md overflow-hidden project-card animate-on-scroll group relative mb-4">
+    <article class="project-list-card w-full bg-white rounded-lg shadow-md overflow-hidden project-card animate-on-scroll group relative mb-4">
       <div class="md:flex">
         <div class="md:w-2/5 relative overflow-hidden">
           <a href="project.html?id=${project.id}" class="block">

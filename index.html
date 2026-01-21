@@ -72,6 +72,22 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/indexMain.js"></script>
+			<script>
+				// Auto-transition to portfolio page if CTA not clicked
+				window.addEventListener('load', () => {
+					const cta = document.querySelector('#banner .more.scrolly');
+					if (!cta) return;
+					let navigated = false;
+					const cancelAutoNav = () => { navigated = true; };
+					cta.addEventListener('click', cancelAutoNav);
+
+					// After CTA appears, wait ~8s then auto-navigate
+					setTimeout(() => {
+						if (navigated) return;
+						window.location.href = 'homepage.html';
+					}, 8000);
+				});
+			</script>
 
 	</body>
 </html>

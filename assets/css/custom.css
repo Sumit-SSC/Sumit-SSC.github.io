@@ -267,6 +267,38 @@ html.dark-theme .text-gray-500 {
   color: #9ca3af !important;
 }
 
+/* Force readable text across dark mode */
+html.dark-theme body {
+  color: #e5e7eb !important;
+}
+
+html.dark-theme h1,
+html.dark-theme h2,
+html.dark-theme h3,
+html.dark-theme h4,
+html.dark-theme h5,
+html.dark-theme h6,
+html.dark-theme p,
+html.dark-theme span,
+html.dark-theme li,
+html.dark-theme label,
+html.dark-theme a,
+html.dark-theme button,
+html.dark-theme input,
+html.dark-theme textarea,
+html.dark-theme select {
+  color: #e5e7eb !important;
+}
+
+html.dark-theme a:hover {
+  color: #f9fafb !important;
+}
+
+/* Ensure theme controls stay visible */
+#theme-controls button {
+  color: #e5e7eb;
+}
+
 /* Hard override for light/dark text tokens across pages */
 html:not(.dark-theme) .text-gray-100,
 html:not(.dark-theme) .text-gray-200,
@@ -433,6 +465,24 @@ html.dark-theme label {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+/* List view styling to differentiate from cards */
+.project-list-card {
+  border-left: 4px solid #e5e7eb;
+  width: 100%;
+}
+
+.dark-theme .project-list-card {
+  border-left-color: #334155;
+}
+
+.project-list-card .md\\:w-2\\/5 {
+  max-width: 260px;
+}
+
+.project-list-card .md\\:w-3\\/5 {
+  padding-left: 1.25rem;
 }
 
 /* Theme-aware link colors in dark mode */
