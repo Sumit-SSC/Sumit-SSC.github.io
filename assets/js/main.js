@@ -8,7 +8,8 @@
 const FEATURED_ORDER = [
   "fraud-intelligence-and-risk-analytics",
   "e-commerce-product-analytics",
-  "churn-retention-analytics"
+  "churn-retention-analytics",
+  "ai-governance-workbench"
 ];
 const FIRST_PAGE_COUNT = 3;
 const REST_PAGE_COUNT = 9;
@@ -158,10 +159,15 @@ function initTheme() {
 
 function applyTheme(theme) {
   const root = document.documentElement;
+  const body = document.body;
   if (theme === 'dark') {
     root.classList.add('dark-theme');
+    root.classList.add('dark');
+    if (body) body.classList.add('dark-theme');
   } else {
     root.classList.remove('dark-theme');
+    root.classList.remove('dark');
+    if (body) body.classList.remove('dark-theme');
   }
 }
 
@@ -551,7 +557,7 @@ async function loadPinnedProjects() {
 
   const projects = await loadProjects();
   const orderedFeatured = getOrderedFeaturedProjects(projects);
-  const pinned = orderedFeatured.slice(1, 3);
+  const pinned = orderedFeatured.slice(1, 4);
 
   if (!pinned.length) {
     container.parentElement.style.display = 'none';
@@ -952,6 +958,8 @@ function renderProject(project) {
   if (project.problem_statement) sections.push({ id: 'problem', title: 'Problem Statement', content: project.problem_statement });
   if (project.approach) sections.push({ id: 'approach', title: 'Approach / Methodology', content: project.approach });
   if (project.insights) sections.push({ id: 'insights', title: 'Insights & Outcomes', content: project.insights });
+  if (project.notebook_url) sections.push({ id: 'notebook', title: 'Notebook (Code Walkthrough)', content: notebookEmbed(project.notebook_url), isMedia: true });
+  if (project.media_notes) sections.push({ id: 'media', title: 'Media & Assets', content: project.media_notes });
   if (shouldShowAppsSection(project)) {
     sections.push({ id: 'apps', title: 'Applications & Dashboards', content: appsSection(project), isMedia: true });
   } else {
@@ -1086,12 +1094,26 @@ function resolveAssetUrl(project, assetPath) {
 }
 
 function streamlitEmbed(url) {
-  return `<iframe src="${url}?embed=true" width="100%" height="600" frameborder="0"></iframe>`;
+  return `
+    <div class="embed-container">
+      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${url}?embed=true', 'Streamlit App')">
+        Expand
+      </button>
+      <iframe src="${url}?embed=true" frameborder="0" allowfullscreen></iframe>
+    </div>
+  `;
 }
 
 function powerBiBlock(embedUrl, downloadPath, project = null) {
   if (embedUrl) {
-    return `<iframe src="${embedUrl}" width="100%" height="600" frameborder="0"></iframe>`;
+    return `
+      <div class="embed-container">
+        <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Power BI Dashboard')">
+          Expand
+        </button>
+        <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
+      </div>
+    `;
   } else if (downloadPath) {
     const resolvedUrl = project ? resolveAssetUrl(project, downloadPath) : downloadPath;
     return `<a href="${resolvedUrl}" download class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">Download PBIX File</a>`;
@@ -1103,10 +1125,41 @@ function videoEmbed(url) {
   if (url.includes('youtube.com') || url.includes('youtu.be')) {
     const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
     if (videoId) {
-      return `<iframe width="100%" height="500" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      return `
+        <div class="embed-container">
+          <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Video Walkthrough')">
+            Expand
+          </button>
+          <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      `;
     }
   }
-  return `<video controls width="100%"><source src="${url}" type="video/mp4"></video>`;
+  return `
+    <div class="embed-container">
+      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${url}', 'Video Walkthrough')">
+        Expand
+      </button>
+      <video controls>
+        <source src="${url}" type="video/mp4">
+      </video>
+    </div>
+  `;
+}
+
+function notebookEmbed(url) {
+  if (!url) return "";
+  const isGithub = url.includes("github.com") && url.includes(".ipynb");
+  const embedUrl = isGithub ? url.replace("https://github.com/", "https://nbviewer.org/github/") : url;
+  return `
+    <div class="embed-container">
+      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Notebook Preview')">
+        Expand
+      </button>
+      <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
+    </div>
+  `;
 }
 
 function pdfEmbed(path, project = null) {
@@ -1125,6 +1178,43 @@ function galleryBlock(images, project = null) {
       ${resolvedImages.map(img => `<img src="${img}" alt="Project image" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">`).join('')}
     </div>
   `;
+}
+
+function ensureEmbedModal() {
+  if (document.getElementById('embed-modal')) return;
+  const modal = document.createElement('div');
+  modal.id = 'embed-modal';
+  modal.className = 'embed-modal hidden';
+  modal.innerHTML = `
+    <div class="embed-modal-backdrop" onclick="closeEmbedModal()"></div>
+    <div class="embed-modal-content">
+      <div class="embed-modal-header">
+        <h3 id="embed-modal-title">Preview</h3>
+        <button type="button" class="embed-modal-close" onclick="closeEmbedModal()">✕</button>
+      </div>
+      <div class="embed-modal-body">
+        <iframe id="embed-modal-iframe" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function openEmbedModal(url, title) {
+  ensureEmbedModal();
+  const modal = document.getElementById('embed-modal');
+  const iframe = document.getElementById('embed-modal-iframe');
+  const modalTitle = document.getElementById('embed-modal-title');
+  if (iframe) iframe.src = url;
+  if (modalTitle) modalTitle.textContent = title || 'Preview';
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeEmbedModal() {
+  const modal = document.getElementById('embed-modal');
+  const iframe = document.getElementById('embed-modal-iframe');
+  if (iframe) iframe.src = '';
+  if (modal) modal.classList.add('hidden');
 }
 
 function toolsBlock(tools, projectId) {
