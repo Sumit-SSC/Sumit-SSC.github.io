@@ -3815,12 +3815,18 @@ input, select, textarea {
 					display: none;
 				}
 
+			#banner .inner {
+				padding-bottom: 2em;
+			}
+
 			#banner .more {
-				display: block !important; /* Show on mobile - keep visible */
-				font-size: 0.7em; /* Slightly smaller on mobile */
-				bottom: 1em; /* Closer to bottom on mobile */
-				width: 14em; /* Slightly narrower on mobile */
-				margin-left: -7em; /* Adjust centering */
+				position: static;
+				display: inline-block !important;
+				font-size: 0.7em;
+				height: auto;
+				width: auto;
+				margin: 2em auto 0;
+				padding: 0.75em 1.5em;
 			}
 			
 			#banner .more:after {

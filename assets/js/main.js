@@ -169,6 +169,7 @@ function applyTheme(theme) {
     root.classList.remove('dark');
     if (body) body.classList.remove('dark-theme');
   }
+  window.dispatchEvent(new Event('theme-changed'));
 }
 
 // Accent color theme helper
@@ -189,6 +190,10 @@ function applyColorTheme(name) {
   };
   
   const colors = colorMap[theme] || colorMap['theme-purple'];
+
+  // Keep CSS variables in sync for theme UI elements
+  root.style.setProperty('--color-primary', colors.primary);
+  root.style.setProperty('--color-accent', colors.accent);
   
   // Inject dynamic style to override Tailwind classes
   let styleEl = document.getElementById('dynamic-theme-colors');
@@ -221,15 +226,24 @@ function applyColorTheme(name) {
   
   const text = isDark ? textColors.dark : textColors.light;
   
+  // Only force .text-white in dark mode to avoid light-mode invisibility
+  const textWhiteOverride = isDark ? `
+    html.dark-theme[data-color-theme="${theme}"] .text-white,
+    html.dark-theme[data-color-theme="${theme}"] button.text-white,
+    html.dark-theme[data-color-theme="${theme}"] a.text-white {
+      color: #ffffff !important;
+    }
+  ` : '';
+
   // Create CSS that overrides all primary color usages with higher specificity
   // Apply to html element to ensure it cascades properly
   styleEl.textContent = `
     /* Primary color overrides */
     html[data-color-theme="${theme}"] .text-primary,
     html[data-color-theme="${theme}"] a.text-primary,
-    html[data-color-theme="${theme}"] .hover\\:text-primary:hover,
-    html[data-color-theme="${theme}"] a:hover.text-primary,
-    html[data-color-theme="${theme}"] a.hover\\:text-primary:hover,
+    html[data-color-theme="${theme}"] .hover\\:text-primary:hover:not(.text-white),
+    html[data-color-theme="${theme}"] a:hover.text-primary:not(.text-white),
+    html[data-color-theme="${theme}"] a.hover\\:text-primary:hover:not(.text-white),
     html[data-color-theme="${theme}"] *[class*="text-primary"] {
       color: ${colors.primary} !important;
     }
@@ -292,12 +306,7 @@ function applyColorTheme(name) {
       --tw-gradient-to: ${colors.accent} !important;
       --tw-gradient-stops: var(--tw-gradient-from), ${colors.accent}, var(--tw-gradient-to) !important;
     }
-    /* Ensure text-white stays white */
-    html[data-color-theme="${theme}"] .text-white,
-    html[data-color-theme="${theme}"] button.text-white,
-    html[data-color-theme="${theme}"] a.text-white {
-      color: #ffffff !important;
-    }
+    ${textWhiteOverride}
     
     /* Text colors adapt to mode */
     html[data-color-theme="${theme}"] .text-gray-900,
@@ -730,24 +739,21 @@ function createDashboardProjectCard(project, layoutClass = '') {
 
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
-  
-  // Build action links
-  const links = [];
-  if (project.github_url) {
-    links.push(`<a href="${project.github_url}" target="_blank" class="project-link-icon" aria-label="GitHub" title="View on GitHub">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-    </a>`);
-  }
-  if (project.demo_url) {
-    links.push(`<a href="${project.demo_url}" target="_blank" class="project-link-icon" aria-label="Demo" title="View Demo">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-    </a>`);
-  }
-  if (project.streamlit_url) {
-    links.push(`<a href="${project.streamlit_url}" target="_blank" class="project-link-icon" aria-label="Streamlit" title="View Streamlit App">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>
-    </a>`);
-  }
+
+  const actionButtons = [
+    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'GitHub', url: project.github_url },
+    { label: 'Demo', url: project.demo_url },
+    { label: 'Streamlit', url: project.streamlit_url },
+    { label: 'Power BI', url: project.powerbi_url },
+    { label: 'Slides', url: project.slides_url },
+    { label: 'Video', url: project.video_url }
+  ].filter(btn => btn.url).map(btn => {
+    const base = btn.primary
+      ? 'bg-primary text-white hover:bg-accent'
+      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600';
+    return `<a href="${btn.url}" ${btn.primary ? '' : 'target="_blank"'} class="px-3 py-1.5 text-xs font-semibold rounded transition-colors ${base}">${btn.label}</a>`;
+  }).join('');
   
   return `
     <article class="project-card-modern bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group relative ${layoutClass}">
@@ -755,21 +761,6 @@ function createDashboardProjectCard(project, layoutClass = '') {
         <a href="project.html?id=${project.id}" class="block">
           <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
         </a>
-        <!-- Hover Popup Overlay (like featured section) -->
-        <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
-          <div class="text-center text-white p-4 max-w-xs">
-            <h4 class="text-xl font-bold mb-2">${project.title}</h4>
-            <p class="text-sm mb-4 opacity-90 line-clamp-3">${project.short_description || ''}</p>
-            <div class="flex flex-wrap gap-3 justify-center text-sm">
-              <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
-                Read Story / Project
-              </a>
-              ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">GitHub</a>` : ''}
-              ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">View Demo</a>` : ''}
-              ${project.streamlit_url ? `<a href="${project.streamlit_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">Streamlit</a>` : ''}
-            </div>
-          </div>
-        </div>
       </div>
       <div class="p-6">
         <div class="flex items-start justify-between mb-3">
@@ -785,14 +776,10 @@ function createDashboardProjectCard(project, layoutClass = '') {
           ${tags || '<span class="text-xs text-gray-400">No tags</span>'}
         </div>
         
-        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-          <a href="project.html?id=${project.id}" class="text-sm font-semibold text-primary hover:text-accent transition-colors flex items-center gap-1">
-            View Project
-            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </a>
-          ${links.length > 0 ? `<div class="flex items-center gap-3">${links.join('')}</div>` : ''}
+        <div class="pt-3 border-t border-gray-100">
+          <div class="flex flex-wrap gap-2">
+            ${actionButtons || ''}
+          </div>
         </div>
       </div>
     </article>
@@ -807,23 +794,20 @@ function createDashboardProjectList(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
   
-  // Build action links
-  const links = [];
-  if (project.github_url) {
-    links.push(`<a href="${project.github_url}" target="_blank" class="project-link-icon" aria-label="GitHub" title="View on GitHub">
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-    </a>`);
-  }
-  if (project.demo_url) {
-    links.push(`<a href="${project.demo_url}" target="_blank" class="project-link-icon" aria-label="Demo" title="View Demo">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-    </a>`);
-  }
-  if (project.streamlit_url) {
-    links.push(`<a href="${project.streamlit_url}" target="_blank" class="project-link-icon" aria-label="Streamlit" title="View Streamlit App">
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>
-    </a>`);
-  }
+  const actionButtons = [
+    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'GitHub', url: project.github_url },
+    { label: 'Demo', url: project.demo_url },
+    { label: 'Streamlit', url: project.streamlit_url },
+    { label: 'Power BI', url: project.powerbi_url },
+    { label: 'Slides', url: project.slides_url },
+    { label: 'Video', url: project.video_url }
+  ].filter(btn => btn.url).map(btn => {
+    const base = btn.primary
+      ? 'bg-primary text-white hover:bg-accent'
+      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600';
+    return `<a href="${btn.url}" ${btn.primary ? '' : 'target="_blank"'} class="px-3 py-1.5 text-xs font-semibold rounded transition-colors ${base}">${btn.label}</a>`;
+  }).join('');
   
   return `
     <article class="project-list-card w-full bg-white rounded-lg shadow-md overflow-hidden project-card animate-on-scroll group relative mb-4">
@@ -854,14 +838,10 @@ function createDashboardProjectList(project) {
           </h3>
           <p class="text-gray-600 text-sm mb-3 line-clamp-2">${project.short_description || ''}</p>
           <div class="flex flex-wrap gap-2 mb-3">${tags}</div>
-          <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-            <a href="project.html?id=${project.id}" class="text-sm font-semibold text-primary hover:text-accent transition-colors flex items-center gap-1">
-              View Project
-              <svg class="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </a>
-            ${links.length > 0 ? `<div class="flex items-center gap-2">${links.join('')}</div>` : ''}
+          <div class="pt-3 border-t border-gray-100">
+            <div class="flex flex-wrap gap-2">
+              ${actionButtons || ''}
+            </div>
           </div>
         </div>
       </div>

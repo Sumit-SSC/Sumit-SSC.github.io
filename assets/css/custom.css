@@ -250,6 +250,52 @@ html:not(.dark-theme) .text-gray-500 {
   color: #6b7280 !important;
 }
 
+/* Light mode: keep readable text without overriding white text */
+html:not(.dark-theme) body {
+  color: #111827 !important;
+}
+
+html:not(.dark-theme) h1:not(.text-white),
+html:not(.dark-theme) h2:not(.text-white),
+html:not(.dark-theme) h3:not(.text-white),
+html:not(.dark-theme) h4:not(.text-white),
+html:not(.dark-theme) h5:not(.text-white),
+html:not(.dark-theme) h6:not(.text-white),
+html:not(.dark-theme) p:not(.text-white),
+html:not(.dark-theme) span:not(.text-white),
+html:not(.dark-theme) li:not(.text-white),
+html:not(.dark-theme) label:not(.text-white),
+html:not(.dark-theme) a:not(.text-white),
+html:not(.dark-theme) button:not(.text-white),
+html:not(.dark-theme) input:not(.text-white),
+html:not(.dark-theme) textarea:not(.text-white),
+html:not(.dark-theme) select:not(.text-white) {
+  color: #111827 !important;
+}
+
+html:not(.dark-theme) a:not(.text-white):hover {
+  color: #0f172a !important;
+}
+
+/* Preserve white text on dark/primary surfaces in light mode */
+html:not(.dark-theme) .text-white,
+html:not(.dark-theme) a.text-white,
+html:not(.dark-theme) button.text-white,
+html:not(.dark-theme) .bg-primary,
+html:not(.dark-theme) .bg-accent,
+html:not(.dark-theme) .btn-primary {
+  color: #ffffff !important;
+}
+
+html:not(.dark-theme) .text-white:hover,
+html:not(.dark-theme) a.text-white:hover,
+html:not(.dark-theme) button.text-white:hover,
+html:not(.dark-theme) .bg-primary:hover,
+html:not(.dark-theme) .bg-accent:hover,
+html:not(.dark-theme) .btn-primary:hover {
+  color: #ffffff !important;
+}
+
 html.dark-theme h1,
 html.dark-theme h2,
 html.dark-theme h3,
@@ -300,8 +346,8 @@ html.dark-theme a:hover {
   color: #f9fafb !important;
 }
 
-/* Ensure theme controls stay visible */
-#theme-controls button {
+/* Ensure theme controls stay visible in dark mode */
+html.dark-theme #theme-controls button {
   color: #e5e7eb;
 }
 
@@ -316,6 +362,24 @@ html.dark-theme .text-gray-100,
 html.dark-theme .text-gray-200,
 html.dark-theme .text-gray-300 {
   color: #e5e7eb !important;
+}
+
+/* Keep white button text readable on hover in dark mode */
+html.dark-theme .text-white:hover {
+  color: #ffffff !important;
+}
+
+/* Ensure primary/accent buttons keep readable text in dark mode */
+html.dark-theme .bg-primary,
+html.dark-theme .bg-accent,
+html.dark-theme .btn-primary {
+  color: #ffffff !important;
+}
+
+html.dark-theme .bg-primary:hover,
+html.dark-theme .bg-accent:hover,
+html.dark-theme .btn-primary:hover {
+  color: #ffffff !important;
 }
 
 html.dark-theme a,
@@ -513,6 +577,38 @@ html.dark-theme select {
 
 .project-list-card .md\\:w-3\\/5 {
   padding-left: 1.25rem;
+}
+
+/* Mobile tuning for project and dashboard pages */
+@media (max-width: 768px) {
+  .project-card-modern img {
+    height: 180px !important;
+  }
+
+  .project-card-modern .p-6 {
+    padding: 1rem !important;
+  }
+
+  #project-hero h1 {
+    font-size: 2.2rem !important;
+  }
+
+  #project-hero p {
+    font-size: 1rem !important;
+  }
+
+  #project-main {
+    padding: 1.25rem !important;
+  }
+
+  #project-side {
+    position: static !important;
+    margin-top: 1.5rem;
+  }
+
+  .embed-container {
+    padding-top: 62.5%;
+  }
 }
 
 /* Theme-aware link colors in dark mode */
@@ -2094,6 +2190,47 @@ body:not(.dark-theme) .skill-badge-active {
   
   .timeline-line {
     display: none;
+  }
+}
+
+/* Mobile layout refinements for core pages */
+@media (max-width: 768px) {
+  header nav.flex.justify-between.items-center {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  header nav ul.flex {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  header nav .flex.items-center.gap-4,
+  header nav .flex.items-center.gap-6 {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  #project-main {
+    padding: 1.5rem;
+  }
+
+  #project-side,
+  #project-nav {
+    position: static;
+    margin-top: 1.5rem;
+  }
+
+  #resume-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  #actual-resume .bg-gray-100,
+  #portfolio-resume .bg-gray-100,
+  #actual-resume .bg-gray-700,
+  #portfolio-resume .bg-gray-700 {
+    height: 520px !important;
   }
 }
 
