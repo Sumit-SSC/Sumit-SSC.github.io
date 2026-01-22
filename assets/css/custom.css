@@ -226,23 +226,31 @@ body:not(.dark-theme) .text-gray-500 {
   color: #6b7280;
 }
 
-/* Thumb rule: enforce readable text colors per theme */
-html:not(.dark-theme) h1,
-html:not(.dark-theme) h2,
-html:not(.dark-theme) h3,
-html:not(.dark-theme) h4,
-html:not(.dark-theme) h5,
-html:not(.dark-theme) h6,
-html:not(.dark-theme) .text-gray-800,
-html:not(.dark-theme) .text-gray-900 {
+/* Theme text rules: readable, but respect text-white/text-primary */
+html:not(.dark-theme) body {
   color: #111827 !important;
 }
 
-html:not(.dark-theme) p,
-html:not(.dark-theme) .text-gray-600,
-html:not(.dark-theme) .text-gray-700,
-html:not(.dark-theme) body {
-  color: #374151 !important;
+html:not(.dark-theme) h1:not(.text-white):not(.text-primary),
+html:not(.dark-theme) h2:not(.text-white):not(.text-primary),
+html:not(.dark-theme) h3:not(.text-white):not(.text-primary),
+html:not(.dark-theme) h4:not(.text-white):not(.text-primary),
+html:not(.dark-theme) h5:not(.text-white):not(.text-primary),
+html:not(.dark-theme) h6:not(.text-white):not(.text-primary),
+html:not(.dark-theme) p:not(.text-white):not(.text-primary),
+html:not(.dark-theme) span:not(.text-white):not(.text-primary),
+html:not(.dark-theme) li:not(.text-white):not(.text-primary),
+html:not(.dark-theme) label:not(.text-white):not(.text-primary),
+html:not(.dark-theme) a:not(.text-white):not(.text-primary),
+html:not(.dark-theme) button:not(.text-white):not(.text-primary),
+html:not(.dark-theme) input:not(.text-white):not(.text-primary),
+html:not(.dark-theme) textarea:not(.text-white):not(.text-primary),
+html:not(.dark-theme) select:not(.text-white):not(.text-primary) {
+  color: #111827 !important;
+}
+
+html:not(.dark-theme) a:not(.text-white):not(.text-primary):hover {
+  color: #0f172a !important;
 }
 
 html:not(.dark-theme) .text-gray-400,
@@ -250,31 +258,10 @@ html:not(.dark-theme) .text-gray-500 {
   color: #6b7280 !important;
 }
 
-/* Light mode: keep readable text without overriding white text */
-html:not(.dark-theme) body {
+html:not(.dark-theme) .text-gray-100,
+html:not(.dark-theme) .text-gray-200,
+html:not(.dark-theme) .text-gray-300 {
   color: #111827 !important;
-}
-
-html:not(.dark-theme) h1:not(.text-white),
-html:not(.dark-theme) h2:not(.text-white),
-html:not(.dark-theme) h3:not(.text-white),
-html:not(.dark-theme) h4:not(.text-white),
-html:not(.dark-theme) h5:not(.text-white),
-html:not(.dark-theme) h6:not(.text-white),
-html:not(.dark-theme) p:not(.text-white),
-html:not(.dark-theme) span:not(.text-white),
-html:not(.dark-theme) li:not(.text-white),
-html:not(.dark-theme) label:not(.text-white),
-html:not(.dark-theme) a:not(.text-white),
-html:not(.dark-theme) button:not(.text-white),
-html:not(.dark-theme) input:not(.text-white),
-html:not(.dark-theme) textarea:not(.text-white),
-html:not(.dark-theme) select:not(.text-white) {
-  color: #111827 !important;
-}
-
-html:not(.dark-theme) a:not(.text-white):hover {
-  color: #0f172a !important;
 }
 
 /* Preserve white text on dark/primary surfaces in light mode */
@@ -296,22 +283,30 @@ html:not(.dark-theme) .btn-primary:hover {
   color: #ffffff !important;
 }
 
-html.dark-theme h1,
-html.dark-theme h2,
-html.dark-theme h3,
-html.dark-theme h4,
-html.dark-theme h5,
-html.dark-theme h6,
-html.dark-theme .text-gray-800,
-html.dark-theme .text-gray-900 {
-  color: #f9fafb !important;
-}
-
-html.dark-theme p,
-html.dark-theme .text-gray-600,
-html.dark-theme .text-gray-700,
 html.dark-theme body {
   color: #e5e7eb !important;
+}
+
+html.dark-theme h1:not(.text-white):not(.text-primary),
+html.dark-theme h2:not(.text-white):not(.text-primary),
+html.dark-theme h3:not(.text-white):not(.text-primary),
+html.dark-theme h4:not(.text-white):not(.text-primary),
+html.dark-theme h5:not(.text-white):not(.text-primary),
+html.dark-theme h6:not(.text-white):not(.text-primary),
+html.dark-theme p:not(.text-white):not(.text-primary),
+html.dark-theme span:not(.text-white):not(.text-primary),
+html.dark-theme li:not(.text-white):not(.text-primary),
+html.dark-theme label:not(.text-white):not(.text-primary),
+html.dark-theme a:not(.text-white):not(.text-primary),
+html.dark-theme button:not(.text-white):not(.text-primary),
+html.dark-theme input:not(.text-white):not(.text-primary),
+html.dark-theme textarea:not(.text-white):not(.text-primary),
+html.dark-theme select:not(.text-white):not(.text-primary) {
+  color: #e5e7eb !important;
+}
+
+html.dark-theme a:not(.text-white):not(.text-primary):hover {
+  color: #f9fafb !important;
 }
 
 html.dark-theme .text-gray-400,
@@ -319,49 +314,15 @@ html.dark-theme .text-gray-500 {
   color: #9ca3af !important;
 }
 
-/* Force readable text across dark mode */
-html.dark-theme body {
+html.dark-theme .text-gray-100,
+html.dark-theme .text-gray-200,
+html.dark-theme .text-gray-300 {
   color: #e5e7eb !important;
-}
-
-html.dark-theme h1,
-html.dark-theme h2,
-html.dark-theme h3,
-html.dark-theme h4,
-html.dark-theme h5,
-html.dark-theme h6,
-html.dark-theme p,
-html.dark-theme span,
-html.dark-theme li,
-html.dark-theme label,
-html.dark-theme a,
-html.dark-theme button,
-html.dark-theme input,
-html.dark-theme textarea,
-html.dark-theme select {
-  color: #e5e7eb !important;
-}
-
-html.dark-theme a:hover {
-  color: #f9fafb !important;
 }
 
 /* Ensure theme controls stay visible in dark mode */
 html.dark-theme #theme-controls button {
   color: #e5e7eb;
-}
-
-/* Hard override for light/dark text tokens across pages */
-html:not(.dark-theme) .text-gray-100,
-html:not(.dark-theme) .text-gray-200,
-html:not(.dark-theme) .text-gray-300 {
-  color: #111827 !important;
-}
-
-html.dark-theme .text-gray-100,
-html.dark-theme .text-gray-200,
-html.dark-theme .text-gray-300 {
-  color: #e5e7eb !important;
 }
 
 /* Keep white button text readable on hover in dark mode */
@@ -380,13 +341,6 @@ html.dark-theme .bg-primary:hover,
 html.dark-theme .bg-accent:hover,
 html.dark-theme .btn-primary:hover {
   color: #ffffff !important;
-}
-
-html.dark-theme a,
-html.dark-theme button,
-html.dark-theme span,
-html.dark-theme label {
-  color: inherit;
 }
 
 .dark-theme header,
