@@ -70,6 +70,12 @@
   transform: scale(0.95);
 }
 
+/* Color swatch visibility in dark mode */
+.theme-color-swatch {
+  background: var(--color-primary) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
 /* Dark mode adjustments for theme controls */
 .dark-theme #theme-controls button {
   border-color: rgba(75, 85, 99, 0.5);
@@ -465,6 +471,30 @@ html.dark-theme label {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+/* Final theme overrides (force readable text in dark mode) */
+html.dark-theme,
+html.dark-theme body {
+  color: #e5e7eb !important;
+}
+
+html.dark-theme h1,
+html.dark-theme h2,
+html.dark-theme h3,
+html.dark-theme h4,
+html.dark-theme h5,
+html.dark-theme h6,
+html.dark-theme p,
+html.dark-theme span,
+html.dark-theme li,
+html.dark-theme label,
+html.dark-theme a,
+html.dark-theme button,
+html.dark-theme input,
+html.dark-theme textarea,
+html.dark-theme select {
+  color: #e5e7eb !important;
 }
 
 /* List view styling to differentiate from cards */
@@ -1395,8 +1425,8 @@ html[data-color-theme] .dark-theme button.bg-primary,
 html[data-color-theme] .dark-theme a.bg-primary,
 html[data-color-theme] .dark-theme button[class*="bg-primary"],
 html[data-color-theme] .dark-theme a[class*="bg-primary"] {
-  background: #f3f4f6 !important; /* Light gray background */
-  color: #111827 !important; /* Dark text - always visible */
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -1415,8 +1445,8 @@ html[data-color-theme] .dark-theme a[class*="bg-primary"] {
 .dark-theme button[class*="bg-primary"]:hover,
 .dark-theme a[class*="bg-primary"]:hover,
 .dark-theme button[type="submit"]:hover {
-  background: #e5e7eb !important; /* Lighter on hover */
-  color: #111827 !important;
+  background: var(--color-accent) !important;
+  color: #ffffff !important;
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
 }
@@ -1587,7 +1617,7 @@ body:not(.dark-theme) a[class*="primary"]:not(.more) {
 
 .dark-theme button[class*="primary"]:not(.more):not(.view-toggle-btn),
 .dark-theme a[class*="primary"]:not(.more) {
-  color: #111827 !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
 }
 

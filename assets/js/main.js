@@ -94,7 +94,7 @@ function initTheme() {
 
     const colorBtn = document.createElement('button');
     colorBtn.type = 'button';
-    colorBtn.className = 'w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 overflow-hidden shadow-sm hover:shadow-md transition-all';
+    colorBtn.className = 'w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 overflow-hidden shadow-sm hover:shadow-md transition-all theme-color-swatch';
     colorBtn.title = 'Change Theme Color (Click to cycle)';
     updateColorSwatch(colorBtn, themes[colorIndex]);
 
