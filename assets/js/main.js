@@ -419,7 +419,7 @@ function createFeaturedHeroCard(project) {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
   };
   const actionButtons = [
-    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -428,14 +428,14 @@ function createFeaturedHeroCard(project) {
     { label: 'Video', url: project.video_url, icon: actionIcons.video }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
-      return `<a href="${btn.url}" class="btn-primary">Read Story</a>`;
+      return `<a href="${btn.url}" class="btn-primary">View Project</a>`;
     }
     return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
 
   const overlayButtons = `
     <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
-      Read Story
+      View Project
     </a>
   `;
   return `
@@ -481,7 +481,7 @@ function createFeaturedHalfCard(project) {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
   };
   const actionButtons = [
-    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -490,14 +490,14 @@ function createFeaturedHalfCard(project) {
     { label: 'Video', url: project.video_url, icon: actionIcons.video }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
-      return `<a href="${btn.url}" class="btn-primary">Read Story</a>`;
+      return `<a href="${btn.url}" class="btn-primary">View Project</a>`;
     }
     return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
 
   const overlayButtons = `
     <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
-      Read Story
+      View Project
     </a>
   `;
   return `
@@ -655,7 +655,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
   };
 
   const actionButtons = [
-    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -664,14 +664,14 @@ function createDashboardProjectCard(project, layoutClass = '') {
     { label: 'Video', url: project.video_url, icon: actionIcons.video }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
-      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">Read Story</a>`;
+      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">View Project</a>`;
     }
     return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
 
   const overlayButtons = `
     <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
-      Read Story
+      View Project
     </a>
   `;
   
@@ -732,7 +732,7 @@ function createDashboardProjectList(project, index = 0) {
   };
 
   const actionButtons = [
-    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -741,13 +741,13 @@ function createDashboardProjectList(project, index = 0) {
     { label: 'Video', url: project.video_url, icon: actionIcons.video }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
-      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">Read Story</a>`;
+      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">View Project</a>`;
     }
     return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
 
   const overlayButtons = [
-    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url },
     { label: 'Demo', url: project.demo_url },
     { label: 'Streamlit', url: project.streamlit_url },

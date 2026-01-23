@@ -90,10 +90,13 @@
 	position: fixed;
 	top: 0;
 	left: 0;
+	width: 0;
 	height: 4px;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	display: block;
+	background: linear-gradient(135deg, var(--button-bg) 0%, var(--color-accent, var(--button-bg)) 100%);
 	z-index: 9999;
 	transition: width 0.1s ease-out;
+	pointer-events: none;
 }
 
 /* Skills Page Styles */
@@ -164,8 +167,17 @@
 }
 
 .project-link-icon:hover {
-	color: #667eea;
-	background-color: #f3f4f6;
+	color: var(--accent-primary);
+	background-color: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+}
+
+/* Theme-aware primary tints (Tailwind bg-primary/10 etc.) */
+.bg-primary\/10 {
+  background-color: color-mix(in srgb, var(--accent-primary) 12%, transparent) !important;
+}
+
+.bg-primary\/20 {
+  background-color: color-mix(in srgb, var(--accent-primary) 20%, transparent) !important;
 }
 
 /* Smooth scroll */
@@ -1361,10 +1373,13 @@ body:not(.dark-theme) .dashboard-intro .more:after {
   position: fixed;
   top: 0;
   left: 0;
+  width: 0;
   height: 3px;
-  background: linear-gradient(to right, #667eea, #764ba2);
+  display: block;
+  background: linear-gradient(135deg, var(--button-bg) 0%, var(--color-accent, var(--button-bg)) 100%);
   z-index: 9999;
   transition: width 0.1s ease;
+  pointer-events: none;
 }
 
 /* Gallery popup effect */
@@ -1457,8 +1472,8 @@ html[data-color-theme] body:not(.dark-theme) button.bg-primary,
 html[data-color-theme] body:not(.dark-theme) a.bg-primary,
 html[data-color-theme] body:not(.dark-theme) button[class*="bg-primary"],
 html[data-color-theme] body:not(.dark-theme) a[class*="bg-primary"] {
-  background: #1f2937 !important; /* Dark gray/black background */
-  color: #ffffff !important; /* White text - always visible */
+  background: var(--button-bg) !important;
+  color: var(--button-text) !important;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -1477,8 +1492,8 @@ body:not(.dark-theme) .bg-primary.text-white:hover,
 body:not(.dark-theme) button[class*="bg-primary"]:hover,
 body:not(.dark-theme) a[class*="bg-primary"]:hover,
 body:not(.dark-theme) button[type="submit"]:hover {
-  background: #111827 !important; /* Darker on hover */
-  color: #ffffff !important;
+  background: var(--color-accent, var(--button-bg)) !important;
+  color: var(--button-text) !important;
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
@@ -2791,6 +2806,7 @@ button.hover\\:bg-accent:hover {
   position: relative;
   overflow: hidden;
   min-height: 224px;
+  isolation: isolate;
 }
 
 .featured-media img {
@@ -2798,9 +2814,12 @@ button.hover\\:bg-accent:hover {
   height: 100%;
   object-fit: cover;
   transition: transform 250ms ease-out;
+  position: relative;
+  z-index: 1;
 }
 
-.featured-card:hover .featured-media img {
+.featured-media:hover img,
+.featured-media:focus-within img {
   transform: scale(1.03);
 }
 
@@ -2869,9 +2888,11 @@ button.hover\\:bg-accent:hover {
   color: #ffffff;
   padding: 16px;
   pointer-events: none;
+  z-index: 2;
 }
 
-.featured-media:hover .featured-hover-overlay {
+.featured-media:hover .featured-hover-overlay,
+.featured-media:focus-within .featured-hover-overlay {
   opacity: 1;
   pointer-events: auto;
 }
