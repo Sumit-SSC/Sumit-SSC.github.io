@@ -91,40 +91,37 @@
 
 	<!-- Main Content -->
 	<main id="main" class="container mx-auto px-6 py-12">
-		<!-- Active Filter & View Toggle -->
-		<div class="flex justify-between items-center gap-4 mb-8">
-			<div id="active-filter"></div>
-			<!-- View Mode Toggle (Card/List) -->
-			<div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-				<button id="view-card" class="view-toggle-btn active px-3 py-1.5 rounded text-sm font-medium transition-colors text-gray-800 dark:text-gray-200" data-view="card" title="Card View">
-					<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-					</svg>
-					<span class="hidden sm:inline ml-1">Card</span>
-				</button>
-				<button id="view-list" class="view-toggle-btn px-3 py-1.5 rounded text-sm font-medium transition-colors text-gray-800 dark:text-gray-200" data-view="list" title="List View">
-					<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-					</svg>
-					<span class="hidden sm:inline ml-1">List</span>
-				</button>
-			</div>
-		</div>
+		<!-- Active Filter & View Toggle moved into All Projects -->
 		
 		<!-- Featured Projects Section -->
 		<section id="featured-projects-section" class="mb-16">
 			<h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center">Featured Projects</h2>
 			
-			<!-- 1 Main Complete Column Project (Full Width) - Loaded Dynamically -->
-			<div id="featured-post"></div>
-
-			<!-- Featured Projects Grid -->
-			<div id="pinned-grid" class="grid md:grid-cols-3 gap-8 mb-12"></div>
+			<div id="featured-hero-row" class="featured-hero-row"></div>
+			<div id="featured-row-2" class="featured-split-row"></div>
+			<div id="featured-row-3" class="featured-split-row"></div>
 		</section>
 
 		<!-- All Projects Section -->
 		<section id="all-projects-section" class="mb-12">
 			<h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center">All Projects</h2>
+			<div class="flex justify-between items-center gap-4 mb-8">
+				<div id="active-filter"></div>
+				<div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+					<button id="view-card" class="view-toggle-btn active px-3 py-1.5 rounded text-sm font-medium transition-colors text-gray-800 dark:text-gray-200" data-view="card" title="Card View">
+						<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+						</svg>
+						<span class="hidden sm:inline ml-1">Card</span>
+					</button>
+					<button id="view-list" class="view-toggle-btn px-3 py-1.5 rounded text-sm font-medium transition-colors text-gray-800 dark:text-gray-200" data-view="list" title="List View">
+						<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+						</svg>
+						<span class="hidden sm:inline ml-1">List</span>
+					</button>
+				</div>
+			</div>
 			<!-- Projects Grid (Dynamic - Card/List view) -->
 			<div id="projects-grid" class="projects-container"></div>
 		</section>

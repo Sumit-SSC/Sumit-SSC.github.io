@@ -11,8 +11,8 @@ const FEATURED_ORDER = [
   "churn-retention-analytics",
   "ai-governance-workbench"
 ];
-const FIRST_PAGE_COUNT = 3;
-const REST_PAGE_COUNT = 9;
+const FIRST_PAGE_COUNT = 6;
+const REST_PAGE_COUNT = 6;
 
 // Initialize on DOM ready
 (function() {
@@ -178,149 +178,24 @@ function applyColorTheme(name) {
   const stored = localStorage.getItem('colorTheme');
   const theme = name || stored || 'theme-purple';
   root.dataset.colorTheme = theme;
-  
-  // Color mappings - Modern color palettes
+
   const colorMap = {
-    'theme-purple': { primary: '#667eea', accent: '#764ba2' },      // Purple/Violet
-    'theme-blue': { primary: '#3b82f6', accent: '#2563eb' },        // Blue
-    'theme-emerald': { primary: '#10b981', accent: '#059669' },    // Green/Emerald
-    'theme-rose': { primary: '#f43f5e', accent: '#e11d48' },        // Rose/Pink
-    'theme-orange': { primary: '#f97316', accent: '#ea580c' },     // Orange/Amber
-    'theme-indigo': { primary: '#6366f1', accent: '#4f46e5' }        // Indigo
+    'theme-purple': { primary: '#667eea' },
+    'theme-blue': { primary: '#3b82f6' },
+    'theme-emerald': { primary: '#10b981' },
+    'theme-rose': { primary: '#f43f5e' },
+    'theme-orange': { primary: '#f97316' },
+    'theme-indigo': { primary: '#6366f1' }
   };
-  
+
   const colors = colorMap[theme] || colorMap['theme-purple'];
 
-  // Keep CSS variables in sync for theme UI elements
-  root.style.setProperty('--color-primary', colors.primary);
-  root.style.setProperty('--color-accent', colors.accent);
-  
-  // Inject dynamic style to override Tailwind classes
-  let styleEl = document.getElementById('dynamic-theme-colors');
-  if (!styleEl) {
-    styleEl = document.createElement('style');
-    styleEl.id = 'dynamic-theme-colors';
-    document.head.appendChild(styleEl);
-  }
-  
-  // Determine if dark mode is active
-  const isDark = document.documentElement.classList.contains('dark-theme');
-  
-  // Theme-aware text colors (lighter in dark mode, darker in light mode)
-  const textColors = {
-    light: {
-      heading: '#1f2937',      // Dark gray for headings
-      body: '#374151',         // Medium gray for body
-      muted: '#6b7280',        // Light gray for muted text
-      link: colors.primary,     // Primary color for links
-      linkHover: colors.accent // Accent color for link hover
-    },
-    dark: {
-      heading: '#f9fafb',       // Almost white for headings
-      body: '#e5e7eb',         // Light gray for body
-      muted: '#9ca3af',        // Medium gray for muted text
-      link: colors.primary,     // Primary color for links (lighter)
-      linkHover: colors.accent // Accent color for link hover
-    }
-  };
-  
-  const text = isDark ? textColors.dark : textColors.light;
-  
-  // Only force .text-white in dark mode to avoid light-mode invisibility
-  const textWhiteOverride = isDark ? `
-    html.dark-theme[data-color-theme="${theme}"] .text-white,
-    html.dark-theme[data-color-theme="${theme}"] button.text-white,
-    html.dark-theme[data-color-theme="${theme}"] a.text-white {
-      color: #ffffff !important;
-    }
-  ` : '';
+  // Palette controls accent only (theme-agnostic)
+  root.style.setProperty('--accent-primary', colors.primary);
+  root.style.setProperty('--accent-contrast', '#ffffff');
+  root.style.setProperty('--button-bg', colors.primary);
+  root.style.setProperty('--button-text', '#ffffff');
 
-  // Create CSS that overrides all primary color usages with higher specificity
-  // Apply to html element to ensure it cascades properly
-  styleEl.textContent = `
-    /* Primary color overrides */
-    html[data-color-theme="${theme}"] .text-primary,
-    html[data-color-theme="${theme}"] a.text-primary,
-    html[data-color-theme="${theme}"] .hover\\:text-primary:hover:not(.text-white),
-    html[data-color-theme="${theme}"] a:hover.text-primary:not(.text-white),
-    html[data-color-theme="${theme}"] a.hover\\:text-primary:hover:not(.text-white),
-    html[data-color-theme="${theme}"] *[class*="text-primary"] {
-      color: ${colors.primary} !important;
-    }
-    
-    /* Theme-aware text colors */
-    html[data-color-theme="${theme}"] h1,
-    html[data-color-theme="${theme}"] h2,
-    html[data-color-theme="${theme}"] h3,
-    html[data-color-theme="${theme}"] h4,
-    html[data-color-theme="${theme}"] h5,
-    html[data-color-theme="${theme}"] h6,
-    html[data-color-theme="${theme}"] .text-gray-800,
-    html[data-color-theme="${theme}"] .text-gray-900,
-    html[data-color-theme="${theme}"] .text-gray-100,
-    html[data-color-theme="${theme}"] .text-gray-200,
-    html[data-color-theme="${theme}"] .text-gray-300,
-    html[data-color-theme="${theme}"] .text-white {
-      color: ${text.heading} !important;
-    }
-    
-    html[data-color-theme="${theme}"] p,
-    html[data-color-theme="${theme}"] .text-gray-600,
-    html[data-color-theme="${theme}"] .text-gray-700,
-    html[data-color-theme="${theme}"] body {
-      color: ${text.body} !important;
-    }
-    
-    html[data-color-theme="${theme}"] .text-gray-400,
-    html[data-color-theme="${theme}"] .text-gray-500 {
-      color: ${text.muted} !important;
-    }
-    
-    html[data-color-theme="${theme}"] a:not(.text-primary):not(.hover\\:text-primary) {
-      color: ${text.link} !important;
-    }
-    
-    html[data-color-theme="${theme}"] a:not(.text-primary):not(.hover\\:text-primary):hover {
-      color: ${text.linkHover} !important;
-    }
-    html[data-color-theme="${theme}"] .border-primary,
-    html[data-color-theme="${theme}"] .focus\\:border-primary:focus,
-    html[data-color-theme="${theme}"] *[class*="border-primary"] {
-      border-color: ${colors.primary} !important;
-    }
-    /* Don't apply theme colors to buttons - they use light/dark mode colors */
-    html[data-color-theme="${theme}"] .bg-primary:not(button):not(.btn-primary):not(a.bg-primary):not(button.bg-primary):not(a.button.bg-primary),
-    html[data-color-theme="${theme}"] *[class*="bg-primary"]:not(button):not(.btn-primary):not(a.bg-primary):not(button.bg-primary):not(a.button.bg-primary) {
-      background-color: ${colors.primary} !important;
-    }
-    html[data-color-theme="${theme}"] .focus\\:ring-primary:focus,
-    html[data-color-theme="${theme}"] *[class*="ring-primary"] {
-      --tw-ring-color: ${colors.primary} !important;
-    }
-    html[data-color-theme="${theme}"] .from-primary,
-    html[data-color-theme="${theme}"] *[class*="from-primary"] {
-      --tw-gradient-from: ${colors.primary} !important;
-    }
-    html[data-color-theme="${theme}"] .via-accent,
-    html[data-color-theme="${theme}"] *[class*="via-accent"] {
-      --tw-gradient-to: ${colors.accent} !important;
-      --tw-gradient-stops: var(--tw-gradient-from), ${colors.accent}, var(--tw-gradient-to) !important;
-    }
-    ${textWhiteOverride}
-    
-    /* Text colors adapt to mode */
-    html[data-color-theme="${theme}"] .text-gray-900,
-    html[data-color-theme="${theme}"] button.text-gray-900:not(.bg-primary),
-    html[data-color-theme="${theme}"] a.text-gray-900:not(.bg-primary) {
-      color: ${text.heading} !important;
-    }
-    
-    html[data-color-theme="${theme}"] .scroll-progress {
-      background: linear-gradient(to right, ${colors.primary}, ${colors.accent}) !important;
-    }
-  `;
-  
-  // Also update theme-color meta tag for browser UI
   let themeColorMeta = document.querySelector('meta[name="theme-color"]');
   if (!themeColorMeta) {
     themeColorMeta = document.createElement('meta');
@@ -420,8 +295,7 @@ function routePage() {
     }
     
     loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
-    loadFeaturedProject(); // Load main featured project
-    loadPinnedProjects(); // Load pinned/featured projects
+    renderFeaturedSection(); // Featured layout (hero + halves)
     initViewModeToggle(); // Initialize view mode toggle
   }
 
@@ -504,129 +378,165 @@ async function loadProjects() {
   }
 }
 
-/* ---------- FEATURED PROJECT LOADING ---------- */
-async function loadFeaturedProject() {
-  const container = document.getElementById('featured-post');
-  if (!container) return;
+/* ---------- FEATURED PROJECTS LAYOUT ---------- */
+async function renderFeaturedSection() {
+  const heroContainer = document.getElementById('featured-hero-row');
+  const rowTwo = document.getElementById('featured-row-2');
+  const rowThree = document.getElementById('featured-row-3');
+  const featuredSection = document.getElementById('featured-projects-section');
+  if (!heroContainer || !rowTwo || !rowThree) return;
 
   const projects = await loadProjects();
-  const orderedFeatured = getOrderedFeaturedProjects(projects);
-  const featured = orderedFeatured[0];
+  const orderedFeatured = getOrderedFeaturedProjects(projects).slice(0, 4);
 
-  if (!featured) {
-    container.style.display = 'none';
+  if (!orderedFeatured.length) {
+    if (featuredSection) featuredSection.style.display = 'none';
     return;
   }
 
-  container.innerHTML = createFeaturedProjectCard(featured);
+  const [hero, second, third, fourth] = orderedFeatured;
+
+  heroContainer.innerHTML = hero ? createFeaturedHeroCard(hero) : '';
+  rowTwo.innerHTML = [second, third].filter(Boolean).map(createFeaturedHalfCard).join('');
+  rowThree.innerHTML = `
+    ${fourth ? createFeaturedHalfCard(fourth) : ''}
+    ${createFeaturedEmptySlot()}
+  `;
 }
 
-function createFeaturedProjectCard(project) {
+function createFeaturedHeroCard(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
-  const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
+  const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const tags = (project.tools || []).slice(0, 4).map(t =>
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
+  ).join('');
+  const actionIcons = {
+    github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
+    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
+    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
+    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
+    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+  };
+  const actionButtons = [
+    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
+    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
+    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
+    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
+    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
+    { label: 'Video', url: project.video_url, icon: actionIcons.video }
+  ].filter(btn => btn.url).map(btn => {
+    if (btn.primary) {
+      return `<a href="${btn.url}" class="btn-primary">Read Story</a>`;
+    }
+    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
+  }).join('');
 
+  const overlayButtons = `
+    <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
+      Read Story
+    </a>
+  `;
   return `
-    <article class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden project-card group">
-      <div class="md:flex">
-        <div class="md:w-1/2 relative overflow-hidden">
-          <a href="project.html?id=${project.id}" class="block">
-            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
-          </a>
-          <!-- Hover Popup Overlay for featured project -->
-          <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div class="text-center text-white p-6 max-w-md">
-              <h3 class="text-2xl font-bold mb-3">${project.title}</h3>
-              <p class="text-sm mb-4 opacity-90">
-                ${project.short_description || ''}
-              </p>
-              <div class="flex flex-wrap gap-3 justify-center text-sm">
-                <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
-                  Read Story / Project
-                </a>
-                ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors font-semibold">GitHub</a>` : ''}
-                ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors font-semibold">View Demo</a>` : ''}
-              </div>
+    <article class="featured-card featured-hero">
+      <a href="project.html?id=${project.id}" class="featured-media">
+        <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+        <div class="featured-hover-overlay">
+          <div class="featured-hover-inner">
+            <p class="text-sm mb-3 opacity-90">${project.short_description || ''}</p>
+            <div class="flex flex-wrap gap-2 justify-center">
+              ${overlayButtons}
             </div>
           </div>
         </div>
-        <div class="md:w-1/2 p-8">
-          <div class="text-sm text-gray-500 mb-4">${project.date || ''}</div>
-          <h2 class="text-3xl font-bold text-gray-800 mb-4">
-            <a href="project.html?id=${project.id}" class="hover:text-primary transition-colors">
-              ${project.title}
-            </a>
-          </h2>
-          <p class="text-gray-600 leading-relaxed mb-6">
-            ${project.full_description || project.short_description || ''}
-          </p>
-          <a href="project.html?id=${project.id}" class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">
-            Full Story →
-          </a>
+      </a>
+      <div class="featured-body">
+        <div class="featured-meta">${project.date || ''}</div>
+        <h3 class="featured-title"><a href="project.html?id=${project.id}">${project.title}</a></h3>
+        <p class="featured-summary">${project.short_description || ''}</p>
+        <div class="list-tags">
+          ${tags || ''}
+        </div>
+        <div class="featured-actions">
+          ${actionButtons || ''}
         </div>
       </div>
     </article>
   `;
 }
 
-/* ---------- PINNED PROJECTS LOADING ---------- */
-async function loadPinnedProjects() {
-  const container = document.getElementById('pinned-grid');
-  if (!container) return;
-
-  const projects = await loadProjects();
-  const orderedFeatured = getOrderedFeaturedProjects(projects);
-  const pinned = orderedFeatured.slice(1, 4);
-
-  if (!pinned.length) {
-    container.parentElement.style.display = 'none';
-    return;
-  }
-
-  container.innerHTML = pinned.map(createPinnedProjectCard).join('');
-}
-
-function createPinnedProjectCard(project) {
-  const tags = (project.tools || []).slice(0, 3).map(t => 
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
-  ).join('');
+function createFeaturedHalfCard(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
-  const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
+  const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const tags = (project.tools || []).slice(0, 3).map(t =>
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
+  ).join('');
+  const actionIcons = {
+    github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
+    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
+    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
+    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
+    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+  };
+  const actionButtons = [
+    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
+    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
+    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
+    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
+    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
+    { label: 'Video', url: project.video_url, icon: actionIcons.video }
+  ].filter(btn => btn.url).map(btn => {
+    if (btn.primary) {
+      return `<a href="${btn.url}" class="btn-primary">Read Story</a>`;
+    }
+    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
+  }).join('');
 
+  const overlayButtons = `
+    <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
+      Read Story
+    </a>
+  `;
   return `
-    <article class="bg-white rounded-lg shadow-lg overflow-hidden project-card animate-on-scroll group relative">
-      <div class="md:flex">
-        <div class="md:w-1/2 relative overflow-hidden">
-          <a href="project.html?id=${project.id}" class="block">
-            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
-          </a>
-          <!-- Hover Popup Overlay -->
-          <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div class="text-center text-white p-4 max-w-xs">
-              <h4 class="text-xl font-bold mb-2">${project.title}</h4>
-              <p class="text-sm mb-4 opacity-90 line-clamp-3">${project.short_description || ''}</p>
-              <div class="flex flex-wrap gap-3 justify-center text-sm">
-                <a href="project.html?id=${project.id}" class="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
-                  Read Story / Project
-                </a>
-                ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">GitHub</a>` : ''}
-                ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">View Demo</a>` : ''}
-              </div>
+    <article class="featured-card featured-half">
+      <a href="project.html?id=${project.id}" class="featured-media">
+        <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+        <div class="featured-hover-overlay">
+          <div class="featured-hover-inner">
+            <p class="text-sm mb-3 opacity-90">${project.short_description || ''}</p>
+            <div class="flex flex-wrap gap-2 justify-center">
+              ${overlayButtons}
             </div>
           </div>
         </div>
-        <div class="md:w-1/2 p-6">
-          <div class="text-sm text-gray-500 mb-2">${project.date || ''}</div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-3">
-            <a href="project.html?id=${project.id}" class="hover:text-primary transition-colors">${project.title}</a>
-          </h3>
-          <p class="text-gray-600 text-sm mb-4 line-clamp-3">${project.short_description || ''}</p>
-          <div class="flex flex-wrap gap-2 mb-4">${tags}</div>
-          <a href="project.html?id=${project.id}" class="inline-block px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors text-sm font-bold">
-            Read Story →
-          </a>
+      </a>
+      <div class="featured-body">
+        <div class="featured-meta">${project.date || ''}</div>
+        <h4 class="featured-title"><a href="project.html?id=${project.id}">${project.title}</a></h4>
+        <p class="featured-summary">${project.short_description || ''}</p>
+        <div class="list-tags">
+          ${tags || ''}
+        </div>
+        <div class="featured-actions">
+          ${actionButtons || ''}
         </div>
       </div>
     </article>
+  `;
+}
+
+function createFeaturedEmptySlot() {
+  return `
+    <div class="featured-empty">
+      <div class="featured-empty-inner">
+        <div class="featured-empty-title">Explore more projects</div>
+        <p class="featured-empty-text">Browse analytics, product, and BI case studies.</p>
+        <a href="#all-projects-section" class="btn-primary">Jump to All Projects</a>
+      </div>
+    </div>
   `;
 }
 
@@ -641,13 +551,29 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
   const urlParams = new URLSearchParams(window.location.search);
   const activeFilter = urlParams.get('filter');
 
-  let list = projects.filter(p => !p.featured);
+  const featured = getOrderedFeaturedProjects(projects).slice(0, 4);
+  const nonFeatured = projects.filter(p => !p.featured);
+  let list = [];
+  let totalCount = 0;
+
   if (activeFilter) {
-    list = list.filter(p => (p.tools || []).includes(activeFilter));
+    list = projects.filter(p => (p.tools || []).includes(activeFilter));
+    totalCount = list.length;
+    const { start, end } = getPaginationSlice(totalCount, page, firstPageCount, restPageCount);
+    list = list.slice(start, end);
+  } else if (page === 1) {
+    const firstPageNonFeaturedCount = Math.max(firstPageCount - featured.length, 0);
+    list = [...featured, ...nonFeatured.slice(0, firstPageNonFeaturedCount)];
+    totalCount = featured.length + nonFeatured.length;
+  } else {
+    const firstPageNonFeaturedCount = Math.max(firstPageCount - featured.length, 0);
+    const start = firstPageNonFeaturedCount + (page - 2) * restPageCount;
+    const end = start + restPageCount;
+    list = nonFeatured.slice(start, end);
+    totalCount = featured.length + nonFeatured.length;
   }
 
-  const { start, end } = getPaginationSlice(list.length, page, firstPageCount, restPageCount);
-  const slice = list.slice(start, end);
+  const slice = list;
   
   // Get current view mode
   const viewMode = el.dataset.view || currentViewMode || 'card';
@@ -669,7 +595,7 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
 
   if (!slice.length) {
     el.innerHTML = '<p class="text-gray-500 text-center py-8">No projects found for this filter.</p>';
-    renderPagination(list.length, page, firstPageCount, restPageCount);
+    renderPagination(totalCount, page, firstPageCount, restPageCount);
     return;
   }
 
@@ -686,34 +612,13 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
 
   // Render based on view mode
   if (viewMode === 'list') {
-    el.innerHTML = slice.map(createDashboardProjectList).join('');
+    el.innerHTML = slice.map((project, index) => createDashboardProjectList(project, index)).join('');
   } else {
-    // For page 1: 3 columns uniform grid (after featured section)
-    if (page === 1) {
-      el.innerHTML = slice.map(createDashboardProjectCard).join('');
-    } else {
-      // Varied Pinterest-style layouts for subsequent pages
-      el.innerHTML = slice.map((project, index) => {
-        // Create varied layouts: mix of 1, 2, and 3 column spans
-        // Pattern creates visual interest like Pinterest
-        const patterns = [
-          '',           // 1 column (default)
-          'md:col-span-2', // 2 columns
-          '',           // 1 column
-          'md:col-span-2', // 2 columns
-          '',           // 1 column
-          'md:col-span-2', // 2 columns
-          '',           // 1 column
-          'md:col-span-3', // 3 columns (wider)
-          '',           // 1 column
-        ];
-        const layoutClass = patterns[index % patterns.length];
-        return createDashboardProjectCard(project, layoutClass);
-      }).join('');
-    }
+    // Consistent card grid on all pages
+    el.innerHTML = slice.map(createDashboardProjectCard).join('');
   }
   
-  renderPagination(list.length, page, firstPageCount, restPageCount);
+  renderPagination(totalCount, page, firstPageCount, restPageCount);
 }
 
 function getOrderedFeaturedProjects(projects) {
@@ -740,20 +645,35 @@ function createDashboardProjectCard(project, layoutClass = '') {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
 
+  const actionIcons = {
+    github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
+    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
+    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
+    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
+    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+  };
+
   const actionButtons = [
     { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
-    { label: 'GitHub', url: project.github_url },
-    { label: 'Demo', url: project.demo_url },
-    { label: 'Streamlit', url: project.streamlit_url },
-    { label: 'Power BI', url: project.powerbi_url },
-    { label: 'Slides', url: project.slides_url },
-    { label: 'Video', url: project.video_url }
+    { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
+    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
+    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
+    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
+    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
+    { label: 'Video', url: project.video_url, icon: actionIcons.video }
   ].filter(btn => btn.url).map(btn => {
-    const base = btn.primary
-      ? 'bg-primary text-white hover:bg-accent'
-      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600';
-    return `<a href="${btn.url}" ${btn.primary ? '' : 'target="_blank"'} class="px-3 py-1.5 text-xs font-semibold rounded transition-colors ${base}">${btn.label}</a>`;
+    if (btn.primary) {
+      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">Read Story</a>`;
+    }
+    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
+
+  const overlayButtons = `
+    <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
+      Read Story
+    </a>
+  `;
   
   return `
     <article class="project-card-modern bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group relative ${layoutClass}">
@@ -761,6 +681,14 @@ function createDashboardProjectCard(project, layoutClass = '') {
         <a href="project.html?id=${project.id}" class="block">
           <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
         </a>
+        <div class="card-hover-overlay absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div class="text-center text-white px-4">
+            <p class="text-sm mb-4 opacity-90 line-clamp-2 text-white">${project.short_description || ''}</p>
+            <div class="flex flex-wrap gap-2 justify-center">
+              ${overlayButtons || ''}
+            </div>
+          </div>
+        </div>
       </div>
       <div class="p-6">
         <div class="flex items-start justify-between mb-3">
@@ -786,15 +714,39 @@ function createDashboardProjectCard(project, layoutClass = '') {
   `;
 }
 
-function createDashboardProjectList(project) {
+function createDashboardProjectList(project, index = 0) {
   const tags = (project.tools || []).slice(0, 4).map(t => 
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
   
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
   
+  const actionIcons = {
+    github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
+    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
+    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
+    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
+    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+  };
+
   const actionButtons = [
+    { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
+    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
+    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
+    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
+    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
+    { label: 'Video', url: project.video_url, icon: actionIcons.video }
+  ].filter(btn => btn.url).map(btn => {
+    if (btn.primary) {
+      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">Read Story</a>`;
+    }
+    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
+  }).join('');
+
+  const overlayButtons = [
     { label: 'Read Story', url: `project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url },
     { label: 'Demo', url: project.demo_url },
@@ -805,43 +757,38 @@ function createDashboardProjectList(project) {
   ].filter(btn => btn.url).map(btn => {
     const base = btn.primary
       ? 'bg-primary text-white hover:bg-accent'
-      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600';
+      : 'bg-white/10 text-white hover:bg-white/20';
     return `<a href="${btn.url}" ${btn.primary ? '' : 'target="_blank"'} class="px-3 py-1.5 text-xs font-semibold rounded transition-colors ${base}">${btn.label}</a>`;
   }).join('');
   
+  const isReverse = index % 2 === 1;
   return `
-    <article class="project-list-card w-full bg-white rounded-lg shadow-md overflow-hidden project-card animate-on-scroll group relative mb-4">
-      <div class="md:flex">
-        <div class="md:w-2/5 relative overflow-hidden">
+    <article class="project-list-row ${isReverse ? 'is-reverse' : ''}">
+      <div class="list-row-inner">
+        <div class="list-media">
           <a href="project.html?id=${project.id}" class="block">
-            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-48 md:h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+            <img src="${thumbnailUrl}" alt="${project.title}" class="list-image" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
           </a>
-          <!-- Hover Popup Overlay -->
-          <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div class="text-center text-white p-4 max-w-xs">
-              <h4 class="text-lg font-bold mb-2">${project.title}</h4>
-              <p class="text-xs mb-3 opacity-90 line-clamp-2">${project.short_description || ''}</p>
-              <div class="flex flex-wrap gap-2 justify-center text-xs">
-                <a href="project.html?id=${project.id}" class="px-3 py-1.5 bg-primary text-white rounded hover:bg-accent transition-colors font-bold">
-                  Read Story
-                </a>
-                ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-3 py-1.5 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">GitHub</a>` : ''}
-                ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-3 py-1.5 bg-white/10 text-white rounded hover:bg-white/20 transition-colors">Demo</a>` : ''}
+          <div class="list-hover-overlay">
+            <div class="list-hover-inner">
+              <p class="text-sm mb-3 opacity-90 text-white">${project.short_description || ''}</p>
+              <div class="flex flex-wrap gap-2 justify-center">
+                ${overlayButtons}
               </div>
             </div>
           </div>
         </div>
-        <div class="md:w-3/5 p-4 md:p-5">
-          <div class="text-xs text-gray-500 mb-1">${project.date || ''}</div>
-          <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">
-            <a href="project.html?id=${project.id}" class="hover:text-primary transition-colors">${project.title}</a>
+        <div class="list-body">
+          <div class="list-meta">${project.date || ''}</div>
+          <h3 class="list-title">
+            <a href="project.html?id=${project.id}">${project.title}</a>
           </h3>
-          <p class="text-gray-600 text-sm mb-3 line-clamp-2">${project.short_description || ''}</p>
-          <div class="flex flex-wrap gap-2 mb-3">${tags}</div>
-          <div class="pt-3 border-t border-gray-100">
-            <div class="flex flex-wrap gap-2">
-              ${actionButtons || ''}
-            </div>
+          <p class="list-summary">${project.short_description || ''}</p>
+          <div class="list-tags">
+            ${tags || '<span class="list-tag muted">No tags</span>'}
+          </div>
+          <div class="list-actions">
+            ${actionButtons || ''}
           </div>
         </div>
       </div>
@@ -902,6 +849,12 @@ function renderPagination(total, currentPage, firstPageCount, restPageCount) {
       const url = new URL(link.href);
       const page = parseInt(url.searchParams.get('page') || '1');
       loadDashboardProjects('projects-grid', page, firstPageCount, restPageCount);
+      const activeFilter = url.searchParams.get('filter');
+      const featuredSection = document.getElementById('featured-projects-section');
+      if (featuredSection) {
+        featuredSection.style.display = (page > 1 || activeFilter) ? 'none' : '';
+      }
+      window.history.pushState({}, '', url.toString());
       window.scrollTo({ top: 0, behavior: 'smooth' });
 					});
 				});
