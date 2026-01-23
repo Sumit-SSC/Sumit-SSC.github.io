@@ -2567,6 +2567,72 @@ a:hover {
   color: var(--accent-primary);
 }
 
+/* Apply theme consistently on non-landing pages */
+body:not(.landing) {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+body:not(.landing) header,
+body:not(.landing) nav,
+body:not(.landing) footer,
+body:not(.landing) section,
+body:not(.landing) main {
+  color: var(--text-primary) !important;
+}
+
+body:not(.landing) header,
+body:not(.landing) nav,
+body:not(.landing) footer,
+body:not(.landing) .bg-white,
+body:not(.landing) .bg-gray-50,
+body:not(.landing) .bg-gray-100,
+body:not(.landing) .bg-gray-800 {
+  background-color: var(--bg-secondary) !important;
+}
+
+body:not(.landing) h1,
+body:not(.landing) h2,
+body:not(.landing) h3,
+body:not(.landing) h4,
+body:not(.landing) h5,
+body:not(.landing) h6,
+body:not(.landing) p,
+body:not(.landing) span,
+body:not(.landing) li,
+body:not(.landing) label,
+body:not(.landing) input,
+body:not(.landing) textarea,
+body:not(.landing) select {
+  color: var(--text-primary) !important;
+}
+
+body:not(.landing) .text-gray-900,
+body:not(.landing) .text-gray-800 {
+  color: var(--text-primary) !important;
+}
+
+body:not(.landing) .text-gray-700,
+body:not(.landing) .text-gray-600,
+body:not(.landing) .text-gray-500,
+body:not(.landing) .text-gray-400 {
+  color: var(--text-secondary) !important;
+}
+
+body:not(.landing) input,
+body:not(.landing) textarea,
+body:not(.landing) select {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-muted) !important;
+}
+a {
+  color: var(--text-secondary);
+}
+
+a:hover {
+  color: var(--accent-primary);
+}
+
 .bg-white { background-color: var(--bg-secondary) !important; }
 .bg-gray-50 { background-color: var(--bg-primary) !important; }
 .bg-gray-100 { background-color: var(--bg-secondary) !important; }

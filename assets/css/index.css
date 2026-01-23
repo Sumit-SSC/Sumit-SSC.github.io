@@ -3455,6 +3455,27 @@ input, select, textarea {
 		z-index: 10000;
 	}
 
+	#header .header-social {
+		position: absolute;
+		right: 6.25em;
+		top: 0;
+		height: inherit;
+		display: flex;
+		align-items: center;
+		gap: 0.75em;
+	}
+
+		#header .header-social a {
+			color: #fff;
+			border: 0;
+		}
+
+		@media screen and (max-width: 736px) {
+			#header .header-social {
+				display: none;
+			}
+		}
+
 		#header h1 {
 			-moz-transition: opacity 0.2s ease;
 			-webkit-transition: opacity 0.2s ease;
