@@ -2632,6 +2632,41 @@ body:not(.landing) select {
   border-color: var(--border-muted) !important;
 }
 
+/* Global light mode text color enforcement (non-landing pages) */
+body:not(.dark-theme):not(.landing),
+body:not(.dark-theme) body:not(.landing),
+body:not(.dark-theme) body:not(.landing) h1,
+body:not(.dark-theme) body:not(.landing) h2,
+body:not(.dark-theme) body:not(.landing) h3,
+body:not(.dark-theme) body:not(.landing) h4,
+body:not(.dark-theme) body:not(.landing) h5,
+body:not(.dark-theme) body:not(.landing) h6,
+body:not(.dark-theme) body:not(.landing) p,
+body:not(.dark-theme) body:not(.landing) span,
+body:not(.dark-theme) body:not(.landing) li,
+body:not(.dark-theme) body:not(.landing) label,
+body:not(.dark-theme) body:not(.landing) a,
+body:not(.dark-theme) body:not(.landing) div {
+  color: var(--text-primary) !important;
+}
+
+/* Global dark mode text color enforcement (non-landing pages) */
+.dark-theme body:not(.landing),
+.dark-theme body:not(.landing) h1,
+.dark-theme body:not(.landing) h2,
+.dark-theme body:not(.landing) h3,
+.dark-theme body:not(.landing) h4,
+.dark-theme body:not(.landing) h5,
+.dark-theme body:not(.landing) h6,
+.dark-theme body:not(.landing) p,
+.dark-theme body:not(.landing) span,
+.dark-theme body:not(.landing) li,
+.dark-theme body:not(.landing) label,
+.dark-theme body:not(.landing) a,
+.dark-theme body:not(.landing) div {
+  color: var(--text-primary) !important;
+}
+
 /* Ensure header/nav text is visible in light mode */
 body:not(.dark-theme) header a:not(.text-white):not(.text-primary),
 body:not(.dark-theme) nav a:not(.text-white):not(.text-primary) {
@@ -2642,6 +2677,55 @@ body:not(.dark-theme) header .text-gray-600,
 body:not(.dark-theme) nav .text-gray-600,
 body:not(.dark-theme) header .text-gray-700,
 body:not(.dark-theme) nav .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+/* Light mode: prevent white utility text in headers/nav */
+body:not(.dark-theme) header .text-white,
+body:not(.dark-theme) nav .text-white,
+body:not(.dark-theme) footer .text-white {
+  color: var(--text-primary) !important;
+}
+
+body:not(.dark-theme) header .text-white\/70,
+body:not(.dark-theme) nav .text-white\/70,
+body:not(.dark-theme) footer .text-white\/70,
+body:not(.dark-theme) header .text-white\/80,
+body:not(.dark-theme) nav .text-white\/80,
+body:not(.dark-theme) footer .text-white\/80,
+body:not(.dark-theme) header .text-white\/60,
+body:not(.dark-theme) nav .text-white\/60,
+body:not(.dark-theme) footer .text-white\/60 {
+  color: var(--text-secondary) !important;
+}
+
+/* Dark mode: normalize gray text in headers/nav */
+.dark-theme header .text-gray-900,
+.dark-theme nav .text-gray-900,
+.dark-theme header .text-gray-800,
+.dark-theme nav .text-gray-800 {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme header .text-gray-700,
+.dark-theme nav .text-gray-700,
+.dark-theme header .text-gray-600,
+.dark-theme nav .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+/* Dark mode: force readable text for common elements */
+.dark-theme body:not(.landing),
+.dark-theme body:not(.landing) h1,
+.dark-theme body:not(.landing) h2,
+.dark-theme body:not(.landing) h3,
+.dark-theme body:not(.landing) h4,
+.dark-theme body:not(.landing) h5,
+.dark-theme body:not(.landing) h6,
+.dark-theme body:not(.landing) p,
+.dark-theme body:not(.landing) span,
+.dark-theme body:not(.landing) li,
+.dark-theme body:not(.landing) label {
   color: var(--text-primary) !important;
 }
 

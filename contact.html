@@ -33,7 +33,7 @@
 
 	<!-- Navigation -->
 	<header class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-40">
-		<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+		<nav id="nav" class="container mx-auto px-6 py-4 flex justify-between items-center">
 			<a href="index.html" class="text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors">Analytics Portfolio</a>
 			<ul class="flex gap-6">
 				<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Projects</a></li>
@@ -104,22 +104,6 @@
 									</div>
 								</a>
 
-								<!-- GitHub Profile Embed -->
-								<div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 mt-8">
-									<h3 class="text-2xl font-bold text-white mb-4">GitHub Profile</h3>
-									<div class="bg-white/5 rounded-lg overflow-hidden" style="height: 400px;">
-										<iframe 
-											src="https://github.cards/sumit-sc?template=Default" 
-											class="w-full h-full border-0"
-											title="GitHub Profile Card"
-											loading="lazy">
-										</iframe>
-									</div>
-									<p class="text-white/70 text-sm mt-3 text-center">
-										<a href="https://github.com/Sumit-SC" target="_blank" class="underline hover:text-white transition-colors">View Full Profile →</a>
-									</p>
-								</div>
-
 								<a href="https://medium.com/@sumitsc.work" target="_blank" class="aerial-social-link group flex items-center gap-4 p-4 bg-white/10 hover:bg-white/20 rounded-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 border border-white/20">
 									<svg class="w-10 h-10 text-white group-hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24">
 										<path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
@@ -139,6 +123,71 @@
 										<div class="text-white/70 text-sm">sumitsc.work@gmail.com</div>
 									</div>
 								</a>
+
+								<!-- GitHub Profile Embed -->
+								<details class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 github-dropdown" open>
+									<summary class="github-dropdown-summary">
+										<span class="github-dropdown-title">GitHub Profile</span>
+										<span class="github-dropdown-icon">▾</span>
+									</summary>
+									<div id="github-card" class="github-card bg-white/5 rounded-lg p-5 space-y-4">
+										<div class="flex items-center gap-4">
+											<div class="w-12 h-12 rounded-full bg-white/10 overflow-hidden">
+												<img id="github-avatar" src="" alt="GitHub avatar" class="w-full h-full object-cover" />
+											</div>
+											<div>
+												<div id="github-name" class="text-white font-semibold text-lg">Sumit-SC</div>
+												<div id="github-bio" class="text-white/70 text-sm">Loading profile…</div>
+											</div>
+										</div>
+										<div class="grid grid-cols-3 gap-3 text-center text-white/80 text-xs">
+											<div>
+												<div id="github-repos" class="text-white font-semibold text-sm">—</div>
+												<div>Repos</div>
+											</div>
+											<div>
+												<div id="github-followers" class="text-white font-semibold text-sm">—</div>
+												<div>Followers</div>
+											</div>
+											<div>
+												<div id="github-following" class="text-white font-semibold text-sm">—</div>
+												<div>Following</div>
+											</div>
+										</div>
+										<div class="github-section">
+											<div class="github-section-title">Top languages</div>
+											<div id="github-languages" class="space-y-2"></div>
+										</div>
+										<div class="github-section">
+											<div class="github-section-title">Other top language</div>
+											<div class="github-lang-highlight">
+												<span class="github-lang-icon" title="HTML" aria-label="HTML"><i class="fab fa-html5"></i></span>
+												<div class="github-lang-main">
+													<div class="github-lang-label">HTML</div>
+													<div class="github-lang-value">91%</div>
+												</div>
+												<div class="github-lang-bar">
+													<span style="width:91%"></span>
+												</div>
+											</div>
+										</div>
+										<div class="github-section">
+											<div class="github-section-title">Top repos</div>
+											<div id="github-top-repos" class="space-y-2 text-sm">Loading…</div>
+										</div>
+										<div class="github-section">
+											<div class="github-section-title">Recent pushes</div>
+											<div id="github-recent-pushes" class="space-y-2 text-sm">Loading…</div>
+										</div>
+										<div class="github-section">
+											<div class="github-section-title">Recent repo updates</div>
+											<ul id="github-repos-list" class="space-y-2 text-sm text-white"></ul>
+										</div>
+										<p class="text-white/70 text-sm text-center">
+											<a href="https://github.com/Sumit-SC" target="_blank" class="underline hover:text-white transition-colors">View Full Profile →</a>
+										</p>
+									</div>
+								</details>
 							</div>
 						</div>
 
@@ -249,11 +298,475 @@
 				window.location.href = mailto;
 			});
 		}
+
+		// GitHub card (client-side, public API)
+		(async function loadGitHubCard() {
+			const username = 'Sumit-SC';
+				const profileUrl = `https://api.github.com/users/${username}`;
+				const reposUrl = `https://api.github.com/users/${username}/repos?per_page=8&sort=pushed`;
+				const eventsUrl = `https://api.github.com/users/${username}/events?per_page=20`;
+
+			try {
+				const [profileRes, reposRes, eventsRes] = await Promise.all([fetch(profileUrl), fetch(reposUrl), fetch(eventsUrl)]);
+				if (!profileRes.ok || !reposRes.ok) throw new Error('GitHub API error');
+
+				const profile = await profileRes.json();
+				const repos = await reposRes.json();
+				const events = eventsRes?.ok ? await eventsRes.json() : [];
+
+				const avatarEl = document.getElementById('github-avatar');
+				const nameEl = document.getElementById('github-name');
+				const bioEl = document.getElementById('github-bio');
+				const reposEl = document.getElementById('github-repos');
+				const followersEl = document.getElementById('github-followers');
+				const followingEl = document.getElementById('github-following');
+				const topReposEl = document.getElementById('github-top-repos');
+				const recentPushesEl = document.getElementById('github-recent-pushes');
+				const listEl = document.getElementById('github-repos-list');
+				const languagesEl = document.getElementById('github-languages');
+
+				if (avatarEl) avatarEl.src = profile.avatar_url || '';
+				if (nameEl) nameEl.textContent = profile.name || profile.login || username;
+				if (bioEl) bioEl.textContent = profile.bio || 'Public analytics + engineering projects';
+				if (reposEl) reposEl.textContent = profile.public_repos ?? '—';
+				if (followersEl) followersEl.textContent = profile.followers ?? '—';
+				if (followingEl) followingEl.textContent = profile.following ?? '—';
+
+				const formatDate = (iso) => {
+					const date = new Date(iso);
+					const datePart = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+					const timePart = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+					return `${datePart} · ${timePart}`;
+				};
+
+				const githubLangIcon = (key) => {
+					const icons = {
+						'html': '<i class="fab fa-html5"></i>',
+						'css': '<i class="fab fa-css3-alt"></i>',
+						'javascript': '<i class="fab fa-js-square"></i>',
+						'typescript': '<i class="fab fa-js"></i>',
+						'python': '<i class="fab fa-python"></i>',
+						'jupyter-notebook': '<img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jupyter_notebook.png" alt="Jupyter" />',
+						'r': '<i class="fab fa-r-project"></i>',
+						'java': '<i class="fab fa-java"></i>',
+						'sql': '<i class="fas fa-database"></i>',
+						'pandas': '<span class="github-lang-text">pd</span>',
+						'numpy': '<span class="github-lang-text">np</span>',
+						'cpp': '<i class="fas fa-code"></i>',
+						'csharp': '<i class="fas fa-code"></i>',
+						'shell': '<i class="fas fa-terminal"></i>',
+						'powerbi': '<i class="fab fa-microsoft"></i>',
+						'dax': '<i class="fas fa-chart-line"></i>',
+						'tableau': '<i class="fas fa-chart-pie"></i>'
+					};
+					return icons[key] || '<i class="fas fa-code"></i>';
+				};
+
+				const recentRepo = repos[0];
+				const languageCounts = {};
+				const languageRepos = repos.filter(repo => repo.languages_url).slice(0, 5);
+
+				const languageResponses = await Promise.all(
+					languageRepos.map(repo => fetch(repo.languages_url).then(res => res.ok ? res.json() : {}))
+				);
+
+				languageResponses.forEach(langObj => {
+					Object.entries(langObj).forEach(([lang, bytes]) => {
+						languageCounts[lang] = (languageCounts[lang] || 0) + bytes;
+					});
+				});
+
+				const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
+				const topLanguages = Object.entries(languageCounts)
+					.sort((a, b) => b[1] - a[1])
+					.filter(([lang]) => lang.toLowerCase() !== 'html')
+					.slice(0, 5)
+					.map(([lang, bytes]) => ({
+						lang,
+						percent: Math.round((bytes / totalLangs) * 100)
+					}));
+
+				if (languagesEl) {
+					if (!topLanguages.length) {
+						languagesEl.innerHTML = '<div class="text-white/70 text-xs">No language data</div>';
+					} else {
+						languagesEl.innerHTML = topLanguages.map(item => {
+							const lower = item.lang.toLowerCase();
+							const map = {
+								'c++': 'cpp',
+								'c#': 'csharp',
+								'jupyter notebook': 'jupyter-notebook',
+								'power bi': 'powerbi'
+							};
+							const key = map[lower] || lower.replace(/[^a-z0-9]+/g, '-');
+							return `
+								<div class="github-lang-row">
+									<span class="github-lang-icon" title="${item.lang}" aria-label="${item.lang}">${githubLangIcon(key)}</span>
+									<div class="github-lang-label">${item.lang}</div>
+									<div class="github-lang-bar">
+										<span style="width:${item.percent}%"></span>
+									</div>
+									<div class="github-lang-value">${item.percent}%</div>
+								</div>
+							`;
+						}).join('');
+					}
+				}
+
+				const topRepos = [...repos]
+					.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+					.slice(0, 4);
+
+				if (topReposEl) {
+					if (!topRepos.length) {
+						topReposEl.innerHTML = '<div class="text-white/70 text-xs">No repos found</div>';
+					} else {
+						const topLangResponses = await Promise.all(
+							topRepos.map(repo =>
+								fetch(repo.languages_url).then(res => res.ok ? res.json() : {})
+							)
+						);
+						topReposEl.innerHTML = topRepos.map((repo, idx) => {
+							const langObj = topLangResponses[idx] || {};
+							const topRepoLangs = Object.entries(langObj)
+								.sort((a, b) => b[1] - a[1])
+								.slice(0, 3)
+								.map(([lang]) => lang);
+							const langDots = topRepoLangs.map(lang => {
+								const lower = lang.toLowerCase();
+								const map = {
+									'c++': 'cpp',
+									'c#': 'csharp',
+									'jupyter notebook': 'jupyter-notebook',
+									'power bi': 'powerbi'
+								};
+								const key = map[lower] || lower.replace(/[^a-z0-9]+/g, '-');
+								return `<span class="github-lang-icon" title="${lang}" aria-label="${lang}">${githubLangIcon(key)}</span>`;
+							}).join('');
+							return `
+								<div class="github-repo-row">
+									<a href="${repo.html_url}" target="_blank" class="github-recent-link">${repo.name}</a>
+									<div class="github-repo-meta">
+										<span class="github-recent-date">Updated ${formatDate(repo.pushed_at)}</span>
+										<span class="github-lang-icons">${langDots || '<span class="github-lang-icon" title="N/A">•</span>'}</span>
+									</div>
+								</div>
+							`;
+						}).join('');
+					}
+				}
+
+				const recentPushes = events
+					.filter(event => event.type === 'PushEvent' && event.repo?.name)
+					.slice(0, 5);
+
+				if (recentPushesEl) {
+					if (!recentPushes.length) {
+						recentPushesEl.innerHTML = '<div class="text-white/70 text-xs">No recent pushes</div>';
+					} else {
+						recentPushesEl.innerHTML = recentPushes.map(event => {
+							const repoName = event.repo.name;
+							const repoUrl = `https://github.com/${repoName}`;
+							return `
+								<div class="github-recent-row">
+									<a href="${repoUrl}" target="_blank" class="github-recent-link">${repoName}</a>
+									<span class="github-recent-date">${formatDate(event.created_at)}</span>
+								</div>
+							`;
+						}).join('');
+					}
+				}
+
+				if (recentRepo) {
+					topReposEl?.setAttribute('data-last', recentRepo.pushed_at);
+				}
+
+				const languageList = repos.reduce((acc, repo) => {
+					if (repo.language) acc[repo.language] = (acc[repo.language] || 0) + 1;
+					return acc;
+				}, {});
+
+				if (listEl) {
+					listEl.innerHTML = repos.map(repo => `
+						<li class="flex items-center justify-between gap-3">
+							<a href="${repo.html_url}" target="_blank" class="underline hover:text-white transition-colors truncate">${repo.name}</a>
+							<span class="text-white/60 text-xs whitespace-nowrap">${formatDate(repo.pushed_at)}</span>
+						</li>
+					`).join('');
+				}
+			} catch (err) {
+				const bioEl = document.getElementById('github-bio');
+				const topReposEl = document.getElementById('github-top-repos');
+				const recentPushesEl = document.getElementById('github-recent-pushes');
+				const languagesEl = document.getElementById('github-languages');
+				if (bioEl) bioEl.textContent = 'Unable to load GitHub data right now.';
+				if (topReposEl) topReposEl.innerHTML = '<div class="text-white/70 text-xs">Check GitHub profile for latest updates.</div>';
+				if (recentPushesEl) recentPushesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+				if (languagesEl) languagesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+			}
+		})();
 	</script>
 	<style>
 		@keyframes gradient-shift {
 			0%, 100% { background-position: 0% 50%; }
 			50% { background-position: 100% 50%; }
+		}
+
+		/* GitHub card look + light mode text fix */
+		.github-card {
+			border: 1px solid rgba(255, 255, 255, 0.22);
+			background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+			box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+		}
+
+		body:not(.dark-theme) .github-card {
+			border-color: rgba(31, 41, 55, 0.2);
+			background: rgba(255, 255, 255, 0.9);
+			color: #111827;
+		}
+
+		body:not(.dark-theme) .github-card .text-white,
+		body:not(.dark-theme) .github-card .text-white\/70,
+		body:not(.dark-theme) .github-card .text-white\/80 {
+			color: #111827 !important;
+		}
+
+		body:not(.dark-theme) .github-card .text-white\/60 {
+			color: #4b5563 !important;
+		}
+
+		.dark-theme .github-card .text-white,
+		.dark-theme .github-card .text-white\/70,
+		.dark-theme .github-card .text-white\/80,
+		.dark-theme .github-card .text-white\/60 {
+			color: #f9fafb !important;
+		}
+
+		.github-section {
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			border-radius: 0.75rem;
+			padding: 0.75rem;
+		}
+
+		.github-section-title {
+			color: rgba(255, 255, 255, 0.7);
+			font-size: 0.75rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.github-recent-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 0.75rem;
+			align-items: center;
+		}
+
+		.github-repo-row {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		.github-repo-meta {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.github-lang-icons {
+			display: inline-flex;
+			gap: 0.35rem;
+			align-items: center;
+		}
+
+		.github-lang-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 18px;
+			height: 18px;
+			font-size: 0.85rem;
+			color: #f9fafb;
+		}
+
+		.github-lang-icon i {
+			font-size: 0.85rem;
+		}
+
+		.github-lang-icon img {
+			width: 16px;
+			height: 16px;
+			object-fit: contain;
+			border-radius: 2px;
+		}
+
+		.github-lang-text {
+			font-size: 0.7rem;
+			font-weight: 700;
+			letter-spacing: 0.2px;
+		}
+
+		.github-lang-python { background: #3572A5; }
+		.github-lang-sql { background: #336791; }
+		.github-lang-javascript { background: #f1e05a; }
+		.github-lang-typescript { background: #3178c6; }
+		.github-lang-html { background: #e34c26; }
+		.github-lang-css { background: #563d7c; }
+		.github-lang-jupyter-notebook { background: #da5b0b; }
+		.github-lang-r { background: #198ce7; }
+		.github-lang-java { background: #b07219; }
+		.github-lang-c { background: #555555; }
+		.github-lang-cpp { background: #f34b7d; }
+		.github-lang-csharp { background: #178600; }
+		.github-lang-shell { background: #89e051; }
+		.github-lang-powerbi { background: #f2c811; }
+		.github-lang-dax { background: #f2c811; }
+		.github-lang-tableau { background: #e97627; }
+
+		.github-recent-link {
+			color: #f9fafb;
+			text-decoration: underline;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 60%;
+		}
+
+		.github-recent-date {
+			color: rgba(255, 255, 255, 0.7);
+			font-size: 0.75rem;
+			white-space: nowrap;
+		}
+
+		.github-lang-row {
+			display: grid;
+			grid-template-columns: auto 1fr 3fr auto;
+			align-items: center;
+			gap: 0.5rem;
+			font-size: 0.75rem;
+			color: rgba(255, 255, 255, 0.85);
+		}
+
+		.github-lang-highlight {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: center;
+			gap: 0.5rem 0.75rem;
+			color: rgba(255, 255, 255, 0.85);
+		}
+
+		.github-lang-main {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: #f9fafb;
+		}
+
+		.github-lang-highlight .github-lang-label,
+		.github-lang-highlight .github-lang-value {
+			color: inherit;
+		}
+
+		body:not(.dark-theme) .github-lang-highlight,
+		body:not(.dark-theme) .github-lang-main {
+			color: #111827;
+		}
+
+		.github-lang-label {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.github-lang-bar {
+			height: 6px;
+			background: rgba(255, 255, 255, 0.15);
+			border-radius: 999px;
+			overflow: hidden;
+		}
+
+		.github-lang-bar span {
+			display: block;
+			height: 100%;
+			background: var(--accent-primary);
+		}
+
+		.github-lang-value {
+			color: rgba(255, 255, 255, 0.75);
+		}
+
+		body:not(.dark-theme) .github-section {
+			background: rgba(17, 24, 39, 0.04);
+			border-color: rgba(17, 24, 39, 0.08);
+		}
+
+		body:not(.dark-theme) .github-section-title {
+			color: #4b5563;
+		}
+
+		body:not(.dark-theme) .github-recent-link {
+			color: #111827;
+		}
+
+		body:not(.dark-theme) .github-recent-date {
+			color: #6b7280;
+		}
+
+		.github-dropdown {
+			overflow: hidden;
+		}
+
+		.github-dropdown-summary {
+			list-style: none;
+			cursor: pointer;
+			padding: 1.25rem 1.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			color: #ffffff;
+			font-weight: 700;
+			font-size: 1.25rem;
+		}
+
+		.github-dropdown-summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.github-dropdown-icon {
+			font-size: 1rem;
+			transition: transform 0.2s ease;
+		}
+
+		.github-dropdown[open] .github-dropdown-icon {
+			transform: rotate(180deg);
+		}
+
+		.github-dropdown-title {
+			letter-spacing: 0.3px;
+		}
+
+		body:not(.dark-theme) .github-dropdown-summary {
+			color: #111827;
+		}
+
+		body:not(.dark-theme) .github-lang-icon {
+			color: #111827;
+		}
+
+		body:not(.dark-theme) .github-lang-row {
+			color: #111827;
+		}
+
+		body:not(.dark-theme) .github-lang-bar {
+			background: rgba(17, 24, 39, 0.1);
+		}
+
+		body:not(.dark-theme) .github-lang-value {
+			color: #4b5563;
 		}
 	</style>
 </body>
