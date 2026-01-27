@@ -76,6 +76,12 @@
   border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
+.dark-theme .theme-color-swatch {
+  background: var(--accent-primary) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
 /* Dark mode adjustments for theme controls */
 .dark-theme #theme-controls button {
   border-color: rgba(75, 85, 99, 0.5);
@@ -2624,6 +2630,56 @@ body:not(.landing) textarea,
 body:not(.landing) select {
   background-color: var(--bg-secondary) !important;
   border-color: var(--border-muted) !important;
+}
+
+/* Ensure header/nav text is visible in light mode */
+body:not(.dark-theme) header a:not(.text-white):not(.text-primary),
+body:not(.dark-theme) nav a:not(.text-white):not(.text-primary) {
+  color: var(--text-primary) !important;
+}
+
+body:not(.dark-theme) header .text-gray-600,
+body:not(.dark-theme) nav .text-gray-600,
+body:not(.dark-theme) header .text-gray-700,
+body:not(.dark-theme) nav .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+/* Journey timeline dotted line connecting dots */
+.journey-line {
+  position: absolute;
+  left: 50%;
+  top: 2.5rem;
+  height: calc(100% - 5rem);
+  width: 220px;
+  transform: translateX(-50%);
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.journey-line path {
+  fill: none;
+  stroke: var(--accent-primary);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 2 4;
+}
+
+.journey-dot {
+  z-index: 2;
+  position: absolute;
+}
+
+.journey-dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 22px;
+  border-left: 2px dashed var(--accent-primary);
+  transform: translate(-50%, -50%);
+  z-index: -1;
 }
 a {
   color: var(--text-secondary);

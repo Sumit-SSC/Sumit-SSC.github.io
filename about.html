@@ -233,19 +233,20 @@
 			</div>
 
 			<div class="max-w-7xl mx-auto relative">
-				<!-- Horizontal Timeline Line (Center Column - spans middle column) -->
-				<div class="absolute top-1/2 left-1/3 right-1/3 h-1 bg-gradient-to-r from-primary via-accent to-purple-600 hidden md:block transform -translate-y-1/2" style="z-index: 1;"></div>
-
+				<!-- Curved journey path connecting timeline dots -->
+				<svg class="journey-line hidden md:block" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+					<path d="M50 0 C 70 10, 70 20, 50 25 S 30 40, 50 50 S 70 70, 50 75 S 30 90, 50 100"></path>
+				</svg>
 				<div class="space-y-12 md:space-y-20">
 					<!-- Timeline Item 1: Image spans col1 + half col2, Text in rest col2 + col3 -->
 					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="journey-dot absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-primary rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
 						<!-- Column 1 + half Column 2: Image (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 relative">
 							<div class="pr-4 md:pr-8">
 								<img src="assets/images/journey.jpg" alt="Analytics Professional" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
 							</div>
-							<!-- Timeline Dot (at the boundary between col1+half-col2 and rest, which is at 50% of row = center of middle column) -->
-							<div class="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-primary rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+							<!-- Timeline Dot moved to article center -->
 						</div>
 						<!-- Rest half Column 2 + Column 3: Text (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 md:pl-8">
@@ -259,6 +260,7 @@
 
 					<!-- Timeline Item 2: Text in col1 + part col2, Image in rest col2 + col3 -->
 					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="journey-dot absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
 						<!-- Column 1 + part Column 2: Text (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 md:pr-8">
 							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -266,8 +268,7 @@
 								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Software Engineer (IT-CS)</h3>
 								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Worked with various programming languages, databases, and cloud technologies. Exposure to data sparked interest in analytics and data-driven decision making.</p>
 							</div>
-							<!-- Timeline Dot (at the boundary, center of middle column) -->
-							<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+							<!-- Timeline Dot moved to article center -->
 						</div>
 						<!-- Rest half Column 2 + Column 3: Image (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 relative">
@@ -279,13 +280,13 @@
 
 					<!-- Timeline Item 3: Image spans col1 + half col2, Text in rest col2 + col3 -->
 					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="journey-dot absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-primary rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
 						<!-- Column 1 + half Column 2: Image (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 relative">
 							<div class="pr-4 md:pr-8">
 								<img src="assets/images/whoami.jpg" alt="PG Diploma" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
 							</div>
-							<!-- Timeline Dot (at the boundary, center of middle column) -->
-							<div class="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-primary rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+							<!-- Timeline Dot moved to article center -->
 						</div>
 						<!-- Rest half Column 2 + Column 3: Text (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 md:pl-8">
@@ -299,6 +300,7 @@
 
 					<!-- Timeline Item 4: Text in col1 + part col2, Image in rest col2 + col3 -->
 					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="journey-dot absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
 						<!-- Column 1 + part Column 2: Text (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 md:pr-8">
 							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -306,8 +308,7 @@
 								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Mechanical Engineering</h3>
 								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Bachelor's degree in Mechanical Engineering. Developed problem-solving mindset and analytical thinking.</p>
 							</div>
-							<!-- Timeline Dot (at the boundary, center of middle column) -->
-							<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+							<!-- Timeline Dot moved to article center -->
 						</div>
 						<!-- Rest half Column 2 + Column 3: Image (spans 3 columns out of 6) -->
 						<div class="md:col-span-3 relative">
