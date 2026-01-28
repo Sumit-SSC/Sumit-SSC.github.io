@@ -125,7 +125,7 @@
 								</a>
 
 								<!-- GitHub Profile Embed -->
-								<details class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 github-dropdown" open>
+								<details class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 github-dropdown">
 									<summary class="github-dropdown-summary">
 										<span class="github-dropdown-title">GitHub Profile</span>
 										<span class="github-dropdown-icon">▾</span>
@@ -154,14 +154,20 @@
 												<div>Following</div>
 											</div>
 										</div>
+										<div class="github-card-actions">
+											<button id="github-refresh" type="button" class="github-refresh-btn">Refresh data</button>
+											<span id="github-cache-meta" class="text-white/60 text-xs">Cached data: —</span>
+										</div>
 										<div class="github-section">
 											<div class="github-section-title">Top languages</div>
 											<div id="github-languages" class="space-y-2"></div>
 										</div>
 										<div class="github-section">
 											<div class="github-section-title">Other top language</div>
-											<div class="github-lang-highlight">
-												<span class="github-lang-icon" title="HTML" aria-label="HTML"><i class="fab fa-html5"></i></span>
+										<div class="github-lang-highlight">
+											<span class="github-lang-icon" title="HTML" aria-label="HTML">
+												<img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png" alt="HTML" />
+											</span>
 												<div class="github-lang-main">
 													<div class="github-lang-label">HTML</div>
 													<div class="github-lang-value">91%</div>
@@ -299,31 +305,114 @@
 			});
 		}
 
-		// GitHub card (client-side, public API)
+		// GitHub card (client-side, cached by default)
 		(async function loadGitHubCard() {
 			const username = 'Sumit-SC';
-				const profileUrl = `https://api.github.com/users/${username}`;
-				const reposUrl = `https://api.github.com/users/${username}/repos?per_page=8&sort=pushed`;
-				const eventsUrl = `https://api.github.com/users/${username}/events?per_page=20`;
+			const profileUrl = `https://api.github.com/users/${username}`;
+			const reposUrl = `https://api.github.com/users/${username}/repos?per_page=8&sort=pushed`;
+			const eventsUrl = `https://api.github.com/users/${username}/events/public?per_page=20`;
+			const CACHE_KEY = 'githubCardCache_v2';
+			const CACHE_TIME_KEY = 'githubCardCacheTime_v2';
 
-			try {
-				const [profileRes, reposRes, eventsRes] = await Promise.all([fetch(profileUrl), fetch(reposUrl), fetch(eventsUrl)]);
-				if (!profileRes.ok || !reposRes.ok) throw new Error('GitHub API error');
+			const detailsEl = document.querySelector('.github-dropdown');
+			if (detailsEl) detailsEl.removeAttribute('open');
 
-				const profile = await profileRes.json();
-				const repos = await reposRes.json();
-				const events = eventsRes?.ok ? await eventsRes.json() : [];
+			const avatarEl = document.getElementById('github-avatar');
+			const nameEl = document.getElementById('github-name');
+			const bioEl = document.getElementById('github-bio');
+			const reposEl = document.getElementById('github-repos');
+			const followersEl = document.getElementById('github-followers');
+			const followingEl = document.getElementById('github-following');
+			const topReposEl = document.getElementById('github-top-repos');
+			const recentPushesEl = document.getElementById('github-recent-pushes');
+			const listEl = document.getElementById('github-repos-list');
+			const languagesEl = document.getElementById('github-languages');
+			const refreshBtn = document.getElementById('github-refresh');
+			const cacheMetaEl = document.getElementById('github-cache-meta');
 
-				const avatarEl = document.getElementById('github-avatar');
-				const nameEl = document.getElementById('github-name');
-				const bioEl = document.getElementById('github-bio');
-				const reposEl = document.getElementById('github-repos');
-				const followersEl = document.getElementById('github-followers');
-				const followingEl = document.getElementById('github-following');
-				const topReposEl = document.getElementById('github-top-repos');
-				const recentPushesEl = document.getElementById('github-recent-pushes');
-				const listEl = document.getElementById('github-repos-list');
-				const languagesEl = document.getElementById('github-languages');
+			const formatDate = (iso) => {
+				const date = new Date(iso);
+				const datePart = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+				const timePart = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+				return `${datePart} · ${timePart}`;
+			};
+
+			const normalizeLangKey = (lang) => {
+				const lower = lang.toLowerCase();
+				const map = {
+					'c++': 'cpp',
+					'c#': 'csharp',
+					'jupyter notebook': 'jupyter-notebook',
+					'power bi': 'powerbi'
+				};
+				return map[lower] || lower.replace(/[^a-z0-9]+/g, '-');
+			};
+
+			const githubLangIcon = (key) => {
+				const iconMap = {
+					'python': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png',
+					'numpy': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/numpy.png',
+					'pandas': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/pandas.png',
+					'jupyter-notebook': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jupyter_notebook.png',
+					'html': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png',
+					'css': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/css.png',
+					'javascript': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/javascript.png',
+					'sql': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/mysql.png',
+					'shell': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/bash.png',
+					'git': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/git.png',
+					'github': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/github.png',
+					'streamlit': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/streamlit.png',
+					'fastapi': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/fastapi.png',
+					'sqlite': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/sqlite.png',
+					'docker': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/docker.png',
+					'ci-cd': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/ci_cd.png',
+					'aws': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/aws.png',
+					'tensorflow': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png',
+					'langchain-icon': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/langchain_icon.png',
+					'linux': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/linux.png',
+					'ubuntu': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/ubuntu.png',
+					'windows': 'https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/windows.png'
+				};
+				if (iconMap[key]) {
+					return `<img src="${iconMap[key]}" alt="${key}" />`;
+				}
+				const icons = {
+					'typescript': '<i class="fab fa-js"></i>',
+					'r': '<i class="fab fa-r-project"></i>',
+					'java': '<i class="fab fa-java"></i>',
+					'cpp': '<i class="fas fa-code"></i>',
+					'csharp': '<i class="fas fa-code"></i>',
+					'powerbi': '<i class="fab fa-microsoft"></i>',
+					'dax': '<i class="fas fa-chart-line"></i>',
+					'tableau': '<i class="fas fa-chart-pie"></i>'
+				};
+				return icons[key] || '<i class="fas fa-code"></i>';
+			};
+
+			const setCacheMeta = (timestamp) => {
+				if (!cacheMetaEl) return;
+				if (!timestamp) {
+					cacheMetaEl.textContent = 'Cached data: —';
+					return;
+				}
+				const date = new Date(timestamp);
+				const datePart = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+				const timePart = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+				cacheMetaEl.textContent = `Cached data: ${datePart} · ${timePart}`;
+			};
+
+			const setEmptyState = () => {
+				if (bioEl) bioEl.textContent = 'Cached data not loaded. Click refresh to fetch.';
+				if (topReposEl) topReposEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+				if (recentPushesEl) recentPushesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+				if (languagesEl) languagesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+				if (listEl) listEl.innerHTML = '<li class="text-white/70 text-xs">—</li>';
+				setCacheMeta(null);
+			};
+
+			const renderCard = (data) => {
+				if (!data) return;
+				const { profile, topLanguages, topRepos, recentPushes, reposList, cachedAt } = data;
 
 				if (avatarEl) avatarEl.src = profile.avatar_url || '';
 				if (nameEl) nameEl.textContent = profile.name || profile.login || username;
@@ -332,117 +421,31 @@
 				if (followersEl) followersEl.textContent = profile.followers ?? '—';
 				if (followingEl) followingEl.textContent = profile.following ?? '—';
 
-				const formatDate = (iso) => {
-					const date = new Date(iso);
-					const datePart = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-					const timePart = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-					return `${datePart} · ${timePart}`;
-				};
-
-				const githubLangIcon = (key) => {
-					const icons = {
-						'html': '<i class="fab fa-html5"></i>',
-						'css': '<i class="fab fa-css3-alt"></i>',
-						'javascript': '<i class="fab fa-js-square"></i>',
-						'typescript': '<i class="fab fa-js"></i>',
-						'python': '<i class="fab fa-python"></i>',
-						'jupyter-notebook': '<img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jupyter_notebook.png" alt="Jupyter" />',
-						'r': '<i class="fab fa-r-project"></i>',
-						'java': '<i class="fab fa-java"></i>',
-						'sql': '<i class="fas fa-database"></i>',
-						'pandas': '<span class="github-lang-text">pd</span>',
-						'numpy': '<span class="github-lang-text">np</span>',
-						'cpp': '<i class="fas fa-code"></i>',
-						'csharp': '<i class="fas fa-code"></i>',
-						'shell': '<i class="fas fa-terminal"></i>',
-						'powerbi': '<i class="fab fa-microsoft"></i>',
-						'dax': '<i class="fas fa-chart-line"></i>',
-						'tableau': '<i class="fas fa-chart-pie"></i>'
-					};
-					return icons[key] || '<i class="fas fa-code"></i>';
-				};
-
-				const recentRepo = repos[0];
-				const languageCounts = {};
-				const languageRepos = repos.filter(repo => repo.languages_url).slice(0, 5);
-
-				const languageResponses = await Promise.all(
-					languageRepos.map(repo => fetch(repo.languages_url).then(res => res.ok ? res.json() : {}))
-				);
-
-				languageResponses.forEach(langObj => {
-					Object.entries(langObj).forEach(([lang, bytes]) => {
-						languageCounts[lang] = (languageCounts[lang] || 0) + bytes;
-					});
-				});
-
-				const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
-				const topLanguages = Object.entries(languageCounts)
-					.sort((a, b) => b[1] - a[1])
-					.filter(([lang]) => lang.toLowerCase() !== 'html')
-					.slice(0, 5)
-					.map(([lang, bytes]) => ({
-						lang,
-						percent: Math.round((bytes / totalLangs) * 100)
-					}));
-
 				if (languagesEl) {
-					if (!topLanguages.length) {
+					if (!topLanguages?.length) {
 						languagesEl.innerHTML = '<div class="text-white/70 text-xs">No language data</div>';
 					} else {
-						languagesEl.innerHTML = topLanguages.map(item => {
-							const lower = item.lang.toLowerCase();
-							const map = {
-								'c++': 'cpp',
-								'c#': 'csharp',
-								'jupyter notebook': 'jupyter-notebook',
-								'power bi': 'powerbi'
-							};
-							const key = map[lower] || lower.replace(/[^a-z0-9]+/g, '-');
-							return `
-								<div class="github-lang-row">
-									<span class="github-lang-icon" title="${item.lang}" aria-label="${item.lang}">${githubLangIcon(key)}</span>
-									<div class="github-lang-label">${item.lang}</div>
-									<div class="github-lang-bar">
-										<span style="width:${item.percent}%"></span>
-									</div>
-									<div class="github-lang-value">${item.percent}%</div>
+						languagesEl.innerHTML = topLanguages.map(item => `
+							<div class="github-lang-row">
+								<span class="github-lang-icon" title="${item.lang}" aria-label="${item.lang}">${githubLangIcon(item.key)}</span>
+								<div class="github-lang-label">${item.lang}</div>
+								<div class="github-lang-bar">
+									<span style="width:${item.percent}%"></span>
 								</div>
-							`;
-						}).join('');
+								<div class="github-lang-value">${item.percent}%</div>
+							</div>
+						`).join('');
 					}
 				}
 
-				const topRepos = [...repos]
-					.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
-					.slice(0, 4);
-
 				if (topReposEl) {
-					if (!topRepos.length) {
+					if (!topRepos?.length) {
 						topReposEl.innerHTML = '<div class="text-white/70 text-xs">No repos found</div>';
 					} else {
-						const topLangResponses = await Promise.all(
-							topRepos.map(repo =>
-								fetch(repo.languages_url).then(res => res.ok ? res.json() : {})
-							)
-						);
-						topReposEl.innerHTML = topRepos.map((repo, idx) => {
-							const langObj = topLangResponses[idx] || {};
-							const topRepoLangs = Object.entries(langObj)
-								.sort((a, b) => b[1] - a[1])
-								.slice(0, 3)
-								.map(([lang]) => lang);
-							const langDots = topRepoLangs.map(lang => {
-								const lower = lang.toLowerCase();
-								const map = {
-									'c++': 'cpp',
-									'c#': 'csharp',
-									'jupyter notebook': 'jupyter-notebook',
-									'power bi': 'powerbi'
-								};
-								const key = map[lower] || lower.replace(/[^a-z0-9]+/g, '-');
-								return `<span class="github-lang-icon" title="${lang}" aria-label="${lang}">${githubLangIcon(key)}</span>`;
-							}).join('');
+						topReposEl.innerHTML = topRepos.map(repo => {
+							const langDots = (repo.langKeys || []).map(key => (
+								`<span class="github-lang-icon" title="${key}" aria-label="${key}">${githubLangIcon(key)}</span>`
+							)).join('');
 							return `
 								<div class="github-repo-row">
 									<a href="${repo.html_url}" target="_blank" class="github-recent-link">${repo.name}</a>
@@ -456,53 +459,224 @@
 					}
 				}
 
-				const recentPushes = events
-					.filter(event => event.type === 'PushEvent' && event.repo?.name)
-					.slice(0, 5);
-
 				if (recentPushesEl) {
-					if (!recentPushes.length) {
+					if (!recentPushes?.length) {
 						recentPushesEl.innerHTML = '<div class="text-white/70 text-xs">No recent pushes</div>';
 					} else {
-						recentPushesEl.innerHTML = recentPushes.map(event => {
-							const repoName = event.repo.name;
-							const repoUrl = `https://github.com/${repoName}`;
-							return `
-								<div class="github-recent-row">
-									<a href="${repoUrl}" target="_blank" class="github-recent-link">${repoName}</a>
-									<span class="github-recent-date">${formatDate(event.created_at)}</span>
-								</div>
-							`;
-						}).join('');
+						recentPushesEl.innerHTML = recentPushes.map(event => `
+							<div class="github-recent-row">
+								<a href="${event.repoUrl}" target="_blank" class="github-recent-link">${event.repoName}</a>
+								<span class="github-recent-date">${formatDate(event.created_at)}</span>
+							</div>
+						`).join('');
 					}
 				}
 
-				if (recentRepo) {
-					topReposEl?.setAttribute('data-last', recentRepo.pushed_at);
-				}
-
-				const languageList = repos.reduce((acc, repo) => {
-					if (repo.language) acc[repo.language] = (acc[repo.language] || 0) + 1;
-					return acc;
-				}, {});
-
 				if (listEl) {
-					listEl.innerHTML = repos.map(repo => `
+					listEl.innerHTML = (reposList || []).map(repo => `
 						<li class="flex items-center justify-between gap-3">
 							<a href="${repo.html_url}" target="_blank" class="underline hover:text-white transition-colors truncate">${repo.name}</a>
 							<span class="text-white/60 text-xs whitespace-nowrap">${formatDate(repo.pushed_at)}</span>
 						</li>
 					`).join('');
 				}
-			} catch (err) {
-				const bioEl = document.getElementById('github-bio');
-				const topReposEl = document.getElementById('github-top-repos');
-				const recentPushesEl = document.getElementById('github-recent-pushes');
-				const languagesEl = document.getElementById('github-languages');
-				if (bioEl) bioEl.textContent = 'Unable to load GitHub data right now.';
-				if (topReposEl) topReposEl.innerHTML = '<div class="text-white/70 text-xs">Check GitHub profile for latest updates.</div>';
-				if (recentPushesEl) recentPushesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
-				if (languagesEl) languagesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+
+				setCacheMeta(cachedAt);
+			};
+
+			const fetchJson = async (url) => {
+				const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
+				if (res.status === 403) {
+					const error = new Error('rate_limit');
+					error.status = 403;
+					throw error;
+				}
+				if (!res.ok) {
+					const error = new Error('github_error');
+					error.status = res.status;
+					throw error;
+				}
+				return res.json();
+			};
+
+			const fetchGithubData = async () => {
+				try {
+					if (refreshBtn) {
+						refreshBtn.disabled = true;
+						refreshBtn.textContent = 'Refreshing…';
+					}
+
+					const [profile, repos] = await Promise.all([
+						fetchJson(profileUrl),
+						fetchJson(reposUrl)
+					]);
+
+					let events = [];
+					try {
+						events = await fetchJson(eventsUrl);
+					} catch (eventErr) {
+						events = [];
+					}
+
+					const languageCounts = {};
+					const languageRepos = repos.filter(repo => repo.languages_url).slice(0, 5);
+					const languageResponses = await Promise.all(
+						languageRepos.map(repo =>
+							fetch(repo.languages_url, { headers: { Accept: 'application/vnd.github+json' } })
+								.then(res => res.ok ? res.json() : {})
+								.catch(() => ({}))
+						)
+					);
+
+					languageResponses.forEach(langObj => {
+						Object.entries(langObj).forEach(([lang, bytes]) => {
+							languageCounts[lang] = (languageCounts[lang] || 0) + bytes;
+						});
+					});
+
+					const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
+					const topLanguages = Object.entries(languageCounts)
+						.sort((a, b) => b[1] - a[1])
+						.filter(([lang]) => lang.toLowerCase() !== 'html')
+						.slice(0, 5)
+						.map(([lang, bytes]) => ({
+							lang,
+							key: normalizeLangKey(lang),
+							percent: Math.round((bytes / totalLangs) * 100)
+						}));
+
+					const topReposSource = [...repos]
+						.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+						.slice(0, 4);
+
+					const topLangResponses = await Promise.all(
+						topReposSource.map(repo =>
+							fetch(repo.languages_url, { headers: { Accept: 'application/vnd.github+json' } })
+								.then(res => res.ok ? res.json() : {})
+								.catch(() => ({}))
+						)
+					);
+
+					const topRepos = topReposSource.map((repo, idx) => {
+						const langObj = topLangResponses[idx] || {};
+						const langKeys = Object.entries(langObj)
+							.sort((a, b) => b[1] - a[1])
+							.slice(0, 3)
+							.map(([lang]) => normalizeLangKey(lang));
+						return {
+							name: repo.name,
+							html_url: repo.html_url,
+							pushed_at: repo.pushed_at,
+							langKeys
+						};
+					});
+
+					const recentPushes = events
+						.filter(event => event.type === 'PushEvent' && event.repo?.name)
+						.slice(0, 5)
+						.map(event => ({
+							repoName: event.repo.name,
+							repoUrl: `https://github.com/${event.repo.name}`,
+							created_at: event.created_at
+						}));
+
+					const reposList = repos.map(repo => ({
+						name: repo.name,
+						html_url: repo.html_url,
+						pushed_at: repo.pushed_at
+					}));
+
+					const payload = {
+						profile: {
+							avatar_url: profile.avatar_url,
+							name: profile.name,
+							login: profile.login,
+							bio: profile.bio,
+							public_repos: profile.public_repos,
+							followers: profile.followers,
+							following: profile.following
+						},
+						topLanguages,
+						topRepos,
+						recentPushes,
+						reposList,
+						cachedAt: Date.now()
+					};
+
+					localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+					localStorage.setItem(CACHE_TIME_KEY, String(payload.cachedAt));
+					renderCard(payload);
+				} catch (err) {
+					const isRateLimit = err?.status === 403 || err?.message === 'rate_limit';
+					const cachedFallback = localStorage.getItem(CACHE_KEY);
+					const hasCacheFallback = Boolean(cachedFallback);
+					if (cachedFallback) {
+						try {
+							renderCard(JSON.parse(cachedFallback));
+						} catch (cacheErr) {
+							// ignore cache parse errors
+						}
+					}
+					if (bioEl) {
+						if (isRateLimit) {
+							let resetMessage = '';
+							try {
+								const rateRes = await fetch('https://api.github.com/rate_limit', {
+									headers: { Accept: 'application/vnd.github+json' }
+								});
+							if (rateRes.ok) {
+								const rateData = await rateRes.json();
+								const resetEpoch = rateData?.resources?.core?.reset;
+								if (resetEpoch) {
+									const resetDate = new Date(resetEpoch * 1000);
+									const timeString = new Intl.DateTimeFormat(undefined, {
+										hour: '2-digit',
+										minute: '2-digit',
+										timeZoneName: 'short'
+									}).format(resetDate);
+									const dateString = resetDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+									const minutesLeft = Math.max(0, Math.ceil((resetDate.getTime() - Date.now()) / 60000));
+									resetMessage = ` Rate limit resets at ${timeString} (${dateString}, ~${minutesLeft} min).`;
+								}
+							}
+							} catch (rateErr) {
+								console.error('GitHub rate limit lookup error:', rateErr);
+							}
+							bioEl.textContent = `GitHub rate limit reached. Please refresh later.${resetMessage}`;
+						} else {
+							bioEl.textContent = 'Unable to load GitHub data right now.';
+						}
+					}
+					if (!hasCacheFallback) {
+						if (topReposEl) topReposEl.innerHTML = '<div class="text-white/70 text-xs">Check GitHub profile for latest updates.</div>';
+						if (recentPushesEl) recentPushesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+						if (languagesEl) languagesEl.innerHTML = '<div class="text-white/70 text-xs">—</div>';
+					}
+					console.error('GitHub card error:', err);
+				} finally {
+					if (refreshBtn) {
+						refreshBtn.disabled = false;
+						refreshBtn.textContent = 'Refresh data';
+					}
+				}
+			};
+
+			const cachedRaw = localStorage.getItem(CACHE_KEY);
+			if (cachedRaw) {
+				try {
+					const cached = JSON.parse(cachedRaw);
+					renderCard(cached);
+				} catch (err) {
+					setEmptyState();
+				}
+			} else {
+				setEmptyState();
+			}
+
+			if (refreshBtn) {
+				refreshBtn.addEventListener('click', () => {
+					fetchGithubData();
+				});
 			}
 		})();
 	</script>
@@ -547,6 +721,42 @@
 			border: 1px solid rgba(255, 255, 255, 0.12);
 			border-radius: 0.75rem;
 			padding: 0.75rem;
+		}
+
+		.github-card-actions {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.75rem;
+			padding: 0.25rem 0 0.1rem;
+		}
+
+		.github-refresh-btn {
+			background: rgba(59, 130, 246, 0.18);
+			color: #e5f0ff;
+			border: 1px solid rgba(59, 130, 246, 0.4);
+			border-radius: 999px;
+			padding: 0.35rem 0.9rem;
+			font-size: 0.75rem;
+			font-weight: 600;
+			transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+		}
+
+		.github-refresh-btn:hover {
+			transform: translateY(-1px);
+			background: rgba(59, 130, 246, 0.32);
+		}
+
+		.github-refresh-btn:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+		body:not(.dark-theme) .github-refresh-btn {
+			color: #1f2937;
+			background: rgba(59, 130, 246, 0.12);
+			border-color: rgba(59, 130, 246, 0.3);
 		}
 
 		.github-section-title {
@@ -664,6 +874,10 @@
 			font-size: 0.8rem;
 			font-weight: 600;
 			color: #f9fafb;
+		}
+
+		.github-lang-highlight .github-lang-bar {
+			grid-column: 1 / -1;
 		}
 
 		.github-lang-highlight .github-lang-label,

@@ -11,9 +11,9 @@
     "tools": ["Python", "Streamlit", "Google Gemini", "RAG", "Pandas", "Plotly"],
     "category": "AI Governance",
     "date": "2025",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/03.jpg",
     "images": [
-      "assets/images/placeholder.png"
+      "assets/images/fulls/03.jpg"
     ],
     "show_apps_section": true,
     "notebook_url": "",
@@ -40,9 +40,9 @@
     "tools": ["Python", "SQL", "MySQL", "Power BI", "Streamlit"],
     "category": "Risk Analytics",
     "date": "2025",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/01.jpg",
     "images": [
-      "assets/images/placeholder.png"
+      "assets/images/fulls/01.jpg"
     ],
     "show_apps_section": true,
     "notebook_url": "",
@@ -69,9 +69,9 @@
     "tools": ["Python", "SQL", "DuckDB", "Power BI", "Statistics"],
     "category": "Product Analytics",
     "date": "2025",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/04.jpg",
     "images": [
-      "assets/images/placeholder.png"
+      "assets/images/fulls/04.jpg"
     ],
     "show_apps_section": true,
     "notebook_url": "",
@@ -98,9 +98,9 @@
     "tools": ["Python", "SQL", "DuckDB", "scikit-learn", "Streamlit"],
     "category": "Decision Science",
     "date": "2025",
-    "thumbnail": "assets/images/placeholder.png",
+    "thumbnail": "assets/images/thumbs/06.jpg",
     "images": [
-      "assets/images/placeholder.png"
+      "assets/images/fulls/06.jpg"
     ],
     "show_apps_section": true,
     "notebook_url": "",

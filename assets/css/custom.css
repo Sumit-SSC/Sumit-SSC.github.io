@@ -159,10 +159,13 @@
 /* Modern Project Card Styles */
 .project-card-modern {
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	border: 1px solid color-mix(in srgb, var(--accent-primary) 18%, var(--border-muted));
+	background: color-mix(in srgb, var(--accent-primary) 4%, var(--bg-secondary));
 }
 
 .project-card-modern:hover {
 	transform: translateY(-4px);
+	box-shadow: 0 12px 24px color-mix(in srgb, var(--accent-primary) 22%, rgba(15, 23, 42, 0.12));
 }
 
 .project-link-icon {
@@ -548,12 +551,13 @@ html.dark-theme select {
 
 /* List view styling to differentiate from cards */
 .project-list-card {
-  border-left: 4px solid #e5e7eb;
+  border-left: 4px solid var(--accent-primary);
   width: 100%;
+  background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-secondary));
 }
 
 .dark-theme .project-list-card {
-  border-left-color: #334155;
+  border-left-color: var(--accent-primary);
 }
 
 .project-list-card .md\\:w-2\\/5 {
@@ -1182,8 +1186,6 @@ html {
 /* Ensure images maintain aspect ratio */
 .story-item img {
   object-fit: cover;
-  width: 100%;
-  height: 100%;
 }
 
 /* Spectral-style "more" button (like index.html) - no box, clean design */
@@ -1372,6 +1374,13 @@ body:not(.dark-theme) .dashboard-intro .more:after {
 
 .section-arrow:hover .arrow-icon {
   transform: translateY(3px);
+}
+
+/* About page header icon sizing */
+.about-page header svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
 }
 
 /* Scroll progress bar */
@@ -1772,6 +1781,8 @@ body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
   --color-accent: #764ba2;
   --color-primary-light: #818cf8;
   --color-accent-light: #a78bfa;
+  --accent-soft: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  --accent-soft-strong: color-mix(in srgb, var(--accent-primary) 18%, transparent);
 }
 
 [data-color-theme="theme-purple"] {
@@ -2729,14 +2740,12 @@ body:not(.dark-theme) footer .text-white\/60 {
   color: var(--text-primary) !important;
 }
 
-/* Journey timeline dotted line connecting dots */
+/* Journey timeline curved line + dots */
 .journey-line {
   position: absolute;
-  left: 50%;
-  top: 2.5rem;
-  height: calc(100% - 5rem);
-  width: 220px;
-  transform: translateX(-50%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0.85;
   pointer-events: none;
   z-index: 1;
@@ -2745,25 +2754,48 @@ body:not(.dark-theme) footer .text-white\/60 {
 .journey-line path {
   fill: none;
   stroke: var(--accent-primary);
-  stroke-width: 1.2;
+  stroke-width: 1.4;
   stroke-linecap: round;
   stroke-dasharray: 2 4;
 }
 
-.journey-dot {
-  z-index: 2;
+.journey-dots {
   position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 
-.journey-dot::after {
-  content: "";
+.journey-dot {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 22px;
-  border-left: 2px dashed var(--accent-primary);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  border: 3px solid var(--bg-primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transform: translate(-50%, -50%);
-  z-index: -1;
+}
+
+/* Skills icon grid layout */
+.skills-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(48px, 1fr));
+  gap: 12px;
+  justify-items: center;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .skills-icon-grid {
+    grid-template-columns: repeat(8, minmax(48px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .skills-icon-grid {
+    grid-template-columns: repeat(5, minmax(44px, 1fr));
+  }
 }
 a {
   color: var(--text-secondary);
@@ -2983,7 +3015,7 @@ button.hover\\:bg-accent:hover {
 
 .featured-card {
   background: var(--bg-secondary);
-  border: 1px solid var(--border-muted);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 22%, var(--border-muted));
   border-radius: 16px;
   overflow: hidden;
   position: relative;
@@ -2996,7 +3028,7 @@ button.hover\\:bg-accent:hover {
 
 .featured-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent-primary) 24%, rgba(15, 23, 42, 0.14));
 }
 
 .featured-card.featured-hero {
@@ -3035,6 +3067,7 @@ button.hover\\:bg-accent:hover {
   flex-direction: column;
   gap: 8px;
   justify-content: center;
+  background: color-mix(in srgb, var(--accent-primary) 6%, transparent);
 }
 
 .featured-meta {
