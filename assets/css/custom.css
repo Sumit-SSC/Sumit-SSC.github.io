@@ -2204,6 +2204,31 @@ body:not(.dark-theme) .skill-badge-active {
 
 /* Mobile-first layout tuning for Tailwind pages */
 @media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden !important; /* prevent sideways scrolling */
+    width: 100%;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  iframe,
+  embed {
+    max-width: 100%;
+  }
+
   body {
     font-size: 15px;
   }
@@ -2221,10 +2246,31 @@ body:not(.dark-theme) .skill-badge-active {
     gap: 0.75rem !important;
   }
 
+  /* Homepage-style nav (nested flex row) */
+  #nav .flex.justify-between.items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
   nav ul,
   header nav ul {
     flex-wrap: wrap !important;
     gap: 0.75rem !important;
+  }
+
+  #nav ul.flex {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  #nav .flex.items-center.gap-4,
+  #nav .flex.items-center.gap-6,
+  header nav .flex.gap-4,
+  header nav .flex.gap-3 {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    width: 100%;
   }
 
   nav a.text-2xl,
@@ -2285,6 +2331,30 @@ body:not(.dark-theme) .skill-badge-active {
   /* Contact page */
   .grid.md\\:grid-cols-2 {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Contact (GitHub card) - prevent grid overflow on mobile */
+  .github-lang-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.4rem !important;
+  }
+
+  .github-lang-main {
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .github-recent-link {
+    max-width: 100% !important;
+  }
+
+  .github-card-actions {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+  }
+
+  #github-cache-meta {
+    width: 100%;
   }
 }
 

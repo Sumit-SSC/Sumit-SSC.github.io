@@ -76,6 +76,22 @@ function initTheme() {
   if (colorIndex < 0) colorIndex = 0;
   applyColorTheme(themes[colorIndex]);
 
+  // Avoid duplicating controls if initTheme() runs more than once
+  const existingControls = document.getElementById('theme-controls');
+  if (existingControls) {
+    const existingToggleBtn = existingControls.querySelector('button');
+    if (existingToggleBtn) {
+      existingToggleBtn.innerHTML =
+        window.currentTheme === 'dark'
+          ? '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light'
+          : '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark';
+    }
+
+    const existingColorBtn = existingControls.querySelector('.theme-color-swatch');
+    if (existingColorBtn) updateColorSwatch(existingColorBtn, themes[colorIndex]);
+    return;
+  }
+
   if (nav) {
     // Add controls to navigation bar
     const controlsContainer = document.createElement('div');
@@ -109,18 +125,30 @@ function initTheme() {
     controlsContainer.appendChild(toggleBtn);
     controlsContainer.appendChild(colorBtn);
     
-    // Insert before social icons list
-    const socialList = nav.querySelector('ul.flex.gap-4');
+    // Insert before social icons list - try multiple selectors for different page structures
+    const socialList =
+      nav.querySelector('ul.flex.gap-4') ||
+      nav.querySelector('div.flex.gap-4') ||
+      nav.querySelector('div.flex.gap-3');
     if (socialList && socialList.parentElement) {
       socialList.parentElement.insertBefore(controlsContainer, socialList);
     } else {
-      // Fallback: find the flex container with items-center gap-4
-      const flexContainer = nav.querySelector('.flex.items-center.gap-4');
-      if (flexContainer) {
-        flexContainer.appendChild(controlsContainer);
+      // Fallback: find the flex container with items-center gap-4 or any flex gap-4
+      const flexContainer =
+        nav.querySelector('.flex.items-center.gap-4') ||
+        nav.querySelector('.flex.items-center.gap-3') ||
+        nav.querySelector('.flex.gap-4') ||
+        nav.querySelector('.flex.gap-3');
+      if (flexContainer && flexContainer.parentElement) {
+        flexContainer.parentElement.insertBefore(controlsContainer, flexContainer);
       } else {
-        // Last resort: append to nav
-        nav.appendChild(controlsContainer);
+        // Last resort: append to nav or find last child div
+        const lastDiv = nav.querySelector('div:last-child');
+        if (lastDiv && lastDiv.classList.contains('flex')) {
+          lastDiv.insertBefore(controlsContainer, lastDiv.firstChild);
+        } else {
+          nav.appendChild(controlsContainer);
+        }
       }
     }
   } else {

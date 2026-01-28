@@ -93,6 +93,7 @@
 						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png" alt="HTML" title="HTML"/></code>
 						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/power-bi.svg" alt="Power BI" title="Power BI"/></code>
 						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/tableau-software.svg" alt="Tableau" title="Tableau"/></code>
+						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/microsoft-excel-2013.svg" alt="Excel" title="Excel"/></code>
 						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jira.png" alt="Jira" title="Jira"/></code>
 						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/css.png" alt="CSS" title="CSS"/></code>
 						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/canva.png" alt="Canva" title="Canva"/></code>
@@ -181,7 +182,7 @@
 			"DuckDB": "https://cdn.worldvectorlogo.com/logos/duckdb-logo.svg",
 			"Power BI": "https://cdn.worldvectorlogo.com/logos/power-bi.svg",
 			Tableau: "https://cdn.worldvectorlogo.com/logos/tableau-software.svg",
-			Excel: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/excel.png",
+			Excel: "https://cdn.worldvectorlogo.com/logos/microsoft-excel-2013.svg",
 			HTML: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png",
 			CSS: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/css.png",
 			JavaScript: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/javascript.png",
@@ -197,55 +198,61 @@
 			Notion: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Notion-Dark.svg",
 			PostgreSQL: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PostgreSQL-Dark.svg",
 			PyTorch: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PyTorch-Dark.svg",
-			Markdown: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Markdown-Dark.svg"
+			Markdown: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Markdown-Dark.svg",
+			TensorFlow: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png",
+			LangChain: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/langchain_icon.png"
 		};
 
 		const skillsData = {
-			"Programming Languages": [
+			"Programming": [
 				{ name: "Python", level: 90, iconUrl: iconUrlMap.Python, color: "#3776ab" },
 				{ name: "SQL", level: 85, iconUrl: iconUrlMap.SQL, color: "#336791" },
 				{ name: "R (learning)", level: 40, iconUrl: iconUrlMap["R (learning)"], color: "#276DC3" },
+				{ name: "HTML", level: 60, iconUrl: iconUrlMap.HTML, color: "#E34F26" },
+				{ name: "CSS", level: 60, iconUrl: iconUrlMap.CSS, color: "#1572B6" },
+				{ name: "JavaScript", level: 60, iconUrl: iconUrlMap.JavaScript, color: "#F7DF1E" },
 			],
-			"Analytics & ML": [
+			"Data Analytics": [
 				{ name: "pandas", level: 90, iconUrl: iconUrlMap.pandas, color: "#150458" },
-				{ name: "scikit-learn", level: 85, iconUrl: iconUrlMap["scikit-learn"], color: "#F7931E" },
-				{ name: "XGBoost", level: 80, iconUrl: iconUrlMap.XGBoost, color: "#FF6B6B" },
 				{ name: "NumPy", level: 85, iconUrl: iconUrlMap.NumPy, color: "#4DABCF" },
-				{ name: "Matplotlib", level: 80, iconUrl: iconUrlMap.Matplotlib, color: "#11557C" },
-				{ name: "Seaborn", level: 75, iconUrl: iconUrlMap.Seaborn, color: "#3776ab" },
-			],
-			"Business Intelligence": [
 				{ name: "Power BI", level: 85, iconUrl: iconUrlMap["Power BI"], color: "#F2C811" },
 				{ name: "DAX", level: 80, icon: "fas fa-code", color: "#F2C811" },
 				{ name: "Tableau", level: 75, iconUrl: iconUrlMap.Tableau, color: "#E97627" },
 				{ name: "Excel", level: 90, iconUrl: iconUrlMap.Excel, color: "#217346" },
-			],
-			"Web & Deployment": [
-				{ name: "HTML", level: 60, iconUrl: iconUrlMap.HTML, color: "#E34F26" },
-				{ name: "CSS", level: 60, iconUrl: iconUrlMap.CSS, color: "#1572B6" },
-				{ name: "JavaScript", level: 60, iconUrl: iconUrlMap.JavaScript, color: "#F7DF1E" },
-				{ name: "Streamlit", level: 85, iconUrl: iconUrlMap.Streamlit, color: "#FF4B4B" },
-				{ name: "Git", level: 80, iconUrl: iconUrlMap.Git, color: "#F05032" },
-				{ name: "GitHub", level: 85, iconUrl: iconUrlMap.GitHub, color: "#181717" },
-			],
-			"Analytics & Testing": [
+				{ name: "DuckDB", level: 65, iconUrl: iconUrlMap["DuckDB"], color: "#F8C41C" },
+				{ name: "PostgreSQL", level: 80, iconUrl: iconUrlMap.PostgreSQL, color: "#336791" },
 				{ name: "A/B Testing", level: 80, icon: "fas fa-flask", color: "#667eea" },
 				{ name: "Statistical Analysis", level: 85, icon: "fas fa-chart-line", color: "#764ba2" },
 				{ name: "Hypothesis Testing", level: 80, icon: "fas fa-check-circle", color: "#667eea" },
 			],
-			"Tools & Libraries": [
-				{ name: "Jupyter", level: 90, iconUrl: iconUrlMap.Jupyter, color: "#F37626" },
-				{ name: "OpenCV", level: 70, icon: "fas fa-eye", color: "#5C3EE8" },
+			"Data Science & ML": [
+				{ name: "scikit-learn", level: 85, iconUrl: iconUrlMap["scikit-learn"], color: "#F7931E" },
+				{ name: "XGBoost", level: 80, iconUrl: iconUrlMap.XGBoost, color: "#FF6B6B" },
+				{ name: "Matplotlib", level: 80, iconUrl: iconUrlMap.Matplotlib, color: "#11557C" },
+				{ name: "Seaborn", level: 75, iconUrl: iconUrlMap.Seaborn, color: "#3776ab" },
 				{ name: "statsmodels", level: 75, icon: "fas fa-chart-bar", color: "#3776ab" },
-				{ name: "Anaconda", level: 75, iconUrl: iconUrlMap.Anaconda, color: "#43B049" },
-				{ name: "DuckDB", level: 65, iconUrl: iconUrlMap["DuckDB"], color: "#F8C41C" },
-				{ name: "Google Cloud", level: 70, iconUrl: iconUrlMap["Google Cloud"], color: "#4285F4" },
-				{ name: "Kubernetes", level: 65, iconUrl: iconUrlMap.Kubernetes, color: "#326CE5" },
-				{ name: "Docker", level: 80, iconUrl: iconUrlMap.Docker, color: "#2496ED" },
-				{ name: "GitHub Actions", level: 70, iconUrl: iconUrlMap["GitHub Actions"], color: "#2088FF" },
-				{ name: "Notion", level: 75, iconUrl: iconUrlMap.Notion, color: "#111827" },
-				{ name: "PostgreSQL", level: 80, iconUrl: iconUrlMap.PostgreSQL, color: "#336791" },
+			],
+			"Advanced DS - DL": [
 				{ name: "PyTorch", level: 70, iconUrl: iconUrlMap.PyTorch, color: "#EE4C2C" },
+				{ name: "TensorFlow", level: 65, iconUrl: iconUrlMap.TensorFlow, color: "#FF6F00" },
+				{ name: "OpenCV", level: 70, icon: "fas fa-eye", color: "#5C3EE8" },
+			],
+			"AI-LLM": [
+				{ name: "LangChain", level: 60, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
+			],
+			"Deployment": [
+				{ name: "Docker", level: 80, iconUrl: iconUrlMap.Docker, color: "#2496ED" },
+				{ name: "Kubernetes", level: 65, iconUrl: iconUrlMap.Kubernetes, color: "#326CE5" },
+				{ name: "GitHub Actions", level: 70, iconUrl: iconUrlMap["GitHub Actions"], color: "#2088FF" },
+				{ name: "Google Cloud", level: 70, iconUrl: iconUrlMap["Google Cloud"], color: "#4285F4" },
+				{ name: "Streamlit", level: 85, iconUrl: iconUrlMap.Streamlit, color: "#FF4B4B" },
+			],
+			"Tools & Development": [
+				{ name: "Jupyter", level: 90, iconUrl: iconUrlMap.Jupyter, color: "#F37626" },
+				{ name: "Anaconda", level: 75, iconUrl: iconUrlMap.Anaconda, color: "#43B049" },
+				{ name: "Git", level: 80, iconUrl: iconUrlMap.Git, color: "#F05032" },
+				{ name: "GitHub", level: 85, iconUrl: iconUrlMap.GitHub, color: "#181717" },
+				{ name: "Notion", level: 75, iconUrl: iconUrlMap.Notion, color: "#111827" },
 				{ name: "Markdown", level: 80, iconUrl: iconUrlMap.Markdown, color: "#111827" },
 			]
 		};
