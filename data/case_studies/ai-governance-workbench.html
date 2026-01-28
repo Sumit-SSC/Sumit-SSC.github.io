@@ -1,0 +1,91 @@
+<div class="space-y-6">
+  <p class="text-base">
+    This case study expands the project overview into a “how you’d ship this at work” narrative: the business problem, the product decisions,
+    the architecture choices, and what I’d build next to take it from prototype to production.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5">
+    <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Executive summary</div>
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Who it’s for:</strong> AI governance, risk, and compliance teams that review policies, assess coverage, and need fast stakeholder-ready readouts.</li>
+      <li><strong>What it does:</strong> Combines governance KPIs + document summarization + RAG-based Q&amp;A into one Streamlit workbench.</li>
+      <li><strong>Why it matters:</strong> Shortens time-to-insight for policy review and makes governance work more auditable and explainable.</li>
+    </ul>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">1) Problem framing (real-world)</h3>
+  <p>
+    In many orgs, governance reviews are “spreadsheet + PDF” workflows. Policies live in docs, audits live in checklists,
+    and leadership wants dashboards with clear KPIs (coverage, incidents, risk severity, review status).
+  </p>
+  <p>
+    The biggest friction is not “can we generate text?” but “can we show traceable evidence, highlight gaps, and answer questions with sources?”
+    This project treats governance like an analytics product: measurable KPIs + explainable document intelligence + repeatable review steps.
+  </p>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">2) Solution design</h3>
+  <div class="space-y-2">
+    <p><strong>Core workflow:</strong> Upload policy → summarize → extract key obligations → run a compliance checklist → ask targeted questions → export.</p>
+    <p><strong>Key UX choices:</strong></p>
+    <ul class="list-disc pl-5 space-y-1">
+      <li>Keep outputs “reviewable”: short summaries + flashcards for key obligations, not just a long paragraph.</li>
+      <li>Make Q&amp;A “governance-safe”: RAG responses should be grounded in uploaded policy text.</li>
+      <li>Support “stakeholder mode”: dashboards and exports that are presentation-ready.</li>
+    </ul>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">3) Architecture (prototype → production path)</h3>
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-5">
+    <pre class="text-xs overflow-auto"><code>UI (Streamlit)
+  ├─ Governance dashboard (KPIs, trends)
+  ├─ Document summarizer (flashcards)
+  ├─ Compliance checks (rules + scoring)
+  └─ RAG Q&amp;A (policy-grounded chat)
+
+Services (logical)
+  ├─ Document ingest &amp; chunking
+  ├─ Embeddings + vector index
+  ├─ LLM summarization + Q&amp;A
+  └─ Audit report generator (export)</code></pre>
+    <p class="text-sm text-gray-600 dark:text-gray-300 mt-3">
+      For production, I’d split the “services” into an API (FastAPI) and a background worker for indexing (Celery/RQ),
+      and store audit artifacts + metadata in a database.
+    </p>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">4) Methodology</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Policy summarization:</strong> Convert long policy text into sections + “what to do” obligations.</li>
+    <li><strong>Compliance checks:</strong> Map obligations to checklist items (prototype ruleset; extendable to frameworks like NIST AI RMF).</li>
+    <li><strong>RAG Q&amp;A:</strong> Chunk → embed → retrieve top-k → answer with citations from retrieved context.</li>
+    <li><strong>Analytics layer:</strong> KPIs framed as governance signals (coverage, completion, severity trend), designed for leadership consumption.</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">5) Results (what “good” looks like)</h3>
+  <p>
+    This is a prototype, so results are framed as product outcomes:
+    faster review cycles, fewer “where did this come from?” questions, and more consistent audit documentation.
+  </p>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Reduced time-to-first-draft:</strong> Summaries + flashcards provide an immediate starting point for reviewers.</li>
+    <li><strong>Explainability:</strong> RAG keeps Q&amp;A grounded in uploaded policy text (reduces hallucination risk vs. freeform chat).</li>
+    <li><strong>Governance readiness:</strong> The workflow naturally produces artifacts that can be exported and archived.</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">6) What I’d build next (advanced)</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Policy-to-control mapping:</strong> automatic mapping to NIST/ISO/industry controls, with human-in-the-loop review.</li>
+    <li><strong>Evidence graph:</strong> link obligations → evidence documents → audit findings → remediation tasks.</li>
+    <li><strong>Evaluation:</strong> RAG eval harness (retrieval precision/recall, answer faithfulness) + red-teaming prompts for governance.</li>
+    <li><strong>Deployment:</strong> auth, audit logs, role-based access, and secure secrets handling for enterprise use.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-5">
+    <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Media checklist (add as you iterate)</div>
+    <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+      <li>Screenshots: dashboard, summarizer, audit output, Q&amp;A with citations</li>
+      <li>Short demo video (60–120s) walking through the workflow</li>
+      <li>Sample policy PDF in repo (sanitized) + sample exported audit report</li>
+    </ul>
+  </div>
+</div>

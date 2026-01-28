@@ -37,6 +37,7 @@ function init() {
   routePage();
   initScrollAnimations();
   initScrollProgress();
+  initHomepageSectionTabs();
   
   // Force theme color application after DOM is ready
   setTimeout(() => {
@@ -375,6 +376,48 @@ function initScrollProgress() {
     const scrolled = (winScroll / height) * 100;
     progressBar.style.width = scrolled + '%';
   });
+}
+
+/* ---------- HOMEPAGE SECTION TABS (SCROLL SPY) ---------- */
+function initHomepageSectionTabs() {
+  const tabs = Array.from(document.querySelectorAll('#section-tabs .section-tab'));
+  if (!tabs.length) return;
+
+  const sections = tabs
+    .map(t => ({ tab: t, id: t.getAttribute('data-section') }))
+    .filter(x => x.id && document.getElementById(x.id))
+    .map(x => ({ ...x, el: document.getElementById(x.id) }));
+
+  if (!sections.length) return;
+
+  const setActive = (id) => {
+    tabs.forEach(t => t.classList.toggle('is-active', t.getAttribute('data-section') === id));
+  };
+
+  tabs.forEach(t => {
+    t.addEventListener('click', (e) => {
+      const id = t.getAttribute('data-section');
+      const el = id ? document.getElementById(id) : null;
+      if (!el) return;
+      e.preventDefault();
+      const headerOffset = 120;
+      const top = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0))[0];
+      if (visible?.target?.id) setActive(visible.target.id);
+    },
+    { root: null, threshold: [0.2, 0.35, 0.5] }
+  );
+
+  sections.forEach(s => observer.observe(s.el));
+  setActive(sections[0].id);
 }
 
 /* ---------- STORY TIMELINE ---------- */
@@ -928,6 +971,14 @@ function renderProject(project) {
   if (project.problem_statement) sections.push({ id: 'problem', title: 'Problem Statement', content: project.problem_statement });
   if (project.approach) sections.push({ id: 'approach', title: 'Approach / Methodology', content: project.approach });
   if (project.insights) sections.push({ id: 'insights', title: 'Insights & Outcomes', content: project.insights });
+  if (project.case_study_path) {
+    sections.push({
+      id: 'case-study',
+      title: 'Case Study (Long-form)',
+      content: `<div id="case-study-assets" class="mb-6"></div><div id="case-study-content" class="text-sm text-gray-600 dark:text-gray-300">Loading case study…</div>`,
+      isMedia: false
+    });
+  }
   if (project.notebook_url) sections.push({ id: 'notebook', title: 'Notebook (Code Walkthrough)', content: notebookEmbed(project.notebook_url), isMedia: true });
   if (project.media_notes) sections.push({ id: 'media', title: 'Media & Assets', content: project.media_notes });
   if (shouldShowAppsSection(project)) {
@@ -966,6 +1017,58 @@ function renderProject(project) {
     // Make tools clickable
     initClickableTools();
   }
+
+  // Load and inject long-form case study (if provided)
+  if (project.case_study_path) {
+    loadCaseStudyIntoProject(project);
+  }
+}
+
+async function loadCaseStudyIntoProject(project) {
+  const container = document.getElementById('case-study-content');
+  if (!container) return;
+
+  try {
+    const res = await fetch(project.case_study_path);
+    if (!res.ok) throw new Error(`Failed to load case study: ${res.status}`);
+    const html = await res.text();
+    container.innerHTML = html;
+
+    const assetsSlot = document.getElementById('case-study-assets');
+    if (assetsSlot) assetsSlot.innerHTML = caseStudyAssetsCallout(project);
+  } catch (e) {
+    container.innerHTML = `<div class="text-sm text-gray-600 dark:text-gray-300">Case study content coming soon.</div>`;
+  }
+}
+
+function caseStudyAssetsCallout(project) {
+  const links = [
+    project.github_url ? { label: 'GitHub', url: project.github_url } : null,
+    project.demo_url ? { label: 'Demo', url: project.demo_url } : null,
+    project.streamlit_url ? { label: 'Streamlit', url: project.streamlit_url } : null,
+    project.powerbi_embed_url ? { label: 'Power BI', url: project.powerbi_embed_url } : null,
+    project.video_url ? { label: 'Video', url: project.video_url } : null,
+    project.notebook_url ? { label: 'Notebook', url: project.notebook_url } : null,
+  ].filter(Boolean);
+
+  const downloads = [
+    project.pbix_download_path ? { label: 'PBIX', url: resolveAssetUrl(project, project.pbix_download_path) } : null,
+    project.slide_pdf_path ? { label: 'PDF', url: resolveAssetUrl(project, project.slide_pdf_path) } : null,
+  ].filter(Boolean);
+
+  const pill = (l) =>
+    `<a href="${l.url}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">${l.label}</a>`;
+
+  const empty = `<span class="text-xs text-gray-500 dark:text-gray-300">Add links (GitHub/Demo/Streamlit/Power BI/Video/PBIX/PDF) in <code>data/projects.json</code>.</span>`;
+
+  return `
+    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 p-4">
+      <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Explore assets</div>
+      <div class="flex flex-wrap gap-2">
+        ${links.length || downloads.length ? `${links.map(pill).join('')}${downloads.map(pill).join('')}` : empty}
+      </div>
+    </div>
+  `;
 }
 
 function section(title, content, id = null, isMedia = false) {

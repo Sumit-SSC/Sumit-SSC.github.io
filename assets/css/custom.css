@@ -99,10 +99,43 @@
 	width: 0;
 	height: 4px;
 	display: block;
-	background: linear-gradient(135deg, var(--button-bg) 0%, var(--color-accent, var(--button-bg)) 100%);
+	background: linear-gradient(135deg, var(--button-bg, #667eea) 0%, var(--color-accent, var(--button-bg, #667eea)) 100%);
 	z-index: 9999;
 	transition: width 0.1s ease-out;
 	pointer-events: none;
+}
+
+/* Homepage section tabs (Medium-style highlight) */
+#section-tabs .section-tab {
+  position: relative;
+  padding: 0.35rem 0;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+#section-tabs .section-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.35rem;
+  height: 2px;
+  width: 0%;
+  background: var(--accent-primary, #667eea);
+  transition: width 180ms ease;
+}
+
+#section-tabs .section-tab.is-active {
+  color: var(--accent-primary, #667eea) !important;
+}
+
+#section-tabs .section-tab.is-active::after {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  #section-tabs {
+    top: 0; /* if nav wraps, keep tabs reachable */
+  }
 }
 
 /* Skills Page Styles */
@@ -1391,7 +1424,7 @@ body:not(.dark-theme) .dashboard-intro .more:after {
   width: 0;
   height: 3px;
   display: block;
-  background: linear-gradient(135deg, var(--button-bg) 0%, var(--color-accent, var(--button-bg)) 100%);
+  background: linear-gradient(135deg, var(--button-bg, #667eea) 0%, var(--color-accent, var(--button-bg, #667eea)) 100%);
   z-index: 9999;
   transition: width 0.1s ease;
   pointer-events: none;

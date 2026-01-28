@@ -1,0 +1,78 @@
+<div class="space-y-6">
+  <p class="text-base">
+    This is written like a Product Analytics / Analytics Engineering case study: a reproducible SQL-first pipeline for funnel, sessionization,
+    cohort retention, and experiment readouts that can feed BI and leadership decisions.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5">
+    <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Executive summary</div>
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Dataset:</strong> ~120k users, ~1M events, ~45k orders, ~400k sessions.</li>
+      <li><strong>Outputs:</strong> session tables, funnel tables, cohort retention tables, A/B evaluation notebook, BI exports.</li>
+      <li><strong>Point of view:</strong> SQL is the source of truth; notebooks validate statistics and guard against misleading conclusions.</li>
+    </ul>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">1) Business problem</h3>
+  <p>
+    Product teams need answers to a small set of high-impact questions:
+    where users drop in the funnel, what cohorts retain, and whether an experiment genuinely improved outcomes.
+  </p>
+  <p>
+    The challenge is that raw clickstream is noisy: multiple devices, long gaps between events, partial funnels, and bots/outliers.
+    This project focuses on building “analysis-grade” tables that keep metrics consistent.
+  </p>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">2) Data pipeline design</h3>
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-5">
+    <pre class="text-xs overflow-auto"><code>raw events + orders
+  → sessionization (time-window + user stitching)
+  → funnel flags (view → add_to_cart → checkout → purchase)
+  → cohort tables (first purchase / first session cohorts)
+  → BI exports (stable grain, documented definitions)</code></pre>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">3) Methodology</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Sessionization:</strong> define session boundaries and compute per-session attributes (device, channel, conversion).</li>
+    <li><strong>Funnel:</strong> compute step completion and time-to-step metrics at user and session grain.</li>
+    <li><strong>Cohorts:</strong> compute retention curves with clear cohort definitions and date alignment.</li>
+    <li><strong>Experiment readout:</strong> difference-in-proportions tests + bootstrap confidence intervals (when appropriate) to validate lift.</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">4) Key insights (from the project)</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Funnel bottleneck:</strong> biggest drop is typically between product view and add-to-cart.</li>
+    <li><strong>Device behavior:</strong> desktop can outperform mobile on checkout completion (often due to payment friction).</li>
+    <li><strong>Cohorts:</strong> early cohorts can retain better (onboarding + product-market fit effects).</li>
+    <li><strong>Experiment rigor:</strong> z-tests + bootstrap CIs help avoid “false wins” in noisy funnels.</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">5) How this maps to a real analytics stack</h3>
+  <p>
+    The structure mirrors analytics engineering best practices:
+    documented models, consistent metric definitions, and BI datasets built from curated tables—not ad hoc joins in dashboards.
+  </p>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Data contracts:</strong> stable grains for BI (session/day/cohort).</li>
+    <li><strong>Reproducibility:</strong> deterministic SQL transformations + validation notebooks.</li>
+    <li><strong>Decision support:</strong> experiment readouts written for product managers (ship/hold + monitoring plan).</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">6) What I’d build next (advanced)</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Attribution:</strong> multi-touch attribution tables and channel quality metrics.</li>
+    <li><strong>Incrementality:</strong> holdout designs for retention/revenue impact (beyond conversion lift).</li>
+    <li><strong>Guardrails:</strong> automated anomaly detection on funnel steps and event volumes.</li>
+    <li><strong>Semantic layer:</strong> centralized metric definitions to reduce BI drift.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-5">
+    <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Media checklist (placeholders)</div>
+    <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+      <li>BI screenshots: funnel, retention cohorts, segment performance</li>
+      <li>Notebook screenshots: experiment readout, CI visualization</li>
+      <li>Short demo video: “raw → tables → dashboard → decision”</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="space-y-6">
+  <p class="text-base">
+    This case study is written like a Decision Science retention program: model risk is only useful if it connects to interventions, ROI,
+    and a measurement plan. The project includes both prediction and a retention strategy simulator.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5">
+    <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Executive summary</div>
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Dataset:</strong> 92,610 customers with realistic usage, billing, and support behavior.</li>
+      <li><strong>Models:</strong> Logistic Regression + Random Forest with explainability.</li>
+      <li><strong>Performance (project):</strong> RF ROC AUC 0.96; Precision@Top 10% = 51%.</li>
+      <li><strong>Decisioning:</strong> retention simulator ties risk scores to ROI-based interventions.</li>
+    </ul>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">1) Business context</h3>
+  <p>
+    Subscription businesses care about <strong>when</strong> churn can be influenced.
+    If you detect risk too late, the customer is already gone; too early and you waste retention budget.
+  </p>
+  <p>
+    This project targets an intervention window (31–45 days) and focuses on making churn risk actionable for a retention team.
+  </p>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">2) Data &amp; feature engineering</h3>
+  <p>
+    The strongest churn signals usually combine usage trajectory + payment friction + support burden.
+    The pipeline builds SQL feature tables that make those patterns explicit:
+  </p>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Usage trend:</strong> decline in recent period vs historical baseline</li>
+    <li><strong>Billing:</strong> payment failures, invoice delays</li>
+    <li><strong>Support:</strong> ticket volume, unresolved issues</li>
+    <li><strong>Tenure &amp; tier:</strong> lifecycle stage + plan-based risk differences</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">3) Modeling approach</h3>
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-5">
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Baseline:</strong> Logistic Regression for interpretability and calibration.</li>
+      <li><strong>Non-linear lift:</strong> Random Forest to capture interactions (e.g., usage decline + payment issues).</li>
+      <li><strong>Explainability:</strong> rank drivers for each customer/segment to guide interventions.</li>
+    </ul>
+    <p class="text-sm text-gray-600 dark:text-gray-300 mt-3">
+      In a production setting, I’d add calibration (Platt/Isotonic), stability monitoring, and backtesting by cohort.
+    </p>
+  </div>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">4) Results &amp; business readout</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Performance:</strong> RF ROC AUC 0.96; Precision@Top 10% = 51% (high-signal queue).</li>
+    <li><strong>Top drivers:</strong> usage decline, payment issues, support load.</li>
+    <li><strong>Segment risk:</strong> Free and Basic tiers higher churn vs Enterprise.</li>
+    <li><strong>Impact framing:</strong> targeted interventions ~2.3x ROI for high-risk segments in the intervention window.</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">5) Strategy simulator (why it’s important)</h3>
+  <p>
+    Models often fail in orgs because the next question is: “Okay, what do we do now?”
+    The retention simulator turns predictions into decisions:
+  </p>
+  <ul class="list-disc pl-5 space-y-1">
+    <li>Choose an offer strategy (discount, outreach, service credits)</li>
+    <li>Apply it to a risk segment</li>
+    <li>Estimate ROI and allocate budget where it performs best</li>
+  </ul>
+
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">6) Future work (advanced DS)</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li><strong>Uplift modeling:</strong> predict treatment effect (who will be saved by an offer), not just churn risk.</li>
+    <li><strong>Causal evaluation:</strong> holdout groups + CUPED to improve measurement sensitivity.</li>
+    <li><strong>Policy optimization:</strong> constrained optimization (budget, fairness, segment SLAs) for offer allocation.</li>
+    <li><strong>Deployment:</strong> feature store + batch scoring + model monitoring + drift alerts.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-5">
+    <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Media checklist (placeholders)</div>
+    <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+      <li>Simulator screenshots (segment selection, ROI output)</li>
+      <li>Model explainability screenshots (drivers by segment)</li>
+      <li>Optional: short video walkthrough of the intervention workflow</li>
+    </ul>
+  </div>
+</div>
