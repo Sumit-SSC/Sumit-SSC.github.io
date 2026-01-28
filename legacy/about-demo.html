@@ -1,0 +1,454 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<title>About (Demo) | Sumit S. Chaure</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#667eea',
+						accent: '#764ba2',
+					}
+				}
+			}
+		}
+	</script>
+	<link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="bg-gray-50">
+	<!-- Scroll Progress Bar -->
+	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
+
+	<!-- Header Navigation -->
+	<header id="header" class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
+		<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+			<a href="homepage.html" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+				</svg>
+				<span class="font-semibold">Homepage</span>
+			</a>
+			<h1 class="text-xl font-bold text-gray-800">About Me <span class="text-sm text-primary">(Enhanced Demo)</span></h1>
+			<div class="flex items-center gap-6">
+				<ul class="flex gap-6">
+					<li><a href="#intro" class="text-gray-600 hover:text-primary transition-colors">Intro</a></li>
+					<li><a href="#one" class="text-gray-600 hover:text-primary transition-colors">What I Do</a></li>
+					<li><a href="#two" class="text-gray-600 hover:text-primary transition-colors">Who I Am</a></li>
+					<li><a href="#work" class="text-gray-600 hover:text-primary transition-colors">My Work</a></li>
+					<li><a href="#journey" class="text-gray-600 hover:text-primary transition-colors">Journey</a></li>
+					<li><a href="resume.html" class="text-gray-600 hover:text-primary transition-colors">Resume</a></li>
+				</ul>
+				<div class="flex gap-3 ml-4">
+					<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="LinkedIn">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+					</a>
+					<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="GitHub">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+					</a>
+					<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="Kaggle">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.825 23.859c-.022.092-.117.141-.235.141h-3.328c-.136 0-.19-.061-.17-.188.019-.13.028-.255.028-.383 0-1.701-.526-2.731-1.596-3.153-.34-.146-.771-.22-1.304-.22-.621 0-1.235.11-1.84.33-.604.218-1.12.54-1.545.963-.425.426-.75.942-.975 1.548-.226.606-.339 1.22-.339 1.841 0 .128.01.253.029.383.02.127-.034.188-.17.188H3.41c-.118 0-.213-.049-.235-.141-.021-.09-.01-.18.035-.27.044-.09.12-.15.23-.18.11-.03.22-.05.33-.06.11-.01.22-.02.33-.02.62 0 1.234-.11 1.84-.33.606-.218 1.12-.54 1.545-.963.425-.426.75-.942.975-1.548.226-.606.339-1.22.339-1.841 0-.11-.01-.22-.02-.33-.01-.11-.03-.22-.06-.33-.03-.11-.09-.186-.18-.23-.09-.045-.18-.056-.27-.035-.09.022-.141.117-.141.235v3.328c0 .136.061.19.188.17.13-.019.255-.028.383-.028 1.701 0 2.731.526 3.153 1.596.146.34.22.771.22 1.304 0 .621-.11 1.235-.33 1.84-.218.604-.54 1.12-.963 1.545-.426.425-.942.75-1.548.975-.606.226-1.22.339-1.841.339-.11 0-.22-.01-.33-.02-.11-.01-.22-.03-.33-.06-.11-.03-.186-.09-.23-.18-.045-.09-.056-.18-.035-.27.022-.092.117-.141.235-.141h3.328c.118 0 .213.049.235.141.021.09.01.18-.035.27-.044.09-.12.15-.23.18-.11.03-.22.05-.33.06-.11.01-.22.02-.33.02-.62 0-1.234.11-1.84.33-.606.218-1.12.54-1.545.963-.425.426-.75.942-.975 1.548-.226.606-.339 1.22-.339 1.841 0 .11.01.22.02.33.01.11.03.22.06.33.03.11.09.186.18.23.09.045.18.056.27.035z"/></svg>
+					</a>
+					<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="Medium">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+					</a>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<!-- Intro Section (Full Screen) -->
+	<section id="intro" class="about-section" style="background-image: url('_backup_old_portfolio/assets/images/intro.jpg');">
+		<div class="content text-center text-white px-6 max-w-3xl">
+			<h2 class="text-5xl md:text-7xl font-bold mb-6">Hello Everyone!!!</h2>
+			<h3 class="text-2xl md:text-4xl mb-8 opacity-90">Myself Sumit S. Chaure a fellow Data enthusiast.</h3>
+			<p class="text-lg md:text-xl mb-8 leading-relaxed">
+				Welcome to <strong>my bio.</strong> Hope to connect and collaborate on innovative data science projects & contribute to the growing field of AI.
+			</p>
+			<a href="#one" class="inline-block px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white font-semibold transition-all duration-300 hover:scale-105 border-2 border-white/30">
+				Learn More
+			</a>
+		</div>
+		<!-- Big Picture style arrow to next section -->
+		<a href="#one" class="section-arrow">
+			<span class="arrow-icon"></span>
+		</a>
+	</section>
+
+	<!-- What I Do Section (Right Side) -->
+	<section id="one" class="about-section" style="background-image: url('_backup_old_portfolio/assets/images/whatdoido.jpg');">
+		<div class="content text-right text-white px-6 max-w-2xl ml-auto">
+			<h2 class="text-4xl md:text-6xl font-bold mb-6">What I Do</h2>
+			<p class="text-lg md:text-xl leading-relaxed">
+				I am a data analyst currently venturing into the field of data science and learning about the vast domain that is filled with unexplored data to be explored and work on. Currently I am self-studying by developing various projects to build my knowledge on <strong>DS-ML Field</strong>
+			</p>
+		</div>
+		<a href="#two" class="section-arrow">
+			<span class="arrow-icon"></span>
+		</a>
+	</section>
+
+	<!-- Who I Am Section (Left Side) -->
+	<section id="two" class="about-section" style="background-image: url('_backup_old_portfolio/assets/images/whoami.jpg');">
+		<div class="content text-left text-white px-6 max-w-2xl mr-auto">
+			<h2 class="text-4xl md:text-6xl font-bold mb-6">Who I Am</h2>
+			<p class="text-lg md:text-xl leading-relaxed">
+				I am <strong><em>Sumit from Pune, India,</em></strong> with a background in Mechanical Engineering. My curiosity led me to pursue PG diploma in computer science, transitioning me into IT-CS as a software engineer. I've mastered various programming languages, databases, and cloud technologies. My work exposed me to data, sparking my interest in data science. Now, I specialize in ML models & am actively seeking roles in data analysis.
+			</p>
+		</div>
+		<a href="#work" class="section-arrow">
+			<span class="arrow-icon"></span>
+		</a>
+	</section>
+
+	<!-- Resume & Journey Split Section -->
+	<section id="work" class="bg-white py-20">
+		<div class="container mx-auto px-6">
+			<div class="text-center mb-12">
+				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">Resume & Journey</h2>
+				<p class="text-lg text-gray-600 max-w-2xl mx-auto">
+					Explore my professional journey and core documents side by side. Use the buttons to focus on either panel.
+				</p>
+			</div>
+
+			<div class="flex flex-col lg:flex-row gap-8 transition-all duration-500 ease-in-out" id="resume-journey-split">
+				<!-- Resume Panel -->
+				<div id="about-resume-panel" class="flex-1 bg-gray-50 rounded-xl shadow-lg p-6 flex flex-col enhanced-animate-panel">
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="text-2xl font-bold text-gray-800">Resume</h3>
+						<div class="flex gap-2 text-sm">
+							<button id="focus-resume" class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">
+								Focus Resume
+							</button>
+							<a href="resume.html" class="px-3 py-1 rounded-full bg-primary text-white hover:bg-accent transition-colors">
+								Open Resume Page
+							</a>
+						</div>
+					</div>
+					<p class="text-gray-600 mb-4 text-sm">
+						A concise overview of my skills, experience, and education. View the full interactive version on the Resume page.
+					</p>
+					<div class="bg-gray-100 rounded-lg overflow-hidden flex-1 min-h-[320px]">
+						<embed src="assets/files/Resume.pdf" type="application/pdf" width="100%" height="100%" class="rounded hidden md:block">
+						<div class="p-4 text-center md:hidden text-gray-500 text-sm">
+							PDF preview is best viewed on larger screens. Use the button above to open the full resume.
+						</div>
+					</div>
+				</div>
+
+				<!-- Journey Panel (compact) -->
+				<div id="about-journey-panel" class="flex-1 bg-gray-50 rounded-xl shadow-lg p-6 flex flex-col max-h-[600px] overflow-y-auto enhanced-animate-panel">
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="text-2xl font-bold text-gray-800">My Journey</h3>
+						<button id="focus-journey" class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors text-sm">
+							Focus Journey
+						</button>
+					</div>
+					<p class="text-gray-600 mb-4 text-sm">
+						A quick snapshot of my path into data science. Scroll or visit the full timeline section below for more detail.
+					</p>
+
+					<div class="space-y-4 text-sm">
+						<div class="border-l-4 border-primary pl-4">
+							<p class="text-primary font-semibold uppercase tracking-wide text-xs">2024 - Present</p>
+							<p class="font-bold text-gray-800">Data Analyst & ML Practitioner</p>
+							<p class="text-gray-600">Building end-to-end ML pipelines and analytics projects.</p>
+						</div>
+						<div class="border-l-4 border-accent pl-4">
+							<p class="text-accent font-semibold uppercase tracking-wide text-xs">2022 - 2024</p>
+							<p class="font-bold text-gray-800">Software Engineer (IT-CS)</p>
+							<p class="text-gray-600">Worked with programming, databases & cloud; discovered passion for data.</p>
+						</div>
+						<div class="border-l-4 border-primary pl-4">
+							<p class="text-primary font-semibold uppercase tracking-wide text-xs">2021 - 2022</p>
+							<p class="font-bold text-gray-800">PG Diploma in Computer Science</p>
+							<p class="text-gray-600">Transitioned from Mechanical to IT-CS, mastering fundamentals.</p>
+						</div>
+						<div class="border-l-4 border-accent pl-4">
+							<p class="text-accent font-semibold uppercase tracking-wide text-xs">2017 - 2021</p>
+							<p class="font-bold text-gray-800">Mechanical Engineering</p>
+							<p class="text-gray-600 mb-2">Developed strong analytical and problem-solving mindset.</p>
+							<a href="#journey" class="inline-block text-primary hover:underline text-xs font-semibold">View full timeline ↓</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Project Gallery (below split) -->
+			<div class="mt-16">
+				<h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Project Gallery</h3>
+				<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+					<div class="gallery-item overflow-hidden rounded-lg">
+						<a href="_backup_old_portfolio/assets/images/one.jpg" class="block">
+							<img src="_backup_old_portfolio/assets/images/thumbs/01.jpg" alt="Car Price Prediction" class="w-full h-full object-cover">
+						</a>
+					</div>
+					<div class="gallery-item overflow-hidden rounded-lg">
+						<a href="_backup_old_portfolio/assets/images/fulls/02.jpg" class="block">
+							<img src="_backup_old_portfolio/assets/images/thumbs/02.jpg" alt="Oil Spill Classification" class="w-full h-full object-cover">
+						</a>
+					</div>
+					<div class="gallery-item overflow-hidden rounded-lg">
+						<a href="_backup_old_portfolio/assets/images/fulls/03.jpg" class="block">
+							<img src="_backup_old_portfolio/assets/images/thumbs/03.jpg" alt="Bank Loan Case Study" class="w-full h-full object-cover">
+						</a>
+					</div>
+					<div class="gallery-item overflow-hidden rounded-lg">
+						<a href="_backup_old_portfolio/assets/images/fulls/04.jpg" class="block">
+							<img src="_backup_old_portfolio/assets/images/thumbs/04.jpg" alt="Customer Churn Data Analysis" class="w-full h-full object-cover">
+						</a>
+					</div>
+					<div class="gallery-item overflow-hidden rounded-lg">
+						<a href="_backup_old_portfolio/assets/images/fulls/05.jpg" class="block">
+							<img src="_backup_old_portfolio/assets/images/thumbs/05.jpg" alt="IMDB Movie Analysis" class="w-full h-full object-cover">
+						</a>
+					</div>
+					<div class="gallery-item overflow-hidden rounded-lg">
+						<a href="_backup_old_portfolio/assets/images/fulls/06.jpg" class="block">
+							<img src="_backup_old_portfolio/assets/images/thumbs/06.jpg" alt="Impact Of Car Features" class="w-full h-full object-cover">
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Journey Timeline (Connected Line Style) -->
+	<section id="journey" class="min-h-screen bg-gray-100 py-20">
+		<div class="container mx-auto px-6">
+			<div class="text-center mb-16">
+				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">My Journey</h2>
+				<p class="text-lg text-gray-600">A timeline of my professional and educational journey</p>
+			</div>
+
+			<div class="max-w-5xl mx-auto relative">
+				<!-- Vertical Timeline Line -->
+				<div class="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gradient-to-b from-primary via-accent to-purple-600 h-full hidden md:block" style="top: 0; bottom: 0;"></div>
+
+				<div class="space-y-16">
+					<!-- Timeline Item 1 -->
+					<article class="story-item enhanced-animate-card relative flex flex-col md:flex-row items-center gap-8">
+						<div class="w-full md:w-5/12 md:text-right order-2 md:order-1">
+							<div class="bg-white rounded-lg shadow-lg p-6">
+								<div class="text-primary font-bold text-lg mb-2">2024 - Present</div>
+								<h3 class="text-2xl font-bold text-gray-800 mb-3">Data Analyst & ML Practitioner</h3>
+								<p class="text-gray-600 leading-relaxed">Self-studying data science and machine learning through hands-on projects. Building end-to-end ML pipelines and analytics solutions.</p>
+							</div>
+						</div>
+						<!-- Timeline Dot -->
+						<div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-primary rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+						<div class="w-full md:w-5/12 order-1 md:order-2">
+							<img src="_backup_old_portfolio/assets/images/journey.jpg" alt="Data Analyst" class="w-full h-64 object-cover rounded-lg shadow-lg">
+						</div>
+					</article>
+
+					<!-- Timeline Item 2 -->
+					<article class="story-item enhanced-animate-card relative flex flex-col md:flex-row items-center gap-8">
+						<div class="w-full md:w-5/12 order-1">
+							<img src="_backup_old_portfolio/assets/images/work.jpg" alt="Software Engineer" class="w-full h-64 object-cover rounded-lg shadow-lg">
+						</div>
+						<!-- Timeline Dot -->
+						<div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+						<div class="w-full md:w-5/12 md:text-left order-2">
+							<div class="bg-white rounded-lg shadow-lg p-6">
+								<div class="text-accent font-bold text-lg mb-2">2022 - 2024</div>
+								<h3 class="text-2xl font-bold text-gray-800 mb-3">Software Engineer (IT-CS)</h3>
+								<p class="text-gray-600 leading-relaxed">Worked with various programming languages, databases, and cloud technologies. Exposure to data sparked interest in data science.</p>
+							</div>
+						</div>
+					</article>
+
+					<!-- Timeline Item 3 -->
+					<article class="story-item enhanced-animate-card relative flex flex-col md:flex-row items-center gap-8">
+						<div class="w-full md:w-5/12 md:text-right order-2 md:order-1">
+							<div class="bg-white rounded-lg shadow-lg p-6">
+								<div class="text-primary font-bold text-lg mb-2">2021 - 2022</div>
+								<h3 class="text-2xl font-bold text-gray-800 mb-3">PG Diploma in Computer Science</h3>
+								<p class="text-gray-600 leading-relaxed">Transitioned from Mechanical Engineering to IT-CS, mastering programming fundamentals and software development.</p>
+							</div>
+						</div>
+						<!-- Timeline Dot -->
+						<div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-primary rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+						<div class="w-full md:w-5/12 order-1 md:order-2">
+							<img src="_backup_old_portfolio/assets/images/whoami.jpg" alt="PG Diploma" class="w-full h-64 object-cover rounded-lg shadow-lg">
+						</div>
+					</article>
+
+					<!-- Timeline Item 4 -->
+					<article class="story-item enhanced-animate-card relative flex flex-col md:flex-row items-center gap-8">
+						<div class="w-full md:w-5/12 order-1">
+							<img src="_backup_old_portfolio/assets/images/intro.jpg" alt="Mechanical Engineering" class="w-full h-64 object-cover rounded-lg shadow-lg">
+						</div>
+						<!-- Timeline Dot -->
+						<div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg z-10 hidden md:block"></div>
+						<div class="w-full md:w-5/12 md:text-left order-2">
+							<div class="bg-white rounded-lg shadow-lg p-6">
+								<div class="text-accent font-bold text-lg mb-2">2017 - 2021</div>
+								<h3 class="text-2xl font-bold text-gray-800 mb-3">Mechanical Engineering</h3>
+								<p class="text-gray-600 leading-relaxed">Bachelor's degree in Mechanical Engineering. Developed problem-solving mindset and analytical thinking.</p>
+							</div>
+						</div>
+					</article>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer id="footer" class="bg-gray-800 text-white py-12">
+		<div class="container mx-auto px-6 text-center">
+			<ul class="flex justify-center gap-6 mb-6">
+				<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="hover:text-primary transition-colors">LinkedIn</a></li>
+				<li><a href="https://github.com/Sumit-SC" target="_blank" class="hover:text-primary transition-colors">GitHub</a></li>
+				<li><a href="https://www.kaggle.com/mitsu00" target="_blank" class="hover:text-primary transition-colors">Kaggle</a></li>
+				<li><a href="https://medium.com/@sumitsc.work" target="_blank" class="hover:text-primary transition-colors">Medium</a></li>
+				<li><a href="mailto:mitsu02@duck.com" class="hover:text-primary transition-colors">Email</a></li>
+			</ul>
+			<p class="text-gray-400">&copy; Sumit S. Chaure | Design inspired by <a href="https://html5up.net/big-picture" class="text-white hover:text-primary transition-colors">HTML5 UP</a></p>
+		</div>
+	</footer>
+
+	<script src="assets/js/main.js"></script>
+	<script>
+		// Smooth scroll for navigation links
+		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+			anchor.addEventListener('click', function (e) {
+				e.preventDefault();
+				const target = document.querySelector(this.getAttribute('href'));
+				if (target) {
+					const headerOffset = 80;
+					const elementPosition = target.getBoundingClientRect().top;
+					const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+					window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+				}
+			});
+		});
+
+		// Arrow key navigation
+		const sections = ['intro', 'one', 'two', 'work', 'journey'];
+		let currentSectionIndex = 0;
+
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+				e.preventDefault();
+				if (currentSectionIndex < sections.length - 1) {
+					currentSectionIndex++;
+					const target = document.getElementById(sections[currentSectionIndex]);
+					if (target) {
+						const headerOffset = 80;
+						const elementPosition = target.getBoundingClientRect().top;
+						const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+						window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+					}
+				}
+			} else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+				e.preventDefault();
+				if (currentSectionIndex > 0) {
+					currentSectionIndex--;
+					const target = document.getElementById(sections[currentSectionIndex]);
+					if (target) {
+						const headerOffset = 80;
+						const elementPosition = target.getBoundingClientRect().top;
+						const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+						window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+					}
+				}
+			}
+		});
+
+		// Update current section on scroll
+		window.addEventListener('scroll', () => {
+			const scrollPos = window.pageYOffset + 200;
+			sections.forEach((section, index) => {
+				const el = document.getElementById(section);
+				if (el) {
+					const top = el.offsetTop;
+					const bottom = top + el.offsetHeight;
+					if (scrollPos >= top && scrollPos < bottom) {
+						currentSectionIndex = index;
+					}
+				}
+			});
+		});
+
+		// Scroll progress bar
+		window.addEventListener('scroll', () => {
+			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+			const scrolled = (winScroll / height) * 100;
+			document.getElementById('scroll-progress').style.width = scrolled + '%';
+		});
+
+		// Big Picture transitions - parallax and fade-in
+		const aboutSections = document.querySelectorAll('.about-section');
+		
+		// Intersection Observer for fade-in animations
+		const observerOptions = {
+			root: null,
+			rootMargin: '0px',
+			threshold: 0.3
+		};
+
+		const sectionObserver = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				}
+			});
+		}, observerOptions);
+
+		aboutSections.forEach(section => {
+			sectionObserver.observe(section);
+		});
+
+		// Parallax effect for background images
+		window.addEventListener('scroll', () => {
+			aboutSections.forEach(section => {
+				const rect = section.getBoundingClientRect();
+				const scrolled = window.pageYOffset;
+				const rate = scrolled * -0.5;
+				
+				if (rect.top < window.innerHeight && rect.bottom > 0) {
+					section.style.backgroundPositionY = `${rate}px`;
+				}
+			});
+		});
+
+		// Initial visibility for first section
+		if (aboutSections.length > 0) {
+			aboutSections[0].classList.add('visible');
+		}
+
+		// Resume/Journey split focus buttons
+		const splitContainer = document.getElementById('resume-journey-split');
+		const resumePanel = document.getElementById('about-resume-panel');
+		const journeyPanel = document.getElementById('about-journey-panel');
+		const focusResumeBtn = document.getElementById('focus-resume');
+		const focusJourneyBtn = document.getElementById('focus-journey');
+
+		if (splitContainer && resumePanel && journeyPanel && focusResumeBtn && focusJourneyBtn) {
+			const setSplit = (mode) => {
+				if (mode === 'resume') {
+					resumePanel.style.flex = '3';
+					journeyPanel.style.flex = '1.5';
+				} else if (mode === 'journey') {
+					resumePanel.style.flex = '1.5';
+					journeyPanel.style.flex = '3';
+				} else {
+					resumePanel.style.flex = '1';
+					journeyPanel.style.flex = '1';
+				}
+			};
+
+			// Default equal split
+			setSplit('equal');
+
+			focusResumeBtn.addEventListener('click', () => setSplit('resume'));
+			focusJourneyBtn.addEventListener('click', () => setSplit('journey'));
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<title>Resume | Sumit S. Chaure</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#667eea',
+						accent: '#764ba2',
+					}
+				}
+			}
+		}
+	</script>
+	<link rel="stylesheet" href="assets/css/custom.css" />
+	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+</head>
+<body class="bg-gray-50">
+	<!-- Scroll Progress Bar -->
+	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
+
+	<!-- Navigation -->
+	<header class="bg-white shadow-sm sticky top-0 z-40">
+		<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+			<a href="index.html" class="text-2xl font-bold text-gray-800 hover:text-primary transition-colors">DS-Portfolio</a>
+			<ul class="flex gap-6">
+				<li><a href="homepage.html" class="text-gray-600 hover:text-primary transition-colors">Projects</a></li>
+				<li><a href="about.html" class="text-gray-600 hover:text-primary transition-colors">About</a></li>
+				<li><a href="resume.html" class="text-primary font-semibold border-b-2 border-primary pb-1">Resume</a></li>
+				<li><a href="contact.html" class="text-gray-600 hover:text-primary transition-colors">Contact</a></li>
+			</ul>
+			<div class="flex gap-4">
+				<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="LinkedIn">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+				</a>
+				<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="GitHub">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+				</a>
+			<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="Kaggle">
+				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg>
+			</a>
+				<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-600 hover:text-primary transition-colors" aria-label="Medium">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+				</a>
+			</div>
+		</nav>
+	</header>
+
+	<!-- Main Content -->
+	<main class="py-12">
+		<div class="container mx-auto px-6">
+			<!-- Skills Badges -->
+			<div class="mb-12">
+				<h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Skills & Technologies</h2>
+				<div id="skills-badges" class="flex flex-wrap justify-center gap-3 mb-8"></div>
+				<div id="filtered-projects" class="hidden mt-8">
+					<h3 class="text-xl font-bold text-gray-800 mb-4">Projects with this skill:</h3>
+					<div id="projects-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+				</div>
+			</div>
+
+			<!-- Resume Toggle Section -->
+			<div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+				<div class="flex gap-4 justify-center mb-6">
+					<button id="toggle-resume" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">
+						Toggle View
+					</button>
+				</div>
+
+				<!-- Resume Container -->
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="resume-container">
+					<!-- Actual Resume -->
+					<div id="actual-resume" class="resume-panel">
+						<div class="flex justify-between items-center mb-4">
+							<h3 class="text-xl font-bold text-gray-800">My Resume</h3>
+							<button class="minimize-btn text-gray-600 hover:text-primary transition-colors" data-panel="actual-resume">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+								</svg>
+							</button>
+						</div>
+						<div class="bg-gray-100 rounded-lg p-4" style="height: 800px;">
+							<embed src="assets/files/Resume.pdf" type="application/pdf" width="100%" height="100%" class="rounded">
+						</div>
+					</div>
+
+					<!-- Portfolio PDF -->
+					<div id="portfolio-resume" class="resume-panel">
+						<div class="flex justify-between items-center mb-4">
+							<h3 class="text-xl font-bold text-gray-800">Portfolio Report</h3>
+							<button class="minimize-btn text-gray-600 hover:text-primary transition-colors" data-panel="portfolio-resume">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+								</svg>
+							</button>
+						</div>
+						<div class="bg-gray-100 rounded-lg p-4" style="height: 800px;">
+							<embed src="https://sumit-sc.github.io/assets/files/Portfolio%20Report%20DA.pdf" type="application/pdf" width="100%" height="100%" class="rounded">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Footer -->
+	<footer class="bg-gray-800 text-white py-8 mt-12">
+		<div class="container mx-auto px-6">
+			<div class="flex justify-center gap-6 mb-4">
+				<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="LinkedIn">
+					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+				</a>
+				<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="GitHub">
+					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+				</a>
+			<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="Kaggle">
+				<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg>
+			</a>
+				<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-400 hover:text-primary transition-colors" aria-label="Medium">
+					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+				</a>
+				<a href="mailto:sumitsc.work@gmail.com" class="text-gray-400 hover:text-primary transition-colors" aria-label="Email">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+				</a>
+			</div>
+			<p class="text-center text-gray-400">&copy; 2026 · Sumit S. Chaure · Data & Analytics Portfolio</p>
+		</div>
+	</footer>
+
+	<script src="assets/js/main.js"></script>
+	<script>
+		// Load skills from projects
+		async function loadSkills() {
+			const response = await fetch('data/projects.json');
+			const projects = await response.json();
+			const allSkills = new Set();
+			
+			projects.forEach(project => {
+				if (project.tools) {
+					project.tools.forEach(tool => allSkills.add(tool));
+				}
+			});
+
+			const badgesContainer = document.getElementById('skills-badges');
+			Array.from(allSkills).sort().forEach(skill => {
+				const badge = document.createElement('button');
+				badge.className = 'px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary hover:text-white transition-colors font-bold skill-badge';
+				badge.textContent = skill;
+				badge.dataset.skill = skill;
+				badge.addEventListener('click', () => filterProjectsBySkill(skill, projects));
+				badgesContainer.appendChild(badge);
+			});
+		}
+
+		// Filter projects by skill
+		function filterProjectsBySkill(skill, projects) {
+			const filtered = projects.filter(p => p.tools && p.tools.includes(skill));
+			const container = document.getElementById('filtered-projects');
+			const list = document.getElementById('projects-list');
+			
+			if (filtered.length === 0) {
+				container.classList.add('hidden');
+				return;
+			}
+
+			container.classList.remove('hidden');
+			list.innerHTML = filtered.map(project => `
+				<div class="bg-white rounded-lg shadow-md p-4">
+					<h4 class="font-bold text-gray-800 mb-2">${project.title}</h4>
+					<p class="text-sm text-gray-600 mb-3">${project.short_description || ''}</p>
+					<a href="project.html?id=${project.id}" class="text-primary hover:underline text-sm">View Project →</a>
+				</div>
+			`).join('');
+
+			// Highlight active skill badge
+			document.querySelectorAll('.skill-badge').forEach(b => {
+				b.classList.remove('bg-primary', 'text-white');
+				b.classList.add('bg-primary/10', 'text-primary');
+			});
+			const activeBadge = document.querySelector(`[data-skill="${skill}"]`);
+			if (activeBadge) {
+				activeBadge.classList.remove('bg-primary/10', 'text-primary');
+				activeBadge.classList.add('bg-primary', 'text-white');
+			}
+		}
+
+		// Resume toggle functionality
+		let resumeMinimized = null;
+		
+		document.getElementById('toggle-resume')?.addEventListener('click', () => {
+			if (resumeMinimized === 'actual-resume') {
+				// Restore actual resume, minimize portfolio
+				document.getElementById('actual-resume').classList.remove('minimized');
+				document.getElementById('portfolio-resume').classList.add('minimized');
+				resumeMinimized = 'portfolio-resume';
+			} else {
+				// Restore portfolio, minimize actual resume
+				document.getElementById('portfolio-resume').classList.remove('minimized');
+				document.getElementById('actual-resume').classList.add('minimized');
+				resumeMinimized = 'actual-resume';
+			}
+		});
+
+		document.querySelectorAll('.minimize-btn').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				const panel = e.target.closest('.resume-panel');
+				const panelId = panel.id;
+				const otherPanel = panelId === 'actual-resume' ? 'portfolio-resume' : 'actual-resume';
+				
+				panel.classList.add('minimized');
+				document.getElementById(otherPanel).classList.remove('minimized');
+				resumeMinimized = panelId;
+			});
+		});
+
+		// Scroll progress bar
+		window.addEventListener('scroll', () => {
+			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+			const scrolled = (winScroll / height) * 100;
+			document.getElementById('scroll-progress').style.width = scrolled + '%';
+		});
+
+		// Load skills on page load
+		loadSkills();
+	</script>
+</body>
+</html>

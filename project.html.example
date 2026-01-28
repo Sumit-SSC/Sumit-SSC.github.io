@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<title>Project | Sumit S. Chaure</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#667eea',
+						accent: '#764ba2',
+					}
+				}
+			}
+		}
+	</script>
+	<link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="bg-gray-50">
+	<!-- Scroll Progress Bar -->
+	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
+
+	<!-- Navigation - Auto-loaded from components.js -->
+	<div id="nav-container" data-style="default"></div>
+
+	<!-- Project Hero -->
+	<section id="project-hero" class="bg-gradient-to-br from-primary via-accent to-purple-900 text-white"></section>
+
+	<!-- Main Content -->
+	<main class="py-12">
+		<div class="container mx-auto px-6">
+			<div class="grid lg:grid-cols-12 gap-8">
+				<!-- Left Navigation Panel (Medium-style) -->
+				<aside id="project-nav" class="lg:col-span-2 hidden lg:block sticky top-24 self-start">
+					<div class="bg-white rounded-lg shadow-lg p-6">
+						<h3 class="text-lg font-bold text-gray-800 mb-4">Table of Contents</h3>
+						<nav id="toc-nav" class="space-y-2">
+							<!-- TOC will be generated dynamically -->
+						</nav>
+					</div>
+				</aside>
+				
+				<!-- Main Content -->
+				<div id="project-main" class="lg:col-span-8 bg-white rounded-lg shadow-lg p-8"></div>
+				
+				<!-- Right Sidebar -->
+				<aside id="project-side" class="lg:col-span-2 sticky top-24 self-start">
+					<!-- Tools and Links will be here -->
+				</aside>
+			</div>
+			
+			<!-- Giscus Comments Section -->
+			<div id="giscus-container" class="mt-12 bg-white rounded-lg shadow-lg p-8">
+				<h2 class="text-2xl font-bold text-gray-800 mb-6">Comments & Discussion</h2>
+				<div id="giscus-root"></div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Footer - Auto-loaded from components.js -->
+	<div id="footer-container" data-style="default"></div>
+
+	<!-- Load components first, then main.js -->
+	<script src="assets/js/components.js"></script>
+	<script src="assets/js/main.js"></script>
+	<!-- Giscus Comments -->
+	<script>
+		// ... rest of Giscus code ...
+	</script>
+</body>
+</html>

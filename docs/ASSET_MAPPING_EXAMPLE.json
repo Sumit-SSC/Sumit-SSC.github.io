@@ -1,0 +1,33 @@
+{
+  "id": "used-car-price",
+  "title": "Used Car Price Prediction",
+  "short_description": "End-to-end ML pipeline: EDA, feature engineering, model selection, deployment.",
+  "full_description": "Built a regression pipeline to predict used car prices using Python (pandas, scikit-learn). Applied feature engineering for age, drivetrain, fuel type, and mileage. Tuned tree-based models and evaluated with cross-validation, then exposed a simple prediction app for business users.",
+  "problem_statement": "Estimate fair market value of used cars to improve resale pricing and reduce inventory holding costs.",
+  "approach": "Data profiling and cleaning; feature engineering (age, brand segments); model benchmarking (Random Forest, XGBoost, LightGBM); SHAP for explainability; Streamlit for inference UI.",
+  "insights": "Feature importance showed mileage, age, and brand segment as the top drivers. Reduced mispricing risk and improved pricing consistency.",
+  "tools": ["Python", "pandas", "scikit-learn", "XGBoost", "Streamlit"],
+  "category": "Machine Learning",
+  "date": "2024",
+  
+  "thumbnail": "assets/images/used-car-thumbnail.png",
+  "images": [
+    "assets/images/eda-visualization.png",
+    "assets/images/model-results.png",
+    "assets/images/streamlit-app.png"
+  ],
+  "pbix_download_path": "assets/pbix/car-price-dashboard.pbix",
+  "slide_pdf_path": "assets/slides/car-price-analysis.pdf",
+  
+  "assets_repo": "Sumit-SC/Data-Science-Capstone-Project",
+  "assets_branch": "main",
+  
+  "video_url": "https://youtu.be/dQw4w9WgXcQ",
+  "streamlit_url": "https://sumit-ml-capstone-project.streamlit.app/",
+  "powerbi_embed_url": "",
+  "github_url": "https://github.com/Sumit-SC/Data-Science-Capstone-Project",
+  "demo_url": "https://nbviewer.org/github/Sumit-SC/Data-Science-Capstone-Project/tree/main/notebooks/",
+  "medium_url": "",
+  "kaggle_url": "",
+  "featured": true
+}
