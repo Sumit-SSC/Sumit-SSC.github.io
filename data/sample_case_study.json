@@ -1,0 +1,11 @@
+{
+  "id": "industry-domain-slug",
+  "title": "Industry Case Study: Domain Name",
+  "short_description": "One-line summary for the case study card. Based on real resources and data from the internet—not your projects.",
+  "category": "Industry · BFSI",
+  "case_study_path": "data/case_studies/industry-domain-slug.html",
+  "thumbnail": "assets/images/thumbs/01.jpg",
+  "tools": ["SQL", "Power BI", "Analytics"],
+  "date": "2025",
+  "case_study_read_mins": 10
+}

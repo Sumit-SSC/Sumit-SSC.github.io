@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-slate-200 dark:border-slate-700 mb-8">
+    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-slate-800 dark:text-slate-200 space-y-1">
+      <p><strong>Type:</strong> Architecture — Warehouse-Centric vs Reverse ETL</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hightouch.com/blog" target="_blank" rel="noopener" class="underline">Hightouch — Reverse ETL</a></p>
+      <p><strong>What it Shows:</strong> Sources → warehouse → BI + Reverse ETL → operational systems. Decision latency trade-off.</p>
+      <p><strong>Why It Matters:</strong> Centralized vs operational analytics.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Analytics has traditionally lived in the warehouse and BI tools. <strong>Reverse ETL</strong> syncs warehouse data back into operational systems (CRM, ads, support) so that decisions can be executed where the user is. This case study examines warehouse-first analytics vs reverse ETL and <strong>decision latency</strong> trade-offs—using <a href="https://hightouch.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Hightouch</a> and <a href="https://www.snowflake.com/guides/" target="_blank" rel="noopener" class="text-primary hover:underline">Snowflake</a> modern data stack.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Warehouse-first:</strong> Single source of truth in the warehouse; BI and analytics consume from warehouse; consistency and governance are central.</li>
+      <li><strong>Reverse ETL:</strong> Warehouse → operational systems (e.g., segment sync to CRM, audience sync to ads); enables "data-driven" actions in tools teams already use.</li>
+      <li><strong>Decision latency:</strong> Warehouse-first supports strategic and periodic decisions; reverse ETL supports operational and real-time decisions (e.g., next-best-action, audience refresh). Data freshness needs differ by use case.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Hightouch's reverse ETL content and Snowflake's modern data stack guides describe how the warehouse has become the hub—but analytics value is realized when data reaches the point of action. Reverse ETL closes the loop: warehouse data → operational systems so that marketing, sales, and support can act on the same data that BI uses.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Flow — Data to Decision</p>
+      <p><strong>Suggested Source:</strong> Snowflake — Modern Data Stack</p>
+      <p><strong>What it Shows:</strong> Ingest → warehouse → (BI + Reverse ETL → CRM/ads/support). Latency: batch vs real-time by use case.</p>
+      <p><strong>Why It Matters:</strong> Where analytics meets action.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Warehouse: curated models (e.g., customer_360, segment_assignments). Reverse ETL: sync jobs (source table/view, destination, mapping, schedule). Freshness: batch (e.g., daily) vs incremental or streaming for operational use cases. Monitor sync success, row counts, and latency.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Warehouse: freshness, quality (as in observability). Reverse ETL: sync success rate, latency (warehouse to destination), row delta per run. North star: data available where decisions are made, with freshness appropriate to the use case.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Map use cases to latency needs (strategic = batch; operational = incremental or real-time). Design warehouse models that serve both BI and reverse ETL; implement sync jobs with idempotency and error handling; monitor and alert on sync health.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated sync scheduling and retries; schema mapping and validation; optional LLM-assisted mapping from warehouse columns to destination fields; anomaly detection on sync volume.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Warehouse-first preserves single source of truth; reverse ETL increases activation of analytics (data in the right place); freshness requirements vary—batch for reporting, incremental or real-time for activation; governance (who can sync what) is critical.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: centralization (warehouse) vs. distribution (reverse ETL). Risk: sync failures or stale data in operational systems. Failure mode: reverse ETL without warehouse discipline—duplicated logic and inconsistent data.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: warehouse as single source of truth; add reverse ETL for operational use cases with appropriate freshness; govern syncs and monitor health. Outcome: analytics that both report and activate.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reverse ETL tools have destination limits; real-time sync is more complex. Improvements: event-driven sync; broader destination coverage; semantic layer driving both BI and reverse ETL.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Real-time reverse ETL; warehouse-native activation (e.g., Snowflake Cortex); unified semantic layer for BI and activation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://hightouch.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Hightouch — Reverse ETL</a></li>
+    <li><a href="https://www.snowflake.com/guides/" target="_blank" rel="noopener" class="text-primary hover:underline">Snowflake — Modern Data Stack</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Keep the warehouse as the single source of truth; use reverse ETL to put data where decisions are made. Match freshness to use case (batch vs incremental/real-time) and govern syncs so analytics both reports and activates.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,384 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Churn prediction isn't just about building accurate models—it's about turning risk scores into actionable retention strategies. This case study explores 
+    how I built an end-to-end churn analytics system that combines SQL feature engineering, ML risk scoring, and a retention strategy simulator to help 
+    subscription businesses optimize their retention spend and improve customer lifetime value.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Dataset:</strong> 92,610 customers with realistic usage, billing, and support behavior. Synthetic data that mirrors real subscription 
+      businesses with usage patterns, payment history, support tickets, and lifecycle stages.</p>
+      <p><strong>Models:</strong> Logistic Regression (baseline) + Random Forest (non-linear lift) with explainability. Both models provide risk scores 
+      and reason codes to guide interventions.</p>
+      <p><strong>Performance:</strong> Random Forest achieves ROC AUC 0.96; Precision@Top 10% = 51%. This means 51% of the highest-risk customers actually 
+      churn, making the queue highly actionable for retention teams.</p>
+      <p><strong>Decisioning:</strong> Retention simulator ties risk scores to ROI-based interventions. Teams can test different offer strategies (discounts, 
+      outreach, service credits) and see which segments deliver the best ROI.</p>
+      <p><strong>Key outcome:</strong> Targeted interventions deliver ~2.3x ROI for high-risk segments in the 31-45 day intervention window, demonstrating 
+      how prediction + decisioning can improve retention efficiency.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">The Business Context: Timing Matters in Retention</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Subscription businesses care about <strong>when</strong> churn can be influenced. If you detect risk too late, the customer is already gone. If you detect 
+    it too early, you waste retention budget on customers who weren't actually going to churn. The sweet spot is the intervention window—typically 31-45 days 
+    before churn—when customers are still engaged enough to respond to offers but at-risk enough to benefit from intervention.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    I've worked with retention teams that send generic offers to all at-risk customers, only to realize later that most of those customers wouldn't have 
+    churned anyway. The problem isn't lack of data—it's lack of precision. You need models that identify the highest-risk customers, explain why they're 
+    at risk, and help you choose the right intervention for each segment.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    This project targets the 31-45 day intervention window and focuses on making churn risk actionable for retention teams. The system doesn't just predict 
+    churn—it helps teams decide who to target, what offer to make, and how much to spend. The retention simulator turns predictions into decisions, showing 
+    ROI for different strategies before teams commit budget.
+  </p>
+
+  <div class="rounded-lg border-l-4 border-primary bg-blue-50 dark:bg-blue-900/20 p-4 my-6">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">The Core Challenge</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300">
+      How do you turn churn predictions into retention strategies that maximize ROI? The answer is combining accurate risk scoring with explainable features, 
+      segment-based targeting, and a simulator that lets teams test intervention strategies before deploying them.
+    </p>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Data & Feature Engineering: Building Predictive Signals</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    The strongest churn signals usually combine usage trajectory, payment friction, and support burden. The pipeline builds SQL feature tables that make those 
+    patterns explicit:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Usage Trend Features</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Usage decline is one of the strongest churn predictors. I compute features that capture recent vs. historical usage patterns:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Usage decline ratio:</strong> Average usage in last 30 days vs. average usage in previous 30 days. Values < 0.8 indicate significant decline.</li>
+    <li><strong>Days since last usage:</strong> How many days since the customer last used the product. Values > 7 days are concerning.</li>
+    <li><strong>Usage volatility:</strong> Coefficient of variation in daily usage. High volatility can indicate disengagement.</li>
+    <li><strong>Feature adoption:</strong> Number of product features used in last 30 days vs. historical average. Declining feature adoption signals churn risk.</li>
+  </ul>
+
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Usage Trend SQL Example</p>
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code>WITH usage_trends AS (
+  SELECT 
+    customer_id,
+    AVG(usage_minutes) FILTER (WHERE date >= CURRENT_DATE - 30) AS avg_usage_recent,
+    AVG(usage_minutes) FILTER (WHERE date < CURRENT_DATE - 30 
+                               AND date >= CURRENT_DATE - 60) AS avg_usage_historical,
+    MAX(date) AS last_usage_date,
+    STDDEV(usage_minutes) FILTER (WHERE date >= CURRENT_DATE - 30) AS usage_stddev_recent
+  FROM staging.usage_daily
+  GROUP BY customer_id
+)
+SELECT 
+  customer_id,
+  avg_usage_recent / NULLIF(avg_usage_historical, 0) AS usage_decline_ratio,
+  CURRENT_DATE - last_usage_date AS days_since_last_usage,
+  usage_stddev_recent / NULLIF(avg_usage_recent, 0) AS usage_volatility
+FROM usage_trends</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Billing & Payment Features</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Payment friction is a strong churn signal. Customers with payment failures or invoice delays are at higher risk:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Payment failure count:</strong> Number of failed payment attempts in last 90 days. Values > 2 are concerning.</li>
+    <li><strong>Invoice delay:</strong> Days between invoice date and payment date. Values > 14 days indicate payment friction.</li>
+    <li><strong>Payment method age:</strong> How long the current payment method has been on file. New payment methods can indicate account changes.</li>
+    <li><strong>Billing cycle changes:</strong> Customers who downgrade billing frequency (annual → monthly) show elevated churn risk.</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Support & Engagement Features</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Support burden and engagement patterns also predict churn:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Support ticket volume:</strong> Number of support tickets in last 90 days. High volume (> 3) can indicate frustration.</li>
+    <li><strong>Unresolved issues:</strong> Number of open/unresolved support tickets. Values > 1 are concerning.</li>
+    <li><strong>Support sentiment:</strong> Average sentiment score of support interactions (if available). Negative sentiment correlates with churn.</li>
+    <li><strong>Email engagement:</strong> Open rate and click rate for marketing emails. Declining engagement signals disinterest.</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Tenure & Lifecycle Features</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Customer lifecycle stage and plan tier also matter:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Account age:</strong> Days since signup. Very new customers (< 30 days) and very old customers (> 2 years) have different risk profiles.</li>
+    <li><strong>Plan tier:</strong> Free and Basic tiers show higher churn than Enterprise. This is a strong segmentation signal.</li>
+    <li><strong>Upgrade/downgrade history:</strong> Customers who downgrade are at higher risk. Customers who upgrade are at lower risk.</li>
+    <li><strong>Onboarding completion:</strong> Whether the customer completed onboarding steps. Incomplete onboarding correlates with early churn.</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Modeling Approach: Interpretability + Performance</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    I use a two-model approach: Logistic Regression for interpretability and calibration, and Random Forest for non-linear lift. Both models provide risk 
+    scores and reason codes to guide interventions.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-6 my-6 shadow-sm">
+    <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Model Architecture</h4>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Baseline: Logistic Regression</strong> - Provides interpretable coefficients and calibrated probabilities. Good for understanding feature 
+      importance and setting thresholds.</li>
+      <li><strong>Non-linear lift: Random Forest</strong> - Captures interactions between features (e.g., usage decline + payment issues). Provides better 
+      discrimination but requires explainability techniques (SHAP values) to understand predictions.</li>
+      <li><strong>Explainability:</strong> Both models rank drivers for each customer/segment. For Logistic Regression, coefficients show feature importance. 
+      For Random Forest, SHAP values show feature contributions to each prediction.</li>
+    </ul>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-4 leading-relaxed">
+      In a production setting, I'd add calibration (Platt scaling or Isotonic regression) to ensure predicted probabilities match actual churn rates, stability 
+      monitoring to detect model drift, and backtesting by cohort to validate performance over time.
+    </p>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Model Training Details</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The Random Forest model uses:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>200 estimators (trees) for stability</li>
+    <li>Max depth of 8 to prevent overfitting</li>
+    <li>Min samples per leaf of 100 to ensure robust splits</li>
+    <li>Class weights balanced to handle class imbalance (churn is typically 5-15% of customers)</li>
+    <li>Random state for reproducibility</li>
+  </ul>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The model is trained on a 70/30 train/test split, with cross-validation to tune hyperparameters. Feature importance is computed using permutation importance 
+    and SHAP values for explainability.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results & Business Readout: What "Good" Looks Like</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Model Performance</h4>
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <div class="text-2xl font-bold text-primary mb-2">0.96</div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">ROC AUC for Random Forest. This means the model can distinguish between churners and non-churners 
+      with 96% accuracy.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <div class="text-2xl font-bold text-primary mb-2">51%</div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Precision@Top 10%. Among the 10% highest-risk customers, 51% actually churn. This makes the 
+      queue highly actionable.</p>
+    </div>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Top Churn Drivers</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Feature importance analysis reveals the strongest churn signals:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Usage decline ratio</strong> - Customers with 30%+ usage decline have 3x higher churn risk</li>
+    <li><strong>Payment failure count</strong> - Customers with 2+ payment failures have 2.5x higher churn risk</li>
+    <li><strong>Support ticket volume</strong> - Customers with 3+ tickets in 90 days have 2x higher churn risk</li>
+    <li><strong>Days since last usage</strong> - Customers inactive for 7+ days have 1.8x higher churn risk</li>
+    <li><strong>Plan tier</strong> - Free/Basic tiers have 1.5x higher churn than Enterprise</li>
+  </ol>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Segment Risk Analysis</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Churn risk varies significantly by segment:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Free tier:</strong> 18% churn rate (baseline: 12%). High risk due to low switching costs.</li>
+    <li><strong>Basic tier:</strong> 15% churn rate. Moderate risk, often due to feature limitations.</li>
+    <li><strong>Enterprise tier:</strong> 8% churn rate. Lower risk due to higher switching costs and better onboarding.</li>
+    <li><strong>New customers (< 30 days):</strong> 22% churn rate. High risk due to incomplete onboarding or poor product-market fit.</li>
+    <li><strong>Established customers (> 1 year):</strong> 9% churn rate. Lower risk due to habit formation and value realization.</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Impact Framing: ROI for Retention</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Targeted interventions deliver ~2.3x ROI for high-risk segments in the 31-45 day intervention window. This means:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>For every $100 spent on retention offers, $230 in customer lifetime value is preserved</li>
+    <li>Focusing on top 10% highest-risk customers (51% precision) maximizes efficiency</li>
+    <li>Segment-specific offers (discounts for price-sensitive, feature upgrades for feature-limited) improve response rates</li>
+    <li>Early intervention (31-45 days before churn) is more effective than last-minute saves</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Retention Strategy Simulator: Turning Predictions into Decisions</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Models often fail in organizations because the next question is: "Okay, what do we do now?" The retention simulator turns predictions into decisions 
+    by letting teams test intervention strategies before deploying them.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">How the Simulator Works</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The simulator is a Streamlit app that lets retention teams:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Select a risk segment:</strong> Choose from top 10%, top 25%, or custom risk threshold</li>
+    <li><strong>Choose an offer strategy:</strong> Discount (10%, 20%, 30%), outreach (email, phone, in-app), or service credits</li>
+    <li><strong>Set offer parameters:</strong> Discount amount, offer duration, eligibility criteria</li>
+    <li><strong>View ROI estimates:</strong> Expected retention lift, cost per customer, net ROI, and budget allocation</li>
+    <li><strong>Compare strategies:</strong> Side-by-side comparison of different offers to choose the best one</li>
+  </ol>
+
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Simulator Logic Example</p>
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code># For each customer in selected segment:
+base_churn_prob = model.predict_proba(customer_features)[1]
+offer_response_rate = estimate_response_rate(customer_segment, offer_type)
+retention_lift = base_churn_prob * offer_response_rate * 0.3  # 30% of responders stay
+
+# ROI calculation:
+customer_lifetime_value = estimate_clv(customer_segment)
+offer_cost = calculate_offer_cost(offer_type, offer_params)
+net_roi = (retention_lift * customer_lifetime_value) - offer_cost
+
+# Aggregate across segment:
+segment_roi = sum(net_roi for all customers in segment)
+segment_cost = sum(offer_cost for all customers in segment)
+total_roi_ratio = segment_roi / segment_cost</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why the Simulator Matters</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The simulator helps retention teams:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Test before deploying:</strong> See ROI estimates before committing budget, reducing wasted spend</li>
+    <li><strong>Optimize offer strategy:</strong> Compare different offers to find the best one for each segment</li>
+    <li><strong>Allocate budget efficiently:</strong> Focus retention spend on segments with highest ROI</li>
+    <li><strong>Set expectations:</strong> Understand expected retention lift and costs before launching campaigns</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Challenges & Lessons Learned</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 1: Class Imbalance</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Churn is typically 5-15% of customers, creating class imbalance. The solution is balanced class weights in Random Forest and careful threshold selection 
+    based on precision/recall trade-offs. For retention, precision matters more than recall—it's better to miss some churners than waste budget on false positives.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 2: Feature Drift</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Customer behavior changes over time, causing feature distributions to drift. The solution is regular model retraining (monthly/quarterly) and monitoring 
+    feature distributions for drift. If features drift significantly, the model needs retraining.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 3: Intervention Window</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The 31-45 day intervention window is a balance between early detection (enough time to intervene) and precision (customers are actually at risk). Too early, 
+    and you waste budget on false positives. Too late, and customers are already gone. The solution is segment-specific windows—new customers might need 60-day 
+    windows, while established customers might only need 30-day windows.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Future Work: Advanced Decision Science</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Uplift Modeling</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Instead of predicting churn risk, predict treatment effect—who will be saved by an offer vs. who would have stayed anyway. This requires randomized 
+    experiments to measure causal effects. Uplift models (e.g., Two-Model approach, Causal Forest) can identify "persuadables" who respond to offers, improving 
+    ROI by avoiding wasted spend on "sure things" and "lost causes."
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Causal Evaluation</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Use holdout groups and CUPED (Controlled-experiment Using Pre-Experiment Data) to improve measurement sensitivity. This allows detecting smaller treatment 
+    effects with the same sample size, or detecting the same effects with smaller samples. CUPED uses pre-experiment covariates to reduce variance in treatment 
+    effect estimates.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Policy Optimization</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Use constrained optimization to allocate offers across segments, balancing:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Budget constraints:</strong> Total retention spend cannot exceed budget</li>
+    <li><strong>Fairness constraints:</strong> Ensure offers are distributed fairly across segments</li>
+    <li><strong>Segment SLAs:</strong> Minimum retention rates for key segments (e.g., Enterprise customers)</li>
+    <li><strong>ROI maximization:</strong> Allocate budget to segments with highest ROI</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This can be formulated as a linear programming problem or solved with gradient-based optimization.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Production Deployment</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For production, I'd add:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Feature store:</strong> Centralized feature computation and serving (e.g., Feast, Tecton) to ensure consistent features across training and inference</li>
+    <li><strong>Batch scoring:</strong> Score all customers daily/weekly and update risk scores in CRM or marketing automation tools</li>
+    <li><strong>Model monitoring:</strong> Track model performance (precision, recall, AUC) and alert on degradation</li>
+    <li><strong>Drift alerts:</strong> Monitor feature distributions and model predictions for drift, triggering retraining when needed</li>
+    <li><strong>A/B testing framework:</strong> Test different models, thresholds, and offer strategies to continuously improve retention</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Real-World Use Cases</h3>
+  
+  <div class="space-y-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 1: Monthly Retention Campaign</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Retention team runs monthly campaigns targeting top 10% highest-risk customers. They use the simulator to test different offers: 20% discount vs. 
+        feature upgrade vs. personalized outreach. The simulator shows that 20% discount delivers 2.3x ROI for Free tier, while feature upgrade delivers 
+        1.8x ROI for Basic tier. They allocate budget accordingly and see 15% improvement in retention rate vs. previous campaigns.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 2: Early Intervention for New Customers</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Product team notices high churn in first 30 days. They use the model to identify new customers with incomplete onboarding and usage decline. They 
+        create an automated email sequence offering onboarding assistance and feature tutorials. This reduces early churn by 25% and improves long-term retention.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 3: Payment Failure Recovery</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Billing team identifies customers with payment failures. They use the model to score these customers for churn risk and prioritize outreach. High-risk 
+        customers get proactive payment assistance (update payment method, payment plan), while low-risk customers get automated retry reminders. This reduces 
+        churn from payment failures by 40%.
+      </p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Conclusion: From Prediction to Action</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This churn retention analytics project demonstrates how ML models can be embedded into business workflows to drive decisions. By combining accurate risk 
+    scoring with explainable features, segment-based targeting, and a retention simulator, the system bridges the gap between data science and operations. 
+    The key insight is that churn prediction isn't enough—you need decision support tools that help teams choose the right interventions for the right customers 
+    at the right time.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The prototype shows what's possible with current tools (SQL, Python, scikit-learn, Streamlit), but production deployment requires attention to scale, 
+    performance, and integration with CRM and marketing automation tools. By building on a solid feature engineering foundation and focusing on decision 
+    support, this system can evolve from a proof-of-concept to a production-ready platform that helps subscription businesses improve retention and maximize 
+    customer lifetime value.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media & Assets Checklist</div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      To make this case study portfolio-ready, add the following media:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li><strong>Simulator screenshots:</strong> Segment selection interface, offer strategy comparison, ROI output visualization, budget allocation view</li>
+      <li><strong>Model explainability screenshots:</strong> Feature importance plots, SHAP value visualizations, segment risk breakdowns, driver analysis by customer</li>
+      <li><strong>Performance metrics:</strong> ROC curve, precision-recall curve, confusion matrix, calibration plot</li>
+      <li><strong>SQL code snippets:</strong> Key feature engineering queries (usage trends, payment features, support features)</li>
+      <li><strong>Demo video:</strong> 60-120 second walkthrough showing "risk scoring → segment selection → offer strategy → ROI estimation" workflow</li>
+      <li><strong>Sample exports:</strong> Example retention campaign report showing segment performance, ROI breakdown, and recommendations</li>
+    </ul>
+  </div>
+</div>

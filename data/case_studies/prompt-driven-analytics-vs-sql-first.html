@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-indigo-200 dark:border-indigo-800 mb-8">
+    <p class="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-indigo-800 dark:text-indigo-200 space-y-1">
+      <p><strong>Type:</strong> Comparison — Prompt vs SQL Workflow</p>
+      <p><strong>Suggested Source:</strong> <a href="https://towardsdatascience.com" target="_blank" rel="noopener" class="underline">Towards Data Science — LLM Analytics</a></p>
+      <p><strong>What it Shows:</strong> Left: natural language → LLM → SQL → result. Right: analyst writes SQL → run → result. Reliability and validation layers.</p>
+      <p><strong>Why It Matters:</strong> Compare reliability of LLM queries vs SQL.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    <strong>Prompt-driven analytics</strong> (natural language → LLM → SQL → result) promises accessibility; <strong>SQL-first</strong> remains the standard for reliability and control. This case study compares the two: hallucination risk, validation layers, and hybrid workflows—using <a href="https://towardsdatascience.com" target="_blank" rel="noopener" class="text-primary hover:underline">Towards Data Science</a> and <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Hallucination risk:</strong> LLMs can generate plausible but wrong SQL (wrong table, column, or logic); validation (syntax, schema, dry-run, row limits) and human review reduce but do not eliminate risk.</li>
+      <li><strong>Validation layers:</strong> Schema guardrails (only allowed tables/columns); read-only and row-limit enforcement; test against known answers for common questions; optional approval workflow for production reports.</li>
+      <li><strong>Hybrid workflows:</strong> Prompt for exploration and first draft; SQL for production and critical metrics. Use semantic layer (metric definitions) so LLM generates against consistent business logic.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Towards Data Science and ThoughtWorks Radar discuss the rise of prompt-driven analytics and the need to balance accessibility with reliability. SQL-first remains the source of truth for critical metrics and regulatory reporting; prompt-driven can accelerate ad-hoc and exploratory use when validation and guardrails are in place.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Table — Prompt vs SQL</p>
+      <p><strong>Suggested Source:</strong> ThoughtWorks Radar</p>
+      <p><strong>What it Shows:</strong> Rows: use case (ad-hoc, production, compliance). Columns: prompt-driven (pros/cons), SQL-first (pros/cons), recommendation (hybrid).</p>
+      <p><strong>Why It Matters:</strong> When to use which approach.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Prompt-driven: user question, generated SQL, validation result (pass/fail), execution result, feedback (correct/incorrect). SQL-first: query repo, versioned SQL, lineage. Semantic layer: metric definitions (name, SQL or logic, dimensions) so both humans and LLM query consistent logic.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Prompt-driven: % queries that pass validation, % that return correct result (vs. known answer or human check), time to first result. SQL-first: query reuse, lineage coverage. North star: right answer for the right use case—prompt for exploration, SQL for production.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Evaluate LLM SQL on benchmark questions (syntax, semantic correctness); A/B test prompt vs SQL for ad-hoc questions (time, accuracy). Implement validation layers and measure rejection rate and false positive/negative. Use semantic layer for critical metrics so prompt-driven generates against same logic as SQL-first.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LLM with schema and semantic layer context; validator (syntax, schema, row limit); optional auto-test against golden queries; human-in-the-loop for production. Feedback loop: flag wrong results to improve prompts or model.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Prompt-driven speeds exploration but requires validation and human review for critical use; semantic layer improves consistency between prompt and SQL; hybrid (prompt for draft, SQL for production) balances speed and reliability.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: accessibility (prompt) vs. reliability (SQL). Risk: over-trust of LLM output. Failure mode: using prompt-driven for production or compliance without validation and approval.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: use prompt-driven for ad-hoc and exploration with validation; keep SQL-first for production and compliance; adopt semantic layer and hybrid workflow. Outcome: faster exploration without sacrificing reliability where it matters.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LLM SQL quality depends on schema and prompt; complex multi-step questions still need analysts. Improvements: better schema and metric context; query benchmarks and regression tests; approval workflows for sensitive data.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Natural language to semantic-layer metrics (no raw SQL); automated correctness checks; governance for prompt-driven (who can ask what, what can be exported).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://towardsdatascience.com" target="_blank" rel="noopener" class="text-primary hover:underline">Towards Data Science — LLM Analytics</a></li>
+    <li><a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Prompt-driven analytics can accelerate exploration; SQL-first remains the standard for production and compliance. Use validation layers and hybrid workflows (prompt for draft, SQL for production) and a semantic layer so that both paths use consistent business logic.
+    </p>
+  </div>
+</div>

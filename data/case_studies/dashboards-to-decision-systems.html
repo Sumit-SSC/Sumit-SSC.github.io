@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-6 border border-emerald-200 dark:border-emerald-800 mb-8">
+    <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-emerald-800 dark:text-emerald-200 space-y-1">
+      <p><strong>Type:</strong> Decision System Architecture</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="underline">Gartner — Decision Intelligence</a></p>
+      <p><strong>What it Shows:</strong> Dashboard → alert → action → feedback. Decision automation, alerting, ownership.</p>
+      <p><strong>Why It Matters:</strong> Close the analytics-to-action gap.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Dashboards inform; <strong>decision systems</strong> close the loop from insight to action. This case study examines how to move from dashboards to decision systems: <strong>decision automation</strong>, <strong>alerting systems</strong>, and <strong>ownership models</strong>—using <a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> Decision Intelligence and <a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> analytics to action.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Decision automation:</strong> When a metric or rule triggers (e.g., threshold breach), automatically trigger an action (e.g., alert, workflow, API call) so that insight leads to action without manual check.</li>
+      <li><strong>Alerting systems:</strong> Define thresholds and owners; alert when breached; track acknowledgment and resolution. Reduce "dashboard graveyard" by pushing only actionable alerts.</li>
+      <li><strong>Ownership models:</strong> Who owns the metric, the alert, and the action? Define RACI (responsible, accountable, consulted, informed) so that decision systems have clear owners and escalation paths.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Gartner's Decision Intelligence and McKinsey's analytics-to-action describe how most analytics value is lost between insight and action. Dashboards alone do not drive decisions unless someone looks, interprets, and acts. Decision systems close the gap: alerts, automation, and ownership so that the right person takes the right action at the right time.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Flow — Dashboard to Action</p>
+      <p><strong>Suggested Source:</strong> McKinsey — Analytics to Action</p>
+      <p><strong>What it Shows:</strong> Metric → threshold → alert → owner → action (e.g., workflow, ticket) → feedback (resolution).</p>
+      <p><strong>Why It Matters:</strong> Close the loop from insight to action.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Metrics: metric_id, value, timestamp, dimensions. Alerts: alert_id, metric_id, threshold, condition, owner, triggered_at, acknowledged_at, resolved_at. Actions: action_id, alert_id, action_type (e.g., workflow, ticket), outcome. Ownership: metric_id, owner, escalation_path. Use to monitor alert coverage, response time, and resolution.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: % critical metrics with alerts and owners; mean time to acknowledge and resolve. Secondary: alert volume, false positive rate, action rate (e.g., % alerts that lead to action). North star: every critical metric has an owner and an alert; insights lead to action within SLA.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Audit: which metrics have alerts and owners? Add alerts and owners for critical metrics; define thresholds and escalation. A/B test alert design (e.g., threshold, frequency) on response rate and action rate. Monitor alert fatigue (e.g., volume, acknowledgment rate) and tune thresholds.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated threshold evaluation and alerting; workflow triggers (e.g., create ticket, notify owner); optional anomaly-based alerts (ML); LLM summarization of "what happened and what to do" for alert context; ownership and escalation in tooling.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Alerts and ownership dramatically increase action rate vs. dashboards alone; decision automation (e.g., auto-trigger workflow) closes the loop further; alert fatigue is reduced when thresholds are tuned and only actionable alerts are sent.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: alert volume (sensitive) vs. missed events (insensitive). Risk: alert fatigue; over-automation. Failure mode: dashboards without alerts or owners—no one acts.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: move from dashboards to decision systems—alerts, automation, ownership. Outcome: analytics that drives action and measurable impact.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Not all metrics are actionable; ownership can be ambiguous. Improvements: decision catalog (which metrics drive which decisions); integration with workflow and ticketing; feedback loop (did action resolve the issue?).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Full decision automation (auto-action within guardrails); causal alerts (why did metric change?); integration with operational runbooks.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Decision Intelligence</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Analytics to Action</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Close the analytics-to-action gap by moving from dashboards to decision systems: alerting, automation, and ownership so that insights lead to action and impact.
+    </p>
+  </div>
+</div>

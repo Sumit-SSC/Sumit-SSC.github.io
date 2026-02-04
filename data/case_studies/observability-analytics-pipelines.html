@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl p-6 border border-amber-200 dark:border-amber-800 mb-8">
+    <p class="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Pipeline Observability Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.montecarlodata.com/blog/" target="_blank" rel="noopener" class="underline">Monte Carlo — Data Observability</a></p>
+      <p><strong>What it Shows:</strong> Pipeline stages with freshness, volume, and quality checks; alerts and lineage.</p>
+      <p><strong>Why It Matters:</strong> Monitor data like production systems.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Analytics pipelines should be monitored like production systems: <strong>data freshness</strong>, <strong>volume anomalies</strong>, and <strong>trust metrics</strong>. This case study covers observability for analytics pipelines—using <a href="https://www.montecarlodata.com/blog/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo</a> and <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog</a> data quality and observability.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Data freshness:</strong> When was the last successful run? When did data last arrive? SLA (e.g., daily by 9am) and alerts when breached.</li>
+      <li><strong>Volume anomalies:</strong> Row counts, key metric aggregates (e.g., sum of revenue) by run or day; detect sudden drops or spikes that indicate pipeline or source issues.</li>
+      <li><strong>Trust metrics:</strong> Schema validation, null rates, duplicate checks, referential integrity; surface so consumers know when to trust the data.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Monte Carlo's data observability blog and Datadog's data quality content emphasize that data pipelines fail in ways that are invisible without monitoring—late data, schema drift, volume drops. Observability (freshness, volume, schema, quality) gives teams the same visibility they have for application logs and metrics.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard — Pipeline Health</p>
+      <p><strong>Suggested Source:</strong> Monte Carlo / Datadog</p>
+      <p><strong>What it Shows:</strong> Tables/models with freshness (last run, SLA status), volume trend, quality score; alert log.</p>
+      <p><strong>Why It Matters:</strong> Single pane for pipeline health.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Pipeline metadata: run_id, model/table, start_time, end_time, rows_affected, status. Quality checks: null_rate, duplicate_count, schema_diff. Observability store: time-series of freshness, volume, and quality per asset; alerts when thresholds are breached.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: % assets within freshness SLA; mean time to detect (MTTD) and mean time to resolve (MTTR) for incidents. Secondary: volume anomaly rate, quality check pass rate. North star: zero undetected data incidents—all issues surfaced before consumers are impacted.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Instrument pipelines with run metadata and quality checks; store time-series of freshness, volume, and quality; set thresholds and alert (e.g., Slack, PagerDuty); review MTTD/MTTR and tune thresholds. Use lineage to scope impact when an upstream asset fails.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Anomaly detection on volume and key metrics (e.g., ML-based); auto-suggested thresholds from historical variance; optional root-cause suggestions (e.g., upstream failure, schema change); LLM summarization of incident for triage.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Freshness is the highest-impact signal; volume anomalies catch many pipeline and source issues; schema and quality checks prevent silent corruption; lineage accelerates impact analysis.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: alert volume (sensitive) vs. missed incidents (insensitive). Risk: alert fatigue. Failure mode: monitoring only freshness and missing schema or quality issues.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt observability for critical pipelines—freshness, volume, quality; alert and review MTTD/MTTR. Outcome: faster detection and resolution of data issues; higher trust in analytics.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Semantic quality (e.g., "revenue is wrong") is hard to automate. Improvements: business-rule checks; consumer feedback loop; integration with data contracts.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Predictive alerts (before breach); cross-pipeline correlation; regulatory and compliance reporting (lineage + SLA).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.montecarlodata.com/blog/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo — Data Observability</a></li>
+    <li><a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog — Data Observability</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Monitor analytics pipelines like production: freshness, volume, and quality; alert on breach and use lineage for impact. Observability reduces undetected data failures and builds trust.
+    </p>
+  </div>
+</div>

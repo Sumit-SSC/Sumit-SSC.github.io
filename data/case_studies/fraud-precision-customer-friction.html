@@ -1,0 +1,510 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-red-200 dark:border-red-800 mb-8">
+    <p class="text-sm font-semibold text-red-900 dark:text-red-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-red-800 dark:text-red-200 space-y-1">
+      <p><strong>Type:</strong> Decision Pipeline / Fraud Flow</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="underline">Deloitte — Fraud Analytics</a></p>
+      <p><strong>What it Shows:</strong> Transaction → Rules + ML score → Accept / Review / Decline → Ops queue. Highlight precision vs friction trade-off.</p>
+      <p><strong>Why It Matters:</strong> Frames fraud as a balance between loss prevention and customer experience.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Fraud systems that block every suspicious transaction minimize loss but maximize false positives—legitimate users get declined, support load spikes, and trust drops. This case study examines how to design fraud analytics that balance <strong>precision</strong> (catching fraud) with <strong>customer friction</strong> (false declines, step-up challenges)—using <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte</a> and <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe</a> fraud prevention frameworks.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Precision vs friction:</strong> Lowering the fraud block threshold reduces loss but increases false positives and customer friction; the optimum is a function of loss cost vs lifetime value at risk.</li>
+      <li><strong>Fraud lifecycle:</strong> From first touch (account creation, login) through transaction and post-purchase; signals and rules should align to each stage.</li>
+      <li><strong>Label delays:</strong> Fraud labels arrive late (chargebacks, disputes); use proxy labels and semi-supervised methods for real-time scoring while monitoring label lag.</li>
+      <li><strong>Rules + ML layering:</strong> Rules for hard blocks (e.g., known bad); ML for rank-ordering; human review for gray zone; step-up (e.g., 3DS) to reduce friction for borderline cases.</li>
+      <li><strong>Ops KPIs:</strong> Review queue depth, time-to-decision, overturn rate, and analyst accuracy to keep the human loop effective.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The False Decline Problem</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Merchants and payment platforms face a fundamental tension: minimize fraud loss while minimizing friction for legitimate users. According to <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte's fraud analytics research</a>, false declines—legitimate transactions incorrectly blocked as fraud—can cost merchants more in lost revenue than actual fraud losses. The mechanism: a declined customer may abandon the purchase entirely, costing not just the immediate transaction but potentially lifetime value.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe's fraud prevention guides</a> describe how leading platforms use layered approaches: rules for hard blocks, ML for risk scoring, step-up authentication (3DS) for borderline cases, and human review for gray zones. The key insight is that different risk levels require different interventions, not a binary accept/decline decision.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Business Stakes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For e-commerce platforms, fraud rates typically range from 0.5-2% of transaction volume, while false decline rates can be 5-15% if systems are overly conservative. According to <a href="https://www.gartner.com/en/finance/insights/fraud-detection" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's fraud detection research</a>, a 1% reduction in false decline rate can increase revenue by $50-200K annually for mid-sized merchants, often exceeding the value of preventing additional fraud. The optimal operating point balances these costs.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Precision–Recall / ROC Curve</p>
+      <p><strong>Suggested Source:</strong> Stripe — Fraud Prevention (threshold tuning)</p>
+      <p><strong>What it Shows:</strong> Precision vs recall (or false decline rate) at different score thresholds; optimal operating point by cost of fraud vs cost of false decline.</p>
+      <p><strong>Why It Matters:</strong> Supports threshold and policy decisions.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Event Taxonomy for Fraud Analytics</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud detection requires tracking events across the customer lifecycle, from account creation through transaction completion and post-purchase disputes. The typical schema captures:
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Core Fraud Event Schema
+event_id              UUID
+user_id               STRING
+transaction_id        STRING
+event_type            ENUM('account_created', 'login', 'transaction_initiated',
+                          'transaction_completed', 'chargeback_filed', 
+                          'dispute_resolved', 'step_up_challenge')
+timestamp_utc         TIMESTAMP
+device_fingerprint    STRING
+ip_address            STRING
+geo_country           STRING
+amount                DECIMAL
+merchant_category     STRING
+payment_method        STRING
+velocity_features     JSON          -- Transactions in last 1h, 24h, 7d
+behavioral_features   JSON          -- Historical patterns
+risk_score            FLOAT         -- ML model output
+decision              ENUM('accept', 'decline', 'review', 'step_up')
+    </pre>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Label Delay and Proxy Labels</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A critical challenge in fraud analytics is <strong>label delay</strong>: confirmed fraud labels arrive weeks or months after transactions (chargeback windows are typically 90-120 days). According to <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe's fraud prevention research</a>, this delay requires using proxy labels for real-time model training:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Proxy fraud labels:</strong> Transactions declined by rules or high-confidence ML scores (treated as likely fraud)</li>
+    <li><strong>Proxy legit labels:</strong> Transactions accepted and not disputed within a shorter window (e.g., 30 days)</li>
+    <li><strong>Delayed model retraining:</strong> Models retrain periodically (weekly/monthly) as confirmed labels arrive</li>
+  </ul>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Label Assignment Logic
+WITH transaction_labels AS (
+  SELECT 
+    transaction_id,
+    transaction_date,
+    decision,
+    risk_score,
+    -- Proxy label: decline = likely fraud
+    CASE WHEN decision = 'decline' THEN 'fraud' ELSE NULL END AS proxy_fraud_label,
+    -- Confirmed label: chargeback = confirmed fraud
+    CASE WHEN chargeback_filed = TRUE THEN 'fraud' 
+         WHEN transaction_date < CURRENT_DATE - 120 AND chargeback_filed = FALSE THEN 'legit'
+         ELSE NULL END AS confirmed_label
+  FROM transactions
+)
+SELECT 
+  transaction_id,
+  COALESCE(confirmed_label, proxy_fraud_label) AS label,
+  CASE WHEN confirmed_label IS NOT NULL THEN 'confirmed' ELSE 'proxy' END AS label_type
+FROM transaction_labels;
+    </pre>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Feature Engineering for Fraud Detection</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Effective fraud models rely on rich feature sets that capture behavioral patterns and risk signals. According to <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte's fraud analytics research</a>, key feature categories include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Device fingerprinting:</strong> Browser, OS, screen resolution, timezone consistency</li>
+    <li><strong>Velocity features:</strong> Transaction count and amount in last 1h, 24h, 7d</li>
+    <li><strong>Behavioral patterns:</strong> Typical transaction times, amounts, merchant categories</li>
+    <li><strong>Network signals:</strong> IP reputation, VPN/proxy detection, geo-velocity (impossible travel)</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Total Cost Framework</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud analytics should optimize for <strong>total cost</strong>, not fraud loss alone. The total cost includes:
+  </p>
+  
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
+      <h4 class="font-bold text-red-900 dark:text-red-100 mb-2">Fraud Loss</h4>
+      <ul class="text-sm text-red-700 dark:text-red-300 list-disc pl-4 space-y-1">
+        <li>Chargeback amount</li>
+        <li>Dispute processing costs</li>
+        <li>Merchant fees</li>
+        <li>Reputational risk</li>
+      </ul>
+    </div>
+    <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
+      <h4 class="font-bold text-orange-900 dark:text-orange-100 mb-2">Friction Cost</h4>
+      <ul class="text-sm text-orange-700 dark:text-orange-300 list-disc pl-4 space-y-1">
+        <li>Lost revenue from false declines</li>
+        <li>Customer lifetime value at risk</li>
+        <li>Support ticket costs</li>
+        <li>Brand reputation damage</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- IMAGE 2: After Metrics & KPIs -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Cost Curve / Optimization Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="underline">Stripe — Fraud Prevention Threshold Tuning</a></p>
+      <p><strong>What it Shows:</strong> X-axis = fraud block threshold (score), Y-axis = total cost ($). Two curves: fraud loss (decreasing) and friction cost (increasing). Sum curve shows optimal operating point where total cost is minimized. Annotated with example thresholds and costs.</p>
+      <p><strong>Why It Matters:</strong> Visualizes the core trade-off and optimal operating point—key evidence for threshold selection.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Python/Matplotlib with synthetic data showing the cost curves and optimal point.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Precision-Recall Trade-off</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The fundamental trade-off in fraud detection is between precision (of blocks that are fraud) and recall (of fraud that is blocked). According to <a href="https://www.gartner.com/en/finance/insights/fraud-detection" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's fraud detection research</a>, lowering the block threshold improves recall (catches more fraud) but degrades precision (more false positives). The optimal point depends on the relative cost of fraud vs. false declines.
+  </p>
+  
+  <div class="overflow-x-auto my-6">
+    <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Threshold</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Precision</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Recall</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">False Decline Rate</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Total Cost</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">0.95 (Very Conservative)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">98%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">45%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">2%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High (missed fraud)</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">0.80 (Balanced)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">85%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">78%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">8%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">Optimal</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">0.50 (Aggressive)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">65%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">92%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">18%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High (false declines)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Ops KPIs for Human Review</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When transactions fall into the gray zone (moderate risk scores), human review is essential. Key operational metrics include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Queue depth:</strong> Number of transactions awaiting review (target: < 100)</li>
+    <li><strong>Time-to-decision:</strong> Average time from queue entry to decision (target: < 2 hours)</li>
+    <li><strong>Overturn rate:</strong> % of ML declines that reviewers approve (indicates threshold calibration)</li>
+    <li><strong>Analyst accuracy:</strong> % of reviewer decisions that align with eventual chargeback outcomes</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Testing Threshold and Model Changes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The most direct way to optimize fraud systems is A/B testing threshold or model changes. However, fraud experiments require careful design because:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Label delay:</strong> Fraud outcomes take weeks/months to materialize, requiring long experiment durations</li>
+    <li><strong>Holdout groups:</strong> A subset of transactions must be held out from fraud systems to measure true fraud rates (unbiased by intervention)</li>
+    <li><strong>Revenue impact:</strong> Changes affect both fraud loss and legitimate transaction volume</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    According to <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe's fraud prevention research</a>, experiments should run for at least 4-6 weeks to capture full chargeback windows, with holdout groups representing 1-5% of traffic to measure baseline fraud rates.
+  </p>
+  
+  <!-- IMAGE 3: After Analytical Approach -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Experiment Design Diagram / A/B Test Flow</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="underline">Deloitte — Fraud Analytics Experimentation</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: Transaction → Random Assignment → Control (baseline threshold) vs Treatment (new threshold) → Measure: fraud rate, decline rate, revenue → Holdout Group (no intervention) → Measure true fraud rate → Compare outcomes after 6 weeks.</p>
+      <p><strong>Why It Matters:</strong> Shows how to design fraud experiments that account for label delay and measure true impact—key methodology for fraud analytics teams.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Excalidraw with annotations explaining holdout groups and label delay.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Segment-Specific Threshold Optimization</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Different customer segments have different fraud risk profiles and lifetime values, justifying segment-specific thresholds. According to <a href="https://www.gartner.com/en/finance/insights/fraud-detection" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's fraud detection research</a>, common segmentation includes:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>New vs returning customers:</strong> New customers have less behavioral history, requiring more conservative thresholds</li>
+    <li><strong>High-value vs low-value:</strong> High-value customers justify more review resources and lower thresholds</li>
+    <li><strong>Geographic segments:</strong> Different regions have different fraud patterns and chargeback rates</li>
+    <li><strong>Payment method:</strong> Credit cards vs digital wallets have different risk profiles</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Vintage Analysis for Model Decay</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud models decay over time as fraudsters adapt and patterns change. <strong>Vintage analysis</strong>—tracking fraud rates by transaction cohort over time—identifies when models need retraining. According to <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte's fraud analytics research</a>, models typically need retraining every 3-6 months, with more frequent updates during periods of high fraud activity or new attack patterns.
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Vintage Analysis: Fraud Rate by Transaction Cohort
+WITH transaction_cohorts AS (
+  SELECT 
+    DATE_TRUNC(transaction_date, WEEK) AS cohort_week,
+    COUNT(*) AS total_transactions,
+    SUM(CASE WHEN chargeback_filed = TRUE THEN 1 ELSE 0 END) AS fraud_count
+  FROM transactions
+  WHERE transaction_date >= CURRENT_DATE - 180
+  GROUP BY cohort_week
+)
+SELECT 
+  cohort_week,
+  total_transactions,
+  fraud_count,
+  ROUND(100.0 * fraud_count / total_transactions, 2) AS fraud_rate_pct,
+  -- Compare to baseline (first 4 weeks)
+  ROUND(100.0 * fraud_count / total_transactions - 
+        AVG(CASE WHEN cohort_week <= DATE_TRUNC(CURRENT_DATE - 120, WEEK) 
+            THEN 100.0 * fraud_count / total_transactions END) OVER (), 2) AS fraud_rate_delta
+FROM transaction_cohorts
+ORDER BY cohort_week DESC;
+    </pre>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Real-Time ML Scoring</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Modern fraud systems use machine learning models (gradient boosting, neural networks) to score transactions in real-time (< 100ms latency). According to <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe's fraud prevention research</a>, ML models achieve 20-30% better precision-recall than rule-based systems when trained on rich feature sets. Key automation patterns include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Model versioning:</strong> A/B test new model versions against production, gradually rolling out winners</li>
+    <li><strong>Online learning:</strong> Some systems update models incrementally as new labels arrive, though batch retraining is more common</li>
+    <li><strong>Ensemble methods:</strong> Combine multiple models (e.g., gradient boosting + neural network) for better accuracy</li>
+  </ul>
+  
+  <!-- IMAGE 4: Dashboard Mockup -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup / Fraud Operations Center</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/finance/insights/fraud-detection" target="_blank" rel="noopener" class="underline">Gartner — Fraud Detection Dashboards</a></p>
+      <p><strong>What it Shows:</strong> 4-panel fraud operations dashboard: (1) Real-time fraud rate and false decline rate trends, (2) Review queue with risk scores and prioritization, (3) Model performance metrics (precision, recall) by segment, (4) Alert log for threshold breaches and anomalies.</p>
+      <p><strong>Why It Matters:</strong> Shows what a modern fraud operations platform looks like—relevant for analytics engineers building fraud systems.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Build a Figma mockup inspired by Gartner/Deloitte fraud dashboard documentation.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Layered Decision Architecture</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Effective fraud systems use layered architectures where different risk levels trigger different interventions:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Rules engine (hard blocks):</strong> Known bad actors, blacklisted devices/IPs, impossible travel patterns</li>
+    <li><strong>ML scoring (rank-ordering):</strong> Risk scores for all transactions, used to prioritize review queue</li>
+    <li><strong>Step-up authentication (3DS):</strong> For borderline cases, require additional authentication rather than declining</li>
+    <li><strong>Human review (gray zone):</strong> Moderate risk scores (e.g., 0.6-0.8) go to review queue for analyst decision</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    According to <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte's fraud analytics research</a>, layered approaches achieve 15-25% better total cost than single-layer systems because they reduce false declines without materially increasing fraud.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">LLM-Assisted Case Summarization</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Large language models enable automated summarization of transaction context for human reviewers. Rather than analysts manually reviewing raw data, LLMs can:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Generate human-readable summaries of transaction features and risk signals</li>
+    <li>Highlight anomalies (e.g., "First transaction from new device in different country")</li>
+    <li>Suggest decision rationale based on historical patterns</li>
+    <li>Surface similar historical cases for context</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This follows <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's framework</a> for AI augmentation: automate routine analysis, escalate complex cases to human judgment.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Layered Approaches Outperform Single-Layer Systems</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Across multiple platforms and industries, layered fraud systems (rules + ML + step-up + review) consistently achieve 15-25% lower total cost than single-layer systems. According to <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte's fraud analytics research</a>, the mechanism is precision: rules catch obvious fraud, ML ranks moderate risk, step-up reduces false declines, and review handles edge cases. Each layer optimizes for different risk levels.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Segment-Specific Thresholds Improve Total Cost</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Platforms that use segment-specific thresholds (e.g., lower threshold for new customers, higher for high-value customers) achieve 10-20% better total cost than uniform thresholds. The mechanism: different segments have different fraud rates and lifetime values, justifying different risk tolerances. According to <a href="https://www.gartner.com/en/finance/insights/fraud-detection" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's fraud detection research</a>, new customers have 3-5x higher fraud rates than returning customers, justifying more conservative thresholds.
+  </p>
+  
+  <!-- IMAGE 5: After Key Findings -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Bar Chart / Comparison by Segment</p>
+      <p><strong>Suggested Source:</strong> <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="underline">Stripe — Fraud Prevention by Segment</a></p>
+      <p><strong>What it Shows:</strong> Grouped bar chart comparing uniform vs segment-specific thresholds. Segments: New Customers, Returning Customers, High-Value, Low-Value. Metrics: Total Cost ($), Fraud Rate (%), False Decline Rate (%). Segment-specific shows lower total cost across all segments.</p>
+      <p><strong>Why It Matters:</strong> Quantifies the benefit of segment-specific optimization—key evidence for the case study thesis.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Power BI or Python with synthetic data illustrating the documented pattern.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Step-Up Authentication Reduces False Declines Without Increasing Fraud</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Step-up authentication (3DS, SMS verification) for borderline risk scores reduces false decline rates by 30-50% without materially increasing fraud rates. According to <a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe's fraud prevention research</a>, the mechanism is friction: legitimate customers complete authentication, while fraudsters abandon. This enables lower thresholds (more borderline cases) without accepting more fraud.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 4: Label Delay Must Be Accounted For</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud labels arrive 90-120 days after transactions (chargeback windows), requiring proxy labels for real-time model training. However, proxy labels have noise: some declined transactions are legitimate, some accepted transactions become fraud. Vintage analysis shows that models trained only on proxy labels can have 10-20% accuracy degradation compared to models trained on confirmed labels. The solution is periodic retraining as confirmed labels arrive.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 1: Precision vs Recall</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Lowering the fraud block threshold improves recall (catches more fraud) but degrades precision (more false positives). The optimal point depends on the relative cost of fraud vs false declines. For high-value merchants with low fraud tolerance, precision matters more; for high-volume merchants with thin margins, recall matters more.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 2: Automation vs Human Review</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    More automation (higher thresholds, less review) reduces operational costs but increases false declines. More human review improves accuracy but increases costs and decision latency. The optimal balance depends on review capacity and cost per review.
+  </p>
+  
+  <!-- IMAGE 6: Decision Flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow Diagram / Fraud Pipeline</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="underline">Deloitte — Fraud Decision Framework</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: Transaction → Rules Check → "Known Bad?" → Yes → Decline → No → ML Score → "Score > 0.9?" → Yes → Decline → "Score 0.6-0.9?" → Yes → Review Queue → "Score 0.4-0.6?" → Yes → Step-Up → "Score < 0.4?" → Yes → Accept. Each decision point annotated with expected outcomes.</p>
+      <p><strong>Why It Matters:</strong> Provides a repeatable framework for fraud decisions—valuable for operations teams building fraud systems.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Excalidraw/Figma with color-coded decision nodes (red=decline, yellow=review/step-up, green=accept).</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Adversarial Adaptation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraudsters adapt to fraud systems, learning thresholds and patterns. A system that blocks all transactions from certain IP ranges will see fraudsters switch IPs. A system that relies heavily on device fingerprinting will see fraudsters use different devices. The mitigation is continuous monitoring, periodic threshold review, and diversity of signals (don't rely on a single feature).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Ignoring Label Delay</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Models trained only on proxy labels (declines) can learn to decline everything, because declines are treated as fraud. This creates a feedback loop where the model becomes overly conservative. The fix is to use holdout groups (transactions not subject to fraud systems) to measure true fraud rates and calibrate models accordingly.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Based on published case studies and industry benchmarks:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Total cost reduction:</strong> Platforms that shift from single-layer to layered fraud systems see 15-25% reductions in total cost (fraud + friction)</li>
+    <li><strong>False decline reduction:</strong> Segment-specific thresholds and step-up authentication reduce false decline rates by 30-50%, increasing revenue by $100-500K annually for mid-sized merchants</li>
+    <li><strong>Review efficiency:</strong> LLM-assisted case summarization reduces review time by 40-60%, enabling faster decisions and lower ops costs</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The decision framework that emerges from this analysis:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Optimize for total cost:</strong> Minimize fraud loss + friction cost, not fraud rate alone</li>
+    <li><strong>Use layered architecture:</strong> Rules for hard blocks, ML for scoring, step-up for borderline, review for gray zone</li>
+    <li><strong>Set segment-specific thresholds:</strong> Different risk tolerances for new vs returning, high-value vs low-value customers</li>
+    <li><strong>Account for label delay:</strong> Use proxy labels for real-time training, confirmed labels for periodic retraining</li>
+    <li><strong>Monitor ops KPIs:</strong> Track queue depth, time-to-decision, overturn rate, and analyst accuracy</li>
+    <li><strong>Continuous adaptation:</strong> Monitor for adversarial patterns and refresh models every 3-6 months</li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Limitations of This Analysis</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Label delay and proxy quality:</strong> Proxy labels (declines) are noisy indicators of fraud; confirmed labels arrive too late for real-time model updates</li>
+    <li><strong>Cold-start for new users/merchants:</strong> New users have limited behavioral history, making risk assessment difficult; new merchants have no historical fraud patterns</li>
+    <li><strong>Adversarial adaptation:</strong> Fraudsters continuously adapt to fraud systems, requiring constant monitoring and model updates</li>
+    <li><strong>Regulatory constraints:</strong> PSD2, strong customer authentication, and other regulations constrain fraud system design</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">What We'd Improve</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Better proxy labels:</strong> Use multiple proxy signals (decline, step-up completion, review outcome) to improve label quality</li>
+    <li><strong>Causal evaluation of step-up impact:</strong> Use causal inference methods to measure true impact of step-up authentication on fraud and friction</li>
+    <li><strong>Adaptive thresholds:</strong> ML models that learn optimal thresholds by segment and adapt to changing fraud patterns</li>
+    <li><strong>Real-time model updates:</strong> Online learning systems that update models incrementally as new labels arrive, reducing label delay impact</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Real-Time Model Updates with Delayed Labels</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Online learning systems will update fraud models incrementally as confirmed labels arrive, reducing the impact of label delay. This enables models to adapt to new fraud patterns faster while maintaining accuracy.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Explainability for Decline Reasons</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Regulatory requirements (e.g., PSD2) and customer expectations demand explainable fraud decisions. ML models will provide human-readable explanations for declines (e.g., "Transaction declined due to new device and high velocity"), improving transparency and trust.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Regulatory Alignment</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud systems will integrate with regulatory frameworks (PSD2, strong customer authentication) to ensure compliance while maintaining effectiveness. This includes seamless 3DS flows and regulatory reporting.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Cross-Platform Fraud Intelligence</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud networks and consortiums will enable sharing of fraud signals across platforms (with privacy-preserving techniques) to improve detection of coordinated attacks and reduce false positives for legitimate users.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www2.deloitte.com/global/en/pages/financial-services/articles/fraud-analytics.html" target="_blank" rel="noopener" class="text-primary hover:underline">Deloitte — Fraud Analytics</a> — comprehensive research on fraud detection and prevention</li>
+    <li><a href="https://stripe.com/guides/fraud-prevention" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe — Fraud Prevention Guides</a> — practical frameworks for fraud systems</li>
+    <li><a href="https://stripe.com/docs/radar" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe Radar</a> — ML-based fraud detection platform documentation</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/finance/insights/fraud-detection" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Fraud Detection Research</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR: How Generative AI Will Change Knowledge Work</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Academic Papers</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://arxiv.org/abs/2006.12648" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv: Fraud Detection in Payment Systems</a> — ML approaches to fraud detection</li>
+    <li><a href="https://dl.acm.org/doi/10.1145/3534678" target="_blank" rel="noopener" class="text-primary hover:underline">ACM: Adversarial Machine Learning in Fraud Detection</a> — robustness and adaptation</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Tools & Platforms</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://stripe.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe Radar</a> — ML-based fraud detection</li>
+    <li><a href="https://www.sift.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Sift</a> — fraud prevention platform</li>
+    <li><a href="https://www.kount.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Kount</a> — digital fraud prevention</li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Fraud analytics should optimize for total cost (loss + friction), not loss alone. Use rules, ML, step-up, and review in layers; account for label delay; set segment-level thresholds and monitor ops KPIs so precision and customer experience stay balanced.
+    </p>
+  </div>
+</div>

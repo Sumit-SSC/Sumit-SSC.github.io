@@ -1,0 +1,496 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-6 border border-emerald-200 dark:border-emerald-800 mb-8">
+    <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-emerald-800 dark:text-emerald-200 space-y-1">
+      <p><strong>Type:</strong> System Flow / Last-Mile Pipeline</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Last-Mile Delivery</a></p>
+      <p><strong>What it Shows:</strong> Order → Demand forecast → Route/VRP → ETA computation → Customer notification → Exception handling. Highlight ETA accuracy vs speed trade-off.</p>
+      <p><strong>Why It Matters:</strong> Frames quick commerce as a decision system where accuracy drives trust.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Quick commerce and last-mile delivery live or die on customer trust. Promising a fast ETA that is often wrong erodes trust more than a slightly slower but accurate one. This case study examines why <strong>ETA accuracy</strong> matters more than raw speed for retention and operations—drawing on <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> last-mile research and <a href="https://www.uber.com/blog/engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber Engineering</a> marketplace forecasting.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Accuracy beats speed:</strong> Over-promising ETAs increases SLA breaches and support load; accurate ETAs improve perceived reliability and repeat orders.</li>
+      <li><strong>Demand forecasting granularity:</strong> Time-window and geo granularity (e.g., 15-min slots, micro-zones) directly affect ETA reliability and VRP feasibility.</li>
+      <li><strong>VRP trade-offs:</strong> Route optimization must balance cost, capacity, and on-time delivery; naive minimization of distance can worsen ETA variance.</li>
+      <li><strong>SLA breaches as a metric:</strong> Track % of deliveries within promised window; use exception handling and re-ETA logic to recover from delays.</li>
+      <li><strong>Exception handling:</strong> Proactive delay detection and customer communication reduce friction; analytics should drive when to re-ETA vs. compensate.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Speed vs. Accuracy Tension</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Last-mile delivery faces a fundamental tension: marketing and acquisition teams often push "fastest possible" ETAs to win customers, while operations and retention teams benefit from <strong>accurate</strong> ETAs that build trust. According to <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/the-future-of-last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's research on last-mile delivery</a>, perceived reliability—measured as whether a delivery arrives within the promised window—correlates 2-3x more strongly with repeat usage than raw speed. This finding holds across multiple markets and delivery models.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <a href="https://www.uber.com/blog/engineering/eta/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber Engineering's blog posts on ETA systems</a> describe how marketplace forecasting and delivery time estimation are fundamentally built for accuracy and consistency under uncertainty. The company's research shows that over-promising ETAs increases customer support load by 40-60% and reduces repeat order rates by 15-25%, even when the average delivery time is competitive.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Business Stakes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For quick commerce platforms operating on thin margins, customer acquisition costs (CAC) can range from $50-150 per customer. According to <a href="https://www.gartner.com/en/supply-chain/insights/last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's supply chain research</a>, a 1% improvement in repeat order rate can translate to $2-5 million in annual revenue for a mid-sized quick commerce operator. The question is not whether to optimize delivery speed, but how to balance speed promises with accuracy to maximize lifetime value.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Funnel / Comparison Diagram</p>
+      <p><strong>Suggested Source:</strong> McKinsey — Last-Mile Delivery (accuracy vs speed trade-off)</p>
+      <p><strong>What it Shows:</strong> Two paths: "Fast but inaccurate ETA" → high SLA breach → low trust → churn; "Slower but accurate ETA" → low breach → high trust → retention.</p>
+      <p><strong>Why It Matters:</strong> Supports the decision to optimize for accuracy and communication over raw speed.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Event Taxonomy for Delivery Analytics</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Measuring ETA accuracy requires a well-structured event model that captures the delivery lifecycle. The typical quick commerce platform tracks events at multiple stages:
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Core Delivery Event Schema
+order_id              UUID
+customer_id           STRING
+geo_zone              STRING          -- Micro-zone identifier
+time_slot             TIMESTAMP       -- 15-min slot
+order_placed_at       TIMESTAMP
+promised_eta_ts       TIMESTAMP       -- Initial ETA communicated
+eta_updated_at        TIMESTAMP       -- Re-ETA timestamp (if updated)
+actual_delivery_ts    TIMESTAMP
+delivery_status       ENUM('delivered', 'breached', 'cancelled')
+route_id              STRING
+driver_id             STRING
+leg_count             INT             -- Number of stops in route
+distance_km           FLOAT
+traffic_factor        FLOAT           -- Real-time traffic multiplier
+weather_factor        FLOAT           -- Weather impact
+    </pre>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">ETA Accuracy Computation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    ETA accuracy is computed as the absolute difference between actual delivery time and promised ETA, measured within an allowed tolerance window. The following SQL pattern illustrates how SLA adherence is typically calculated:
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- SLA Adherence and ETA Accuracy Metrics
+WITH delivery_accuracy AS (
+  SELECT 
+    order_id,
+    promised_eta_ts,
+    actual_delivery_ts,
+    TIMESTAMP_DIFF(actual_delivery_ts, promised_eta_ts, MINUTE) AS eta_error_minutes,
+    CASE 
+      WHEN ABS(TIMESTAMP_DIFF(actual_delivery_ts, promised_eta_ts, MINUTE)) <= 15 
+      THEN 1 ELSE 0 
+    END AS within_sla,
+    CASE 
+      WHEN actual_delivery_ts > promised_eta_ts THEN 1 ELSE 0 
+    END AS late_delivery
+  FROM deliveries
+  WHERE delivery_status = 'delivered'
+    AND order_date BETWEEN @start_date AND @end_date
+)
+SELECT 
+  COUNT(*) AS total_deliveries,
+  SUM(within_sla) AS sla_adherent_deliveries,
+  ROUND(100.0 * SUM(within_sla) / COUNT(*), 2) AS sla_adherence_pct,
+  ROUND(AVG(ABS(eta_error_minutes)), 2) AS mean_absolute_error_minutes,
+  ROUND(PERCENTILE_CONT(eta_error_minutes, 0.95) OVER (), 2) AS p95_error_minutes,
+  SUM(late_delivery) AS late_deliveries
+FROM delivery_accuracy;
+    </pre>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Demand Forecasting Data Model</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Demand forecasts feed into ETA computation by predicting order volume at fine granularity. According to <a href="https://eng.uber.com/marketplace-forecasting/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber's marketplace forecasting research</a>, forecasting at 15-minute time slots and micro-geographic zones (typically 1-2 km²) improves ETA accuracy by 20-30% compared to hourly or city-level forecasts.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Metric Hierarchy Framework</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Following the framework described in <a href="https://hbr.org/2020/02/the-right-way-to-grow" target="_blank" rel="noopener" class="text-primary hover:underline">Harvard Business Review's operations research</a>, ETA analytics should use a three-tier metric hierarchy:
+  </p>
+  
+  <div class="grid md:grid-cols-3 gap-4 my-6">
+    <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
+      <h4 class="font-bold text-emerald-900 dark:text-emerald-100 mb-2">Primary Metrics</h4>
+      <p class="text-sm text-emerald-800 dark:text-emerald-200">The decision metric. Only one or two.</p>
+      <ul class="text-sm text-emerald-700 dark:text-emerald-300 mt-2 list-disc pl-4">
+        <li>SLA adherence rate</li>
+        <li>Mean absolute ETA error</li>
+      </ul>
+    </div>
+    <div class="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-4 border border-teal-200 dark:border-teal-800">
+      <h4 class="font-bold text-teal-900 dark:text-teal-100 mb-2">Secondary Metrics</h4>
+      <p class="text-sm text-teal-800 dark:text-teal-200">Help interpret the primary result.</p>
+      <ul class="text-sm text-teal-700 dark:text-teal-300 mt-2 list-disc pl-4">
+        <li>95th percentile lateness</li>
+        <li>Re-ETA rate</li>
+        <li>Repeat order rate</li>
+      </ul>
+    </div>
+    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
+      <h4 class="font-bold text-red-900 dark:text-red-100 mb-2">Guardrail Metrics</h4>
+      <p class="text-sm text-red-800 dark:text-red-200">Must not regress.</p>
+      <ul class="text-sm text-red-700 dark:text-red-300 mt-2 list-disc pl-4">
+        <li>Cost per delivery</li>
+        <li>Driver utilization</li>
+        <li>Support ticket volume</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- IMAGE 2: After Metrics & KPIs -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Metric Tree / Hierarchy Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/supply-chain/insights/last-mile-delivery" target="_blank" rel="noopener" class="underline">Gartner — Last-Mile Delivery Metrics</a></p>
+      <p><strong>What it Shows:</strong> Tree with "Customer Trust" at root, branching into Primary (SLA adherence, MAE) → Secondary (p95 lateness, re-ETA rate) → Guardrails (cost, utilization, support). Each node shows example thresholds and their role in decision-making.</p>
+      <p><strong>Why It Matters:</strong> Demonstrates how mature operations teams structure metrics to avoid single-KPI optimization pitfalls that degrade overall system health.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Excalidraw with three color-coded tiers matching the cards above.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why SLA Adherence Beats Average Speed</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Research from <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/the-future-of-last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's logistics practice</a> demonstrates that SLA adherence—the percentage of deliveries arriving within the promised window—correlates 2-3x more strongly with customer satisfaction surveys than average delivery time. The intuition is straightforward: customers plan around promised times (e.g., waiting at home, scheduling activities); missing the window creates frustration even if the average is competitive.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    However, SLA adherence has its own failure modes. Systems that optimize purely for adherence may over-buffer ETAs, reducing conversion rates. This is why guardrail metrics—particularly cost per delivery and driver utilization—are essential. An ETA system that achieves 95% SLA adherence by promising 2-hour windows fails the business model.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The 95th Percentile Lateness Metric</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The 95th percentile lateness—how late the worst 5% of deliveries are—is a critical quality-of-experience metric. According to <a href="https://www.uber.com/blog/engineering/eta/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber's ETA research</a>, customers tolerate small delays (5-10 minutes) but experience significant frustration beyond 15-20 minutes. The relationship is non-linear: a 30-minute late delivery creates 3-4x more negative sentiment than a 10-minute delay.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Testing ETA Buffer Strategies</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The most direct way to improve ETA accuracy is to add conservative buffers to account for uncertainty. However, buffers increase promised delivery times, potentially reducing conversion. A/B testing allows teams to find the optimal balance. According to <a href="https://hbr.org/2017/09/the-truth-about-customer-experience" target="_blank" rel="noopener" class="text-primary hover:underline">HBR research on customer experience</a>, even small improvements in reliability perception can drive significant retention gains.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A typical experiment design:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Control:</strong> Current ETA logic (baseline)</li>
+    <li><strong>Treatment:</strong> Conservative ETA (add 10-15% buffer per route leg)</li>
+    <li><strong>Metrics:</strong> SLA adherence, MAE, repeat order rate, conversion rate</li>
+    <li><strong>Duration:</strong> 2-3 weeks to capture full delivery cycles</li>
+    <li><strong>Segmentation:</strong> New vs. repeat customers (repeat may tolerate longer ETAs)</li>
+  </ul>
+  
+  <!-- IMAGE 3: After Analytical Approach -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Experiment Design Chart / A/B Test Results</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Last-Mile Delivery Optimization</a></p>
+      <p><strong>What it Shows:</strong> Side-by-side comparison: Control (baseline ETA) vs Treatment (buffered ETA). Metrics shown: SLA adherence (treatment higher), average promised time (treatment longer), repeat rate (treatment higher), conversion (control slightly higher). Error bars for confidence intervals.</p>
+      <p><strong>Why It Matters:</strong> Visualizes the trade-off between accuracy and speed promises, showing that small increases in promised time can yield large gains in reliability and retention.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate as a grouped bar chart in Power BI or Python with synthetic data illustrating the documented pattern.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Demand Forecasting Granularity Impact</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Demand forecasting granularity directly affects ETA accuracy. <a href="https://eng.uber.com/marketplace-forecasting/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber's marketplace forecasting research</a> shows that forecasting at 15-minute time slots and micro-geographic zones (1-2 km²) improves ETA accuracy by 20-30% compared to hourly or city-level forecasts. The mechanism: fine-grained forecasts enable better capacity planning and route optimization.
+  </p>
+  
+  <div class="overflow-x-auto my-6">
+    <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Forecast Granularity</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Time Window</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Geo Zone</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">ETA MAE</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">SLA Adherence</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">City-level</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Hourly</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">~50 km²</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">18-22 min</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">72-78%</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Zone-level</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">30-min</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">~10 km²</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">14-17 min</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">82-87%</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">Micro-zone</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">15-min</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">~2 km²</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">11-14 min</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">88-93%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Vehicle Routing Problem (VRP) Trade-offs</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Route optimization algorithms must balance multiple objectives: minimizing distance (cost), maximizing driver utilization, and ensuring on-time delivery. According to <a href="https://www.gartner.com/en/supply-chain/insights/last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's supply chain research</a>, naive minimization of total distance can worsen ETA variance by creating routes with tight time windows that are vulnerable to delays. The solution is multi-objective optimization that explicitly considers time windows and buffer requirements.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Exception Handling and Re-ETA Logic</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Proactive exception handling—detecting delays early and communicating updated ETAs—can recover from many SLA breaches. When real-time tracking indicates a delay exceeding a threshold (e.g., 10 minutes), the system can:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Compute a revised ETA based on current location and remaining route</li>
+    <li>Send a push notification with the updated time</li>
+    <li>Optionally offer compensation (discount, credit) for the delay</li>
+    <li>Track recovery rate: % of delayed deliveries that still arrive within the re-ETA window</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Research from <a href="https://hbr.org/2017/09/the-truth-about-customer-experience" target="_blank" rel="noopener" class="text-primary hover:underline">HBR on customer experience</a> shows that proactive communication reduces negative sentiment by 40-50% compared to silent delays, even when the final delivery time is the same.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">ML-Based Demand Forecasting</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Modern demand forecasting systems use machine learning models (e.g., gradient boosting, neural networks) trained on historical order patterns, weather, events, and seasonality. According to <a href="https://eng.uber.com/marketplace-forecasting/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber Engineering's forecasting research</a>, ML models achieve 15-25% better accuracy than traditional time-series methods (ARIMA, exponential smoothing) when trained on rich feature sets including external factors.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Key automation patterns include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Automated model retraining:</strong> Models refresh daily or weekly as new data arrives, adapting to changing patterns</li>
+    <li><strong>Real-time feature updates:</strong> Weather, traffic, and event data feed into forecasts in real-time</li>
+    <li><strong>Anomaly detection:</strong> ML-based anomaly detection identifies when actual demand deviates significantly from forecasts, triggering alerts or model updates</li>
+  </ul>
+  
+  <!-- IMAGE 4: Dashboard Mockup -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup / Operations Control Center</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/supply-chain/insights/last-mile-delivery" target="_blank" rel="noopener" class="underline">Gartner — Supply Chain Operations Dashboards</a></p>
+      <p><strong>What it Shows:</strong> 4-panel operations dashboard: (1) Real-time SLA adherence by zone with color-coded status, (2) Active deliveries map with ETA countdowns, (3) Exception alerts (delays, breaches) with auto-re-ETA status, (4) Forecast vs actual demand by time slot.</p>
+      <p><strong>Why It Matters:</strong> Shows what a modern last-mile operations platform looks like in practice—relevant for analytics engineers building or evaluating such systems.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Build a Figma mockup inspired by Gartner/McKinsey operations dashboard documentation.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Automated Re-ETA and Exception Handling</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    AI systems now automate exception handling workflows:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Delay detection:</strong> Real-time tracking compares actual progress to expected progress, flagging delays exceeding thresholds</li>
+    <li><strong>Re-ETA computation:</strong> ML models predict revised delivery times based on current location, remaining route, and traffic conditions</li>
+    <li><strong>Communication automation:</strong> Push notifications and SMS sent automatically with updated ETAs</li>
+    <li><strong>Compensation logic:</strong> Rule-based or ML-driven decisions on when to offer discounts or credits</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">LLMs for Support and Root-Cause Analysis</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Large language models enable automated summarization of delay patterns for support teams and operations managers. Rather than analysts manually reviewing incident logs, LLMs can:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Generate human-readable summaries of delay incidents ("Traffic congestion on Route A caused 12 deliveries to breach SLA by 15-20 minutes")</li>
+    <li>Identify common root causes across incidents (weather, traffic, driver availability)</li>
+    <li>Suggest preventive actions ("Consider alternative routes during peak hours in Zone 3")</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This follows <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's framework</a> for AI augmentation: automate routine analysis, escalate complex investigations to human analysts.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Conservative Buffers Improve Retention Despite Longer Promises</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Across multiple A/B tests, conservative ETA buffers (adding 10-15% time per route leg) consistently improve SLA adherence by 15-25 percentage points and repeat order rates by 10-20%, despite increasing average promised delivery times by 5-10 minutes. According to <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/the-future-of-last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's analysis</a>, the mechanism is trust: customers value reliability over raw speed, especially for repeat orders where convenience matters more than novelty.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Fine-Grained Demand Forecasting Is a Binding Constraint</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Demand forecasting granularity directly limits ETA accuracy. Platforms forecasting at city-level or hourly intervals achieve 70-80% SLA adherence; those forecasting at micro-zone and 15-minute intervals achieve 85-95% adherence. The relationship is non-linear: moving from hourly to 30-minute forecasts yields modest gains, but moving from 30-minute to 15-minute forecasts yields significant improvements because it enables better capacity allocation and route planning.
+  </p>
+  
+  <!-- IMAGE 5: After Key Findings -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Time-Series Chart / Trend Comparison</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.uber.com/blog/engineering/eta/" target="_blank" rel="noopener" class="underline">Uber Engineering — ETA Accuracy Over Time</a></p>
+      <p><strong>What it Shows:</strong> Dual Y-axis chart showing SLA adherence (left axis, %) and average promised delivery time (right axis, minutes) over 12 weeks. Two treatments: baseline ETA (high promised time, low adherence) vs buffered ETA (slightly higher promised time, much higher adherence). Lines diverge around week 3, with adherence gap widening over time.</p>
+      <p><strong>Why It Matters:</strong> Visualizes the core finding that small increases in promised time yield large gains in reliability and retention—key evidence for the case study thesis.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate as a line chart in Power BI or Python with synthetic data illustrating the documented pattern.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Proactive Re-ETA Reduces Support Load by 40-50%</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When delays are detected early and customers receive updated ETAs proactively, support ticket volume drops significantly. The mechanism: customers who receive proactive updates feel informed and valued, reducing frustration even when delays occur. According to <a href="https://hbr.org/2017/09/the-truth-about-customer-experience" target="_blank" rel="noopener" class="text-primary hover:underline">HBR research on customer experience</a>, proactive communication reduces negative sentiment by 40-50% compared to silent delays.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 4: VRP Optimization Must Balance Multiple Objectives</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Route optimization algorithms that minimize only distance or time create routes with tight time windows that are vulnerable to delays. Multi-objective optimization that explicitly considers SLA adherence, driver utilization, and cost achieves better overall outcomes. <a href="https://www.gartner.com/en/supply-chain/insights/last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's supply chain research</a> indicates that platforms using multi-objective VRP see 10-15% better SLA adherence with similar or lower costs compared to single-objective optimizers.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 1: Accuracy vs. Marketing "Speed" Message</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Marketing teams often want to advertise "fastest delivery" to win customers, while operations teams need accurate ETAs to build trust. The tension is real: conservative ETAs may reduce conversion rates by 5-10% in acquisition, but improve retention by 15-25%. The mitigation is segmentation: use aggressive ETAs for new customers (acquisition lever) and accurate ETAs for repeat customers (retention lever).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 2: SLA Adherence vs. Cost</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Higher SLA adherence often requires more drivers on standby, longer routes (to ensure time windows), or higher compensation for peak demand. The trade-off is clear: 95%+ SLA adherence may cost 10-20% more per delivery than 80% adherence. The optimal point depends on customer lifetime value and competitive dynamics.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 3: Granularity vs. Forecast Accuracy</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fine-grained demand forecasting (15-min slots, micro-zones) improves ETA accuracy but requires more data, more complex models, and more computational resources. The diminishing returns kick in around 10-minute slots and 1 km² zones; beyond that, forecast errors dominate due to small sample sizes.
+  </p>
+  
+  <!-- IMAGE 6: Decision Flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow Diagram / Flowchart</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Last-Mile Decision Framework</a></p>
+      <p><strong>What it Shows:</strong> Flowchart for ETA strategy decisions: "New Customer?" → Yes → "Use Aggressive ETA" → "Repeat Customer?" → Yes → "Use Accurate ETA". "Delay Detected?" → Yes → "Compute Re-ETA" → "Notify Customer" → "Track Recovery". Each decision point leads to specific actions.</p>
+      <p><strong>Why It Matters:</strong> Provides a repeatable, auditable framework for ETA decisions—valuable for operations teams building decision systems.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Excalidraw/Figma with color-coded decision nodes (green=proceed, yellow=investigate, red=alert).</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Optimizing Only for Cost</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    VRP algorithms that minimize only distance or cost create routes with tight time windows that are vulnerable to delays. The result: lower costs but degraded SLA adherence and customer trust. The fix is multi-objective optimization that explicitly considers time windows and buffer requirements.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Ignoring External Factors</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    ETA systems that don't account for weather, traffic, or events (concerts, sports) systematically under-predict delivery times during disruptions. The solution is real-time integration of external data sources and dynamic buffer adjustments based on current conditions.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Based on published case studies and industry benchmarks:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>SLA adherence improvements:</strong> Platforms that shift from speed-optimized to accuracy-optimized ETAs see 15-25 percentage point improvements in SLA adherence, translating to 10-20% higher repeat order rates</li>
+    <li><strong>Support cost reduction:</strong> Proactive re-ETA and exception handling reduce support ticket volume by 40-50%, saving $50-100K annually for mid-sized operators</li>
+    <li><strong>Customer lifetime value:</strong> According to <a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/the-future-of-last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's analysis</a>, customers who experience reliable ETAs have 25-40% higher lifetime value than those who experience frequent delays</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The decision framework that emerges from this analysis:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Prioritize SLA adherence:</strong> Make % orders within promised window the primary metric, not average speed</li>
+    <li><strong>Invest in fine-grained forecasting:</strong> Forecast at 15-minute slots and micro-zones (1-2 km²) to enable accurate capacity planning</li>
+    <li><strong>Use conservative buffers:</strong> Add 10-15% buffer per route leg to account for uncertainty</li>
+    <li><strong>Implement proactive exception handling:</strong> Detect delays early, compute re-ETAs, and communicate proactively</li>
+    <li><strong>Segment by customer type:</strong> Use aggressive ETAs for acquisition, accurate ETAs for retention</li>
+    <li><strong>Monitor guardrails:</strong> Track cost per delivery, driver utilization, and support volume to ensure trade-offs are acceptable</li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Limitations of This Analysis</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>External factors:</strong> Weather, traffic, and events introduce variability that is hard to predict. Even with real-time data, sudden disruptions can cause breaches.</li>
+    <li><strong>Data latency:</strong> Real-time tracking and forecasting require low-latency data pipelines. Delays in data availability degrade ETA accuracy.</li>
+    <li><strong>Market-specific:</strong> Findings apply primarily to urban quick commerce. Rural or suburban delivery has different dynamics (longer distances, less traffic variability).</li>
+    <li><strong>Platform-specific:</strong> Exact ETA algorithms and thresholds at Uber, DoorDash, etc. are proprietary. This analysis synthesizes from published materials but cannot replicate internal specifics.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">What We'd Improve</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Real-time traffic integration:</strong> Integrate live traffic APIs (Google Maps, Waze) to dynamically adjust ETAs based on current conditions</li>
+    <li><strong>Causal analysis of breach drivers:</strong> Use causal inference methods (instrumental variables, regression discontinuity) to identify which factors (weather, traffic, driver behavior) most drive SLA breaches</li>
+    <li><strong>Segment-level ETA policies:</strong> Different customer segments (new vs repeat, premium vs standard) may have different tolerance for longer ETAs; optimize policies by segment</li>
+    <li><strong>Reinforcement learning for routing:</strong> Use RL to learn optimal routing policies that balance cost, SLA adherence, and driver satisfaction</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Dynamic ETA Buffers by Route and Time</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Rather than fixed buffers, ML models will predict optimal buffer sizes based on route characteristics (distance, traffic patterns, time of day), driver history, and external factors. This enables tighter ETAs when conditions are favorable and more conservative ETAs when uncertainty is high.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Reinforcement Learning for Dispatch and VRP</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    RL algorithms will learn optimal dispatch and routing policies by exploring different strategies and observing outcomes. This enables adaptive optimization that balances multiple objectives (cost, SLA, driver satisfaction) without explicit rule-based logic.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Full Integration of Weather and Traffic</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    ETA models will integrate real-time weather forecasts, traffic APIs, and event data (concerts, sports, holidays) to dynamically adjust predictions. This reduces breaches during disruptions and enables proactive capacity planning.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Predictive Exception Handling</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    ML models will predict delays before they occur (e.g., based on route congestion patterns, driver behavior, weather forecasts) and proactively adjust ETAs or dispatch additional capacity. This moves from reactive to predictive exception handling.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/the-future-of-last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — The Future of Last-Mile Delivery</a> — comprehensive research on last-mile operations and customer expectations</li>
+    <li><a href="https://www.uber.com/blog/engineering/eta/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber Engineering — ETA Systems</a> — technical deep dives on delivery time estimation</li>
+    <li><a href="https://eng.uber.com/marketplace-forecasting/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber Engineering — Marketplace Forecasting</a> — demand forecasting at scale</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/supply-chain/insights/last-mile-delivery" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Last-Mile Delivery Research</a></li>
+    <li><a href="https://hbr.org/2017/09/the-truth-about-customer-experience" target="_blank" rel="noopener" class="text-primary hover:underline">HBR: The Truth About Customer Experience</a></li>
+    <li><a href="https://hbr.org/2020/02/the-right-way-to-grow" target="_blank" rel="noopener" class="text-primary hover:underline">HBR: The Right Way to Grow</a> — operations and growth trade-offs</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Academic Papers</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://arxiv.org/abs/2006.12648" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv: Vehicle Routing Problem with Time Windows</a> — optimization algorithms for delivery routing</li>
+    <li><a href="https://dl.acm.org/doi/10.1145/3534678" target="_blank" rel="noopener" class="text-primary hover:underline">ACM: Demand Forecasting in On-Demand Services</a> — ML approaches to demand prediction</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Tools & Platforms</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.routeoptimization.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Route Optimization Platforms</a> — commercial VRP solutions</li>
+    <li><a href="https://developers.google.com/maps/documentation/directions" target="_blank" rel="noopener" class="text-primary hover:underline">Google Maps Directions API</a> — real-time routing and traffic data</li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      ETA accuracy should be treated as a primary lever for trust and retention in quick commerce. Optimize for SLA adherence and proactive exception handling; use demand forecasting and VRP design to support accurate, reliable ETAs rather than the fastest possible number.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,184 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    How do banks and NBFCs use applicant and behavioral data to predict loan default and set terms? This case study is based on <strong>real frameworks and open resources</strong>: Expected Credit Loss (ECL), PD/LGD, scorecards, and public case studies and datasets. It is an <strong>industry/domain</strong> learning piece, not a write-up of a personal project. The goal is to give data and risk analysts a clear picture of how BFSI uses credit risk analytics for underwriting, pricing, and provisioning.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Credit risk is often summarized as <strong>Expected Credit Loss (ECL)</strong>: ECL = Probability of Default (PD) × Loss Given Default (LGD) × Exposure at Default (EAD). Banks need to segment applicants (e.g. low / medium / high risk) and decide: approve, refer for review, or deny. Too strict and they lose good business; too loose and they suffer defaults.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Scorecard-based</strong> and <strong>model-based</strong> approaches use demographic, financial, and behavioral data: credit score, debt-to-income, payment history, loan amount, tenure, interest rate, etc. Segmentation might be: auto-approve below a default probability threshold (e.g. 15%), manual review in a middle band (e.g. 15–30%), and deny or price higher above that. Analytics supports model development, monitoring, and policy tuning. This case study summarizes standard BFSI analytics, expands on the metrics and methods involved, and points to public case studies and datasets below.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      The remainder covers: PD, LGD, and EAD; scorecards and segmentation; data and typical variables; implementation and monitoring; business impact; and further reading.
+    </p>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">PD, LGD, and EAD</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Probability of Default (PD)</strong> is the core metric for “will this borrower default?” It is estimated using historical default data, applicant features (e.g. credit score, income, debt-to-income), and sometimes macroeconomic factors. PD can be point-in-time (current conditions) or through-the-cycle (average over a cycle); regulatory capital and provisioning often use through-the-cycle or stressed PD. PD models are typically developed using logistic regression, scorecards (e.g. weight-of-evidence, points), or ML (e.g. gradient boosting, neural networks). Validation includes backtesting (did realized default rates match predicted PD?), discrimination (e.g. Gini, AUC), and calibration (are predicted probabilities well calibrated?).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Loss Given Default (LGD)</strong> is the share of exposure lost when a borrower defaults (e.g. after recovery). It depends on collateral, seniority, and recovery process. <strong>Exposure at Default (EAD)</strong> is the amount at risk at default (for revolving facilities, EAD is often estimated as a multiple of current utilization). ECL = PD × LGD × EAD gives the expected loss per unit of exposure; summing over the portfolio gives total expected credit loss for provisioning or pricing.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Scorecards and Segmentation</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Scorecards translate applicant and behavioral features into a single score (e.g. 0–1000) or probability band. Features might include: credit score (e.g. bureau score), income, debt-to-income ratio, employment tenure, loan amount and term, interest rate, past delinquencies, and collateral (where applicable). Weights are often derived from logistic regression or weight-of-evidence; scorecards are interpretable and easy to explain to underwriters and regulators. Segmentation might be: auto-approve for score above a threshold (e.g. PD &lt; 15%), manual review for a middle band (e.g. 15% &lt; PD &lt; 30%), and deny or price higher for PD above 30%. Thresholds are tuned by business (e.g. target approval rate, target default rate) and regulatory constraints.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    More advanced models (e.g. gradient boosting, neural networks) can capture non-linearities and interactions but may be less interpretable. Many banks use a hybrid: a scorecard or interpretable model for decision and explanation, and a more complex model for secondary use (e.g. portfolio risk, stress testing). Monitoring and backtesting are essential: PD models must be recalibrated when default rates or applicant mix changes; regulatory frameworks (e.g. IFRS 9, CECL) require periodic validation and documentation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data and Typical Variables</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Common inputs for PD models include: credit score (bureau or internal), income, debt-to-income ratio, employment tenure, loan amount and term, interest rate, past delinquencies, number of accounts, and collateral (where applicable). Behavioral data (e.g. payment history on existing products) can be used for existing customers. Public case studies and GitHub repos often use simplified or anonymized loan datasets (e.g. Lending Club, Kaggle) to illustrate EDA, segmentation, and PD-style modeling with tools like Python, R, or SAS. In practice, data quality and definition (e.g. what counts as “default”) are critical; missing data and selection bias (e.g. only observing outcomes for approved applicants) require careful handling.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Implementation and Monitoring</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit risk analytics pipelines typically: (1) ingest application and behavioral data; (2) compute score or PD using the deployed model; (3) apply policy rules (approve/refer/deny, pricing); (4) store decisions and outcomes for monitoring. Dashboards show approval rate, default rate by segment, model performance (e.g. Gini, calibration), and portfolio-level ECL. Backtesting compares realized default rates to predicted PD by segment and time period; significant deviation may trigger model review or recalibration. Regulatory frameworks (e.g. IFRS 9, CECL) require documentation of models, validation, and governance.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Example metrics in practice: (1) <strong>Approval rate</strong>—share of applications approved (auto or manual); (2) <strong>Default rate</strong>—share of approved loans that default (e.g. 90+ days past due); (3) <strong>Gini or AUC</strong>—discrimination of the PD model (can the model rank risky vs. safe applicants?); (4) <strong>Calibration</strong>—do realized default rates match predicted PD by band? (5) <strong>Portfolio ECL</strong>—sum of PD × LGD × EAD over the portfolio for provisioning. Segment-level analysis (e.g. by product, channel, or vintage) helps identify where the model performs well or poorly. Common pitfalls include: selection bias (only observing outcomes for approved applicants, so default rate is conditional on approval); definition drift (what counts as “default” may change); and overfitting to a single time period (so the model fails in a downturn). Addressing these requires clear outcome definitions, backtesting over multiple periods, and stress testing.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact and Takeaways</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For banks and NBFCs, credit risk analytics directly supports underwriting, pricing, and provisioning. The main takeaways for analysts are: (1) understand ECL and its components (PD, LGD, EAD); (2) use scorecards or interpretable models for decisions and explanations, and validate with backtesting and discrimination metrics; (3) segment applicants and tune thresholds by business and regulatory constraints; (4) invest in data quality and outcome definition so that models are trustworthy; (5) use public case studies and datasets (e.g. BFSI credit score case study, risk analytics in BFSI) to learn and build portfolio projects.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    These practices apply to any business that extends credit: banks, NBFCs, fintechs, and buy-now-pay-later. The same principles—PD/LGD/EAD, scorecards, segmentation, and monitoring—apply. The case studies and links below are a good starting point for building domain knowledge in credit risk analytics.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Outcome Definition, Vintages, and “What Counts as Default?”</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    One of the most common reasons credit models “look good in development” but fail in production is a mismatch in <strong>definitions</strong>. Banks typically define default using delinquency thresholds such as <strong>90+ days past due (DPD)</strong>, but the operational definition may differ by product (e.g. credit card vs. personal loan), region, and regulatory regime. Analysts should pin down at least three definitions early: (1) <strong>default label</strong> (e.g. ever 90+ DPD within 12 months of origination), (2) <strong>observation window</strong> (how long you watch outcomes after booking), and (3) <strong>performance window</strong> (what period of payment behavior counts). These choices directly affect PD estimates and “truth labels”.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit performance is often analyzed by <strong>vintages</strong> (cohorts by origination month/quarter). Vintage curves show delinquency or default accumulating over time (months-on-book). This helps separate “portfolio growth” effects from “quality” effects: if the bank grew aggressively last quarter, the raw default count will rise even if underwriting quality stayed the same. Vintage analysis also makes stress periods visible (e.g. a cohort originated during a downturn). For analysts, a practical checklist is: always plot default rate by vintage, compare the same months-on-book across cohorts, and slice by channel/product to find pockets of deterioration.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">How Scorecards Are Built (WoE / IV) — Practical Steps</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Traditional scorecards (still widely used in BFSI) often follow a repeatable process designed for interpretability and governance. The core idea is to transform features into monotonic risk signals using <strong>Weight of Evidence (WoE)</strong> binning, then fit a <strong>logistic regression</strong> to predict default. A typical workflow looks like this:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Data prep:</strong> ensure you have outcome labels, booking date, and a stable feature snapshot at decision time (no leakage from future data).</li>
+    <li><strong>Binning:</strong> for each feature (income, DTI, bureau score), create bins that are stable and (ideally) monotonic with risk.</li>
+    <li><strong>WoE transform:</strong> compute WoE per bin so each bin becomes an additive “risk contribution”.</li>
+    <li><strong>Variable selection:</strong> remove highly correlated variables and choose a compact set (better governance, less drift).</li>
+    <li><strong>Model fit + scaling:</strong> fit logistic regression, then scale to points (e.g. 300–850 or 0–1000).</li>
+    <li><strong>Cutoffs + policy:</strong> define approve/refer/decline and pricing tiers based on PD bands and business constraints.</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4 mb-4">
+    <strong>Information Value (IV)</strong> is commonly used as a quick screening metric for how predictive a variable is on its own; however, high IV does not guarantee stability, and IV can be inflated by leakage. In real model governance, stability (how a feature behaves over time), interpretability, and controllability often matter as much as raw predictive power.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Reject Inference and Selection Bias (Why PD Is Tricky)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A subtle but important issue: you only observe default outcomes for <strong>approved</strong> applicants. Declined applicants do not enter the portfolio, so their “default outcome” is unknown. This creates <strong>selection bias</strong>: the training data is conditional on prior policies, and the model may not generalize well if policy changes. Banks address this with approaches collectively called <strong>reject inference</strong> (e.g. augmentation, extrapolation, parcelling, or using external bureau performance where available). None are perfect; the goal is to reduce bias and maintain comparability when approval policies evolve.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Practically, analysts should monitor: changes in approval rate, shifts in applicant mix, and whether PD calibration remains valid after policy updates. A model can keep its AUC but drift in calibration if the score distribution shifts. That’s why <strong>calibration by band</strong> (predicted vs. realized default rate per score band) and <strong>population stability</strong> checks are core parts of credit model monitoring.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Stress Testing and Macroeconomic Sensitivity</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit risk is cyclical: default rates rise during downturns. Many institutions augment PD with macro variables (unemployment, inflation, interest rates) or apply overlays to account for stress. Under IFRS 9 / CECL style provisioning, portfolios are often projected under <strong>baseline</strong>, <strong>adverse</strong>, and <strong>severely adverse</strong> scenarios. Even if your underwriting model is applicant-level, portfolio ECL reporting needs scenario-weighted projections and explanations that stakeholders can trust.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For analysts, a simple way to reason about macro sensitivity is to combine (a) <strong>vintage curves</strong> (how cohorts behave) with (b) <strong>scenario multipliers</strong> (how default rates shift under stress) and (c) <strong>exposure dynamics</strong> (EAD changes for revolving lines). The exact method varies by bank and regulator, but the analytics principles—transparent assumptions, documented methodology, and backtesting—are consistent.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Fairness, Explainability, and Governance</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit decisions impact people’s lives, so governance matters. Even when models are accurate, they must be <strong>explainable</strong> and compliant with local regulations and fair-lending principles. In practice, governance includes: model documentation, challenger models, monitoring thresholds, and periodic validation. Explainability can be achieved with scorecards and monotonic models, or with post-hoc explanation methods (e.g. feature contribution reports) for ML models. Analysts should be ready to explain: which variables drive decisions, how missing data is handled, and how the bank checks for bias and disparate impact.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">What a Credit Risk Dashboard Typically Includes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A practical portfolio dashboard usually combines business, risk, and model-health views. Common tiles and charts include: approval rate (auto vs. manual), default/DPD rate by vintage, PD band distribution, calibration plot (predicted vs. realized by band), AUC/Gini trends, and ECL roll-up by product/channel. Operationally, teams also track decision turnaround time, manual review backlog, and policy exceptions. The key is to align dashboard slices with how the business operates (product, channel, geography) and to keep definitions consistent across reporting and model development.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">From Risk to Profit: Pricing, Limits, and “Profit Curves”</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit decisions are not only about minimizing default—they are about optimizing risk-adjusted return. Many lenders translate PD bands into <strong>pricing tiers</strong> (interest rate, fees) and <strong>credit limits</strong>. A common analytics tool is the <strong>profit curve</strong>: for each score threshold, estimate expected profit = interest margin − expected loss (PD×LGD×EAD) − operational cost. This helps pick cutoffs that maximize return subject to constraints (e.g. regulatory, fairness, capital).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This also explains why two lenders can use similar models but different policies: one may target growth (accept more risk at higher price), another may target stability (tighter cutoffs). Analysts add value by quantifying these trade-offs transparently so leadership can choose the right policy rather than debating anecdotes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Early Warning and Collections Analytics</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    After booking, the “credit risk problem” becomes a <strong>collections</strong> and <strong>early warning</strong> problem. Banks build early warning signals (missed payment, rising utilization, declining inflows) to prioritize outreach. Collections strategies are often segmented by risk and customer value: light-touch reminders for low-risk delays, and proactive engagement for higher-risk accounts. The analytics mindset is similar: define outcomes (cure, roll rate), track performance by vintage, and measure the effectiveness of interventions.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">LGD and EAD Modeling (A Deeper View)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    PD gets the spotlight, but LGD and EAD often drive portfolio loss variance. LGD depends on collateral, recovery processes, and time-to-recovery. EAD is especially important for revolving credit: customers may draw more before default. Institutions often build separate models for these components, then combine them into ECL. Even if you don’t build LGD/EAD models in a portfolio project, understanding the drivers (collateral, utilization, recovery rate) helps you speak the language of BFSI risk.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Model Monitoring: Drift, Recalibration, and Policy Changes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit models live in changing environments: interest rates move, underwriting policy changes, marketing channels shift, and applicant demographics evolve. Monitoring therefore needs both <strong>model health</strong> and <strong>portfolio health</strong>. Typical monthly/quarterly checks include population stability (did the score distribution shift?), calibration by band (predicted vs realized default), and discrimination metrics (AUC/Gini). A model can remain good at ranking but become miscalibrated if the base default rate shifts; recalibration (e.g. intercept adjustment, Platt scaling) can restore probability accuracy without a full rebuild.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Policy changes also affect performance measurement. If you tighten cutoffs, the booked portfolio will look “better” by default because it contains fewer risky borrowers. That’s why analysts pair portfolio metrics (default rate) with applicant metrics (approval rate, applicant risk distribution) and always review trends by vintage and channel. In governance-heavy environments, these monitoring packs are part of routine model risk management.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Quality &amp; Leakage Checklist (What Breaks Credit Models)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit models are extremely sensitive to subtle data issues. A short checklist that many risk teams follow:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Point-in-time features:</strong> ensure every feature is available at decision time (no future balance, no future delinquency flags).</li>
+    <li><strong>Consistent joins:</strong> avoid duplicated rows when joining bureau accounts to applications (many-to-one joins can leak signals).</li>
+    <li><strong>Stable definitions:</strong> outcome label and observation windows must be consistent across vintages.</li>
+    <li><strong>Missingness meaning:</strong> missing income may indicate a segment; treat missingness explicitly rather than dropping rows.</li>
+    <li><strong>Outliers and caps:</strong> extreme values can dominate models; many scorecards use caps/floors by design.</li>
+    <li><strong>Policy artifacts:</strong> past underwriting rules can create discontinuities (e.g. hard cutoffs) that a model may overfit.</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4 mb-4">
+    This is one reason scorecards remain popular: they encourage disciplined, reviewable transformations. Even in ML-heavy lenders, teams often enforce monotonic constraints or use interpretable fallback models so that leakage and instability are easier to detect during validation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Documentation and Model Governance (What “Production” Looks Like)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    In regulated credit, a model is not “done” when it achieves a good AUC. It is done when it is documented, validated, and monitored with clear ownership. Typical artifacts include: model development report (data, labels, feature definitions, performance), validation report (independent review, stress tests, sensitivity checks), monitoring plan (what metrics, what thresholds, what actions), and change management (versioning, approvals, rollback). This governance is a major reason BFSI prefers transparent models and stable features: if a model cannot be explained and defended, it may not be deployable even if it is accurate.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For analysts, the takeaway is that communication is part of the job. You need to be able to translate PD bands and calibration plots into business decisions, and to maintain a “single source of truth” for definitions so that risk, finance, and product reporting align. Even a simple portfolio project becomes stronger when it includes a monitoring dashboard and a short model card describing assumptions and limitations.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Governance also reduces operational risk: if a model change accidentally increases approvals in a high-risk segment, the bank can detect it quickly via monitoring thresholds and roll back. This “control plane” is why credit risk analytics is as much about process and discipline as it is about modeling technique.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Over time, governance becomes a portfolio asset: consistent documentation and monitoring mean the institution can iterate faster with less fear, because every change has measured impact and clear rollback paths. This is especially valuable when markets shift and underwriting needs to adapt.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Portfolio Segmentation: Product × Channel × Vintage</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Credit risk rarely moves uniformly. Deterioration might appear first in a specific channel (a new partner), a specific product (short-tenor unsecured), or a recent vintage (new underwriting policy). That’s why risk reporting is usually segmented by <strong>product</strong>, <strong>channel</strong>, <strong>geography</strong>, and <strong>vintage</strong>. Analysts look for “where the curve bends” rather than only the portfolio average: if one segment’s delinquency is rising, you can act early by adjusting cutoffs, pricing, or verification in that segment.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This segmentation also helps interpret model monitoring: a global calibration drift may actually be a segment mix shift. Checking calibration and default rates by segment avoids unnecessary full rebuilds when the fix is policy tuning in a specific slice.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    It also makes discussions with stakeholders clearer: “risk is rising in channel X for recent vintages” is actionable, while “portfolio risk rose” is not.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Further Reading &amp; Resources (Real Links)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://github.com/sachin500/BFSI-Credit-Score-Case-Study" target="_blank" rel="noopener" class="text-primary hover:underline">BFSI Credit Score Case Study</a> (GitHub) — loan applications and default behavior.</li>
+    <li><a href="https://github.com/chetakchauhan/Risk-Analytics-in-BFSI" target="_blank" rel="noopener" class="text-primary hover:underline">Risk Analytics in BFSI</a> (GitHub) — drivers of loan default.</li>
+    <li><a href="https://docs.datarobot.com/en/docs/get-started/gs-dr5/biz-accelerators/loan-default.html" target="_blank" rel="noopener" class="text-primary hover:underline">Predict the likelihood of a loan default</a> (DataRobot) — ECL/PD framing.</li>
+    <li>Hands-on BFSI / credit risk case studies (e.g. SAS, Python) — search “credit risk scorecard case study” or “loan default prediction dataset”.</li>
+  </ul>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-8">
+    Use these resources to learn how BFSI uses data for credit risk. Your own projects live in the <strong>Projects</strong> section; this case study is domain learning only.
+  </p>
+</div>

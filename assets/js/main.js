@@ -14,6 +14,22 @@ const FEATURED_ORDER = [
 const FIRST_PAGE_COUNT = 6;
 const REST_PAGE_COUNT = 6;
 
+// Grouped project filters: one URL param matches any of these tools
+const FILTER_GROUPS = {
+  'Python': ['Python'],
+  'SQL': ['SQL', 'MySQL', 'PostgreSQL', 'DuckDB', 'SQL Server', 'Oracle', 'MongoDB'],
+  'Data viz': ['Matplotlib', 'Seaborn', 'Plotly'],
+  'Data cleaning': ['NumPy', 'pandas'],
+  'A/B Testing': ['A/B Testing', 'A/B Test', 'AB Testing', 'Hypothesis Testing'],
+  'Statistical Analysis': ['Statistical Analysis', 'Statistics', 'Hypothesis Testing', 'A/B Testing'],
+  'Web scraping': ['Beautiful Soup', 'Scrapy', 'Selenium', 'requests', 'pandas'],
+  'Git': ['Git', 'GitHub'],
+  'Excel': ['Excel'],
+  'BI tools': ['Power BI', 'Tableau', 'Excel', 'Apache Superset', 'DAX'],
+  'Web-dev': ['HTML', 'CSS', 'JavaScript'],
+  'Notebook': ['Jupyter', 'VS Code', 'Google Colab', 'Anaconda', 'R (learning)']
+};
+
 // Initialize on DOM ready
 (function() {
   if (document.readyState === 'loading') {
@@ -325,11 +341,15 @@ function routePage() {
     
     loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
     renderFeaturedSection(); // Featured layout (hero + halves)
+    renderCaseStudiesSection(); // Case Studies grid (populates #case-studies-grid inside #case-studies-view)
     initViewModeToggle(); // Initialize view mode toggle
+    initViewSwitcher(); // Toggle between Projects content and Case Studies content (same page)
   }
 
-  // Load project detail page
-  if (document.getElementById("project-hero")) {
+  // Load case study page (standalone long-form article)
+  if (document.getElementById("case-study-hero")) {
+    loadCaseStudyPage();
+  } else if (document.getElementById("project-hero")) {
     loadProjectDetail();
   }
 
@@ -420,6 +440,92 @@ function initHomepageSectionTabs() {
   setActive(sections[0].id);
 }
 
+/* ---------- VIEW SWITCHER (Projects <-> Case Studies, same page) ---------- */
+function initViewSwitcher() {
+  const projectsView = document.getElementById('projects-view');
+  const caseStudiesView = document.getElementById('case-studies-view');
+  const viewTitle = document.getElementById('view-title');
+  const backBtn = document.getElementById('view-back-to-projects');
+  const arrowBtn = document.getElementById('view-go-to-case-studies');
+  const sectionTabs = document.getElementById('section-tabs');
+
+  if (!projectsView || !caseStudiesView || !viewTitle || !backBtn || !arrowBtn) return;
+
+  function showProjects() {
+    projectsView.classList.remove('hidden');
+    caseStudiesView.classList.add('hidden');
+    viewTitle.textContent = 'Featured Projects';
+    backBtn.classList.add('hidden');
+    arrowBtn.classList.remove('hidden');
+    if (sectionTabs) sectionTabs.classList.remove('hidden');
+  }
+
+  function showCaseStudies() {
+    projectsView.classList.add('hidden');
+    caseStudiesView.classList.remove('hidden');
+    viewTitle.textContent = 'Case Studies';
+    backBtn.classList.remove('hidden');
+    arrowBtn.classList.add('hidden');
+    if (sectionTabs) sectionTabs.classList.add('hidden');
+  }
+
+  arrowBtn.addEventListener('click', showCaseStudies);
+  backBtn.addEventListener('click', showProjects);
+}
+
+/* ---------- CASE STUDIES SECTION (Medium / TDS style) ---------- */
+async function loadCaseStudies() {
+  try {
+    const response = await fetch('data/case_studies.json');
+    if (!response.ok) throw new Error('Failed to load case studies');
+    return await response.json();
+  } catch (error) {
+    console.error('Error loading case studies:', error);
+    return [];
+  }
+}
+
+async function renderCaseStudiesSection() {
+  const grid = document.getElementById('case-studies-grid');
+  if (!grid) return;
+
+  const caseStudies = await loadCaseStudies();
+  if (!caseStudies.length) {
+    grid.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-12">Case studies will appear here. Edit <code>data/case_studies.json</code> to add or reorder.</p>';
+    return;
+  }
+
+  grid.innerHTML = caseStudies.map(cs => createCaseStudyCard(cs)).join('');
+}
+
+function createCaseStudyCard(caseStudy) {
+  const thumbnailUrl = resolveAssetUrl(caseStudy, caseStudy.thumbnail || 'assets/images/thumbs/01.jpg');
+  const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const excerpt = (caseStudy.short_description || '').replace(/<[^>]*>/g, '').substring(0, 160);
+  const category = caseStudy.category || 'Analytics';
+  const readMins = caseStudy.case_study_read_mins != null ? caseStudy.case_study_read_mins : 5;
+  const tags = (caseStudy.tools || []).slice(0, 3).map(t =>
+    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="case-study-tag">${t}</a>`
+  ).join('');
+
+  return `
+    <article class="case-study-card">
+      <a href="case-study.html?id=${encodeURIComponent(caseStudy.id)}" class="case-study-card-link">
+        <div class="case-study-card-image">
+          <img src="${thumbnailUrl}" alt="${caseStudy.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+          <span class="case-study-card-read-time">${readMins} min read</span>
+        </div>
+        <div class="case-study-card-body">
+          <span class="case-study-card-category">${category}</span>
+          <h3 class="case-study-card-title">${caseStudy.title}</h3>
+          <p class="case-study-card-excerpt">${excerpt}${excerpt.length >= 160 ? '…' : ''}</p>
+          <div class="case-study-card-tags">${tags}</div>
+        </div>
+      </a>
+    </article>
+  `;
+}
+
 /* ---------- STORY TIMELINE ---------- */
 function initStoryTimeline() {
   const observer = new IntersectionObserver((entries) => {
@@ -505,17 +611,22 @@ function createFeaturedHeroCard(project) {
   }).join('');
 
   const overlayButtons = `
-    <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
-      View Project
+    <a href="project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
+      View Project →
     </a>
   `;
   return `
-    <article class="featured-card featured-hero">
+    <article class="featured-card featured-hero group">
       <a href="project.html?id=${project.id}" class="featured-media">
         <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
-            <p class="text-sm mb-3 opacity-90">${project.short_description || ''}</p>
+            ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
+            <h4 class="text-lg font-bold text-white mb-3">${project.title}</h4>
+            <p class="text-sm text-white/90 leading-relaxed mb-4">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 120) + '...' || 'Explore this project'}</p>
+            <div class="flex flex-wrap gap-2 justify-center mb-3">
+              ${tags || ''}
+            </div>
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons}
             </div>
@@ -523,7 +634,7 @@ function createFeaturedHeroCard(project) {
         </div>
       </a>
       <div class="featured-body">
-        <div class="featured-meta">${project.date || ''}</div>
+        <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
         <h3 class="featured-title"><a href="project.html?id=${project.id}">${project.title}</a></h3>
         <p class="featured-summary">${project.short_description || ''}</p>
         <div class="list-tags">
@@ -567,17 +678,22 @@ function createFeaturedHalfCard(project) {
   }).join('');
 
   const overlayButtons = `
-    <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
-      View Project
+    <a href="project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
+      View Project →
     </a>
   `;
   return `
-    <article class="featured-card featured-half">
+    <article class="featured-card featured-half group">
       <a href="project.html?id=${project.id}" class="featured-media">
         <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
-            <p class="text-sm mb-3 opacity-90">${project.short_description || ''}</p>
+            ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
+            <h4 class="text-base font-bold text-white mb-2">${project.title}</h4>
+            <p class="text-sm text-white/90 leading-relaxed mb-3">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 100) + '...' || 'Explore this project'}</p>
+            <div class="flex flex-wrap gap-1.5 justify-center mb-2">
+              ${tags || ''}
+            </div>
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons}
             </div>
@@ -585,7 +701,7 @@ function createFeaturedHalfCard(project) {
         </div>
       </a>
       <div class="featured-body">
-        <div class="featured-meta">${project.date || ''}</div>
+        <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
         <h4 class="featured-title"><a href="project.html?id=${project.id}">${project.title}</a></h4>
         <p class="featured-summary">${project.short_description || ''}</p>
         <div class="list-tags">
@@ -628,7 +744,38 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
   let totalCount = 0;
 
   if (activeFilter) {
-    list = projects.filter(p => (p.tools || []).includes(activeFilter));
+    const groupTools = FILTER_GROUPS[activeFilter];
+    let filterTools = [];
+    if (groupTools && groupTools.length) {
+      filterTools = groupTools;
+      list = projects.filter(p => (p.tools || []).some(t => groupTools.includes(t)));
+    } else {
+      filterTools = [activeFilter];
+      list = projects.filter(p => (p.tools || []).includes(activeFilter));
+    }
+    
+    // Also include case studies that match the filter
+    const caseStudies = await loadCaseStudies();
+    const filteredCaseStudies = caseStudies.filter(cs => {
+      const csTools = cs.tools || [];
+      return csTools.some(t => filterTools.includes(t) || t === activeFilter);
+    });
+    
+    // Convert case studies to project-like format for rendering
+    const caseStudyProjects = filteredCaseStudies.map(cs => ({
+      id: cs.id,
+      title: cs.title,
+      short_description: cs.short_description,
+      thumbnail: cs.thumbnail,
+      tools: cs.tools || [],
+      category: cs.category,
+      featured: false,
+      isCaseStudy: true,
+      case_study_path: cs.case_study_path
+    }));
+    
+    // Combine projects and case studies, then sort (projects first, then case studies)
+    list = [...list, ...caseStudyProjects];
     totalCount = list.length;
     const { start, end } = getPaginationSlice(totalCount, page, firstPageCount, restPageCount);
     list = list.slice(start, end);
@@ -931,20 +1078,105 @@ function renderPagination(total, currentPage, firstPageCount, restPageCount) {
 				});
 }
 
+/* ---------- CASE STUDY PAGE (standalone long-form) ---------- */
+async function loadCaseStudyPage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const caseStudyId = urlParams.get('id');
+  if (!caseStudyId) {
+    document.getElementById('case-study-content').innerHTML = '<p class="text-gray-500">No case study selected. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
+    return;
+  }
+
+  const caseStudies = await loadCaseStudies();
+  const caseStudy = caseStudies.find(cs => cs.id === caseStudyId);
+  if (!caseStudy) {
+    document.getElementById('case-study-content').innerHTML = '<p class="text-gray-500">Case study not found. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
+    return;
+  }
+
+  document.title = `${caseStudy.title} | Case Study | Sumit S. Chaure`;
+
+  const hero = document.getElementById('case-study-hero');
+  if (hero) {
+    const readMins = caseStudy.case_study_read_mins != null ? caseStudy.case_study_read_mins : 5;
+    hero.innerHTML = `
+      <div class="container mx-auto px-6 py-16 text-center max-w-4xl">
+        <div class="text-sm text-white/80 mb-4">
+          <span>${caseStudy.category || 'Analytics'}</span>
+          ${caseStudy.date ? ` · <span>${caseStudy.date}</span>` : ''}
+          · <span>${readMins} min read</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">${caseStudy.title}</h1>
+        <p class="text-xl text-white/90 max-w-2xl mx-auto">${(caseStudy.short_description || '').replace(/<[^>]*>/g, '')}</p>
+      </div>
+    `;
+  }
+
+  const viewProjectEl = document.getElementById('case-study-view-project');
+  if (viewProjectEl && caseStudy.project_id) {
+    viewProjectEl.innerHTML = `
+      <a href="project.html?id=${encodeURIComponent(caseStudy.project_id)}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold text-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        View full project
+      </a>
+    `;
+  } else if (viewProjectEl) {
+    viewProjectEl.innerHTML = '';
+  }
+
+  const container = document.getElementById('case-study-content');
+  if (!container) return;
+  try {
+    const res = await fetch(caseStudy.case_study_path);
+    if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
+    const html = await res.text();
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = '<p class="text-gray-500">Case study content could not be loaded. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
+  }
+}
+
 /* ---------- PROJECT DETAIL PAGE ---------- */
 async function loadProjectDetail() {
   const urlParams = new URLSearchParams(window.location.search);
   const projectId = urlParams.get('id');
   if (!projectId) return;
 
-  const projects = await loadProjects();
+  const [projects, caseStudies] = await Promise.all([loadProjects(), loadCaseStudies()]);
   const project = projects.find(p => p.id === projectId);
   if (!project) return;
 
-  renderProject(project);
+  const caseStudy = caseStudies.find(cs => cs.project_id === projectId);
+  let contentFromFile = null;
+  if (project.content_path) {
+    contentFromFile = await fetchProjectContent(project.content_path);
+  }
+  renderProject(project, caseStudy, contentFromFile);
 }
 
-function renderProject(project) {
+/** Fetch project content from HTML file; returns { overview, problem, approach, insights, media } or null. */
+async function fetchProjectContent(path) {
+  try {
+    const res = await fetch(path);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const get = (id) => { const el = doc.getElementById(id); return el ? el.innerHTML.trim() : ''; };
+    return {
+      overview: get('overview'),
+      problem: get('problem'),
+      approach: get('approach'),
+      insights: get('insights'),
+      media: get('media')
+    };
+  } catch (e) {
+    console.warn('Failed to load project content from', path, e);
+    return null;
+  }
+}
+
+function renderProject(project, caseStudy, contentFromFile) {
   document.title = `${project.title} | Sumit S. Chaure`;
 
   const hero = document.getElementById("project-hero");
@@ -965,13 +1197,18 @@ function renderProject(project) {
     `;
   }
 
-  // Build sections with IDs for TOC
+  // Build sections with IDs for TOC (use content from HTML file if available, else JSON)
   const sections = [];
-  if (project.full_description) sections.push({ id: 'overview', title: 'Overview', content: project.full_description });
-  if (project.problem_statement) sections.push({ id: 'problem', title: 'Problem Statement', content: project.problem_statement });
-  if (project.approach) sections.push({ id: 'approach', title: 'Approach / Methodology', content: project.approach });
-  if (project.insights) sections.push({ id: 'insights', title: 'Insights & Outcomes', content: project.insights });
-  if (project.case_study_path) {
+  const overview = contentFromFile?.overview || project.full_description;
+  const problem = contentFromFile?.problem || project.problem_statement;
+  const approach = contentFromFile?.approach || project.approach;
+  const insights = contentFromFile?.insights || project.insights;
+  const mediaNotes = contentFromFile?.media || project.media_notes;
+  if (overview) sections.push({ id: 'overview', title: 'Overview', content: overview });
+  if (problem) sections.push({ id: 'problem', title: 'Problem Statement', content: problem });
+  if (approach) sections.push({ id: 'approach', title: 'Approach / Methodology', content: approach });
+  if (insights) sections.push({ id: 'insights', title: 'Insights & Outcomes', content: insights });
+  if (caseStudy && caseStudy.case_study_path) {
     sections.push({
       id: 'case-study',
       title: 'Case Study (Long-form)',
@@ -980,7 +1217,7 @@ function renderProject(project) {
     });
   }
   if (project.notebook_url) sections.push({ id: 'notebook', title: 'Notebook (Code Walkthrough)', content: notebookEmbed(project.notebook_url), isMedia: true });
-  if (project.media_notes) sections.push({ id: 'media', title: 'Media & Assets', content: project.media_notes });
+  if (mediaNotes) sections.push({ id: 'media', title: 'Media & Assets', content: mediaNotes });
   if (shouldShowAppsSection(project)) {
     sections.push({ id: 'apps', title: 'Applications & Dashboards', content: appsSection(project), isMedia: true });
   } else {
@@ -1018,18 +1255,17 @@ function renderProject(project) {
     initClickableTools();
   }
 
-  // Load and inject long-form case study (if provided)
-  if (project.case_study_path) {
-    loadCaseStudyIntoProject(project);
+  if (caseStudy && caseStudy.case_study_path) {
+    loadCaseStudyIntoProject(project, caseStudy);
   }
 }
 
-async function loadCaseStudyIntoProject(project) {
+async function loadCaseStudyIntoProject(project, caseStudy) {
   const container = document.getElementById('case-study-content');
   if (!container) return;
 
   try {
-    const res = await fetch(project.case_study_path);
+    const res = await fetch(caseStudy.case_study_path);
     if (!res.ok) throw new Error(`Failed to load case study: ${res.status}`);
     const html = await res.text();
     container.innerHTML = html;

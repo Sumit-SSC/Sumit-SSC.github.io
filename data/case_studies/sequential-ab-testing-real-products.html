@@ -1,0 +1,100 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 mb-8">
+    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+      <p><strong>Type:</strong> Sequential Testing Boundaries Chart</p>
+      <p><strong>Suggested Source:</strong> <a href="https://netflixtechblog.com/tagged/experimentation" target="_blank" rel="noopener" class="underline">Netflix Tech Blog — Experimentation</a></p>
+      <p><strong>What it Shows:</strong> Sample size (or time) on X-axis, test statistic on Y-axis; upper/lower boundaries; sample path crossing a boundary (early stop).</p>
+      <p><strong>Why It Matters:</strong> Core visual for sequential A/B testing in product.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Fixed-horizon A/B tests force a choice: wait for a pre-set sample size (slow) or peek and stop early (biased). <strong>Sequential A/B testing</strong> allows early stopping with valid inference by using pre-defined boundaries. This case study covers sequential testing in real products, early-stopping bias, and guardrails—using <a href="https://netflixtechblog.com/tagged/experimentation" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix</a> and <a href="https://arxiv.org/search/?query=sequential+ab+testing" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Sequential testing:</strong> Compute test statistic at interim looks; compare to upper (reject H0) and lower (accept H0) boundaries; stop when a boundary is crossed, else continue.</li>
+      <li><strong>Early stopping bias:</strong> Naive peeking inflates Type I error; sequential boundaries are designed to preserve Type I/II error while allowing early stop when effect is clear.</li>
+      <li><strong>Guardrails:</strong> Pre-specify primary metric and boundaries; monitor guardrail metrics at each look; do not use sequential design as excuse to peek on many metrics.</li>
+      <li><strong>Implementation:</strong> Use validated sequential methods (e.g., O'Brien-Fleming, Pocock, or custom boundaries); document analysis plan upfront.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Product teams want fast answers; fixed-horizon tests can feel slow. Netflix's experimentation posts describe sequential testing as a way to conclude experiments 30–50% faster on average while controlling false positives. The key is using proper boundaries (e.g., from group-sequential design) rather than ad-hoc peeking.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Line Chart — Sequential Boundaries</p>
+      <p><strong>Suggested Source:</strong> Netflix — Sequential A/B Testing (Part 1)</p>
+      <p><strong>What it Shows:</strong> Cumulative Z (or LR) vs. sample size; upper and lower curves; one sample path crossing upper boundary (reject H0, ship treatment).</p>
+      <p><strong>Why It Matters:</strong> Explains how early stop preserves validity.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Standard experiment schema: assignment (user_id, experiment_id, arm, assigned_at), events (user_id, event_type, value, timestamp). For sequential analysis, aggregate to experiment-level metric (e.g., mean per arm) at each look; compute test statistic (e.g., Z or likelihood ratio) and compare to boundaries. Looks are typically time-based (e.g., daily) or sample-size-based.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Primary:</strong> One metric for the sequential test (e.g., conversion rate, retention). <strong>Guardrails:</strong> Metrics checked at each look; if a guardrail breaches, consider stopping for harm even if primary has not crossed a boundary. North star: correct ship/no-ship decision with minimum expected sample size.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Pre-specify: primary metric, null and alternative, Type I/II error, maximum sample size, and boundary type (e.g., O'Brien-Fleming). At each look: compute point estimate and variance per arm, then test statistic; compare to boundaries; stop if crossed, else continue. Report final decision and confidence interval (e.g., repeated-confidence-interval for sequential).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated boundary computation and daily (or per-look) evaluation; dashboards showing statistic path and boundaries; alerts when boundary crossed or guardrail breached; optional LLM summarization of "experiment concluded: ship treatment, primary +X%, guardrails OK."
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Sequential testing reduces expected sample size for a given power when effects are large; early-stopping bias is controlled by design. Guardrails must be specified in advance; peeking on many metrics still inflates Type I error unless adjusted (e.g., Bonferroni on number of metrics).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: speed vs. complexity (boundaries, analysis plan). Risk: misuse (e.g., changing primary metric mid-test). Failure mode: treating sequential as "peek until significant" without proper boundaries.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt sequential testing for high-volume product experiments; pre-register primary and guardrails; use validated boundaries. Outcome: faster ship decisions with preserved statistical validity.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Sequential methods assume correct model (e.g., normal); delayed outcomes complicate look timing. Improvements: sequential methods for ratio metrics and survival; integration with CUPED or variance reduction.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Platform-native sequential testing (e.g., Statsig, Eppo); multi-armed and bandit-sequential hybrids; pre-registration and audit trails.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://netflixtechblog.com/tagged/experimentation" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix — Experimentation</a></li>
+    <li><a href="https://arxiv.org/search/?query=sequential+ab+testing" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv — Sequential A/B Testing</a></li>
+    <li><a href="https://hbr.org/2020/06/a-refresher-on-ab-testing" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — A Refresher on A/B Testing</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Sequential A/B testing enables faster product decisions with valid inference. Pre-specify primary metric and boundaries; use guardrails at each look; avoid peeking on many metrics without adjustment. Implement with validated methods and clear analysis plans.
+    </p>
+  </div>
+</div>

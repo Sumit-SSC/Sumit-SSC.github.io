@@ -1,0 +1,100 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-violet-200 dark:border-violet-800 mb-8">
+    <p class="text-sm font-semibold text-violet-900 dark:text-violet-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-violet-800 dark:text-violet-200 space-y-1">
+      <p><strong>Type:</strong> Metric Tree / Goodhart Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2017/01/a-refresher-on-metrics-that-matter" target="_blank" rel="noopener" class="underline">HBR — Metrics That Matter</a></p>
+      <p><strong>What it Shows:</strong> North star at top; gaming paths (when metric becomes target, behavior distorts); guardrails and proxy failures.</p>
+      <p><strong>Why It Matters:</strong> Explains why single-metric optimization fails at scale.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    North Star metrics align organizations around one outcome—but when that metric becomes the sole target, behavior distorts (Goodhart's Law). This case study examines why popular North Star metrics fail at scale: <strong>metric gaming</strong>, <strong>proxy failures</strong>, and the need for <strong>multi-metric frameworks</strong>—using <a href="https://hbr.org/2017/01/a-refresher-on-metrics-that-matter" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> and <a href="https://www.reforge.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Goodhart's Law:</strong> "When a measure becomes a target, it ceases to be a good measure." Optimizing for one number invites gaming and unintended consequences.</li>
+      <li><strong>Gaming patterns:</strong> Selection (who counts), definition creep (what counts), and effort substitution (doing what moves the number, not what creates value).</li>
+      <li><strong>Proxy failures:</strong> North stars are often proxies (e.g., DAU for engagement); when the proxy decouples from true outcome (e.g., vanity DAU), the metric misleads.</li>
+      <li><strong>Multi-metric frameworks:</strong> Primary + secondary + guardrails; pre-register what "good" looks like; avoid rewarding one number in isolation.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Companies adopt a North Star to focus effort—revenue, DAU, NPS, retention. At scale, incentives and targets attach to that number; people optimize for it. HBR's "Metrics That Matter" and Reforge's growth essays describe how single-metric cultures produce short-term wins and long-term distortion unless guardrails and multiple outcomes are explicit.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Causal Diagram / Gaming Pathways</p>
+      <p><strong>Suggested Source:</strong> HBR — When Metrics Mislead</p>
+      <p><strong>What it Shows:</strong> North star → gaming paths (selection, definition creep, effort substitution) → unintended outcomes; guardrail metrics that block bad behavior.</p>
+      <p><strong>Why It Matters:</strong> Supports design of metric hierarchies and incentives.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Events and dimensions must support both the North Star and guardrails: e.g., DAU (user_id, date, source) plus quality signals (session depth, retention, revenue). Definitional consistency (who is "active," what is "conversion") and auditability (can we detect selection or creep?) are critical.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>North Star:</strong> One primary outcome (e.g., weekly active users, revenue). <strong>Secondary:</strong> Input and quality metrics (e.g., retention, depth). <strong>Guardrails:</strong> Metrics that must not regress (e.g., NPS, support load, compliance). All three tiers should be defined and monitored; incentives should not attach to North Star alone.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Detect gaming: segment North Star by cohort and channel; look for selection (e.g., easy users only) or definition creep (e.g., loosening "active"). A/B test incentive schemes: North Star only vs. North Star + guardrails. Monitor correlation between North Star and true outcome over time (proxy decay).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Dashboards that surface North Star, secondary, and guardrails together; alerts when guardrails breach; anomaly detection on segment-level North Star (e.g., one channel gaming).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Single-metric cultures consistently produce gaming; multi-metric frameworks with guardrails reduce distortion; proxy decay is common as tactics adapt to the metric; explicit definition and auditability slow gaming.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: focus (one number) vs. robustness (many numbers). Risk: guardrails ignored if not incentivized. Failure mode: rewarding North Star alone until it breaks, then switching metric without fixing incentives.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt North Star + secondary + guardrails; define and lock definitions; avoid incentive design that rewards only the North Star. Outcome: sustained alignment without gaming-driven distortion.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Guardrails can be gamed too; multi-metric incentives are harder to communicate. Improvements: causal mapping of metrics to outcome; periodic metric review; culture that rewards long-term outcome over short-term number.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Outcome-based metrics (e.g., LTV, health score) that are harder to game; automated gaming detection; incentive design experiments.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://hbr.org/2017/01/a-refresher-on-metrics-that-matter" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Metrics That Matter</a></li>
+    <li><a href="https://www.reforge.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge Essays</a></li>
+    <li><a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — KPI Design</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      North Star metrics align organizations but invite gaming. Use multi-metric frameworks (primary + secondary + guardrails), lock definitions, and design incentives so that the North Star is not the only lever that gets pulled.
+    </p>
+  </div>
+</div>

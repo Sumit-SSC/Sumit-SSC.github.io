@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-6 border border-orange-200 dark:border-orange-800 mb-8">
+    <p class="text-sm font-semibold text-orange-900 dark:text-orange-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-orange-800 dark:text-orange-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow — AI + Human Escalation</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="underline">Gartner — Human-in-the-Loop AI</a></p>
+      <p><strong>What it Shows:</strong> Model score → auto-approve / escalate / auto-decline; human queue and feedback loop.</p>
+      <p><strong>Why It Matters:</strong> Safe AI systems with oversight.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    AI systems in risk and ops—fraud, credit, support—often require <strong>human oversight</strong>: decision escalation, explainability, and ops throughput. This case study covers human-in-the-loop AI for risk and ops—using <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and <a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> trustworthy AI.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Decision escalation:</strong> Auto-approve low risk, auto-decline high risk, escalate gray zone to humans; define thresholds and queue prioritization (e.g., by value, SLA).</li>
+      <li><strong>Explainability:</strong> Provide reason codes or feature contributions so humans can verify and overturn; required for compliance and trust.</li>
+      <li><strong>Ops throughput:</strong> Queue depth, time-to-decision, overturn rate; balance automation rate with human capacity; use AI to prioritize and suggest actions so humans focus on edge cases.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Gartner's human-in-the-loop AI and HBR's trustworthy AI describe how high-stakes decisions (fraud, credit, moderation) need a balance of automation and human judgment. Escalation design, explainability, and ops metrics determine whether the system is safe, compliant, and efficient.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Flowchart — Escalation Logic</p>
+      <p><strong>Suggested Source:</strong> Gartner — Human-in-the-Loop AI</p>
+      <p><strong>What it Shows:</strong> Score bands: [0, a) auto-decline, [a, b) escalate, [b, 1] auto-approve. Queue: priority, SLA, explainability panel.</p>
+      <p><strong>Why It Matters:</strong> Design of escalation and throughput.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decisions: case_id, score, decision (auto/human), outcome (approve/decline), reason_codes, reviewer_id, time_to_decision. Queue: case_id, priority, created_at, SLA_deadline. Feedback: overturn rate, analyst accuracy (vs. ground truth when available). Use to tune thresholds and prioritization.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: decision accuracy (or loss/cost); ops SLA (e.g., % cases decided within SLA). Secondary: escalation rate, overturn rate, time-to-decision. Guardrails: explainability coverage, fairness metrics. North star: correct decisions with acceptable throughput and human capacity.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A/B test threshold bands (e.g., widen auto-approve band); measure accuracy, escalation rate, and SLA. Analyze overturn rate by score band and reason code to improve model or explainability. Use human feedback to retrain or refine rules.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Model scoring and reason codes; queue management and prioritization; optional LLM summarization of case for reviewer; feedback loop from human decisions to model retraining or rule updates.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Escalation bands tuned to risk and capacity improve both accuracy and throughput; explainability increases trust and reduces overturn time; human feedback improves model and rules over time.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: automation (fewer humans) vs. safety (more escalation). Risk: humans over-trust or under-trust AI. Failure mode: escalation queue grows faster than capacity; or auto-band too wide and errors spike.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: design human-in-the-loop with clear escalation, explainability, and ops metrics; tune bands and prioritization; close feedback loop. Outcome: safe, compliant, and efficient risk and ops decisions.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Explainability can be incomplete; human bias in overturns. Improvements: better reason codes; fairness monitoring of human decisions; adaptive thresholds by segment.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Active learning (prioritize cases that improve model); full audit trail for regulatory; AI-assisted explainability (e.g., natural language reasons).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Human-in-the-Loop AI</a></li>
+    <li><a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Trustworthy AI</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Design AI for risk and ops with human-in-the-loop: clear escalation, explainability, and ops throughput. Tune bands and prioritization and close the feedback loop so that automation is safe and efficient.
+    </p>
+  </div>
+</div>

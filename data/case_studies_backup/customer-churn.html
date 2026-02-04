@@ -1,0 +1,51 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Customer churn analysis and retention is a core use case for decision scientists and business analysts: combine SQL cohorting, feature engineering, and ML risk scoring to prioritize retention actions and protect recurring revenue. This case study focuses on the analytics lifecycle from raw behavior data to a stakeholder-ready dashboard and actionable risk segments.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Goal:</strong> Reduce churn and protect recurring revenue by targeting high-risk cohorts with tailored offers.</p>
+      <p><strong>Approach:</strong> Cohort analysis in SQL; feature engineering (tenure, usage, support tickets, payments); XGBoost model with SHAP for drivers; Power BI dashboard for business teams.</p>
+      <p><strong>Insights:</strong> Support tickets and payment failures were top churn signals; targeting the top decile by risk improved retention lift versus baseline.</p>
+      <p><strong>Outcome:</strong> A repeatable pipeline and dashboard that retention and success teams use to prioritize outreach and offers.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Business Context</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Subscription and B2B businesses live on recurring revenue. Churn directly hits MRR/ARR and often signals product-market fit or experience issues. The analytics challenge is to move from “who churned?” to “who is likely to churn next, and why?” so that retention efforts can be focused and measured.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology</h3>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Cohort & Features</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Cohorts were defined by signup or first contract date. Features included tenure, usage intensity and trend, support ticket count and recency, payment failures, and plan tier. All built in SQL for reproducibility and alignment with the data warehouse.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Modeling & Explainability</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    XGBoost was trained with class weighting for imbalance. SHAP values were used to rank global drivers and to explain individual risk scores for the dashboard and for retention playbooks.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results & Decisioning</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The model identified a high-risk decile with materially higher churn rate. Retention campaigns focused on this decile showed better lift than broad-brush efforts. The dashboard exposed risk score, top drivers, and segment filters so that success and sales could prioritize accounts.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Future Work</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li>Uplift modeling to target “persuadables” and avoid wasting spend on sure things or lost causes.</li>
+    <li>Automated retraining and drift monitoring; feedback loop from disposition data.</li>
+    <li>Integration with CRM and marketing automation for triggered campaigns.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media Checklist</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Power BI dashboard screenshots: risk distribution, top drivers, segment filters</li>
+      <li>SHAP summary and example customer-level explanation</li>
+      <li>Short narrative on how retention used the outputs</li>
+    </ul>
+  </div>
+</div>

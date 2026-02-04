@@ -1,0 +1,44 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This is a <strong>learning case study</strong> on how healthcare uses patient and operational data for outcomes, capacity, and resource planning. The emphasis is on analytics and reporting first; ML/DL are introduced only where they add clear value (e.g. readmission risk, demand forecasting), so the case study stays grounded in data and decisions.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Domain:</strong> Healthcare. Providers and payers need better outcomes and efficiency while staying compliant.</p>
+      <p><strong>Data:</strong> EHR (encounters, diagnoses, procedures, meds), claims (utilization, cost), and operational data (beds, wait times, staffing).</p>
+      <p><strong>Analytics focus:</strong> Length of stay (LOS), readmission rates, capacity and utilization, and risk stratification. Dashboards and reports support clinical and operational teams. Optional: readmission or demand models where they drive clear actions.</p>
+      <p><strong>Decision angle:</strong> Who to target for outreach, where to add capacity, and how to monitor quality and cost. Compliance and privacy (e.g. HIPAA-style rules) are non-negotiable in data design.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Core Metrics</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    <strong>Length of stay (LOS)</strong> by unit, diagnosis, and cohort is a key efficiency and capacity metric. <strong>Readmission rate</strong> (e.g. 30-day) by condition and provider is a quality and cost lever. <strong>Capacity and utilization</strong>—beds, OR time, staff hours—show where bottlenecks are. <strong>Risk stratification</strong> (e.g. high-risk patients for readmission or deterioration) helps target outreach and care management. All of these start with clear definitions (e.g. index admission, readmission window) and reproducible pipelines so that reports are trusted.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Where Analytics Ends and ML Can Help</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Descriptive and cohort analytics (LOS, readmission rate, utilization) are the foundation. Predictive models (e.g. readmission risk score, demand for beds) can add value when they drive actions: e.g. “high risk → care manager outreach” or “forecasted demand → staffing adjustment.” ML/DL (e.g. NLP on notes, imaging) are useful where the problem is well-scoped and the output is interpretable and actionable. The case study keeps the focus on analytics and decision support; ML is an optional layer with clear use cases and governance.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Compliance and Privacy</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Healthcare data is sensitive. Pipelines and dashboards must respect access control, anonymization/aggregation where required, and audit trails. Analytics roles often work with de-identified or aggregated data; understanding compliance constraints is part of the learning.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">What You Can Learn and Reuse</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    LOS and readmission definitions, utilization and capacity metrics, and risk stratification are transferable to any healthcare analytics role. Public datasets (e.g. MIMIC, CMS claims, HCUP) support hands-on SQL and dashboard practice. Focus on clear metrics and reproducible pipelines before adding predictive models.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Further Reading & Resources</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Healthcare analytics and quality metrics (HIMSS, CMS, industry primers)</li>
+      <li>MIMIC, HCUP, CMS public use files for practice</li>
+      <li>Readmission and risk stratification (methods and governance)</li>
+    </ul>
+  </div>
+</div>

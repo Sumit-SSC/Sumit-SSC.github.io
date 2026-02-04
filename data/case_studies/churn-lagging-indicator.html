@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-rose-200 dark:border-rose-800 mb-8">
+    <p class="text-sm font-semibold text-rose-900 dark:text-rose-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-rose-800 dark:text-rose-200 space-y-1">
+      <p><strong>Type:</strong> Leading vs Lagging Indicator Timeline</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="underline">Bain — Customer Retention</a></p>
+      <p><strong>What it Shows:</strong> Timeline: early signals (usage drop, support) → behavioral markers → churn event. Intervention window.</p>
+      <p><strong>Why It Matters:</strong> Detect churn before it happens.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Churn is a <strong>lagging indicator</strong>—by the time a user churns, it is too late to retain them. This case study examines how to detect churn risk earlier: <strong>early signals</strong>, <strong>behavioral markers</strong>, and <strong>intervention analytics</strong>—using <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain</a> and <a href="https://www.amplitude.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude</a> retention analytics.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Early signals:</strong> Usage decline (sessions, depth, feature adoption), support tickets, payment failures, login frequency—often weeks before churn.</li>
+      <li><strong>Behavioral markers:</strong> Segment users by behavior (e.g., power user, at-risk, dormant); build risk score or propensity-to-churn model from historical churners and their pre-churn behavior.</li>
+      <li><strong>Intervention analytics:</strong> Test interventions (email, in-app, offer) on at-risk segments; measure lift in retention and payback; optimize timing and channel.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Bain's customer retention work and Amplitude's retention analytics describe how leading indicators (usage, engagement, support) precede churn. Detecting risk early and intervening (e.g., outreach, offer, product fix) can save a significant share of at-risk users. Analytics should focus on early signals and intervention effectiveness, not only on churn rate after the fact.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Risk Score Distribution / Segment</p>
+      <p><strong>Suggested Source:</strong> Amplitude — Retention Analytics</p>
+      <p><strong>What it Shows:</strong> Users by risk score (low/medium/high); churn rate by score band; intervention lift by band.</p>
+      <p><strong>Why It Matters:</strong> Target interventions by risk.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Events: sessions, feature_use, support_ticket, payment_failure, login. User snapshot: user_id, date, usage_metrics (sessions_7d, depth_7d, etc.), risk_score, segment. Churn: user_id, churn_date. Intervention: user_id, treatment, sent_at, channel. Model: train on historical churners and non-churners; features = lagged usage and behavior; target = churn in next 30/60/90 days.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: churn rate (lagging); leading: at-risk rate (e.g., % users in top risk decile), early-signal trend (e.g., usage decline rate). Intervention: lift in retention for treated vs control. North star: reduce churn by detecting risk early and intervening effectively.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Build propensity-to-churn model (e.g., logistic regression, gradient boosting) on historical data; validate on holdout; segment users by risk. A/B test interventions (email, in-app, offer) on at-risk segment; measure retention lift and payback. Monitor early-signal trends (e.g., aggregate usage decline) as leading indicator of future churn.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated risk scoring (daily or weekly); segment and list generation for campaigns; intervention tracking and attribution; optional LLM summarization of at-risk user behavior for support or success teams.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Early signals (usage drop, support) predict churn with lead time; risk scoring improves targeting of interventions; intervention lift is often highest in mid-risk segment (low-risk would stay anyway, high-risk may be too late).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: intervention cost vs. retention gain. Risk: over-intervening (fatigue). Failure mode: only measuring churn rate and not leading indicators or intervention effectiveness.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: invest in early signals and risk scoring; run intervention experiments; track leading indicators and intervention lift. Outcome: lower churn through earlier detection and effective intervention.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Risk model depends on historical behavior; new segments or products have limited data. Improvements: causal evaluation of interventions; segment-specific models; real-time signals.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Real-time risk scoring; automated intervention triggers; integration with success and support workflows.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain — Customer Retention</a></li>
+    <li><a href="https://www.amplitude.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude — Retention Analytics</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Churn is a lagging indicator. Detect risk earlier with early signals and behavioral markers; build risk scores and run intervention analytics so that retention improves before churn happens.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,100 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-slate-200 dark:border-slate-700 mb-8">
+    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-slate-800 dark:text-slate-200 space-y-1">
+      <p><strong>Type:</strong> Metric Tree / Profit Decomposition</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Credit Risk Analytics</a></p>
+      <p><strong>What it Shows:</strong> Expected profit = f(PD, LGD, EAD, revenue); reject inference and vintage analysis feed into PD/LGD.</p>
+      <p><strong>Why It Matters:</strong> Frames credit as profit optimization, not just classification.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Credit approval is often treated as a binary approve/decline problem. In practice, it is a <strong>profit optimization</strong> problem: expected profit = revenue from good borrowers minus loss from bad, adjusted for exposure and loss given default. This case study examines PD × LGD × EAD frameworks, reject inference, vintage analysis, and bias and governance—using <a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> credit risk research and the <a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="text-primary hover:underline">Basel framework</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Profit, not accuracy:</strong> Optimize for expected profit (revenue − expected loss) per applicant; classification accuracy is a means, not the end.</li>
+      <li><strong>PD × LGD × EAD:</strong> Probability of default, loss given default, and exposure at default decompose risk and revenue; scorecards and models should feed these components.</li>
+      <li><strong>Reject inference:</strong> Applicants who were declined have no outcome; use augmentation (e.g., parceling, reweighting) or accept selection bias and monitor portfolio performance.</li>
+      <li><strong>Vintage analysis:</strong> Cohort performance over time (e.g., default rate by origination month) reveals model drift, policy impact, and economic cycles.</li>
+      <li><strong>Bias & governance:</strong> Fairness metrics (e.g., adverse action, disparity in approval/default by protected group) and model documentation for regulatory and internal governance.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Lenders maximize long-term profit by approving applicants whose expected revenue exceeds expected loss. McKinsey's credit risk analytics work emphasizes moving from "good/bad" scoring to economic decision frameworks. Basel capital and IFRS 9 ECL rely on PD, LGD, and EAD; analytics teams must produce estimates that are consistent with both profit and regulation.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Curve / Profit by Score Threshold</p>
+      <p><strong>Suggested Source:</strong> McKinsey — Credit Risk (profit curve)</p>
+      <p><strong>What it Shows:</strong> Expected profit per applicant vs. approval threshold (score cutoff); optimal cutoff where profit is maximized.</p>
+      <p><strong>Why It Matters:</strong> Replaces "maximize AUC" with "maximize profit at threshold."</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Application (applicant_id, features, decision, score); performance (account_id, monthly_snapshot, default_flag, EAD, recovery); reject pool (applicant_id, features, no outcome). PD models use performance data; reject inference augments with rejected applicants via parceling or reweighting. Vintage = cohort by origination date; track default rate and loss by vintage and month.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Primary:</strong> Expected profit per decision (or portfolio NIM / loss ratio). <strong>Secondary:</strong> PD/LGD calibration, approval rate, default rate by segment. <strong>Guardrails:</strong> Fairness metrics, capital adequacy, model stability. North star: risk-adjusted profit within governance constraints.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Backtest profit at different score cutoffs; A/B test policy (e.g., new cutoff or new model) on approval rate, default rate, and profit. Vintage analysis: default rate by origination cohort and age; monitor drift. Reject inference: compare portfolio performance with and without augmentation; document assumptions.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated PD/LGD model retraining with vintage and reject-inference; profit-curve dashboards; fairness dashboards (approval/default by segment); model documentation and change logs for governance.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Profit-optimal cutoff often differs from accuracy-optimal; vintage analysis surfaces policy and economic effects; reject inference improves representativeness but adds assumption risk; fairness constraints can be incorporated as constraints on threshold or segment-level policies.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: profit vs. volume vs. fairness. Risk: reject inference mis-specification; model drift in downturns. Failure mode: optimizing only for default rate can shrink volume and profit; optimizing only for volume can blow loss.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt profit-based decision framework; use PD × LGD × EAD; run vintage analysis and reject inference with clear assumptions; enforce fairness and governance. Outcome: better risk-adjusted returns and auditability.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reject inference is unobservable; PD/LGD in low default portfolios. Improvements: alternative reject inference methods; stress testing; segment-level profit curves.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Causal credit policies; explainable adverse action; integration with IFRS 9 and Basel reporting.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Credit Risk Analytics</a></li>
+    <li><a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="text-primary hover:underline">Basel Framework (BIS)</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Treat credit decisions as profit systems: optimize for expected profit using PD × LGD × EAD, support with reject inference and vintage analysis, and embed bias and governance checks so that risk-adjusted returns and fairness are both delivered.
+    </p>
+  </div>
+</div>

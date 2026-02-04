@@ -1,0 +1,3 @@
+# Skill icons are downloaded here by scripts/download-skill-icons.ps1
+# Run from project root:
+# powershell -ExecutionPolicy Bypass -File scripts/download-skill-icons.ps1

@@ -1,0 +1,178 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    How do banks use transaction data and analytics to detect fraud without drowning in false positives? This case study is based on <strong>real case studies and frameworks</strong> (e.g. Danske Bank, BankSealer, BIS/Teradata) and industry data. It is an <strong>industry/domain</strong> learning piece, not a write-up of a personal project. The goal is to give data and risk analysts a clear picture of how banks use behavioral analytics, anomaly detection, and ML to improve fraud detection while controlling false positives and investigation load.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Banks have moved from rule-based systems (high false positives, limited detection) to <strong>behavioral analytics and ML</strong>. Published case studies report large improvements: e.g. 60% reduction in false positives and 50% increase in true positives after deploying deep learning and anomaly detection. Semi-supervised and outlier-detection frameworks (e.g. BankSealer) have achieved very high detection rates in testing while remaining explainable for investigators.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Key ideas: <strong>customer profiling</strong> (historical behavior), <strong>anomaly scoring</strong> (deviation from profile), <strong>velocity and pattern checks</strong>, and <strong>operational metrics</strong> (catch rate, false-positive rate, investigation queue). Analytics supports both the models and the dashboards that fraud ops use daily. This case study summarizes public case studies and industry reports, expands on the metrics and methods involved, and links to the sources below.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      The remainder covers: case studies and frameworks (Danske Bank, BankSealer), key metrics and data sources, behavioral profiling and anomaly detection, implementation and operational metrics, business impact, and further reading.
+    </p>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Case Studies and Frameworks</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Danske Bank</strong> (Teradata case study): Implemented AI and deep learning for fraud detection. Initial state: ~40% detection rate and up to 1,200 false positives per day. After deployment: significant reduction in false positives and increase in true positives; deep learning outperformed traditional ML for complex patterns (e.g. unusual debit card activity across countries). The case study illustrates how moving from rules to behavioral and ML-based detection can improve both precision and recall while reducing analyst workload.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>BankSealer</strong> (academic/industry): A semi-supervised outlier-detection framework for online banking fraud. Uses customer spending profiles (e.g. typical amounts, merchants, times), anomaly quantification (deviation from profile), and clustering to flag suspicious transactions. Reported high detection rates in testing and explainable outputs for analysts—e.g. “this transaction is anomalous because amount and merchant are outside the customer’s typical pattern.” Explainability is important for investigators who need to understand why a transaction was flagged and for regulatory and audit requirements.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Industry context: fraud costs are enormous (e.g. billions in losses and operational cost); traditional rules alone are insufficient because fraudsters adapt and rules generate too many false positives. Modern analytics combines rules (e.g. velocity limits, blocklists), behavioral baselines (e.g. customer profile), and ML (e.g. gradient boosting, neural networks, anomaly detection) to improve detection while controlling false positives and investigation load.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Key Metrics and Data Sources</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud analytics teams track a set of primary and operational metrics. Primary metrics include: <strong>True positive rate (recall)</strong>—share of actual fraud that is detected; <strong>False positive rate</strong>—share of legitimate transactions that are flagged; <strong>Precision</strong>—share of flagged transactions that are actually fraud. In practice, there is a trade-off: raising the threshold to catch more fraud increases false positives and investigation load; lowering the threshold reduces false positives but may miss fraud. Teams often tune thresholds by segment (e.g. high-value vs. low-value) and monitor operational metrics such as investigation queue size, average time to close a case, and analyst satisfaction.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Data sources typically include: transaction data (amount, timestamp, merchant, channel, device, location), customer data (tenure, product holdings, historical behavior), and optionally external data (e.g. device fingerprinting, identity checks). Behavioral profiling uses historical transactions to build a baseline for each customer (e.g. typical amount range, typical merchants, typical time of day); new transactions are scored by how much they deviate from this baseline. Velocity checks (e.g. number of transactions in the last hour, number of new merchants) and pattern checks (e.g. sequence of transactions, geographic impossibility) complement the behavioral score.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Behavioral Profiling and Anomaly Detection</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Customer profiling can be done at various levels: (1) aggregate profile—e.g. average transaction amount, typical merchant categories, typical time windows; (2) segment-level—e.g. profiles by customer segment (new vs. established, high-value vs. low-value); (3) individual—e.g. per-customer baseline. The choice depends on data volume and stability: individual profiles are more accurate when there is enough history but can be noisy for new or low-activity customers. Anomaly detection methods include: statistical (e.g. z-score, Mahalanobis distance), clustering (e.g. flag points far from any cluster), and ML (e.g. isolation forest, autoencoders, or supervised models trained on labeled fraud/not-fraud). Semi-supervised approaches (e.g. train on normal behavior only, flag outliers) are common when labeled fraud is scarce or biased.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Explainability is important for investigators and regulators: a score alone is often insufficient; analysts need to know which features drove the score (e.g. “amount 3x above typical,” “new merchant,” “unusual country”). Model-agnostic explainability (e.g. SHAP, LIME) or interpretable models (e.g. logistic regression, decision trees with limited depth) can provide this. Many banks use a two-tier approach: a complex model for scoring and a simpler, interpretable layer for explanations.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Implementation and Operational Metrics</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud detection pipelines typically run in near-real time: when a transaction is initiated, it is scored against the customer profile and rules; if the score exceeds a threshold, the transaction may be blocked, challenged (e.g. step-up authentication), or queued for review. Batch jobs update customer profiles periodically (e.g. daily) using recent transaction history. Dashboards show detection rate, false positive rate, precision, queue size, and average time to close; segment-level views help identify where the model performs well or poorly. A/B tests or champion/challenger setups are used to evaluate new models or rules before full rollout.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Guardrail metrics include: customer friction (e.g. legitimate transactions blocked or challenged), investigator workload, and regulatory and audit readiness (e.g. model documentation, explainability). Balancing detection and false positives is an ongoing process; feedback from investigators (e.g. which alerts were true vs. false) is used to retrain and tune models.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Example metrics in practice: (1) <strong>Detection rate (recall)</strong>—share of confirmed fraud cases that were flagged by the system; (2) <strong>False positive rate</strong>—share of legitimate transactions that were flagged; (3) <strong>Precision</strong>—share of flagged transactions that were confirmed fraud; (4) <strong>Queue size</strong>—number of alerts awaiting review; (5) <strong>Average time to close</strong>—time from alert to resolution. Segment-level analysis (e.g. by product, channel, or customer segment) helps identify where the model performs well or poorly and where thresholds might be tuned. Common pitfalls include: overfitting to historical fraud patterns (so new fraud types are missed), ignoring explainability (so investigators cannot act efficiently), and tuning only for precision or only for recall (so either investigation load or fraud loss is unacceptable). Addressing these requires clear metrics, segment-level monitoring, feedback loops, and explainable models.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact and Takeaways</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For banks and fintechs, fraud detection directly protects revenue and reputation and supports regulatory compliance. The main takeaways for analysts are: (1) define primary and operational metrics (detection rate, false positive rate, precision, queue size) and tune thresholds by segment; (2) combine rules, behavioral profiling, and ML so that the system is both effective and explainable; (3) invest in data pipelines and feedback loops so that models can be retrained and improved; (4) use public case studies (e.g. Danske Bank, BankSealer) and industry reports to learn from real implementations; (5) consider explainability and auditability from the start, not as an afterthought.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    These practices apply to any business that faces fraud or abuse: payments, e-commerce, insurance, and identity. The same principles—behavioral baselines, anomaly scoring, operational metrics, and explainability—apply. The case studies and links below are a good starting point for building domain knowledge in fraud analytics.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Fraud “Lifecycle” and Where Analytics Fits</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A helpful way to structure fraud analytics is to think in terms of a lifecycle: <strong>prevent</strong>, <strong>detect</strong>, <strong>respond</strong>, and <strong>learn</strong>. Prevention includes identity checks, device fingerprinting, velocity limits, and authentication challenges. Detection scores the transaction (or session) and decides whether to allow, challenge, or block. Response includes case management: analysts investigate alerts, contact customers, file chargeback disputes, and escalate suspicious patterns. Learn closes the loop: confirmed fraud labels and investigator feedback feed back into feature engineering, rule tuning, and retraining.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The biggest operational challenge is that even a “good” model can fail if it creates too many alerts or is hard to act on. That’s why fraud teams treat analytics as an <strong>operational system</strong>, not a pure ML problem: they explicitly budget investigation capacity, tune thresholds to match staffing, and use workflow metrics (time-to-triage, reopen rate, investigator agreement) alongside classic ML metrics.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Feature Engineering for Fraud (Signals That Actually Work)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud patterns are often better captured by <strong>behavioral and relational</strong> features than by raw transaction fields. Common high-signal features include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Velocity:</strong> count and total amount in last 5/15/60 minutes; new merchant count; new device count.</li>
+    <li><strong>Novelty:</strong> first time at merchant/category; first international transaction; first high-ticket purchase.</li>
+    <li><strong>Geographic consistency:</strong> impossible travel; distance between consecutive transactions vs time gap.</li>
+    <li><strong>Device + channel:</strong> risky device fingerprint; emulator indicators; web vs mobile vs card-present.</li>
+    <li><strong>Account health:</strong> recent password reset; failed login streak; change in contact details.</li>
+    <li><strong>Graph signals:</strong> shared devices/addresses/emails across many accounts; community detection patterns.</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4 mb-4">
+    Many of these signals are naturally expressed as <strong>time-window aggregates</strong> (rolling features) and <strong>relationships</strong> (graph features). This is why fraud platforms often rely on feature stores, streaming aggregations, and fast key-value lookups to compute features in milliseconds.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Labels, Feedback Loops, and “Delayed Truth”</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud labels are messy. A transaction may look legitimate at authorization time but later become confirmed fraud via chargeback, customer report, or investigation—sometimes weeks later. This creates <strong>label delay</strong> and <strong>label leakage risk</strong> (using information not available at decision time). Analysts often maintain two label layers: (1) near-real-time operational labels (investigator decision), and (2) “final” labels (chargeback/confirmed fraud after a settlement window). Models are trained and evaluated with careful time splits so that you don’t accidentally use future information.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Feedback loops are also a risk: if the model blocks certain patterns, those outcomes are no longer observed, and the training data changes. To manage this, teams use champion/challenger experiments, logging of model scores and decisions, and occasionally randomized “holdout” traffic to measure baseline fraud in segments.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Monitoring: Drift, Stability, and Ops Guardrails</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud changes quickly—attackers adapt. Monitoring therefore includes both model health and business impact. Typical monitoring includes: score distribution drift, feature drift (PSI), alert volume vs capacity, precision/recall trends (with label delay accounted for), and segment-level breakdowns (country, merchant category, device). Ops guardrails often matter more than AUC: if alert volume doubles, the queue collapses and true fraud might be missed.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A practical monitoring setup includes: daily alert volume, queue aging (how long alerts wait), investigator throughput, % of alerts auto-closed, and customer impact metrics (false declines, complaints, support contacts). When any guardrail breaches, teams may temporarily tighten/loosen thresholds or add rules while a model update is prepared.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Case Management and Explainability (Making Alerts Actionable)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud ops teams need more than a score; they need <strong>reasons</strong>. A good alert often includes top contributing factors (“new device”, “unusual location”, “rapid spend”) plus supporting evidence (recent transaction list, device history, account changes). This reduces time-to-triage and improves consistency across analysts. Many organizations standardize a “reason code” taxonomy so that investigators can act quickly and so the business can report outcomes to auditors and regulators.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">A Practical Analytics Blueprint (What You’d Build)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    If you were designing a fraud analytics program end-to-end, a realistic blueprint would include: (1) event ingestion for auth + account events; (2) a feature layer for rolling aggregates and device/graph signals; (3) a scoring service (rules + ML); (4) case management with reason codes; (5) dashboards for model + ops metrics; and (6) a retraining and governance loop. Even without building the full system, analysts can practice by designing the metric framework (precision/recall + queue metrics), writing SQL to compute velocity features, and building a Power BI dashboard for alert operations.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Imbalanced Data and Cost-Based Evaluation</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud is rare, which means accuracy is a useless metric: you can be 99.9% accurate by predicting “not fraud” always. Teams therefore focus on <strong>precision/recall</strong>, <strong>PR-AUC</strong>, and operational measures like <strong>precision at k</strong> (how many true frauds in the top k alerts) because investigation capacity is limited. In payments, teams often optimize a <strong>cost function</strong>: expected fraud loss + investigation cost + customer friction cost (false declines). This can be more aligned with business outcomes than a generic ML metric.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Thresholding is not one-size-fits-all. It’s common to have different thresholds by segment: high-value transactions may tolerate more friction to prevent large losses; low-value segments may prioritize customer experience. Analysts should be comfortable expressing performance as “at this threshold, we catch X% of fraud while generating Y alerts per day and blocking Z legitimate transactions,” because that is the language operations leaders use.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Privacy, Security, and Data Retention</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Fraud teams operate on sensitive data (PII, device identifiers). That means analytics pipelines must respect privacy rules, retention policies, and secure access patterns. Common practices include tokenization of identifiers, least-privilege access, and careful handling of cross-border data flows. From an analytics perspective, this also affects feature design: you may need privacy-preserving features (hashed IDs, aggregated risk scores) rather than raw PII. Building systems that are both effective and compliant is part of what differentiates production-grade fraud analytics from a toy model.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Rules + ML: A Layered Strategy That Works in Practice</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Despite the focus on machine learning, most real systems are <strong>layered</strong>. Rules handle known bad patterns quickly (blocked BINs, impossible geographies, merchant blocklists) and provide deterministic guardrails. ML handles subtle patterns and adapts as behavior changes. Many teams also use <strong>step-up authentication</strong> as an intermediate action: instead of blocking a borderline transaction, they challenge it (OTP, 3DS, biometric), which reduces customer harm while still reducing fraud.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    From an analytics standpoint, layering changes how you measure performance. If rules block obvious fraud, the remaining fraud is “harder,” and ML performance metrics may look worse even though the overall system is better. Good dashboards therefore report metrics at each layer (rules-only, ML-only, combined) and track how changes in one layer shift the workload and labels for the others.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Alert Prioritization: Ranking the Queue, Not Just Scoring Transactions</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    In many banks, the operational unit of work is the <strong>investigation queue</strong>. The goal is not only to score each transaction, but to <strong>rank alerts</strong> so investigators spend time on the most valuable cases first. This shifts the optimization problem from generic classification to <strong>ranking under capacity</strong>. A model that slightly improves PR-AUC might still be less useful than a model that materially improves “precision in the top 1,000 alerts per day,” because that’s what the team can actually review.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Prioritization also benefits from grouping: instead of sending five separate alerts for five transactions, systems often create a <strong>case</strong> that aggregates related activity (same account/device/merchant). Case-level features (number of distinct merchants, number of geographies, total spend in the burst) are often more actionable than single-transaction features. Analysts can add value by designing case rollups and by measuring time saved and improved investigator hit-rate when alerts are grouped.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Finally, prioritization should reflect business severity. High-value fraud, account takeover, and mule activity have different loss profiles and response actions. Many organizations therefore use multi-stage routing: (1) identify the fraud type, (2) assign severity, and (3) route to the right team with the right SLA. The analytics success metric then becomes a blend of catch rate, time-to-action, and reduced customer friction.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Auditability and Regulatory Readiness</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Banks operate under strict expectations for audit trails: what was the decision, why was it made, and what evidence supports it? Even if your institution is not required to explain every individual decision, regulators and internal audit often require that the fraud program be <strong>governed</strong>: model approvals, monitoring reports, access controls, and documented change management. This is one reason “reason codes” and consistent case documentation matter—investigators need to justify actions (block, close, escalate) with traceable evidence.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    In practice, auditability means logging: model version, score, threshold, action taken, top contributing factors, and the downstream outcome (confirmed fraud, false positive, chargeback). It also means retaining the minimal necessary evidence for a defined period (subject to privacy and retention policies). For analysts, building dashboards that can answer “how did fraud loss change after the new model?” and “did false declines increase?” is not just nice-to-have—it’s the evidence required to keep the program running.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Another practical aspect is <strong>investigation consistency</strong>. If two investigators make different decisions on similar cases, model feedback becomes noisy. Many teams standardize playbooks (what evidence to check, when to escalate) and track inter-analyst agreement. Better process improves label quality, which in turn improves model performance—a virtuous cycle that is often overlooked when teams focus only on algorithms.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When organizations scale, this often turns into a formal “quality assurance” loop: a small team reviews a sample of closed cases, checks reason codes and evidence, and feeds findings back into training and playbooks. It’s not glamorous, but it is one of the fastest ways to improve both operational outcomes and model learning.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Continuous Improvement: Playbooks, Training, and Rapid Rule Patches</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Even with strong ML, fraud programs still need fast response mechanisms. When a new attack appears, teams may deploy temporary “patch” rules (e.g. block a merchant pattern, tighten a device threshold) while the model retraining cycle catches up. The healthiest programs treat this as normal and controlled: every patch has an owner, an expiry/review date, and a measurable impact on loss and false positives. Training and playbook updates keep investigators aligned, which improves label quality and reduces operational variance.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Further Reading &amp; Resources (Real Links)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li>Teradata case study: Danske Bank – fighting fraud with deep learning and AI (search “Danske Bank Teradata fraud”).</li>
+    <li><a href="https://innowise.com/case/machine-learning-solution-for-bank/" target="_blank" rel="noopener" class="text-primary hover:underline">Machine learning in banking to detect transaction anomalies</a> (case study).</li>
+    <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0167404815000437" target="_blank" rel="noopener" class="text-primary hover:underline">BankSealer: A decision support system for online banking fraud analysis</a> (ScienceDirect).</li>
+    <li><a href="https://stripe.com/radar/guide" target="_blank" rel="noopener" class="text-primary hover:underline">Stripe Radar</a> — example of fraud prevention in payments.</li>
+    <li>BIS/industry reports on fraud and operational risk (e.g. bis.org).</li>
+  </ul>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-8">
+    Use these resources to learn how banks use data for fraud detection. Your own projects live in the <strong>Projects</strong> section; this case study is domain learning only.
+  </p>
+</div>

@@ -1,0 +1,23 @@
+{
+  "id": "my-project-slug",
+  "title": "My Project Title",
+  "short_description": "One-line summary for cards and hero. Plain text or very short HTML; no long paragraphs.",
+  "content_path": "data/projects/my-project-slug.html",
+  "tools": ["Python", "SQL", "Power BI"],
+  "category": "Analytics",
+  "date": "2025",
+  "thumbnail": "assets/images/thumbs/01.jpg",
+  "images": ["assets/images/fulls/01.jpg"],
+  "show_apps_section": true,
+  "notebook_url": "https://example.com/notebook.ipynb",
+  "video_url": "https://youtube.com/...",
+  "streamlit_url": "https://my-app.streamlit.app/",
+  "powerbi_embed_url": "",
+  "pbix_download_path": "assets/pbix/my-dashboard.pbix",
+  "slide_pdf_path": "assets/slides/slides.pdf",
+  "github_url": "https://github.com/me/repo",
+  "demo_url": "https://demo.example.com",
+  "medium_url": "",
+  "kaggle_url": "",
+  "featured": false
+}

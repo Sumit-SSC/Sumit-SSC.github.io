@@ -1,0 +1,55 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Used car pricing is a classic regression problem with real business impact: dealers and marketplaces need fair market estimates to reduce mispricing risk and improve inventory turnover. This case study walks through an end-to-end ML pipeline—EDA, feature engineering, model selection, explainability, and deployment—positioned for senior analyst and data science associate roles in data-rich domains.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Goal:</strong> Predict fair market value of used cars to support pricing decisions and reduce holding costs.</p>
+      <p><strong>Approach:</strong> Data profiling and cleaning; feature engineering (age, brand segments, drivetrain, fuel type, mileage); model benchmarking (Random Forest, XGBoost, LightGBM); SHAP for explainability; Streamlit for inference UI.</p>
+      <p><strong>Insights:</strong> Mileage, age, and brand segment emerged as top drivers; tree-based models outperformed linear baselines; explainability was critical for stakeholder buy-in.</p>
+      <p><strong>Outcome:</strong> Reduced mispricing risk and improved pricing consistency; deployed a simple prediction app for business users.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Business Context: Why Pricing Matters</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    In used car markets, mispricing leads to either lost margin (underpricing) or slow turnover and excess inventory cost (overpricing). Leadership needs a single, defensible estimate that can be explained to customers and auditors. This project frames the problem as a regression task with a strong emphasis on interpretability and deployment.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology</h3>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Data & EDA</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Raw data included make, model, year, mileage, fuel type, drivetrain, and price. Profiling revealed missing values in categorical fields and right-skewed price and mileage distributions. I applied log transforms where appropriate and built brand-segment features (luxury, mass-market, etc.) to capture price tiers.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Feature Engineering</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Key features: vehicle age (current year − year), mileage per year (mileage / age), brand segment (from external mapping or clustering), fuel type and drivetrain as categoricals. These gave the model both linear and ratio-based signals that align with how dealers think about value.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Model Selection & Evaluation</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    I benchmarked Random Forest, XGBoost, and LightGBM with cross-validation (e.g. 5-fold), using RMSE and MAE on holdout. Tree-based models consistently beat linear regression. I used SHAP to rank drivers (mileage, age, brand segment) and to provide per-prediction explanations for the Streamlit app.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results & Business Readout</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The final model delivered a substantial improvement over rule-of-thumb baselines. Feature importance and SHAP plots were shared with business stakeholders to build trust. The Streamlit app allowed sales and ops to get instant estimates and see the main drivers behind each prediction.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Future Work</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li>Incorporate regional and seasonal effects; list prices from marketplaces as a feature or benchmark.</li>
+    <li>Calibration and uncertainty intervals (e.g. quantile regression) for risk-aware pricing.</li>
+    <li>Model monitoring and retraining cadence as new data arrives.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media Checklist</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Screenshots: Streamlit app, SHAP summary and waterfall plots</li>
+      <li>Short demo video: end-to-end prediction and explainability</li>
+      <li>Notebook or repo link for reproducibility</li>
+    </ul>
+  </div>
+</div>

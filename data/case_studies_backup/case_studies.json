@@ -1,0 +1,57 @@
+[
+  {
+    "id": "netflix-recommendation-analytics",
+    "title": "Netflix Recommendation & Streaming: Data, Metrics, and A/B Testing",
+    "short_description": "How Netflix uses completion rate, play-delay, and sequential A/B testing—with real resources from Netflix Tech Blog and industry.",
+    "category": "Industry · Media & Streaming",
+    "case_study_path": "data/case_studies/netflix-recommendation-analytics.html",
+    "thumbnail": "assets/images/thumbs/04.jpg",
+    "tools": ["SQL", "Event Data", "A/B Testing", "Power BI", "Cohort Analysis"],
+    "date": "2025",
+    "case_study_read_mins": 16
+  },
+  {
+    "id": "spotify-playlist-discovery-analytics",
+    "title": "Spotify Playlist & Music Discovery: Skip Rate, Diversity, and User Satisfaction",
+    "short_description": "How Spotify uses skip behavior, playlist diversity, and discovery satisfaction—backed by Spotify Research and PLOS One.",
+    "category": "Industry · Music & Audio",
+    "case_study_path": "data/case_studies/spotify-playlist-discovery-analytics.html",
+    "thumbnail": "assets/images/thumbs/02.jpg",
+    "tools": ["SQL", "Event Analytics", "Power BI", "Segment Analysis"],
+    "date": "2025",
+    "case_study_read_mins": 16
+  },
+  {
+    "id": "logistics-quick-commerce-analytics",
+    "title": "Quick Commerce & Last-Mile Logistics: Route Optimization and Demand Forecasting",
+    "short_description": "Last-mile cost drivers, dynamic route optimization, and demand forecasting—with case studies from e-commerce and parcel delivery.",
+    "category": "Industry · Logistics & Retail",
+    "case_study_path": "data/case_studies/logistics-quick-commerce-analytics.html",
+    "thumbnail": "assets/images/thumbs/04.jpg",
+    "tools": ["SQL", "Demand Forecasting", "Power BI", "Operational Analytics"],
+    "date": "2025",
+    "case_study_read_mins": 16
+  },
+  {
+    "id": "bank-fraud-patterns-analytics",
+    "title": "Bank Fraud Detection: Transaction Monitoring and Anomaly Detection",
+    "short_description": "How banks use behavioral analytics and ML to cut false positives and improve detection—Danske Bank, BankSealer, and industry data.",
+    "category": "Industry · BFSI",
+    "case_study_path": "data/case_studies/bank-fraud-patterns-analytics.html",
+    "thumbnail": "assets/images/thumbs/01.jpg",
+    "tools": ["SQL", "Power BI", "Rule Design", "Operational Metrics"],
+    "date": "2025",
+    "case_study_read_mins": 16
+  },
+  {
+    "id": "loan-credit-default-bfsi",
+    "title": "Loan Prediction & Credit Default: BFSI Analytics and Scorecards",
+    "short_description": "ECL, PD/LGD, and scorecard-based segmentation—with real frameworks and open datasets for credit risk analytics.",
+    "category": "Industry · BFSI",
+    "case_study_path": "data/case_studies/loan-credit-default-bfsi.html",
+    "thumbnail": "assets/images/thumbs/06.jpg",
+    "tools": ["SQL", "Scorecards", "Power BI", "Risk Metrics"],
+    "date": "2025",
+    "case_study_read_mins": 16
+  }
+]

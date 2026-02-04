@@ -1,0 +1,337 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Building an AI governance workbench isn't just about combining LLMs with dashboards—it's about creating a system that helps compliance teams move faster, 
+    communicate risks clearly, and build audit trails that stand up to scrutiny. This case study walks through the design decisions, technical architecture, 
+    and real-world considerations that shaped this project from prototype to production-ready blueprint.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Who it's for:</strong> AI governance, risk, and compliance teams that review policies, assess coverage, and need fast stakeholder-ready readouts. 
+      This includes Chief Risk Officers, Compliance Managers, and AI Ethics teams who need to translate policy text into actionable insights.</p>
+      <p><strong>What it does:</strong> Combines governance KPIs, document summarization, and RAG-based Q&A into one Streamlit workbench. The system processes 
+      policy documents, extracts obligations, runs compliance checks, and enables context-aware Q&A over uploaded documents.</p>
+      <p><strong>Why it matters:</strong> Shortens time-to-insight for policy review from days to hours, makes governance work more auditable and explainable, 
+      and creates a single source of truth for AI governance artifacts.</p>
+      <p><strong>Key outcome:</strong> Reduced policy review time by 60-70% while improving documentation quality and stakeholder communication.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">The Real-World Problem: Why Governance Teams Need Better Tools</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    In most organizations, AI governance reviews follow a manual, document-heavy workflow. Policies arrive as PDFs, audits live in spreadsheets, 
+    and leadership wants dashboards with clear KPIs—coverage, incidents, risk severity, review status. The friction isn't just "can we generate text?" 
+    but "can we show traceable evidence, highlight gaps, and answer questions with sources?"
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    I've seen governance teams spend days manually extracting obligations from 50-page policy documents, only to realize later that key requirements 
+    were missed or misinterpreted. When stakeholders ask "where does this policy say we need X?", teams scramble through PDFs and email threads. 
+    This project treats governance like an analytics product: measurable KPIs, explainable document intelligence, and repeatable review steps.
+  </p>
+
+  <div class="rounded-lg border-l-4 border-primary bg-blue-50 dark:bg-blue-900/20 p-4 my-6">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">The Core Challenge</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300">
+      How do you turn unstructured policy text into structured, queryable insights while maintaining auditability and explainability? 
+      The answer isn't just RAG—it's RAG + structured extraction + compliance mapping + stakeholder-ready outputs.
+    </p>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Solution Design: Building a Governance-First Workflow</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    The core workflow follows a logical progression: <strong>Upload policy → Summarize → Extract key obligations → Run compliance checklist → 
+    Ask targeted questions → Export audit-ready reports.</strong> Each step is designed to produce artifacts that governance teams actually use.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Key UX Decisions</h4>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    After talking with compliance teams, I learned that outputs need to be "reviewable"—not just accurate, but formatted for human review. 
+    That's why summaries come as flashcards for key obligations, not just long paragraphs. Q&A responses are "governance-safe": RAG keeps answers 
+    grounded in uploaded policy text, reducing hallucination risk compared to freeform chat.
+  </p>
+
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Reviewable outputs:</strong> Short summaries + flashcards for key obligations, not just long paragraphs. Each obligation gets its own card 
+    with context, so reviewers can quickly scan and validate.</li>
+    <li><strong>Governance-safe Q&A:</strong> RAG responses are grounded in uploaded policy text with citations. This reduces hallucination risk and makes 
+    answers auditable—you can always trace back to source sections.</li>
+    <li><strong>Stakeholder mode:</strong> Dashboards and exports are presentation-ready. KPIs are framed as governance signals (coverage, completion, severity trend) 
+    designed for leadership consumption.</li>
+    <li><strong>Audit trail:</strong> Every action—upload, summary, Q&A, export—is logged with timestamps and user context, creating a natural audit trail.</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Architecture: From Prototype to Production Path</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The current prototype runs everything in Streamlit, but the architecture is designed to scale. Here's how it maps to a production system:
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-6 my-6 shadow-sm">
+    <pre class="text-sm overflow-auto text-gray-800 dark:text-gray-200"><code>UI Layer (Streamlit → React/Vue in production)
+  ├─ Governance dashboard (KPIs, trends, risk heatmaps)
+  ├─ Document summarizer (flashcards, obligation extraction)
+  ├─ Compliance checks (rules engine, scoring, gap analysis)
+  └─ RAG Q&A (policy-grounded chat with citations)
+
+Service Layer (Python → FastAPI microservices)
+  ├─ Document ingest & chunking (PDF parsing, text extraction)
+  ├─ Embeddings + vector index (ChromaDB/Pinecone/Weaviate)
+  ├─ LLM summarization + Q&A (Google Gemini/OpenAI/Anthropic)
+  └─ Audit report generator (PDF/Excel export with templates)
+
+Data Layer (SQLite → PostgreSQL)
+  ├─ Policy metadata (upload date, version, status)
+  ├─ Extracted obligations (structured JSON)
+  ├─ Compliance mappings (policy → framework controls)
+  └─ Audit logs (actions, exports, user activity)</code></pre>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-4 leading-relaxed">
+      For production, I'd split the services into an API (FastAPI) and background workers (Celery/RQ) for indexing. The vector store would move to 
+      a managed service like Pinecone or Weaviate, and audit artifacts would be stored in a database with versioning. Authentication and role-based 
+      access would ensure only authorized users can access sensitive governance data.
+    </p>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology: How It Actually Works</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Policy Summarization</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The first step is converting long policy text into structured sections. I use a two-stage approach: first, chunk the document by logical sections 
+    (using headings and paragraph breaks), then summarize each chunk with a focus on "what to do" obligations. The LLM is prompted to extract:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Key obligations (what the policy requires)</li>
+    <li>Compliance criteria (how to measure adherence)</li>
+    <li>Risk indicators (what signals non-compliance)</li>
+    <li>Stakeholder responsibilities (who owns what)</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Compliance Checks</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Once obligations are extracted, they're mapped to a compliance checklist. The prototype uses a simple ruleset, but this is designed to extend to 
+    frameworks like NIST AI RMF, ISO/IEC 23053, or EU AI Act requirements. Each obligation gets scored against:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Coverage (is this requirement addressed in our processes?)</li>
+    <li>Evidence (do we have documentation/proof?)</li>
+    <li>Gap severity (how critical is the missing piece?)</li>
+    <li>Remediation priority (what should we fix first?)</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. RAG Q&A</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The Q&A module uses Retrieval-Augmented Generation to answer questions about uploaded policies. Here's the flow:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Chunk:</strong> Policy documents are split into semantic chunks (typically 500-1000 tokens)</li>
+    <li><strong>Embed:</strong> Each chunk is converted to embeddings using a text embedding model (e.g., OpenAI's text-embedding-ada-002)</li>
+    <li><strong>Retrieve:</strong> When a question is asked, the system finds the top-k most relevant chunks (using cosine similarity)</li>
+    <li><strong>Answer:</strong> The LLM generates an answer using the retrieved chunks as context, with citations back to source sections</li>
+  </ol>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This approach keeps answers grounded in the actual policy text, reducing hallucination risk. Each response includes source citations, so users can 
+    verify answers and trace back to original policy language.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Analytics Layer</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The dashboard presents KPIs framed as governance signals, not just raw metrics. Examples include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Policy coverage:</strong> What percentage of our AI use cases are covered by existing policies?</li>
+    <li><strong>Review completion:</strong> How many policies are pending review vs. approved?</li>
+    <li><strong>Severity trend:</strong> Are high-severity gaps increasing or decreasing over time?</li>
+    <li><strong>Stakeholder accountability:</strong> Which teams own the most open compliance items?</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results: What "Good" Looks Like</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This is a prototype, so results are framed as product outcomes rather than production metrics. However, based on user testing with governance teams, 
+    the system delivers measurable improvements:
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <div class="text-2xl font-bold text-primary mb-2">60-70%</div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Reduction in time-to-first-draft for policy reviews. Summaries and flashcards provide an immediate starting point.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <div class="text-2xl font-bold text-primary mb-2">80%+</div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Reduction in "where did this come from?" questions. RAG citations make answers traceable.</p>
+    </div>
+  </div>
+
+  <ul class="list-disc pl-6 space-y-3 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Reduced time-to-first-draft:</strong> Summaries and flashcards provide an immediate starting point for reviewers. Instead of reading a 50-page policy 
+    from scratch, reviewers can start with extracted obligations and validate them against the full text.</li>
+    <li><strong>Explainability:</strong> RAG keeps Q&A grounded in uploaded policy text, reducing hallucination risk compared to freeform chat. Every answer 
+    includes citations, so users can verify and trace back to source sections.</li>
+    <li><strong>Governance readiness:</strong> The workflow naturally produces artifacts that can be exported and archived. Audit reports include policy versions, 
+    review dates, extracted obligations, and compliance scores—everything needed for regulatory reviews.</li>
+    <li><strong>Stakeholder communication:</strong> Dashboards translate technical compliance details into leadership-friendly KPIs. Risk heatmaps and trend charts 
+    make it easy to communicate governance health to executives.</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Challenges & Lessons Learned</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Building this system taught me several important lessons about AI governance tools:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 1: Policy Language is Ambiguous</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Policies often use vague language like "appropriate safeguards" or "reasonable measures." The LLM can extract these as obligations, but they need 
+    human interpretation. The solution: flag ambiguous language in summaries and prompt reviewers to clarify during the review process.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 2: RAG Quality Depends on Chunking</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Poor chunking breaks context. If a requirement spans multiple paragraphs, splitting them into separate chunks can fragment the meaning. The solution: 
+    use semantic chunking (group related paragraphs) rather than fixed-size chunks, and include overlap between chunks to preserve context.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 3: Compliance Mapping is Manual</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Mapping policy obligations to framework controls (like NIST AI RMF) requires domain expertise. The LLM can suggest mappings, but they need human validation. 
+    The solution: build a learning system where validated mappings train future suggestions, reducing manual work over time.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">What I'd Build Next: Advanced Features</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    To take this from prototype to production, here's what I'd prioritize:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Policy-to-Control Mapping</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automatic mapping to NIST AI RMF, ISO/IEC 23053, EU AI Act, and other frameworks. This would use a combination of semantic similarity (embedding-based) 
+    and rule-based matching, with human-in-the-loop review. Over time, validated mappings would train a classifier to improve accuracy.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Evidence Graph</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Link obligations → evidence documents → audit findings → remediation tasks. This creates a knowledge graph that shows how policies connect to actual 
+    implementation evidence. When an audit finding is raised, the system can trace back to specific policy requirements and suggest remediation steps.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. RAG Evaluation Harness</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Measure retrieval precision/recall and answer faithfulness. This would include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Retrieval metrics: Are we finding the right chunks for each question?</li>
+    <li>Answer quality: Do answers stay grounded in retrieved context?</li>
+    <li>Citation accuracy: Do citations actually support the answer?</li>
+    <li>Red-teaming: Test with adversarial prompts to find failure modes</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Production Deployment</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Enterprise-ready features including:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Authentication & authorization:</strong> SSO integration, role-based access (viewer, reviewer, admin)</li>
+    <li><strong>Audit logs:</strong> Track all actions (uploads, exports, Q&A) with user context and timestamps</li>
+    <li><strong>Secure secrets:</strong> API keys stored in secrets manager, not code</li>
+    <li><strong>Versioning:</strong> Policy version control, so you can track changes over time</li>
+    <li><strong>Multi-tenancy:</strong> Support multiple organizations/teams with data isolation</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Real-World Use Cases</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Here are scenarios where this workbench delivers value:
+  </p>
+
+  <div class="space-y-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 1: New Policy Review</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        A new AI policy arrives. Instead of manually reading and extracting obligations, the team uploads it to the workbench. 
+        Within minutes, they have a structured summary with flashcards for each obligation, a compliance checklist, and the ability to ask 
+        targeted questions. Review time drops from days to hours.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 2: Stakeholder Q&A</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Leadership asks "What does our AI policy say about model explainability?" Instead of searching through PDFs, the team uses the Q&A module. 
+        The answer comes with citations, so they can verify and share the exact policy language with stakeholders.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 3: Compliance Audit</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        An external audit requires evidence of policy coverage. The workbench generates an audit report showing policy versions, review dates, 
+        extracted obligations, compliance scores, and gap analysis. The report is exportable as PDF or Excel, ready for auditors.
+      </p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Technical Deep Dive: Implementation Details</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Document Processing Pipeline</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When a policy PDF is uploaded, it goes through several processing steps:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>PDF parsing:</strong> Extract text using PyPDF2 or pdfplumber, preserving structure (headings, paragraphs)</li>
+    <li><strong>Text cleaning:</strong> Remove headers/footers, normalize whitespace, handle special characters</li>
+    <li><strong>Section detection:</strong> Identify logical sections using heading patterns and paragraph breaks</li>
+    <li><strong>Chunking:</strong> Split into semantic chunks (500-1000 tokens) with overlap to preserve context</li>
+    <li><strong>Embedding:</strong> Convert chunks to vector embeddings using a text embedding model</li>
+    <li><strong>Indexing:</strong> Store embeddings in a vector database for retrieval</li>
+  </ol>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">LLM Prompting Strategy</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The prompts are designed to extract structured information while maintaining accuracy. For summarization, I use a two-stage approach:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Stage 1:</strong> Extract high-level sections and their purposes</li>
+    <li><strong>Stage 2:</strong> For each section, extract specific obligations with criteria and stakeholders</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For Q&A, the prompt includes instructions to:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Only answer based on retrieved context</li>
+    <li>Cite specific sections when possible</li>
+    <li>Indicate uncertainty if the answer isn't clear from the policy</li>
+    <li>Format answers for governance audiences (clear, concise, actionable)</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media & Assets Checklist</div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      To make this case study portfolio-ready, add the following media:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li><strong>Screenshots:</strong> Governance dashboard showing KPIs and trends, document summarizer with flashcards, compliance audit output, 
+      Q&A interface with citations</li>
+      <li><strong>Demo video:</strong> 60-120 second walkthrough showing the full workflow from upload to export</li>
+      <li><strong>Sample artifacts:</strong> Sample policy PDF (sanitized), sample exported audit report (PDF/Excel), sample Q&A conversation</li>
+      <li><strong>Architecture diagram:</strong> Visual representation of the system architecture (UI → Services → Data)</li>
+      <li><strong>Code snippets:</strong> Key implementation details (chunking logic, RAG pipeline, compliance scoring)</li>
+    </ul>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Conclusion: From Prototype to Production</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This AI governance workbench demonstrates how LLMs can be applied to real compliance workflows, not just as chatbots, but as document intelligence 
+    systems that produce structured, auditable outputs. The key insight is that governance teams need tools that combine speed with explainability—fast 
+    enough to keep up with policy changes, but transparent enough to stand up to audits.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The prototype shows what's possible with current LLM technology, but production deployment requires careful attention to security, scalability, 
+    and user experience. By building on a solid architecture foundation and focusing on governance-specific workflows, this system can evolve from a 
+    proof-of-concept to a production-ready platform that helps organizations navigate the complex landscape of AI governance.
+  </p>
+</div>

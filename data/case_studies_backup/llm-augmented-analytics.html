@@ -1,0 +1,58 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Large language models are reshaping how analysts and business users interact with data: natural language to SQL, automated report generation, and explainable insights are moving from research to production. This case study takes a 2026-and-beyond perspective on LLM-augmented analytics, drawing on Gartner, Netflix, and industry practice to frame opportunities, architecture, and guardrails for business analysts, product analysts, and data science associates.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Theme:</strong> LLMs will augment—not replace—analysts by bridging natural language and structured analytics.</p>
+      <p><strong>Use cases:</strong> Natural language to SQL (NL2SQL), automated report summaries, insight generation, and Q&A over data with citations.</p>
+      <p><strong>Architecture:</strong> Semantic layer + schema context, retrieval-augmented generation (RAG), and validation/guardrails (syntax checks, row limits, approval workflows).</p>
+      <p><strong>Guardrails:</strong> Explainability, citations, and governance are non-negotiable for enterprise adoption; human-in-the-loop remains critical for high-stakes decisions.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Why LLM-Augmented Analytics Matters in 2026</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Analysts and business users are drowning in data but short on time to write SQL, build every report, and distill insights. LLMs can translate “What was our top product by revenue last quarter?” into a valid query, run it in a governed environment, and return an answer with a citation. They can also summarize long reports, suggest follow-up questions, and surface anomalies. Gartner and industry leaders consistently highlight augmented analytics as a top trend: the goal is to scale analyst productivity while keeping accuracy and accountability.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Key Use Cases</h3>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Natural Language to SQL (NL2SQL)</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Users ask questions in plain language; the system generates SQL against a known schema (often exposed via a semantic layer or data catalog). Best practice: provide the model with table and column metadata, sample values, and business definitions so that it produces correct, safe queries. Validation (syntax check, row limit, sensitive column checks) and optional human approval for write or high-risk queries reduce errors and abuse.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Report Summarization & Insight Generation</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LLMs can summarize long reports, highlight key metrics and trends, and suggest “so what?” insights. When grounded in actual data (e.g. RAG over report content or query results), they reduce hallucination. Outputs should be clearly labeled as AI-generated and reviewable; critical decisions should still require human validation.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Q&A Over Data with Citations</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    RAG over documents, semantic layer definitions, or query result snippets lets users ask follow-up questions and get answers with source citations. This pattern is central to trustworthy analytics: every claim can be traced back to a table, report, or definition.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Architecture & Data Contracts</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A robust setup rests on a well-defined semantic layer: consistent metric and dimension definitions, documented schema, and access controls. The LLM receives schema context (tables, columns, descriptions) and, where applicable, sample rows or aggregates. Query execution runs in a sandbox with row limits and timeout; results are passed back to the model for natural language answer generation and citation. Analytics engineering and data contracts (see the companion case study) ensure that the data the LLM “sees” is the same single source of truth used by BI and product.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Governance & Guardrails</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Enterprise adoption requires guardrails: no arbitrary SQL execution, no exposure of PII or sensitive metrics without approval, and clear labeling of AI-generated content. Explainability—showing the generated SQL and the underlying data slice—and citations build trust. Human-in-the-loop remains essential for high-stakes decisions; the LLM augments the analyst rather than replacing judgment.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">2026 and Beyond</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    As models and tooling improve, NL2SQL and report generation will become standard in self-serve analytics platforms. The differentiator will be reliability, governance, and integration with the rest of the stack: semantic layer, data quality, and audit trails. Analysts who understand both the data and the capabilities and limits of LLMs will be best positioned to design and operate these systems.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Further Reading & Media</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Gartner: Augmented Analytics, Natural Language Query; Netflix and similar firms’ public talks on data and ML.</li>
+      <li>Towards Data Science / Analytics Vidhya: NL2SQL, RAG for analytics, semantic layer.</li>
+      <li>Optional: Screenshots or short demo of an NL2SQL or report-summary prototype.</li>
+    </ul>
+  </div>
+</div>

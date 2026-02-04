@@ -1,0 +1,51 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Product and growth teams run experiments to improve conversion and engagement; the analyst’s job is to ensure those experiments are designed and evaluated rigorously. This case study covers pre-test power, randomization checks, difference-in-proportions testing, and decision readouts—aligned with product analyst and decision scientist roles.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Goal:</strong> Determine whether a product variant improves conversion without harming retention or revenue per user.</p>
+      <p><strong>Approach:</strong> Pre-test power calculation; randomization checks; difference-in-proportions test; delta method CI; holdout check on retention; readout with ship/hold recommendation.</p>
+      <p><strong>Insights:</strong> Variant lifted signup conversion by ~4.2 pp with 95% CI [1.1 pp, 7.3 pp]; recommended ship with monitoring on retention.</p>
+      <p><strong>Outcome:</strong> Clear, reproducible readout that product and leadership could use for go/no-go decisions.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Business Context</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    A/B tests are only as good as their design and analysis. Underpowered tests lead to inconclusive results; poorly randomized tests can bias estimates. This project emphasized pre-experiment design, balance checks, and a single primary metric with a clear decision rule and follow-up monitoring plan.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology</h3>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Design</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Sample size was chosen via power analysis (e.g. 80% power to detect a 10% relative lift in conversion). Randomization was at user level; assignment was logged and validated for balance on key covariates.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Analysis</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Randomization checks (e.g. chi-square, t-tests) confirmed balance. Primary metric was conversion (binary); difference-in-proportions z-test and delta method CI were used. Retention and revenue per user were checked as guardrail metrics; no material harm was detected.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results & Readout</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The variant showed a ~4.2 pp lift in signup conversion with 95% CI [1.1 pp, 7.3 pp]. The readout recommended ship with a monitoring plan for retention and revenue so that any delayed effects could be caught.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Future Work</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li>CUPED or other variance reduction to improve sensitivity.</li>
+    <li>Segment-level analysis and heterogeneity (e.g. by cohort or region).</li>
+    <li>Automated readout templates and integration with experiment platforms.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media Checklist</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>One-page readout: metric, lift, CI, recommendation, monitoring plan</li>
+      <li>Notebook or script snippets: power calc, randomization check, z-test</li>
+      <li>Optional: short video walkthrough of the analysis</li>
+    </ul>
+  </div>
+</div>

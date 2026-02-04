@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 mb-8">
+    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+      <p><strong>Type:</strong> Cohort Economics / Payback Curve</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.reforge.com/blog" target="_blank" rel="noopener" class="underline">Reforge — Growth Loops</a></p>
+      <p><strong>What it Shows:</strong> CAC vs LTV by cohort; payback period; retention vs acquisition spend trade-off.</p>
+      <p><strong>Why It Matters:</strong> Balance acquisition and retention spend.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Growth teams face a fundamental trade-off: <strong>acquisition</strong> (new users) vs. <strong>retention</strong> (keep existing users). This case study examines how to balance acquisition and retention spend using <strong>cohort economics</strong> and <strong>payback periods</strong>—using <a href="https://www.reforge.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a> and <a href="https://hbr.org/2020/02/the-right-way-to-grow" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> growth trade-offs.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Cohort economics:</strong> LTV and CAC by acquisition cohort (channel, time); compare payback period and LTV/CAC across cohorts to prioritize where to invest.</li>
+      <li><strong>Payback periods:</strong> Time for cumulative revenue (or margin) to equal CAC; shorter payback = faster capital recovery and lower risk. Use to compare acquisition channels and retention quality.</li>
+      <li><strong>Retention vs acquisition spend:</strong> Improving retention (e.g., product, engagement) extends LTV and effective payback; improving acquisition (e.g., paid) increases volume but at higher CAC. Optimal mix depends on LTV/CAC and payback by channel.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reforge's growth loops and HBR's "right way to grow" describe how sustainable growth requires balancing acquisition and retention. Over-investing in acquisition with weak retention burns capital; over-investing in retention with no acquisition caps growth. Cohort economics (LTV, CAC, payback by cohort) informs where to spend.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Chart — LTV/CAC and Payback by Channel</p>
+      <p><strong>Suggested Source:</strong> Reforge — Growth Loops</p>
+      <p><strong>What it Shows:</strong> Bars: LTV/CAC and payback (months) by channel. Highlights best and worst channels.</p>
+      <p><strong>Why It Matters:</strong> Where to invest acquisition vs retention.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Cohorts: sign-up date, channel, segment. For each cohort: CAC (acquisition cost / new users), cumulative revenue (or margin) by month, LTV (modeled or observed), payback month (when cumulative revenue ≥ CAC). Retention: retention curve by cohort. Compare cohorts to rank channels and inform spend.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: LTV/CAC and payback period by cohort/channel. Secondary: retention curve, CAC trend. North star: sustainable growth—LTV/CAC above threshold and payback within target, with balanced acquisition and retention spend.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Build cohort tables (CAC, LTV, payback by cohort and channel); rank channels by LTV/CAC and payback; identify underperforming channels. A/B test acquisition spend (e.g., increase spend on best channel) vs retention (e.g., product or engagement experiment); measure incremental LTV and payback. Use payback and LTV/CAC to set acquisition and retention budget mix.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated cohort and LTV/CAC reporting; payback and LTV/CAC by channel; optional LTV prediction by cohort; alerts when payback or LTV/CAC degrades; LLM summarization of "where to invest" for strategy.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Cohort economics reveals which channels are profitable and how fast they pay back; retention improvements extend LTV and improve payback without increasing CAC; optimal mix shifts as channels and product mature.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: acquisition volume vs retention quality. Risk: LTV model misspecification; attribution bias. Failure mode: optimizing only acquisition or only retention without cohort view.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: use cohort economics (LTV, CAC, payback) to balance acquisition and retention spend; prioritize channels and retention initiatives by payback and LTV/CAC. Outcome: sustainable growth with capital efficiency.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LTV and attribution are uncertain; long payback cohorts need long observation. Improvements: causal attribution; probabilistic LTV; integration with marketing and product experiments.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Real-time LTV/CAC and payback; automated budget allocation; cross-channel attribution.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.reforge.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge — Growth Loops</a></li>
+    <li><a href="https://hbr.org/2020/02/the-right-way-to-grow" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Growth Trade-offs</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Balance acquisition and retention using cohort economics: LTV, CAC, and payback by cohort and channel. Use payback and LTV/CAC to set acquisition and retention spend so growth is sustainable and capital-efficient.
+    </p>
+  </div>
+</div>

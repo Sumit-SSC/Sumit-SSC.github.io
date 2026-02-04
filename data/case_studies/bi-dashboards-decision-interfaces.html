@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-blue-50 to-slate-50 dark:from-blue-900/20 dark:to-slate-800/40 rounded-xl p-6 border border-blue-200 dark:border-blue-800 mb-8">
+    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup / KPI Layering</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="underline">Gartner — BI Best Practices</a></p>
+      <p><strong>What it Shows:</strong> North star at top; secondary KPIs; exec vs ops views; narrative flow.</p>
+      <p><strong>Why It Matters:</strong> Dashboards that drive action.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    BI dashboards should be <strong>decision interfaces</strong>—designed so that the right person sees the right metric at the right time and can act. This case study covers KPI layering, narrative dashboards, and exec vs ops views—using <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and <a href="https://www.tableau.com/learn/articles/dashboard-design" target="_blank" rel="noopener" class="text-primary hover:underline">Tableau</a> dashboard design.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>KPI layering:</strong> Primary metric first; secondary and guardrails in context; avoid metric overload—one decision per view.</li>
+      <li><strong>Narrative dashboards:</strong> Lead with the question or decision; use layout and order to tell a story (what happened, why, what to do).</li>
+      <li><strong>Exec vs ops views:</strong> Exec: high-level, trend, exception; ops: granular, filterable, actionable. Same data, different slice and depth.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Gartner's BI best practices and Tableau's dashboard design guidance emphasize that dashboards fail when they show data without guiding the viewer to a decision. Design for the user (exec vs ops), the question (what happened vs what to do), and the action (monitor vs intervene).
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Wireframe — Exec vs Ops</p>
+      <p><strong>Suggested Source:</strong> Tableau — Dashboard Design</p>
+      <p><strong>What it Shows:</strong> Left: exec view (1 KPI, trend, exception list). Right: ops view (filters, table, drill-down).</p>
+      <p><strong>Why It Matters:</strong> Same data, different decision interface.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Dashboards consume curated datasets (aggregated, filtered) with clear definitions. Semantic layer or metric definitions (e.g., "active user" = definition + dimensions) ensure consistency. Exec and ops views may use the same base tables with different aggregation and filters.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary KPI per dashboard or section; secondary in context; guardrails (e.g., data freshness) visible. North star: dashboard drives at least one clear decision per user type.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    User research: what decision does the viewer need? Map metrics to decisions; design layout (narrative order, hierarchy). A/B test layout or default filters (e.g., time range) to measure engagement and action (e.g., clicks, exports, follow-up).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Auto-generated narrative summaries (LLM) from dashboard data; anomaly highlights; optional natural-language questions that drive to the right dashboard or slice.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Dashboards that lead with a question and one primary metric get more action; exec and ops need different depth; narrative order and exception highlighting improve usefulness.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: simplicity (few metrics) vs. completeness (many metrics). Risk: dashboard becomes a data dump. Failure mode: building for "everyone" and satisfying no one.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: design dashboards as decision interfaces—KPI layering, narrative, exec vs ops. Outcome: higher engagement and clearer action from BI.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Static dashboards can lag behind questions; personalization is limited. Improvements: adaptive defaults, NL-to-dashboard, and tighter link to alerts and workflows.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Conversational BI; dashboards that suggest next question or action; integration with decision automation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — BI Best Practices</a></li>
+    <li><a href="https://www.tableau.com/learn/articles/dashboard-design" target="_blank" rel="noopener" class="text-primary hover:underline">Tableau — Dashboard Design</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Design dashboards as decision interfaces: KPI layering, narrative flow, and exec vs ops views so that the right person sees the right metric and can act.
+    </p>
+  </div>
+</div>

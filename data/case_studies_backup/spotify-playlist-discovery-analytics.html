@@ -1,0 +1,167 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    How do music platforms like Spotify use skip behavior and playlist data to improve discovery? This case study is based on <strong>real research</strong> from Spotify Research and published studies (e.g. PLOS One on skipping behavior). It is an <strong>industry/domain</strong> learning piece, not a write-up of a personal project. The goal is to give data and product analysts a clear picture of how music streaming services use behavioral signals—especially skip rate and diversity—to measure and improve user satisfaction with discovery.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Skip behavior</strong> is a critical signal: users tend to skip at points that correlate with musical structure (e.g. transitions from intro to verse or verse to chorus). Research on streaming services shows that the same engagement metric (e.g. skip vs. stream) can mean different things for different users—satisfaction with discovery should be evaluated relative to individual listening goals and habits, not with a single global metric.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Spotify’s own research (e.g. on <strong>Discover Weekly</strong> and <strong>algorithmic effects on diversity</strong>) shows that recommendations influence whether users consume more specialized or more diverse content. Analytics teams use skip data, playlist diversity, and user-satisfaction studies to improve discovery and retention. This case study summarizes public research, expands on the metrics and methods involved, and links to the sources below so you can go deeper.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      The remainder covers: skip rate and musical structure, diversity and discovery satisfaction, how platforms define and measure these metrics, implementation and data pipelines, business impact, and further reading.
+    </p>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Skip Rate and Musical Structure</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Studies (e.g. PLOS One) have shown that skip behavior is related to musical structure—listeners skip at predictable points in tracks, such as the boundary between intro and verse or between verse and chorus. That gives platforms a large amount of behavioral data to improve predictive models and recommendations: if many users skip at the same relative position in a track, that signal can be used to refine similarity models, adjust playlist ordering, or even inform content creation. The takeaway for analysts: skip rate is a core engagement signal and should be defined and sliced consistently (by user, by context, by playlist, by time-in-track).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Skip rate can be defined at several levels: (1) track-level—what share of users who started this track skipped before the end; (2) user-level—how often does this user skip within a session or playlist; (3) context-level—skip rate in “discovery” vs. “background” vs. “focused listening” contexts. Each level answers a different question: track-level skip rate helps rank or filter content; user-level skip rate can indicate satisfaction or intent; context-level skip rate helps evaluate whether a recommendation algorithm is succeeding in a given context (e.g. discovery playlists). Defining the denominator clearly (e.g. “skip rate among users who had the track in their session for at least N seconds”) avoids mixing different behaviors (e.g. immediate skip vs. skip after listening to most of the track).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Time-to-skip (how long into the track the user skipped) is another useful signal: a skip at 5 seconds may mean “not for me,” while a skip at 2 minutes may mean “liked it but had enough.” Some platforms use these signals to build “skip curves” or survival-style models that predict the probability of skip at each second, which can then feed into ranking and diversity algorithms.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Diversity and Discovery Satisfaction</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Spotify Research has published on how algorithms affect the diversity of consumption and on evaluating user satisfaction with music discovery. Discovery playlists (e.g. Discover Weekly, Release Radar) are used differently depending on whether users want background music, saving for later, or actively exploring new artists. Metrics should account for these contexts rather than treating all engagement the same: a “save” or “add to playlist” in a discovery context may be a stronger signal of discovery satisfaction than a passive listen.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Diversity can be measured in several ways: (1) artist diversity—how many unique artists per session or per playlist; (2) genre or tag diversity—entropy or spread across genre tags; (3) novelty—share of content the user had not consumed before. Different goals imply different metrics: if the goal is to help users explore new genres, genre diversity and novelty matter; if the goal is to deepen engagement with familiar artists, artist diversity might be less important than completion rate within a niche. Spotify’s research on “algorithmic effects on the diversity of consumption” shows that recommendation algorithms can either increase or decrease diversity depending on design—so measuring diversity and tying it to long-term satisfaction (e.g. retention, subscription) is important.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    User satisfaction with discovery is hard to measure from behavior alone: a user might listen to a discovery playlist but not be satisfied, or might be satisfied but not listen long. Spotify Research’s work on “understanding and evaluating user satisfaction with music discovery” discusses survey-based and behavioral proxies: for example, follow-up actions (save, add to playlist, search for the artist) can indicate satisfaction; repeat listens to discovered tracks can indicate lasting value. Combining behavioral metrics with occasional surveys or preference learning helps calibrate what “good discovery” means for different user segments.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Defining and Measuring Discovery Metrics</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    In practice, analytics teams define a set of primary and guardrail metrics for discovery features. Primary metrics might include: skip rate in discovery contexts, save rate (or add-to-playlist rate) from discovery, and diversity (e.g. unique artists per discovery session). Guardrail metrics might include: overall listen time (so that discovery does not cannibalize engagement), retention (so that discovery does not hurt retention), and satisfaction scores if available. A/B tests for recommendation changes often compare treatment vs. control on these metrics, with segment-level analysis (e.g. by user tenure, by listening breadth) to ensure that gains are not concentrated in a narrow segment or that losses in one segment are acceptable.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Data pipelines for skip and discovery analytics typically ingest play events (start, pause, seek, skip, end) with timestamps, user ID, track ID, context (e.g. playlist ID, source), and optionally device and location. Sessionization rules (e.g. 30-minute timeout) group events into sessions; then aggregates are computed at the level of user-session, user-playlist, or track. Consistency in definitions (e.g. what counts as a “skip” vs. “track ended naturally”) is essential so that metrics are comparable across experiments and over time.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Example metrics in practice: (1) <strong>Skip rate in Discover Weekly</strong> — among users who opened Discover Weekly, what share of recommended tracks were skipped before 30 seconds (or before the end)? This can be sliced by user segment (e.g. new vs. power users). (2) <strong>Save rate from discovery</strong> — among tracks that were recommended in a discovery context, what share were saved or added to a playlist? (3) <strong>Artist diversity per session</strong> — in discovery sessions, how many unique artists did the user listen to? (4) <strong>Follow-up engagement</strong> — did the user search for the artist, listen to more of their catalog, or add another track from the same artist? These metrics together give a fuller picture of discovery quality than any single number.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Common pitfalls include: (1) conflating “low skip rate” with “good discovery”—a user might not skip because they are passive, not because they are delighted; (2) ignoring context—skip rate in a “focus” playlist may mean something different than in a “discovery” playlist; (3) optimizing for diversity at the cost of relevance—users may want some diversity but not random content; (4) using a single global metric—different segments (e.g. casual vs. power listeners) may have different goals. Addressing these requires clear definitions, segment-level analysis, and whenever possible, qualitative or survey validation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Implementation and Data Pipelines</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Event pipelines for skip and discovery analytics typically ingest play events (start, pause, seek, skip, end) with timestamps, user ID, track ID, context (e.g. playlist ID, source), and optionally device and location. Sessionization rules (e.g. 30-minute timeout or end-of-playlist) group events into sessions; then aggregates are computed at the level of user-session, user-playlist, or track. Consistency in definitions (e.g. what counts as a “skip” vs. “track ended naturally”) is essential so that metrics are comparable across experiments and over time. Many teams also build “skip curves” or survival-style models that predict the probability of skip at each second into the track, which can then feed into ranking and diversity algorithms.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Dashboards for discovery often show skip rate by playlist type, diversity (e.g. unique artists per session) by segment, and save/add rates from discovery surfaces. A/B tests for recommendation changes compare treatment vs. control on these metrics, with segment-level analysis (e.g. by user tenure, by listening breadth) to ensure that gains are not concentrated in a narrow segment. Combining behavioral metrics with occasional surveys or preference learning helps calibrate what “good discovery” means for different user segments.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Context Matters: Discovery vs Background vs Focus Listening</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The same user can behave very differently depending on intent. “Discovery” is an active mode: users are sampling new artists and deciding what to keep. “Background” is passive: users may let a playlist run while working. “Focus” is somewhere in-between: users want consistent vibe and low disruption. If you treat all listens as equal, you will misread skip rate and completion. A robust analytics approach therefore starts with <strong>context classification</strong> (where did the play come from and what does the user appear to be doing?) using signals like source surface (Discover Weekly vs. user playlist), time of day, device type, and whether the user frequently saves/rewinds.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A practical tip for analysts: build separate metric panels per context. For discovery, optimize for save rate, repeat listens, and healthy skip (users sampling without frustration). For background/focus, optimize for low disruptive skips, long listening streaks, and consistent mood. This prevents shipping a “win” that improves discovery metrics but makes background listening worse, or vice versa.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">A Skip Taxonomy (Not All Skips Are Equal)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Skip events should be interpreted relative to timing and user control. Teams often segment skips into buckets like:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Immediate skip</strong> (e.g. &lt; 5–10 seconds): strong “not for me” signal; can indicate mismatch or bad cold-start.</li>
+    <li><strong>Preview skip</strong> (e.g. 10–30 seconds): sampling behavior; may be normal in discovery.</li>
+    <li><strong>Late skip</strong> (e.g. after most of the track): can indicate “good enough” rather than dislike.</li>
+    <li><strong>Seek + skip</strong>: user searched within the track and then skipped; often indicates dissatisfaction with structure.</li>
+    <li><strong>End-of-session stop</strong>: playback stopped because the user ended the session; not a negative “skip”.</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4 mb-4">
+    This taxonomy helps avoid over-penalizing discovery playlists. A discovery playlist can have high preview-skip but still generate high saves and repeat listens, which is a good outcome: users sampled, found a few gems, and kept them.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Diversity Metrics: Beyond “Unique Artists”</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Diversity is multi-dimensional. A playlist with 20 unique artists might still be genre-homogeneous. Analysts therefore use richer measures such as:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Genre entropy</strong>: higher entropy means listening is spread across more genres.</li>
+    <li><strong>Catalog novelty</strong>: share of plays from “new-to-user” artists/tracks.</li>
+    <li><strong>Concentration</strong>: what fraction of listening goes to top-1/top-5 artists (lower concentration = more diverse).</li>
+    <li><strong>Serendipity</strong>: relevance + novelty; hard to measure but often proxied by “saved new-to-user track” rate.</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4 mb-4">
+    A common best practice is to track diversity alongside satisfaction signals. If diversity increases but save rate drops, the system might be “too random”. If diversity drops but completion rises, the system might be over-personalizing and narrowing the user’s exposure. The goal is balance, not maximum diversity at all costs.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Designing Experiments for Discovery</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Discovery experiments often change ranking or candidate generation. A clean design typically includes: a primary metric (e.g. save rate of new-to-user tracks), guardrails (overall listening time, churn signals), and a context-specific analysis plan. It is also important to account for <strong>position bias</strong>: tracks near the top get sampled more. Some teams normalize by “exposed positions” or compare only within comparable rank ranges. Others use interleaving-style methods for fast offline screening and reserve full A/B tests for finalists.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Another key issue is <strong>delayed outcomes</strong>. The best discovery outcome is often a repeat listen days later, not an immediate stream. That’s why many teams evaluate both short-horizon (skip/save) and longer-horizon (repeat listens, follows) outcomes. If you stop experiments too early, you might ship changes that look good immediately but don’t create lasting value.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Biases and Pitfalls (What Commonly Breaks Analysis)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Discovery analytics has several recurring pitfalls. <strong>Survivorship bias</strong>: if you only analyze users who kept using Discover Weekly, you miss users who tried it and left because it was bad. <strong>Confounding by mood</strong>: users listen differently on weekends vs weekdays. <strong>Feedback loops</strong>: recommendations change what users listen to, which then changes training data. And <strong>global metrics</strong> hide segment differences: new users may need familiar anchors, while power users crave novelty.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The practical fix is disciplined segmentation and intent-to-treat analysis: analyze users as assigned in experiments, build dashboards by cohort (new vs established), and check balance across arms. When possible, calibrate behavioral metrics with occasional surveys to ensure you’re measuring “satisfaction” rather than “habit”.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Playlist Sequencing: Why Order Can Matter More Than Selection</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Discovery is not only “which tracks do we recommend?” but also “in what order do we present them?” A playlist can contain great candidates but still perform poorly if the first few tracks don’t hook the user. Sequencing problems show up as a high immediate-skip rate early in the session and a sharp drop-off in session length. Teams therefore track early-session metrics (first 3–5 tracks) separately from overall averages, and they often optimize for an opening “ramp” that mixes familiar anchors with novel picks.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Sequencing also interacts with diversity: if you put too many novel tracks back-to-back, the playlist can feel random; if you cluster similar tracks too tightly, it can feel repetitive. Analysts often examine “run length” (how many consecutive tracks share a genre/artist cluster) and study how run length relates to skip and save. This converts “diversity” from a static property into a <strong>listening journey</strong> property.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Offline vs Online Evaluation (Why You Need Both)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Recommendation teams typically do offline evaluation first (precision@k, NDCG, hit-rate), then validate online with A/B tests. Offline metrics are faster but can be misleading because they reflect historical exposure: users can only “like” what they were shown. Online tests capture true product impact but are slower and more expensive. A strong program treats offline metrics as <strong>screening</strong> and uses online experiments for <strong>confirmation</strong>.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A practical compromise is to validate offline metrics against historical experiments: check whether models that improved offline scores tended to improve online discovery metrics. Over time, teams learn which offline metrics correlate best with real outcomes in each context (discovery vs background), and they tune their model iteration loop accordingly.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Measuring “Satisfaction” Directly: Surveys and Lightweight Feedback</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Behavioral signals are powerful, but satisfaction is ultimately a human judgment. Many product analytics teams periodically run lightweight surveys (in-app prompts, periodic NPS-style questions) targeted to discovery surfaces. The value of surveys is not the average score; it’s calibration: do your proxy metrics (skip, save, repeat listen) actually move in the same direction as user-reported satisfaction? If not, you might be optimizing for engagement without improving “felt” discovery quality.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A practical design is to sample a small fraction of sessions, ask a short question (“How satisfied were you with these recommendations?”), and join it back to the session metrics. Over time you can build a mapping: for example, sessions with high save rate and moderate preview-skip may have the best satisfaction, while sessions with low skip but no saves may indicate passive listening. This helps define better north-star metrics for discovery features.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Long-Term Value: Retention and “Discovery That Sticks”</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Great discovery creates lasting behavior: users return, follow new artists, and build playlists around what they found. That’s why mature teams track long-horizon outcomes such as repeat listens of discovered tracks (7/28-day), follows, and subscription retention. These metrics move slowly, so they are rarely the only decision metric, but they are critical for validation: if a change improves short-term saves but reduces long-term repeat listens, it may be optimizing for novelty without building taste.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact and Takeaways</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For music and audio platforms, discovery is a key differentiator: users who find new music they love are more likely to retain and to attribute value to the service. Skip rate and diversity metrics, when defined and used consistently, help teams iterate on recommendation algorithms and playlist design. The main takeaways for analysts are: (1) define skip rate and diversity at clear levels (track, user, context) and with clear denominators; (2) use multiple signals (skip, save, repeat listen) to infer discovery satisfaction; (3) segment analysis by user type and context so that gains and losses are visible; (4) invest in event pipelines and definitions so that metrics are trustworthy; (5) use public research (e.g. Spotify Research, PLOS One) to ground your metrics and methods.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    These practices apply beyond music: any content or recommendation product that cares about discovery and diversity can adopt similar discipline. Podcasts, video, and e-commerce all have analogues (e.g. “skip” vs. “completed,” “diversity of categories,” “save for later”). The Spotify Research blog and published papers remain among the best free resources for learning how a leading music platform thinks about discovery analytics. If you are building a portfolio or moving into product analytics in media or recommendation systems, studying these sources and replicating their ideas (e.g. defining skip rate and diversity for a sample dataset, or building a simple skip curve) will strengthen your ability to speak the language of discovery and engagement in interviews and on the job.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Finally, satisfaction with discovery is inherently multi-dimensional: some users want deep dives into a single genre; others want broad exploration. No single metric captures “good discovery” for everyone. The best practice is to define a small set of primary and guardrail metrics, segment by user type and context, and use both behavioral and survey data when possible to validate that your metrics align with user satisfaction and business outcomes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Further Reading &amp; Resources (Real Links)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://research.atspotify.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Spotify Research</a> — publications on discovery, diversity, and satisfaction.</li>
+    <li><a href="https://research.atspotify.com/2018/07/understanding-and-evaluating-user-satisfaction-with-music-discovery/" target="_blank" rel="noopener" class="text-primary hover:underline">Understanding and Evaluating User Satisfaction with Music Discovery</a>.</li>
+    <li><a href="https://research.atspotify.com/algorithmic-effects-on-the-diversity-of-consumption-on-spotify/" target="_blank" rel="noopener" class="text-primary hover:underline">Algorithmic Effects on the Diversity of Consumption on Spotify</a>.</li>
+    <li><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0239418" target="_blank" rel="noopener" class="text-primary hover:underline">The skipping behavior of users of music streaming services and its relation to musical structure</a> (PLOS One).</li>
+  </ul>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-8">
+    Use these resources to learn how music platforms use data for discovery. Your own projects live in the <strong>Projects</strong> section; this case study is domain learning only.
+  </p>
+</div>

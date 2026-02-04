@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl p-6 border border-amber-200 dark:border-amber-800 mb-8">
+    <p class="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Pricing Logic Diagram — Transparent Rules</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales" target="_blank" rel="noopener" class="underline">McKinsey — Pricing Analytics</a></p>
+      <p><strong>What it Shows:</strong> Demand → elasticity → price rule; fairness constraints; regulation. Explainable path from inputs to price.</p>
+      <p><strong>Why It Matters:</strong> Explainable pricing analytics.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Dynamic pricing can be <strong>explainable</strong>: elasticity estimation, fairness constraints, and clear rules instead of black-box models. This case study covers design of explainable pricing analytics—using <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> pricing and <a href="https://www.uber.com/blog/engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber</a> pricing blog.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Elasticity estimation:</strong> Price elasticity of demand (and cross-elasticity) from historical or quasi-experimental data; use to set price bounds and optimize revenue or margin within constraints.</li>
+      <li><strong>Fairness constraints:</strong> Limit price variance by segment (e.g., geography, time) to avoid perceived discrimination; document rules and monitor outcomes.</li>
+      <li><strong>Regulation:</strong> Align to local rules (e.g., surge caps, transparency); maintain audit trail (price, inputs, rule version) for compliance.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    McKinsey's pricing analytics and Uber's pricing engineering posts describe how dynamic pricing can be built with transparent rules: demand and elasticity drive price within bounds; fairness and regulation constrain the solution. Explainability (why this price?) supports trust and compliance.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Elasticity Curve / Price–Demand</p>
+      <p><strong>Suggested Source:</strong> Uber Pricing Blog</p>
+      <p><strong>What it Shows:</strong> Demand vs. price (or surge); elasticity; revenue-maximizing price subject to cap.</p>
+      <p><strong>Why It Matters:</strong> Transparent link from demand to price.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Transactions: price, quantity, segment (geo, time, product), demand signals. Elasticity model: fit demand ~ price + controls (e.g., segment, seasonality); estimate elasticity by segment. Pricing rule: inputs (demand, elasticity, bounds, fairness cap) → price. Audit: price, inputs, rule_version, timestamp.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: revenue or margin; secondary: volume, price variance by segment. Guardrails: fairness (e.g., max price ratio across segments), compliance (within regulatory cap). North star: revenue or margin within fairness and regulatory bounds, with explainable logic.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Estimate elasticity from historical or quasi-experimental (e.g., IV, natural experiment) data; validate on holdout. A/B test pricing rules (e.g., new elasticity or cap); measure revenue, volume, and fairness. Monitor price distribution by segment and audit trail for compliance.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated elasticity estimation and refresh; rule engine (inputs → price) with versioning; fairness and compliance checks; audit log pipeline; optional LLM summarization of "why this price" for support or regulators.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Transparent rules (elasticity + bounds + fairness) achieve most of the benefit of dynamic pricing with explainability; black-box models can improve revenue slightly but at the cost of trust and compliance; elasticity varies by segment—segment-level estimation improves outcomes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: explainability (simpler rules) vs. revenue (more complex model). Risk: elasticity misspecification or regime change. Failure mode: optimizing revenue without fairness or compliance constraints.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt explainable dynamic pricing—elasticity, bounds, fairness, audit trail. Outcome: revenue or margin gains with trust and compliance.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Elasticity can be noisy in thin segments; regulation varies by jurisdiction. Improvements: causal elasticity (IV, experiments); real-time demand signals; multi-product pricing.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Real-time elasticity; automated fairness and compliance checks; integration with regulatory reporting.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Pricing Analytics</a></li>
+    <li><a href="https://www.uber.com/blog/engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">Uber — Pricing Blog</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Design dynamic pricing to be explainable: elasticity estimation, fairness constraints, and regulation. Use transparent rules and an audit trail so that pricing is effective, trusted, and compliant.
+    </p>
+  </div>
+</div>

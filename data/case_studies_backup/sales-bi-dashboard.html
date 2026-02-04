@@ -1,0 +1,46 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Executive sales dashboards are a staple of business analytics and analytics engineering: one source of truth for revenue, margin, and growth that leadership can use for planning and accountability. This case study covers data modeling, DAX design, and storytelling in Power BI, aligned with senior business analyst and analytics engineer roles.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Goal:</strong> Give leadership a single source of truth for sales performance and margin health.</p>
+      <p><strong>Approach:</strong> Fact/dimension modeling; DAX KPIs (YoY, MoM, mix); drill-through for region and segment; publish to Power BI Service.</p>
+      <p><strong>Insights:</strong> Identified margin erosion in two regions and surfaced top underperforming SKUs for targeted action.</p>
+      <p><strong>Outcome:</strong> Dashboards used in monthly business reviews; reduced ad hoc report requests and conflicting numbers.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Business Context</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Sales and finance need consistent metrics: revenue, margin, growth rates, and contribution by region, segment, and product. When each team uses different definitions or sources, planning and accountability break down. This project focused on a single semantic layer and clear, documented DAX so that “revenue” and “margin” mean the same thing everywhere.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Data Model & DAX</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A star schema was used: fact table(s) at transaction or summary grain, with dimensions for date, region, segment, product, and customer. DAX measures were built for revenue, cost, margin, and then time intelligence (YoY, MoM, same period last year) and mix/contribution analysis. All measures were named and documented so that report authors and consumers could trust and reuse them.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results & Storytelling</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The dashboard highlighted margin erosion in two regions and listed top underperforming SKUs. Leadership used it to assign ownership and track follow-up. Drill-through and filters allowed regional and segment deep-dives without leaving the report.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Future Work</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li>Align with a central semantic layer or metric store (dbt, Cube, etc.) for consistency across BI tools.</li>
+    <li>Automated data quality checks and refresh monitoring.</li>
+    <li>Optional: forecasting and scenario views for planning.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media Checklist</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Power BI report screenshots: executive summary, region/segment drill-through</li>
+      <li>Sample DAX snippets and model diagram</li>
+      <li>One-page “how we use this in business reviews” summary</li>
+    </ul>
+  </div>
+</div>

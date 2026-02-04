@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-cyan-200 dark:border-cyan-800 mb-8">
+    <p class="text-sm font-semibold text-cyan-900 dark:text-cyan-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-cyan-800 dark:text-cyan-200 space-y-1">
+      <p><strong>Type:</strong> LTV / Cohort Curve</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.reforge.com/blog/lifetime-value" target="_blank" rel="noopener" class="underline">Reforge — LTV Frameworks</a></p>
+      <p><strong>What it Shows:</strong> Cumulative revenue (or value) by cohort over time; LTV curve and payback period.</p>
+      <p><strong>Why It Matters:</strong> Moves focus beyond short-term retention to long-term value.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Subscription businesses often over-index on short-term retention (e.g., Day 1, Day 7) and under-invest in measuring <strong>long-term value</strong>. This case study examines LTV realism, cohort decay, and delayed impact—using <a href="https://www.reforge.com/blog/lifetime-value" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a> and <a href="https://www.mckinsey.com/business-functions/growth-marketing-and-sales" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey subscription economics</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>LTV realism:</strong> LTV is uncertain and model-dependent; use ranges and scenarios (best/base/worst); validate with cohort curves and payback periods.</li>
+      <li><strong>Cohort decay:</strong> Retention and revenue decay by cohort age; measure decay curves by acquisition channel and product tier to inform CAC payback and LTV.</li>
+      <li><strong>Delayed impact:</strong> Product and pricing changes affect long-term retention with lag; use long-term holdouts and vintage analysis to capture delayed effects.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reforge's LTV essays and McKinsey's subscription work emphasize that optimizing for early retention alone can miss long-term value—and that LTV estimates are only as good as the cohort data and assumptions (discount rate, horizon, churn model). Measuring and forecasting LTV with realism (ranges, validation) is essential for unit economics and growth decisions.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Cohort Retention / Revenue Table</p>
+      <p><strong>Suggested Source:</strong> Reforge — LTV / McKinsey Subscription</p>
+      <p><strong>What it Shows:</strong> Rows = cohorts (e.g., sign-up month); columns = months since sign-up; cells = retention or cumulative revenue. Highlights decay and payback.</p>
+      <p><strong>Why It Matters:</strong> Core view for LTV and payback analysis.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Subscriptions: user_id, start_date, end_date, plan, mrr. Events: payment, usage, cancel. Cohorts: defined by sign-up period (e.g., month); for each cohort, compute retention and cumulative revenue by period. LTV = expected cumulative revenue over horizon (e.g., 24 months) with churn model and optional discounting.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Primary: LTV (with range) and payback period. Secondary: retention curve by cohort, ARPU, churn rate by tenure. Guardrails: early retention (D1, D7, D30) as leading indicators. North star: LTV/CAC or risk-adjusted LTV by channel and segment.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Build cohort tables and retention/revenue curves; fit LTV model (e.g., survival + revenue); validate with holdout cohorts. A/B test acquisition or product with long-term holdouts (e.g., 12-month LTV). Use vintage analysis to detect delayed impact of changes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated cohort and LTV reporting; scenario-based LTV (best/base/worst); alerts when cohort curves shift; optional ML for LTV prediction and payback forecasting.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Short-term retention is a weak proxy for LTV when decay curves vary by segment; LTV ranges and validation reduce overconfidence; long-term holdouts are necessary to measure true impact of product and acquisition changes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: speed (short-term metrics) vs. accuracy (LTV). Risk: LTV model misspecification. Failure mode: optimizing for early retention while LTV and payback worsen.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: measure LTV and payback with cohort curves and ranges; use long-term holdouts for key experiments; report LTV/CAC by channel. Outcome: better growth and pricing decisions aligned to long-term value.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LTV horizon and churn assumptions are uncertain; new products have limited cohort history. Improvements: probabilistic LTV; segment-level models; integration with CLV and marketing attribution.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Causal LTV (effect of treatment on LTV); real-time LTV scoring; subscription health scores that predict LTV.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.reforge.com/blog/lifetime-value" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge — LTV Frameworks</a></li>
+    <li><a href="https://www.mckinsey.com/business-functions/growth-marketing-and-sales" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Subscription Economics</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Move beyond short-term retention by measuring LTV with realism (cohort curves, ranges, validation), cohort decay, and delayed impact. Use long-term holdouts and LTV/CAC by channel so subscription strategy is aligned to long-term value.
+    </p>
+  </div>
+</div>

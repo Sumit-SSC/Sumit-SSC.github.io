@@ -1,0 +1,54 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Analytics engineering sits at the intersection of data engineering and product analytics: it focuses on reliable, documented, and testable data assets that power BI, experimentation, and decision support. Data contracts and semantic layers are central to scaling trust in data. This case study takes a 2026 perspective on analytics engineering and data contracts, aligned with dbt Labs, ThoughtSpot, and industry best practices for analytics engineers and senior data analysts.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Theme:</strong> Data contracts and a single semantic layer reduce metric drift and rework; analytics engineers own the “middle layer” between raw data and consumption.</p>
+      <p><strong>Data contracts:</strong> Explicit agreements on schema, freshness, and quality between producers and consumers; tests and monitoring enforce them.</p>
+      <p><strong>Semantic layer:</strong> Centralized definitions of metrics and dimensions so that “revenue,” “active user,” and “conversion” mean the same thing in every report and tool.</p>
+      <p><strong>Outcome:</strong> Fewer conflicting numbers, faster onboarding, and a clear path for self-serve and LLM-augmented analytics.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Why Analytics Engineering and Data Contracts Matter</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    When every team writes its own SQL and defines “revenue” or “active user” differently, dashboards and reports conflict and trust erodes. Analytics engineering addresses this by treating the data pipeline as a product: curated models, clear ownership, tests, and documentation. Data contracts formalize the handoff between producers (e.g. event pipelines, source systems) and consumers (BI, product, ML)—everyone agrees on schema, freshness, and quality expectations, and automated checks enforce them.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Data Contracts in Practice</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A data contract specifies: (1) schema (column names, types, optional constraints), (2) freshness (e.g. daily by 6 a.m.), (3) quality rules (e.g. no nulls in key columns, row count within expected range). Contracts can be codified in YAML, in dbt project config, or in a catalog. When a pipeline breaks the contract (e.g. a new column appears or freshness is missed), tests fail and consumers are notified. This reduces “silent” breakage and speeds up root-cause analysis.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Semantic Layer & Metric Store</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The semantic layer is the single place where metrics and dimensions are defined. “Revenue” might be sum of amount where status = completed; “active user” might be count distinct user_id where last_activity within 30 days. BI tools, notebooks, and LLM-augmented interfaces all query this layer so that everyone uses the same logic. Tools like dbt metrics, Cube, Looker’s semantic model, or custom metric stores implement this; the analytics engineer maintains definitions and keeps them aligned with business language.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Testing & Documentation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Analytics engineering relies on automated tests: uniqueness, not-null, referential integrity, and custom business rules (e.g. revenue ≥ 0). Documentation—column descriptions, lineage, and ownership—lives in the project and in the catalog so that new joiners and consumers can understand and trust the data. dbt has become the de facto standard for this workflow; similar practices apply in other frameworks.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Collaboration with BI and Product</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Analytics engineers work closely with BI authors and product analysts: they provide the clean, modeled datasets and metric definitions; BI and product build reports and experiments on top. Clear contracts and a semantic layer reduce back-and-forth (“which table do I use?” “what’s the definition of X?”) and free analysts to focus on interpretation and action.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">2026 and Beyond</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    As self-serve and LLM-augmented analytics grow, the semantic layer and data contracts become even more critical: they are the single source of truth that both humans and models rely on. Analytics engineers who combine SQL fluency, testing, documentation, and business acumen will remain central to scaling data-driven decision-making.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Further Reading & Media</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>dbt Labs: analytics engineering, testing, documentation; ThoughtSpot, Cube: semantic layer.</li>
+      <li>Blogs and talks on data contracts (e.g. Gartner, vendor best practices).</li>
+      <li>Optional: Sample dbt project structure, contract YAML, or metric definitions.</li>
+    </ul>
+  </div>
+</div>

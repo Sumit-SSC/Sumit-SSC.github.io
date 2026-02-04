@@ -1,0 +1,575 @@
+<div class="space-y-8">
+
+  <!-- Hero Image -->
+  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 mb-8">
+    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+      <p><strong>Type:</strong> System Architecture / Feedback Loop Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://netflixtechblog.com/a-b-testing-and-beyond-improving-the-netflix-streaming-experience-with-experimentation-and-data-science-5b0ae9295bdf" target="_blank" rel="noopener" class="underline">Netflix Tech Blog — A/B Testing and Beyond</a></p>
+      <p><strong>What it Shows:</strong> Netflix's experimentation feedback loop: hypothesis → experiment design → data collection → analysis → decision. Circular flow emphasizing continuous learning.</p>
+      <p><strong>Why It Matters:</strong> Sets the tone for a metrics-driven, experimentation-first approach to recommendation evaluation.</p>
+      <p class="italic text-blue-600 dark:text-blue-400">Note: Recreate this diagram in Excalidraw/Figma with custom branding if needed.</p>
+    </div>
+  </div>
+
+  <!-- Introduction -->
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Click-through rate has long been the default success metric for recommendation systems. Yet leading streaming platforms have learned that optimizing for clicks can actively harm user satisfaction and long-term retention. This case study examines how organizations like Netflix, Spotify, and YouTube have shifted toward multi-dimensional evaluation frameworks that capture engagement quality, content completion, and sustained user satisfaction—drawing on published research from engineering blogs, academic papers, and industry reports.
+  </p>
+
+  <!-- Section 1: Executive Summary -->
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>CTR optimization leads to clickbait:</strong> Recommendation systems optimized solely for clicks tend to surface sensational or misleading content, degrading user trust and long-term engagement.</li>
+      <li><strong>Completion rate as quality signal:</strong> Netflix and similar platforms use completion rate (percentage of content consumed) as a primary indicator of recommendation quality, correlating strongly with user satisfaction.</li>
+      <li><strong>Play delay impacts abandonment:</strong> Technical metrics like play delay (time from click to playback start) directly affect session continuation—every 100ms of delay increases abandonment by measurable margins.</li>
+      <li><strong>Sequential testing accelerates decisions:</strong> Continuous monitoring with sequential A/B testing allows platforms to conclude experiments 30-50% faster while maintaining statistical rigor.</li>
+      <li><strong>Guardrail metrics prevent gaming:</strong> Multi-metric frameworks with explicit guardrails (diversity, session depth, long-term retention) prevent algorithms from "winning" on one metric while harming the overall experience.</li>
+      <li><strong>AI-assisted monitoring catches drift:</strong> Automated anomaly detection and LLM-based experiment summarization reduce analyst toil and accelerate decision cycles.</li>
+    </ul>
+  </section>
+
+  <!-- Section 2: Business Context & Problem Framing -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Click-Through Rate Trap</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For over a decade, CTR served as the north star metric for recommendation systems across industries. The logic was straightforward: if users click, they must be interested. This assumption broke down at scale. According to <a href="https://hbr.org/2020/03/how-one-company-turned-personalization-into-a-billion-dollar-strategy" target="_blank" rel="noopener" class="text-primary hover:underline">Harvard Business Review</a>, organizations that optimized purely for engagement metrics saw initial gains followed by declining user trust and retention.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The fundamental problem is <strong>metric misalignment</strong>: CTR measures initial interest, not satisfaction. A thumbnail that overpromises generates clicks but leads to rapid abandonment. Over time, users learn to distrust recommendations, reducing overall platform engagement. <a href="https://www.gartner.com/en/marketing/topics/personalization" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner research</a> indicates that 63% of digital marketing leaders struggle to deliver personalization that balances engagement with user satisfaction.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Business Stakes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For subscription-based streaming services, the economics are clear: a 1% improvement in monthly retention can translate to hundreds of millions in annual revenue. Netflix, with over 230 million subscribers, has publicly stated that their recommendation system saves over $1 billion annually by reducing churn through better content discovery (<a href="https://netflixtechblog.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix Tech Blog</a>). The question is not whether to personalize, but how to measure success in ways that align with long-term business outcomes.
+  </p>
+
+  <!-- IMAGE 1: After Business Context -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Comparison Diagram / Two-Path Flow</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-value-of-getting-personalization-right-or-wrong-is-multiplying" target="_blank" rel="noopener" class="underline">McKinsey — The Value of Getting Personalization Right</a> (Figure: Personalization Value Framework)</p>
+      <p><strong>What it Shows:</strong> Two divergent paths: CTR-optimized (short-term gains → long-term churn) vs. satisfaction-optimized (balanced engagement → retention). Annotated with business impact percentages.</p>
+      <p><strong>Why It Matters:</strong> Visualizes the core trade-off between short-term engagement and long-term business value that drives the shift away from CTR.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Adapted from McKinsey personalization research. Recreate with custom annotations in Figma.</p>
+    </div>
+  </div>
+
+  <!-- Metrics Comparison Table -->
+  <div class="overflow-x-auto my-6">
+    <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Metric</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">What It Measures</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Correlation with Satisfaction</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Gaming Risk</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Click-Through Rate (CTR)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Initial interest / curiosity</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Low-Medium</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High (clickbait)</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Completion Rate</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Content quality match</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Medium (short content bias)</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Session Depth</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Continued engagement</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Low</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Play Delay</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Technical experience quality</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Medium-High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">None</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">30-Day Retention</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Long-term satisfaction</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Very High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Low (but slow to measure)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 3: Data Landscape & Event Model -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Event Taxonomy for Streaming Analytics</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Measuring recommendation quality requires a well-structured event model. The typical streaming platform captures events at multiple granularities:
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Core Event Schema (Simplified)
+event_id         UUID
+user_id          STRING
+session_id       STRING
+event_type       ENUM('impression', 'click', 'play_start', 'play_end', 
+                      'pause', 'seek', 'abandon', 'buffer', 'error')
+content_id       STRING
+timestamp_utc    TIMESTAMP
+device_type      STRING
+experiment_arm   STRING
+position_in_row  INT
+row_type         STRING          -- e.g., 'continue_watching', 'top_picks'
+    </pre>
+  </div>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    From these raw events, analytics teams derive key metrics through sessionization and aggregation. A typical data pipeline includes:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Impression logs:</strong> Every content card shown to the user, with position and context</li>
+    <li><strong>Play events:</strong> Start, pause, seek, and end events with timestamps for duration calculation</li>
+    <li><strong>Quality events:</strong> Buffering, bitrate changes, and errors that affect experience</li>
+    <li><strong>Experiment assignment:</strong> Deterministic bucketing based on user_id hash for reproducible analysis</li>
+  </ul>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Derived Metrics Computation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The following SQL pattern illustrates how completion rate is typically computed from event data:
+  </p>
+
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Completion Rate by Experiment Arm
+WITH play_sessions AS (
+  SELECT 
+    user_id,
+    content_id,
+    experiment_arm,
+    MIN(CASE WHEN event_type = 'play_start' THEN timestamp_utc END) AS start_time,
+    MAX(CASE WHEN event_type = 'play_end' THEN timestamp_utc END) AS end_time,
+    MAX(content_duration_seconds) AS content_duration
+  FROM events e
+  JOIN content_metadata c ON e.content_id = c.id
+  WHERE event_type IN ('play_start', 'play_end')
+    AND event_date BETWEEN @experiment_start AND @experiment_end
+  GROUP BY user_id, content_id, experiment_arm
+),
+completion_flags AS (
+  SELECT 
+    *,
+    CASE 
+      WHEN TIMESTAMP_DIFF(end_time, start_time, SECOND) >= content_duration * 0.9 
+      THEN 1 ELSE 0 
+    END AS completed
+  FROM play_sessions
+)
+SELECT 
+  experiment_arm,
+  COUNT(*) AS total_plays,
+  SUM(completed) AS completions,
+  ROUND(100.0 * SUM(completed) / COUNT(*), 2) AS completion_rate_pct
+FROM completion_flags
+GROUP BY experiment_arm;
+    </pre>
+  </div>
+
+  <!-- Section 4: Metrics, KPIs & North Star -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Metric Hierarchy Framework</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Netflix's experimentation philosophy, documented extensively in their <a href="https://netflixtechblog.com/interpreting-a-b-test-results-false-positives-and-statistical-significance-c1522d0db27a" target="_blank" rel="noopener" class="text-primary hover:underline">Tech Blog posts on A/B testing</a>, emphasizes a three-tier metric hierarchy:
+  </p>
+
+  <div class="grid md:grid-cols-3 gap-4 my-6">
+    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+      <h4 class="font-bold text-blue-900 dark:text-blue-100 mb-2">Primary Metrics</h4>
+      <p class="text-sm text-blue-800 dark:text-blue-200">The decision metric. Only one or two. Pre-registered before experiment launch.</p>
+      <ul class="text-sm text-blue-700 dark:text-blue-300 mt-2 list-disc pl-4">
+        <li>Completion rate</li>
+        <li>Quality-adjusted watch time</li>
+      </ul>
+    </div>
+    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+      <h4 class="font-bold text-green-900 dark:text-green-100 mb-2">Secondary Metrics</h4>
+      <p class="text-sm text-green-800 dark:text-green-200">Help interpret the primary result. Not used for go/no-go decisions.</p>
+      <ul class="text-sm text-green-700 dark:text-green-300 mt-2 list-disc pl-4">
+        <li>Session depth</li>
+        <li>Titles started per session</li>
+        <li>Search-to-play ratio</li>
+      </ul>
+    </div>
+    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
+      <h4 class="font-bold text-red-900 dark:text-red-100 mb-2">Guardrail Metrics</h4>
+      <p class="text-sm text-red-800 dark:text-red-200">Must not regress. Can block a winning experiment.</p>
+      <ul class="text-sm text-red-700 dark:text-red-300 mt-2 list-disc pl-4">
+        <li>Play delay (p95)</li>
+        <li>Content diversity score</li>
+        <li>30-day retention</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- IMAGE 2: After Metrics & KPIs -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Metric Hierarchy / Tree Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://netflixtechblog.com/decision-making-at-netflix-33065fa06f04" target="_blank" rel="noopener" class="underline">Netflix Tech Blog — Decision Making at Netflix</a></p>
+      <p><strong>What it Shows:</strong> A metric tree with "North Star" (user satisfaction) at root, branching into Primary → Secondary → Guardrail metrics. Each node shows example metrics and their role in decision-making.</p>
+      <p><strong>Why It Matters:</strong> Demonstrates how mature experimentation programs structure metrics to avoid single-KPI optimization pitfalls.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Excalidraw with three color-coded tiers matching the cards above.</p>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why Completion Rate Beats CTR</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Research from <a href="https://arxiv.org/abs/2006.12648" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv papers on online evaluation</a> demonstrates that completion-based metrics correlate 2-3x more strongly with user satisfaction surveys than CTR. The intuition is straightforward: completing content requires sustained engagement, while clicking requires only momentary curiosity.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    However, completion rate has its own failure modes. Systems that optimize purely for completion may bias toward shorter content (easier to complete) or familiar content (lower risk of abandonment). This is why the guardrail metrics—particularly diversity scores—are essential. A recommendation that achieves high completion by showing only safe, previously-watched content fails the user's discovery needs.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Play Delay: The Hidden Quality Metric</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Play delay—the time between a user pressing play and video starting—is a critical quality-of-experience metric. According to <a href="https://netflixtechblog.com/toward-a-better-quality-measure-for-streaming-video-74d4f261c2d3" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix's research</a>, increases in play delay correlate with higher abandonment rates. The relationship is non-linear: users tolerate small delays but abandon rapidly beyond a threshold (typically 2-3 seconds).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For experimentation, play delay serves as a guardrail: a recommendation algorithm change that improves completion but degrades play delay (e.g., by recommending content that requires different CDN routing) should not ship until the technical issue is resolved.
+  </p>
+
+  <!-- Section 5: Analytical / Experimental Approach -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Sequential A/B Testing vs. Fixed-Horizon</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Classical A/B testing requires pre-specifying a sample size, running the experiment to completion, and then analyzing results. This approach has two problems at scale: (1) clear winners must wait unnecessarily, wasting opportunity cost; (2) analysts who peek at results and stop early inflate false positive rates.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <a href="https://netflixtechblog.com/sequential-a-b-testing-keeps-the-world-streaming-netflix-part-1-continuous-data-cba6c7ed49df" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix's sequential testing framework</a> addresses both issues by computing test statistics continuously against pre-defined boundaries. If the statistic crosses an upper boundary, reject the null (treatment wins); if it crosses a lower boundary, accept the null (no effect); otherwise, continue collecting data.
+  </p>
+
+  <!-- IMAGE 3: After Analytical Approach -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Statistical Chart / Sequential Testing Boundaries</p>
+      <p><strong>Suggested Source:</strong> <a href="https://netflixtechblog.com/sequential-a-b-testing-keeps-the-world-streaming-netflix-part-1-continuous-data-cba6c7ed49df" target="_blank" rel="noopener" class="underline">Netflix Tech Blog — Sequential A/B Testing (Part 1)</a> (Figure: Sequential boundaries diagram)</p>
+      <p><strong>What it Shows:</strong> Line chart with sample size on X-axis, test statistic on Y-axis. Two curved boundaries (upper = reject H0, lower = accept H0) with a sample path showing how the test statistic evolves until crossing a boundary.</p>
+      <p><strong>Why It Matters:</strong> Core visual for explaining why sequential testing enables faster decisions without inflating false positives.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Source image available in Netflix post. Recreate with annotations for portfolio context.</p>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Interleaving for Ranking Evaluation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Full A/B tests are expensive: they require large populations and long durations to detect small effects. <a href="https://netflixtechblog.com/interleaving-in-online-experiments-at-netflix-a04ee392ec55" target="_blank" rel="noopener" class="text-primary hover:underline">Interleaving</a> is a screening technique where two ranking algorithms are blended in a single list shown to users. User engagement with items from each algorithm provides a relative preference signal.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The key insight from <a href="https://arxiv.org/abs/1903.12262" target="_blank" rel="noopener" class="text-primary hover:underline">research on interleaving methods</a> is sensitivity: interleaving can detect ranking quality differences with 10-100x fewer samples than traditional A/B tests. This makes it ideal for screening many candidate algorithms before committing to a full experiment.
+  </p>
+
+  <div class="overflow-x-auto my-6">
+    <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Method</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Sample Efficiency</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Causal Validity</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Best Use Case</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Fixed-Horizon A/B Test</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Low</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Final ship decision</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Sequential A/B Test</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Medium-High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Production experiments with early stopping</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Interleaving</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Very High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Medium (relative only)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Screening candidates</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Multi-Armed Bandit</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">High</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Low-Medium</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">Optimization under uncertainty</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Avoiding Common Experiment Pitfalls</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Netflix's documentation and broader experimentation literature identify several failure modes that teams must actively prevent:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Peeking without correction:</strong> Checking results repeatedly and stopping when p &lt; 0.05 inflates false positive rates to 20-30%. Sequential designs with proper boundaries fix this.</li>
+    <li><strong>Multiple comparisons:</strong> Testing 20 metrics without adjustment guarantees at least one false positive. Pre-specify primary metrics and apply Bonferroni/FDR corrections for exploratory analysis.</li>
+    <li><strong>Novelty effects:</strong> Users engage differently with new features simply because they are new. Run experiments for at least 2-3 weeks to let behavior stabilize.</li>
+    <li><strong>Selection bias:</strong> Analyzing only users who "saw" the treatment (vs. intent-to-treat) biases estimates. Always analyze by assignment, not exposure.</li>
+    <li><strong>Day-of-week confounds:</strong> Launching on Friday and concluding on Monday captures only weekend behavior. Run full weekly cycles.</li>
+  </ul>
+
+  <!-- Section 6: AI & Automation Layer -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">AI-Assisted Experiment Monitoring</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Modern experimentation platforms increasingly incorporate AI for operational efficiency. According to <a href="https://www.gartner.com/en/articles/what-s-new-in-artificial-intelligence-from-the-2023-gartner-hype-cycle" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's AI research</a>, 40% of large enterprises now use automated anomaly detection in their analytics pipelines.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Key automation patterns in experiment monitoring include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Automated guardrail alerts:</strong> When a guardrail metric regresses beyond a threshold, the system automatically alerts the experiment owner and can pause allocation.</li>
+    <li><strong>Sample ratio mismatch detection:</strong> If the observed allocation ratio differs significantly from the intended ratio (e.g., 50/50), it indicates a bucketing bug. Automated checks catch this within hours.</li>
+    <li><strong>Metric drift detection:</strong> Time-series anomaly detection identifies when experiment metrics deviate from historical patterns, flagging potential data quality issues.</li>
+  </ul>
+
+  <!-- IMAGE 4: Dashboard Mockup -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup / Multi-Panel Analytics View</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.statsig.com/blog/experiment-analysis-framework" target="_blank" rel="noopener" class="underline">Statsig Blog — Experiment Analysis Framework</a> or <a href="https://www.eppo.com/blog" target="_blank" rel="noopener" class="underline">Eppo Engineering Blog</a></p>
+      <p><strong>What it Shows:</strong> 4-panel experiment dashboard: (1) metric trends over time with confidence bands, (2) guardrail status indicators, (3) sample ratio check, (4) automated alert log.</p>
+      <p><strong>Why It Matters:</strong> Shows what a modern experimentation platform looks like in practice—relevant for analytics engineers building or evaluating such systems.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Build a Figma mockup inspired by Statsig/Eppo/Optimizely public documentation.</p>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">LLMs for Experiment Summarization</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A emerging pattern in 2024-2026 is using large language models to generate experiment summaries for stakeholders. Rather than analysts manually writing reports, LLMs can:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Synthesize statistical results into plain-language explanations</li>
+    <li>Highlight unexpected segment-level differences</li>
+    <li>Generate draft recommendations based on pre-defined decision rules</li>
+    <li>Surface similar historical experiments for context</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This does not replace analyst judgment but reduces toil on routine experiments, freeing analysts for complex investigations. The pattern follows <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's framework</a> for AI augmentation: automate the routine, escalate the complex.
+  </p>
+
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Example: Automated Experiment Summary Prompt Template
+"""
+Experiment: {experiment_name}
+Duration: {start_date} to {end_date}
+Sample Size: Control={control_n}, Treatment={treatment_n}
+
+Primary Metric: {primary_metric}
+  - Control: {control_mean} (95% CI: {control_ci})
+  - Treatment: {treatment_mean} (95% CI: {treatment_ci})
+  - Relative Lift: {lift_pct}% (p-value: {p_value})
+
+Guardrail Status: {guardrail_summary}
+
+Generate a 3-paragraph summary for stakeholders covering:
+1. What was tested and why
+2. Key findings and statistical confidence
+3. Recommended action and any caveats
+"""
+    </pre>
+  </div>
+
+  <!-- Section 7: Observations & Key Findings -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Multi-Metric Frameworks Outperform Single KPI Optimization</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Organizations that evaluate recommendations on a portfolio of metrics—completion, diversity, session depth, and retention—consistently outperform those optimizing a single metric. <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-value-of-getting-personalization-right-or-wrong-is-multiplying" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey research</a> indicates that companies with sophisticated personalization measurement see 10-15% higher customer lifetime value than single-metric optimizers.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Long-Term Satisfaction Often Conflicts with Short-Term Engagement</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A consistent pattern across platforms: changes that boost immediate engagement (clicks, watch time in the first session) often degrade long-term retention. The mechanism is usually over-exploitation—showing users more of what they already like—at the expense of discovery. Users eventually tire of repetitive recommendations and churn.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This creates a fundamental tension that experimentation must address. Short experiments (1-2 weeks) may show positive results that reverse over months. The solution is either to run longer experiments for retention-sensitive changes or to use proxy metrics (e.g., diversity scores) that correlate with long-term outcomes.
+  </p>
+
+  <!-- IMAGE 5: After Key Findings -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Time-Series Chart / Dual-Axis Trend Comparison</p>
+      <p><strong>Suggested Source:</strong> <a href="https://towardsdatascience.com/beyond-accuracy-behavioral-evaluation-of-recommender-systems-3b13e8e4b4e4" target="_blank" rel="noopener" class="underline">Towards Data Science — Beyond Accuracy: Behavioral Evaluation of Recommender Systems</a></p>
+      <p><strong>What it Shows:</strong> Dual Y-axis chart showing short-term engagement (left axis) vs. long-term retention (right axis) over 12 weeks. Two treatments: one optimized for CTR (high short-term, declining long-term) vs. one optimized for satisfaction (moderate short-term, stable long-term). Lines cross around week 6.</p>
+      <p><strong>Why It Matters:</strong> Visualizes the core trade-off that justifies long-term holdout groups and multi-metric evaluation.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate as a line chart in Power BI / Matplotlib with synthetic data illustrating the pattern.</p>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Sequential Testing Reduces Time-to-Decision by 30-50%</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Across published case studies, sequential testing consistently achieves significant efficiency gains. For large effect sizes, experiments conclude in days rather than weeks. This acceleration compounds: faster decisions mean more experiments per quarter, accelerating the overall pace of product improvement.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 4: Interleaving Screens 10x More Candidates</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Netflix's published data suggests interleaving can evaluate ranking algorithms with 10-100x fewer samples than A/B tests. This enables a two-stage pipeline: interleaving screens many candidates quickly, and A/B tests confirm the top performers. The result is both speed and rigor.
+  </p>
+
+  <!-- Section 8: Trade-offs, Risks & Failure Modes -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 1: Completion vs. Diversity</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Algorithms that maximize completion tend to recommend familiar, safe content. This improves short-term metrics but reduces discovery, eventually leading to user boredom. The mitigation is explicit diversity constraints or guardrails that block high-completion algorithms with low diversity scores.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 2: Speed vs. Precision</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Sequential testing and interleaving enable faster decisions but introduce risks. Early stopping may miss delayed effects (e.g., novelty wearing off). Interleaving provides relative rankings but not absolute impact estimates. Teams must understand what each method can and cannot tell them.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 3: Global Wins vs. Segment Losses</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A treatment can win overall while harming specific segments (e.g., new users, low-bandwidth regions). Segment analysis is essential but increases multiple comparisons risk. The best practice is to pre-define a small set of critical segments and treat other slicing as hypothesis generation.
+  </p>
+
+  <!-- IMAGE 6: Decision Flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow Diagram / Flowchart</p>
+      <p><strong>Suggested Source:</strong> <a href="https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8" target="_blank" rel="noopener" class="underline">Netflix Tech Blog — Building Confidence in a Decision</a></p>
+      <p><strong>What it Shows:</strong> Flowchart for experiment ship decisions: "Primary Metric Significant?" → Yes → "Guardrails Pass?" → Yes → "Critical Segments OK?" → Yes → SHIP. Each "No" leads to specific remediation steps.</p>
+      <p><strong>Why It Matters:</strong> Provides a repeatable, auditable framework for experiment conclusions—valuable for analytics teams building decision governance.</p>
+      <p class="italic text-amber-600 dark:text-amber-400">Recreate in Excalidraw/Figma with color-coded decision nodes (green=ship, yellow=investigate, red=reject).</p>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Goodhart's Law</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    "When a measure becomes a target, it ceases to be a good measure." Any metric optimized intensely will be gamed by the algorithm. CTR optimization led to clickbait; completion optimization may lead to short-content bias. The only defense is a balanced scorecard with guardrails that encode what matters beyond the primary metric.
+  </p>
+
+  <!-- Section 9: Business Impact & Decision Outcomes -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    While exact figures are proprietary, published estimates suggest:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Netflix:</strong> Recommendation system saves $1B+ annually in reduced churn (company statements)</li>
+    <li><strong>YouTube:</strong> Shift from CTR to watch time as primary metric led to 20% increase in daily watch time per user (public earnings commentary)</li>
+    <li><strong>Spotify:</strong> Multi-objective ranking improvements drove 5-10% increases in streaming hours (investor presentations)</li>
+  </ul>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The decision framework that emerges from this analysis:
+  </p>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Define primary metric:</strong> Choose completion or quality-adjusted watch time, not CTR</li>
+    <li><strong>Set guardrails:</strong> Diversity, play delay, and retention must not regress</li>
+    <li><strong>Use interleaving for screening:</strong> Test many candidates quickly</li>
+    <li><strong>Confirm with sequential A/B:</strong> Validate winners with causal rigor</li>
+    <li><strong>Check segments:</strong> Ensure no critical cohort is harmed</li>
+    <li><strong>Monitor post-launch:</strong> Continue tracking for delayed effects</li>
+  </ol>
+
+  <!-- Section 10: Limitations & What We'd Improve -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Limitations of This Analysis</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Proprietary data:</strong> Exact metric definitions and thresholds at Netflix, Spotify, etc. are not public. This analysis synthesizes from published materials but cannot replicate internal specifics.</li>
+    <li><strong>Platform-specific:</strong> Findings apply primarily to large-scale streaming platforms. Smaller platforms or different domains (e-commerce, news) may have different optimal metrics.</li>
+    <li><strong>Temporal validity:</strong> Experimentation best practices evolve. Techniques described here reflect 2024-2026 state of the art; future methods may differ.</li>
+  </ul>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">What We'd Improve</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Long-term holdouts:</strong> Run persistent holdout groups to measure true long-term impact of cumulative recommendation changes</li>
+    <li><strong>Causal discovery:</strong> Apply causal inference methods (e.g., instrumental variables, regression discontinuity) to understand mechanisms, not just effects</li>
+    <li><strong>User-level optimization:</strong> Move from population-level metrics to personalized success definitions that vary by user segment</li>
+    <li><strong>Qualitative integration:</strong> Systematically incorporate user research and survey data alongside behavioral metrics</li>
+  </ul>
+
+  <!-- Section 11: Future Scope -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12-24 Months)</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Causal Inference at Scale</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The next frontier is moving from "what happened" to "why." Techniques like double machine learning, synthetic controls, and causal forests are entering production experimentation platforms. These methods enable causal conclusions from observational data when experiments are infeasible.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">AI-Native Experiment Design</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LLMs and AI agents will increasingly assist with experiment design: suggesting metrics, identifying confounds, estimating required sample sizes, and generating analysis plans. This reduces the expertise barrier and democratizes rigorous experimentation.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Satisfaction Prediction Models</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Rather than measuring satisfaction indirectly through completion, platforms will build explicit satisfaction prediction models trained on survey data and use these predictions as optimization targets. This closes the loop between behavioral signals and actual user sentiment.
+  </p>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Real-Time Adaptive Experiments</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reinforcement learning-based experimentation will enable continuous adaptation: automatically shifting traffic toward winning variants while maintaining statistical validity. This combines the exploration benefits of bandits with the rigor of hypothesis testing.
+  </p>
+
+  <!-- Section 12: Related Work & Further Reading -->
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://netflixtechblog.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix Technology Blog</a> — comprehensive resource on streaming experimentation and data science</li>
+    <li><a href="https://netflixtechblog.com/sequential-a-b-testing-keeps-the-world-streaming-netflix-part-1-continuous-data-cba6c7ed49df" target="_blank" rel="noopener" class="text-primary hover:underline">Sequential A/B Testing Keeps the World Streaming (Netflix)</a></li>
+    <li><a href="https://netflixtechblog.com/interpreting-a-b-test-results-false-positives-and-statistical-significance-c1522d0db27a" target="_blank" rel="noopener" class="text-primary hover:underline">Interpreting A/B Test Results: False Positives and Statistical Significance</a></li>
+    <li><a href="https://netflixtechblog.com/interleaving-in-online-experiments-at-netflix-a04ee392ec55" target="_blank" rel="noopener" class="text-primary hover:underline">Innovating Faster on Personalization Using Interleaving</a></li>
+  </ul>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://hbr.org/2020/03/how-one-company-turned-personalization-into-a-billion-dollar-strategy" target="_blank" rel="noopener" class="text-primary hover:underline">HBR: How One Company Turned Personalization Into a Billion-Dollar Strategy</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-value-of-getting-personalization-right-or-wrong-is-multiplying" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey: The Value of Getting Personalization Right</a></li>
+    <li><a href="https://www.gartner.com/en/marketing/topics/personalization" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner: Personalization Research Hub</a></li>
+  </ul>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Academic Papers</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://arxiv.org/abs/1903.12262" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv: Advances in Online Evaluation Methods</a> — survey of interleaving and online evaluation</li>
+    <li><a href="https://arxiv.org/abs/2006.12648" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv: Beyond Clicks - Measuring User Engagement</a> — research on engagement quality metrics</li>
+    <li><a href="https://dl.acm.org/doi/10.1145/3534678" target="_blank" rel="noopener" class="text-primary hover:underline">ACM: Trustworthy Online Controlled Experiments</a> — comprehensive guide to experimentation rigor</li>
+  </ul>
+
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Tools & Platforms</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.statsig.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Statsig</a> — modern experimentation platform with sequential testing</li>
+    <li><a href="https://www.optimizely.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Optimizely</a> — enterprise experimentation and feature management</li>
+    <li><a href="https://www.eppo.com/" target="_blank" rel="noopener" class="text-primary hover:underline">Eppo</a> — warehouse-native experimentation platform</li>
+  </ul>
+
+  <!-- Conclusion -->
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      The shift from click-based to satisfaction-based evaluation represents a maturation of recommendation analytics. Organizations that adopt multi-metric frameworks, invest in sequential testing infrastructure, and maintain rigorous guardrails will outperform single-metric optimizers. The future lies in combining these foundations with causal inference and AI-assisted tooling to make experimentation faster, more rigorous, and more accessible.
+    </p>
+  </div>
+
+</div>

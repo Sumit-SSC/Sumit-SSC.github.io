@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-sky-50 to-indigo-50 dark:from-sky-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-sky-200 dark:border-sky-800 mb-8">
+    <p class="text-sm font-semibold text-sky-900 dark:text-sky-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-sky-800 dark:text-sky-200 space-y-1">
+      <p><strong>Type:</strong> Event Schema / Taxonomy Tree</p>
+      <p><strong>Suggested Source:</strong> <a href="https://segment.com/academy/" target="_blank" rel="noopener" class="underline">Segment — Event Tracking Guide</a></p>
+      <p><strong>What it Shows:</strong> Object–action hierarchy (e.g., User → Signed Up, Page Viewed; Order → Completed, Refunded). Naming and cardinality.</p>
+      <p><strong>Why It Matters:</strong> Foundation for analytics-friendly event schemas.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Product analytics depends on a clear, consistent <strong>event taxonomy</strong>. Poor naming, high cardinality, and schema drift lead to uninterpretable dashboards and broken pipelines. This case study covers event naming, cardinality issues, and schema drift—using <a href="https://segment.com/academy/" target="_blank" rel="noopener" class="text-primary hover:underline">Segment</a> and <a href="https://www.amplitude.com/blog/event-taxonomy" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude</a> taxonomy design.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Event naming:</strong> Object–action (e.g., Order Completed, User Signed Up) or action–object; consistent verb tense and casing; avoid free-form or high-cardinality event names.</li>
+      <li><strong>Cardinality issues:</strong> High-cardinality dimensions (e.g., raw IDs in event names) fragment reporting; use bounded enums or separate dimension tables; limit event name and property cardinality for dashboards.</li>
+      <li><strong>Schema drift:</strong> New properties, renamed events, and deprecated events break downstream; version events, document changes, and use schema registry or contracts to detect drift.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Segment's Event Tracking Guide and Amplitude's event taxonomy posts emphasize that analytics-friendly schemas are designed upfront: naming conventions, property types, and cardinality limits. Without a taxonomy, teams ship inconsistent events and downstream analytics become unreliable. Taxonomy design is an analytics-engineering and product collaboration.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Taxonomy Table / Naming Convention</p>
+      <p><strong>Suggested Source:</strong> Amplitude — Event Taxonomy</p>
+      <p><strong>What it Shows:</strong> Rows: event name, object, action, properties, cardinality. Columns: example, rule, anti-pattern.</p>
+      <p><strong>Why It Matters:</strong> Operational reference for event design.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Events: event_id, event_name (bounded), timestamp, user_id, session_id, properties (typed, bounded cardinality where possible). Taxonomy doc: event_name, description, properties (name, type, enum or range), owner, version. Schema registry or validation layer checks incoming events against taxonomy and flags drift.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Taxonomy health: % events conforming to taxonomy, % properties with valid types, drift rate (new/renamed/deprecated per period). North star: consistent, interpretable event data that supports product and analytics use cases without rework.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Audit existing events against naming and cardinality rules; document taxonomy and version it; add validation (e.g., schema checks in pipeline) to block or flag non-conforming events; run drift reports (new event names, new properties) and review periodically.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated schema validation in pipeline; drift alerts (new/renamed events or properties); optional LLM-assisted documentation from event samples; taxonomy as code (e.g., YAML/JSON) with CI checks.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Object–action naming and bounded cardinality reduce fragmentation and support dashboards; schema drift is inevitable without validation and versioning; taxonomy ownership (product + analytics engineering) improves adoption.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: flexibility (many event names/properties) vs. consistency (bounded taxonomy). Risk: taxonomy too rigid and teams work around it. Failure mode: no taxonomy and events become unmanageable; or taxonomy exists but is not enforced.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt event taxonomy with naming and cardinality rules; document and version; validate in pipeline and monitor drift. Outcome: reliable, interpretable product analytics and fewer broken reports.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Taxonomy can lag product changes; retrofitting existing events is costly. Improvements: taxonomy as code with CI; automated suggestions for new events from product specs; integration with data contracts.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Data contracts that extend to events; semantic layer that maps events to metrics; automated taxonomy from usage patterns.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://segment.com/academy/" target="_blank" rel="noopener" class="text-primary hover:underline">Segment — Event Tracking Guide</a></li>
+    <li><a href="https://www.amplitude.com/blog/event-taxonomy" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude — Event Taxonomy</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Design analytics-friendly event schemas with clear naming (object–action), bounded cardinality, and versioning. Validate in pipeline and monitor drift so product analytics stays consistent and interpretable.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-teal-200 dark:border-teal-800 mb-8">
+    <p class="text-sm font-semibold text-teal-900 dark:text-teal-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-teal-800 dark:text-teal-200 space-y-1">
+      <p><strong>Type:</strong> Pipeline + Contract Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.thoughtworks.com/insights/articles/data-contracts" target="_blank" rel="noopener" class="underline">ThoughtWorks — Data Contracts</a></p>
+      <p><strong>What it Shows:</strong> Source → contract → transform → contract → consumer. SLA and versioning.</p>
+      <p><strong>Why It Matters:</strong> Prevents silent data failures.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Analytics pipelines fail silently when schema or semantics change and downstream consumers are not notified. <strong>Data contracts</strong> define expected schema, freshness, and quality so that producers and consumers agree and breakages are detected. This case study covers data contracts, SLA for analytics, and versioning—using <a href="https://www.thoughtworks.com/insights/articles/data-contracts" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks</a> and <a href="https://www.getdbt.com/what-is-analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Data contracts:</strong> Explicit agreement between producer and consumer: schema (columns, types), freshness (e.g., daily by 9am), and optional quality rules (e.g., non-null, uniqueness).</li>
+      <li><strong>SLA for analytics:</strong> Define and monitor freshness, completeness, and accuracy; alert when SLA is breached so downstream teams are not blind.</li>
+      <li><strong>Versioning:</strong> Contract version (e.g., v1, v2) and backward compatibility (additive changes vs. breaking); consumers can depend on a version and migrate when ready.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    ThoughtWorks' data contracts article and dbt Labs' analytics engineering content emphasize that data products (tables, models) should have clear contracts so that breakages are detected and communicated. Without contracts, schema drift and late data cause silent failures and lost trust. Contracts are a collaboration between analytics engineering and consumers (BI, product, data science).
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Contract Schema / Table</p>
+      <p><strong>Suggested Source:</strong> dbt — Analytics Engineering / ThoughtWorks</p>
+      <p><strong>What it Shows:</strong> Table name, columns (name, type, constraints), freshness, owner, version. Example: orders_daily, order_id (PK), order_date, amount (not null), updated_at; freshness: 1 day.</p>
+      <p><strong>Why It Matters:</strong> Operational reference for contract design.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Contracts live in code (e.g., dbt schema.yml, or dedicated contract repo). Each model/table has: schema (columns, types, constraints), freshness (e.g., max delay), and optional tests (unique, not_null, relationships). Pipeline runs validate against contracts; failures block or alert. Version is attached to contract; breaking changes require version bump and consumer notification.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Contract health: % models passing contract checks, freshness SLA adherence, time to detect and resolve breaches. North star: zero silent failures—all breakages detected and communicated before consumers are impacted.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Implement contracts for critical models first (e.g., fact tables, key dimensions); run contract checks in CI and on schedule; monitor freshness and completeness; document versioning and breaking-change process. Iterate on contract coverage and consumer adoption.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Contract-as-code with automated validation; freshness and quality checks in pipeline; alerts on breach; optional LLM-assisted impact analysis when contract breaks (which dashboards/reports are affected).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Contracts reduce silent failures and improve trust; freshness SLA is often the first and most impactful contract; versioning and backward compatibility require discipline but enable safe evolution.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: rigidity (strict contracts) vs. flexibility (frequent change). Risk: contracts ignored if too strict or not enforced. Failure mode: no versioning and breaking changes break all consumers at once.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt data contracts for critical analytics assets; define schema, freshness, and versioning; validate in pipeline and alert on breach. Outcome: fewer silent failures, faster detection, and clearer ownership.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Contract coverage can be partial; semantic meaning (e.g., definition of "active user") is harder to contract. Improvements: semantic contracts or data quality rules; consumer-facing contract catalog; integration with observability.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Cross-pipeline contract propagation; semantic layer with contract-like definitions; regulatory and compliance alignment (e.g., lineage + contract).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.thoughtworks.com/insights/articles/data-contracts" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks — Data Contracts</a></li>
+    <li><a href="https://www.getdbt.com/what-is-analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs — Analytics Engineering</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Prevent silent data failures with data contracts: explicit schema, freshness, and versioning; validate in pipeline and alert on breach so analytics engineering and consumers share a single source of truth and breakages are caught early.
+    </p>
+  </div>
+</div>

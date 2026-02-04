@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/20 dark:to-gray-800/40 rounded-xl p-6 border border-slate-200 dark:border-slate-700 mb-8">
+    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-slate-800 dark:text-slate-200 space-y-1">
+      <p><strong>Type:</strong> Governance Framework Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/artificial-intelligence" target="_blank" rel="noopener" class="underline">Gartner — AI Governance</a></p>
+      <p><strong>What it Shows:</strong> Bias monitoring, model accountability, regulatory readiness—policy, process, and tooling.</p>
+      <p><strong>Why It Matters:</strong> Ensure compliance and auditability.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    AI governance for analytics teams means <strong>bias monitoring</strong>, <strong>model accountability</strong>, and <strong>regulatory readiness</strong>. This case study covers how analytics teams can ensure compliance and auditability—using <a href="https://www.gartner.com/en/artificial-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> AI governance and <a href="https://oecd.ai/en/ai-principles" target="_blank" rel="noopener" class="text-primary hover:underline">OECD AI Principles</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Bias monitoring:</strong> Track model outputs and outcomes by protected or sensitive segments; flag disparity (e.g., approval rate, error rate) and document mitigation.</li>
+      <li><strong>Model accountability:</strong> Document model purpose, data, logic, and change history; assign owner; define review cadence and retirement criteria.</li>
+      <li><strong>Regulatory readiness:</strong> Align to OECD AI principles and local regulation (e.g., EU AI Act); maintain audit trail (inputs, model version, outputs, human decisions) for high-stakes use cases.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Gartner's AI governance and OECD AI principles emphasize that analytics teams using ML/AI must document, monitor, and be accountable for model behavior and impact. Bias monitoring and model accountability are not optional for credit, fraud, hiring, or other high-stakes domains; regulatory readiness reduces risk and builds trust.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Governance Checklist / Table</p>
+      <p><strong>Suggested Source:</strong> OECD AI Principles</p>
+      <p><strong>What it Shows:</strong> Rows: transparency, fairness, accountability, safety. Columns: policy, process, tooling, audit.</p>
+      <p><strong>Why It Matters:</strong> Operational checklist for analytics AI governance.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Model registry: model_id, version, purpose, owner, data_spec, logic_summary, created_at, retired_at. Bias monitoring: segment, metric (e.g., approval_rate, error_rate), threshold, alert. Audit log: decision_id, model_version, input_hash, output, human_override, timestamp.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Governance health: % models with current documentation, % with bias monitoring, % decisions with audit trail. North star: all high-stakes models documented, monitored, and auditable; zero unapproved model changes in production.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Implement model registry and documentation template; add bias monitoring (segment-level metrics and thresholds); enable audit logging for high-stakes decisions; run periodic reviews and retirement checks. Map to OECD principles and local regulation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated bias dashboards (segment-level metrics); model registry with versioning and lineage; audit log pipeline; optional alerts when disparity exceeds threshold or when model changes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Bias monitoring surfaces issues that aggregate metrics miss; documentation and accountability reduce "black box" risk; audit trails are essential for regulatory and internal review.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: governance overhead vs. risk. Risk: governance as checkbox without real monitoring. Failure mode: no documentation or audit trail when regulators or auditors ask.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt AI governance for analytics—bias monitoring, model accountability, regulatory alignment. Outcome: compliant, auditable analytics and reduced regulatory and reputational risk.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Bias metrics depend on segment definition; regulation is evolving. Improvements: causal fairness analysis; automated compliance mapping; integration with data contracts and lineage.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    EU AI Act alignment; automated bias detection and mitigation; cross-company governance standards.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/artificial-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — AI Governance</a></li>
+    <li><a href="https://oecd.ai/en/ai-principles" target="_blank" rel="noopener" class="text-primary hover:underline">OECD AI Principles</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Ensure AI governance for analytics: bias monitoring, model accountability, and regulatory readiness. Document, monitor, and audit so that analytics is compliant and trustworthy.
+    </p>
+  </div>
+</div>

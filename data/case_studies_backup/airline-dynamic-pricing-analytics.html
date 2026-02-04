@@ -1,0 +1,39 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This is a <strong>learning case study</strong> on how airlines use demand signals, events, and time to set and change fares. The focus is on data sources, metrics, and revenue-management decisions—analytics heavy, with clear links to business outcomes.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Domain:</strong> Travel & aviation. Carriers need to fill planes while maximizing revenue per seat.</p>
+      <p><strong>Data:</strong> Booking and cancellation curves, load factor by flight/route/date, fare history, event calendars (festivals, holidays), and optional weather or external demand signals.</p>
+      <p><strong>Analytics focus:</strong> Booking curve (how fast seats sell by days-before-departure), price elasticity by segment and route, impact of events and seasonality, and competitive fare benchmarking. Dashboards support revenue and pricing teams.</p>
+      <p><strong>Decision angle:</strong> When to raise or lower fares, which segments to target, and how to respond to demand spikes (events, weather). Rules and thresholds are informed by historical data and experiments.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Key Concepts</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    The <strong>booking curve</strong>—bookings per day in the weeks before departure—reveals demand patterns and “last-minute” vs. “early bird” behavior. <strong>Load factor</strong> (seats sold / capacity) by route and date drives pricing: high load often allows higher fares. <strong>Events and seasonality</strong> (festivals, holidays, school breaks) shift demand; aligning capacity and price with these windows is a core analytics task. <strong>Segment</strong> (leisure vs. business, point of sale) affects price sensitivity and is used to set and adjust fares.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">How Analytics Supports Pricing</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Revenue and pricing teams use dashboards that show booking pace, load, fare level, and comparisons to past years or similar routes. When demand is ahead of plan, fares may rise; when it’s behind, promotions or lower fares may be tested. Weather (e.g. disruption) and events are overlayed so teams can act on external factors. The “dynamic” in dynamic pricing comes from these data-driven adjustments, not only from real-time ML.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">What You Can Learn and Reuse</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Time-series aggregation (bookings by day, load by flight), segment-level metrics, and event/calendar alignment are transferable to any capacity or pricing problem. Public flight or travel datasets (e.g. Bureau of Transportation Statistics, OpenSky) can support hands-on analytics and dashboard building.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Further Reading & Resources</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Revenue management and dynamic pricing (industry primers, airline case studies)</li>
+      <li>BTS (Bureau of Transportation Statistics) and OpenSky for flight/demand data</li>
+      <li>Visual Capitalist / Gartner: travel and pricing trends</li>
+    </ul>
+  </div>
+</div>

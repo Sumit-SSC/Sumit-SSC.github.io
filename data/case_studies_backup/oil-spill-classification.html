@@ -1,0 +1,55 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Detecting oil spills in satellite imagery is a high-stakes application of machine learning: faster, accurate classification supports environmental response and regulatory compliance. This case study covers image preprocessing, feature extraction, model training (Random Forest, SVM, neural networks), and evaluation—positioned for data science associate and ML-focused analyst roles in data-rich, domain-heavy settings.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Goal:</strong> Classify ocean patches in satellite images as oil spill vs. non–oil spill to enable rapid environmental response.</p>
+      <p><strong>Approach:</strong> Image preprocessing and patch extraction; hand-crafted and/or learned features; model benchmarking (Random Forest, SVM, neural networks); evaluation with precision, recall, and F1.</p>
+      <p><strong>Insights:</strong> Achieved high classification accuracy; feature design and class balance were critical; explainability (e.g. attention or feature importance) helped domain experts trust the model.</p>
+      <p><strong>Outcome:</strong> A pipeline that can be extended to near–real-time detection and integrated with monitoring workflows.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Business & Domain Context</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Oil spill detection from remote sensing is used by agencies and operators for early warning and impact assessment. Manual review of large image volumes is slow and inconsistent. ML-based classification can prioritize patches for human review and speed up response. The problem is inherently imbalanced and sensitive to false negatives (missed spills) and false positives (unnecessary alerts).
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology</h3>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Data & Preprocessing</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Satellite imagery was split into patches; labels (oil vs. non-oil) were derived from expert or reference data. Preprocessing included normalization, optional band selection, and handling of missing or low-quality regions. Train/validation/test splits respected temporal or spatial structure to avoid leakage.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Features & Models</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Both hand-crafted features (e.g. spectral, texture) and learned representations (e.g. CNN features) were used. Random Forest and SVM provided strong baselines with interpretability; neural networks were evaluated for potential gains. Class weighting or sampling was used to address imbalance.
+  </p>
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Evaluation</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Metrics included precision, recall, F1, and ROC-AUC. Thresholds were tuned for the desired trade-off between missed spills and false alarms. Where possible, feature importance or attention maps were produced for domain review.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Results & Impact</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The pipeline achieved high accuracy and was positioned for integration into monitoring systems. Explainability increased trust with environmental and operations teams. Next steps include real-time or near–real-time deployment and continuous retraining as new imagery and labels become available.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Future Work</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li>Full CNN or vision transformer for end-to-end learning; transfer learning from related earth-observation datasets.</li>
+    <li>Uncertainty quantification and human-in-the-loop review workflows.</li>
+    <li>Integration with GIS and alerting for operational use.</li>
+  </ul>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media Checklist</div>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li>Sample images: oil vs. non-oil patches; model predictions and attention/importance</li>
+      <li>Confusion matrix and ROC curve; metric table</li>
+      <li>Notebook or repo link for reproducibility</li>
+    </ul>
+  </div>
+</div>

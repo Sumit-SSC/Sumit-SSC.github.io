@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-green-200 dark:border-green-800 mb-8">
+    <p class="text-sm font-semibold text-green-900 dark:text-green-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-green-800 dark:text-green-200 space-y-1">
+      <p><strong>Type:</strong> Copilot Flow — Question → SQL → Insight</p>
+      <p><strong>Suggested Source:</strong> <a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="underline">OpenAI — Enterprise Analytics</a></p>
+      <p><strong>What it Shows:</strong> User question → LLM → generated SQL → validation → result → summary.</p>
+      <p><strong>Why It Matters:</strong> GenAI to accelerate analytics work.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    GenAI can accelerate analytics: <strong>SQL generation</strong>, <strong>root-cause assistance</strong>, and <strong>insight summarization</strong>. This case study examines LLMs as analyst copilots—using <a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="text-primary hover:underline">OpenAI</a> enterprise use cases and <a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> generative AI for analytics.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>SQL generation:</strong> Natural language → SQL with schema context; validate and run in sandbox; analyst reviews and corrects. Reduces time to first query for ad-hoc questions.</li>
+      <li><strong>RCA assistance:</strong> When a metric changes, LLM can suggest hypotheses (e.g., segment, dimension) and draft queries to test; analyst chooses and refines. Speeds up root-cause analysis.</li>
+      <li><strong>Insight summarization:</strong> LLM summarizes result sets or reports into plain language; highlights anomalies and trends. Frees analyst from repetitive writing; analyst validates and edits.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    OpenAI's enterprise analytics use cases and McKinsey's generative AI for analytics describe how LLMs can act as copilots—generating SQL, suggesting hypotheses, and summarizing results—while the analyst remains in the loop for validation and judgment. The goal is to reduce toil and speed time-to-insight, not to replace analysts.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Diagram — Copilot Loop</p>
+      <p><strong>Suggested Source:</strong> McKinsey — Generative AI for Analytics</p>
+      <p><strong>What it Shows:</strong> User → prompt → LLM → SQL/hypothesis/summary → validation layer → analyst → refine or approve.</p>
+      <p><strong>Why It Matters:</strong> Human-in-the-loop design.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Copilot inputs: user question, schema (table/column names, types), optional sample rows or metadata. Outputs: generated SQL, hypotheses, or summary text. Validation: SQL syntax and safety (e.g., read-only, no DDL); optional execution in sandbox with row limits. Log prompts and outputs for quality and safety review.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Copilot effectiveness: % of generated SQL that runs and returns expected result (or passes analyst edit); time to first query; RCA time. North star: analyst productivity (more questions answered per unit time) with no increase in errors or security risk.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A/B test: analysts with vs without copilot; measure time to insight, query count, and error rate. Evaluate SQL generation on held-out questions (syntax correct, semantically correct). Monitor hallucination (e.g., wrong table/column) and add validation layers (schema guardrails, row limits).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LLM with schema and query history; SQL validator and sandbox executor; optional semantic layer so LLM generates against metrics, not raw tables; RCA hypothesis generator; report summarizer. All with human review before production use.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    SQL generation works well for standard questions when schema context is good; RCA assistance reduces time to hypothesis; summarization is useful for recurring reports. Hallucination and wrong logic remain risks—validation and human-in-the-loop are essential.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: speed (accept LLM output) vs. safety (always human review). Risk: over-trust of LLM output; security (e.g., prompt injection). Failure mode: deploying copilot without validation layer and causing wrong decisions.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: adopt LLM copilot for SQL, RCA, and summarization with validation and human-in-the-loop. Outcome: faster ad-hoc analysis and reporting with controlled risk.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    LLMs can hallucinate schema or logic; complex queries and edge cases need analyst skill. Improvements: better schema and metric context; query feedback loop; semantic layer for consistent metric generation.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Multi-step reasoning for complex questions; automated validation (test queries against known answers); copilot for data quality and pipeline debugging.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="text-primary hover:underline">OpenAI — Enterprise Analytics Use Cases</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Generative AI for Analytics</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Use GenAI as an analyst copilot for SQL generation, RCA, and summarization—with validation layers and human-in-the-loop so that productivity gains do not come at the cost of accuracy or security.
+    </p>
+  </div>
+</div>

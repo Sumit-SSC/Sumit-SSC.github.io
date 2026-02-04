@@ -27,125 +27,24 @@
 		body { font-family: 'Inter', sans-serif; }
 	</style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 skills-page text-gray-800 dark:text-gray-100 antialiased">
 	<!-- Scroll Progress Bar -->
 	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
 
-	<!-- Navigation -->
-	<header class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-40">
-		<nav id="nav" class="container mx-auto px-6 py-4 flex justify-between items-center">
-			<a href="index.html" class="text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors">Analytics Portfolio</a>
-			<ul class="flex gap-6">
-				<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Projects</a></li>
-				<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">About</a></li>
-				<li><a href="resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Resume</a></li>
-				<li><a href="skills.html" class="text-primary font-semibold border-b-2 border-primary pb-1">Skills</a></li>
-				<li><a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Contact</a></li>
-			</ul>
-			<div class="flex gap-4">
-				<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-				</a>
-				<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="GitHub">
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-				</a>
-				<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Kaggle">
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg>
-				</a>
-				<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Medium">
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
-				</a>
-				<a href="mailto:sumitsc.work@gmail.com" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Email">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-				</a>
-			</div>
-		</nav>
-	</header>
-
-	<!-- Main Content -->
-	<main class="py-16 min-h-screen">
-		<div class="container mx-auto px-6 max-w-6xl">
-			<!-- Page Header -->
-			<div class="text-center mb-16">
-				<h1 class="text-5xl font-bold text-gray-800 dark:text-gray-100 mb-4">Skills & Technologies</h1>
-				<p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-					Technical expertise across data analytics, product analytics, business intelligence, and decision science tools
-				</p>
-			</div>
-
-			<!-- Icon Grid -->
-			<div class="mb-16">
-				<div class="bg-white/80 dark:bg-gray-900/60 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-					<div class="skills-icon-grid">
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png" alt="Python" title="Python"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/numpy.png" alt="NumPy" title="NumPy"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/pandas.png" alt="Pandas" title="Pandas"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jupyter_notebook.png" alt="Jupyter Notebook" title="Jupyter Notebook"/></code>
-						<code><img width="50" src="https://upload.wikimedia.org/wikipedia/commons/6/69/XGBoost_logo.png" alt="XGBoost" title="XGBoost"/></code>
-						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/matplotlib-1.svg" alt="Matplotlib" title="Matplotlib"/></code>
-						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/seaborn-1.svg" alt="Seaborn" title="Seaborn"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/mysql.png" alt="MySQL" title="MySQL"/></code>
-						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/duckdb-logo.svg" alt="DuckDB" title="DuckDB"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/streamlit.png" alt="Streamlit" title="Streamlit"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/github.png" alt="GitHub" title="GitHub"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/visual_studio_code.png" alt="Visual Studio Code" title="Visual Studio Code"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/git.png" alt="Git" title="Git"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png" alt="HTML" title="HTML"/></code>
-						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/power-bi.svg" alt="Power BI" title="Power BI"/></code>
-						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/tableau-software.svg" alt="Tableau" title="Tableau"/></code>
-						<code><img width="50" src="https://cdn.worldvectorlogo.com/logos/microsoft-excel-2013.svg" alt="Excel" title="Excel"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jira.png" alt="Jira" title="Jira"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/css.png" alt="CSS" title="CSS"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/canva.png" alt="Canva" title="Canva"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/javascript.png" alt="JavaScript" title="JavaScript"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/windows.png" alt="Windows" title="Windows"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/fastapi.png" alt="FastAPI" title="FastAPI"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/sqlite.png" alt="SQLite" title="SQLite"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/bash.png" alt="bash" title="bash"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/docker.png" alt="Docker" title="Docker"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/ci_cd.png" alt="CI/CD" title="CI/CD"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/aws.png" alt="AWS" title="AWS"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png" alt="TensorFlow" title="TensorFlow"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/langchain_icon.png" alt="LangChain" title="LangChain"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/linux.png" alt="Linux" title="Linux"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/ubuntu.png" alt="Ubuntu" title="Ubuntu"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Anaconda-Dark.svg" alt="Anaconda" title="Anaconda"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Cloudflare-Dark.svg" alt="Cloudflare" title="Cloudflare"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/DevTo-Dark.svg" alt="Dev.to" title="Dev.to"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Discord.svg" alt="Discord" title="Discord"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Figma-Dark.svg" alt="Figma" title="Figma"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/GCP-Dark.svg" alt="Google Cloud" title="Google Cloud"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/GithubActions-Dark.svg" alt="GitHub Actions" title="GitHub Actions"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Gmail-Dark.svg" alt="Gmail" title="Gmail"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Heroku.svg" alt="Heroku" title="Heroku"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Kubernetes.svg" alt="Kubernetes" title="Kubernetes"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/LinkedIn.svg" alt="LinkedIn" title="LinkedIn"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Markdown-Dark.svg" alt="Markdown" title="Markdown"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Mint-Dark.svg" alt="Linux Mint" title="Linux Mint"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Notion-Dark.svg" alt="Notion" title="Notion"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PostgreSQL-Dark.svg" alt="PostgreSQL" title="PostgreSQL"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PyTorch-Dark.svg" alt="PyTorch" title="PyTorch"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/R-Dark.svg" alt="R" title="R"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Replit-Dark.svg" alt="Replit" title="Replit"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/ScikitLearn-Dark.svg" alt="scikit-learn" title="scikit-learn"/></code>
-						<code><img width="50" src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Workers-Dark.svg" alt="Cloudflare Workers" title="Cloudflare Workers"/></code>
-					</div>
-				</div>
-			</div>
-
-			<!-- Skills Categories -->
-			<div id="skills-container" class="space-y-16">
-				<!-- Skills will be dynamically loaded here -->
-			</div>
-		</div>
-	</main>
-
-	<!-- Footer -->
-	<footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-8 mt-16">
-		<div class="container mx-auto px-6">
-			<div class="flex flex-col md:flex-row justify-between items-center gap-4">
-				<p class="text-gray-600 dark:text-gray-300">&copy; 2024 Sumit S. Chaure. All rights reserved.</p>
-				<div class="flex gap-6">
+	<!-- Header: same structure as homepage/about so theme toggle and font apply correctly -->
+	<header class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700">
+		<nav id="nav" class="container mx-auto px-6 py-4 flex justify-between items-center flex-wrap gap-3">
+			<a href="index.html" class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors flex-shrink-0">Analytics Portfolio</a>
+			<div class="flex items-center gap-3 flex-shrink-0">
+				<ul class="flex gap-4 sm:gap-6 text-sm font-medium">
+					<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Projects</a></li>
+					<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">About</a></li>
+					<li><a href="resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Resume</a></li>
+					<li><a href="skills.html" class="text-primary font-semibold border-b-2 border-primary pb-1">Skills</a></li>
+					<li><a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Contact</a></li>
+				</ul>
+				<!-- Theme controls (toggle + color) injected before this div by main.js -->
+				<div class="flex gap-4">
 					<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
 					</a>
@@ -163,64 +62,215 @@
 					</a>
 				</div>
 			</div>
+		</nav>
+	</header>
+
+	<!-- Main Content -->
+	<main class="py-12 min-h-screen">
+		<div class="container mx-auto px-6 max-w-6xl">
+			<!-- Page Header -->
+			<div class="text-center mb-10">
+				<h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3">Skills & Technologies</h1>
+				<p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+					Technical expertise across data analytics, BI, and decision science. Use the filter above to filter projects on the homepage.
+				</p>
+			</div>
+
+			<!-- Tech stack: one box (whole stub) – white bg so icons visible; no per-icon background -->
+			<div class="mb-10">
+				<div class="bg-white dark:bg-white rounded-xl p-6 border border-gray-200 dark:border-gray-400 shadow-sm">
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Programming / tech</h2>
+					<div id="tech-stack-programming" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
+					<hr class="my-6 border-gray-300 dark:border-gray-500" />
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">AI Tools</h2>
+					<div id="tech-stack-ai-tools" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
+					<hr class="my-6 border-gray-300 dark:border-gray-500" />
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Non-tech / Tools</h2>
+					<div id="tech-stack-nontech" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
+				</div>
+			</div>
+
+			<!-- Filter: short label + icon links (below tech stack), then jump to skillset -->
+			<div class="mb-12">
+				<h2 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-2 text-center">Filter projects</h2>
+				<p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-3">Click an icon to filter projects on the homepage.</p>
+				<div id="skills-badges" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4"></div>
+				<p class="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">Jump to skillset:</p>
+				<div class="flex flex-wrap justify-center gap-2 text-sm">
+					<a href="#skills-programming" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Programming</a>
+					<a href="#skills-data-analytics" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Data Analytics</a>
+					<a href="#skills-data-science-ml" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Data Science &amp; ML</a>
+					<a href="#skills-advanced-ds" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Advanced DS</a>
+					<a href="#skills-ai-llm" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">AI-LLM</a>
+					<a href="#skills-deployment" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Deployment</a>
+					<a href="#skills-tools" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Tools</a>
+					<a href="#skills-productivity" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">Productivity</a>
+				</div>
+			</div>
+
+			<!-- Skills by category (cards with icons, theme-aware) -->
+			<div id="skills-container" class="space-y-12"></div>
+		</div>
+	</main>
+
+	<!-- Footer (matches resume / about) -->
+	<footer class="bg-gray-800 dark:bg-gray-900 text-white py-8 mt-16">
+		<div class="container mx-auto px-6">
+			<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+				<div class="flex gap-4 order-2 md:order-1">
+					<a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-400 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+					</a>
+					<a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-400 dark:text-gray-300 hover:text-primary transition-colors" aria-label="GitHub">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+					</a>
+					<a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-400 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Kaggle">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg>
+					</a>
+					<a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-400 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Medium">
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+					</a>
+				</div>
+				<p class="text-gray-400 dark:text-gray-300 order-1 md:order-2">&copy; 2026 · Sumit S. Chaure · Data & Analytics Portfolio</p>
+			</div>
 		</div>
 	</footer>
 
 	<script src="assets/js/main.js"></script>
 	<script>
-		// Skills data organized by categories
-		const iconUrlMap = {
+		// CDN URLs (backup if local icon missing). Local copies in assets/images/icons/ for speed and reliability.
+		const iconUrlMapCdn = {
 			Python: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
 			SQL: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/mysql.png",
-			"R (learning)": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/R-Dark.svg",
+			MySQL: "https://icon.icepanel.io/Technology/svg/MySQL.svg",
+			MongoDB: "https://icon.icepanel.io/Technology/svg/MongoDB.svg",
+			"R (learning)": "https://cdn.worldvectorlogo.com/logos/r-lang.svg",
 			pandas: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/pandas.png",
 			NumPy: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/numpy.png",
-			"scikit-learn": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/ScikitLearn-Dark.svg",
+			"scikit-learn": "https://icon.icepanel.io/Technology/svg/scikit-learn.svg",
 			XGBoost: "https://upload.wikimedia.org/wikipedia/commons/6/69/XGBoost_logo.png",
 			Matplotlib: "https://cdn.worldvectorlogo.com/logos/matplotlib-1.svg",
 			Seaborn: "https://cdn.worldvectorlogo.com/logos/seaborn-1.svg",
-			"DuckDB": "https://cdn.worldvectorlogo.com/logos/duckdb-logo.svg",
-			"Power BI": "https://cdn.worldvectorlogo.com/logos/power-bi.svg",
-			Tableau: "https://cdn.worldvectorlogo.com/logos/tableau-software.svg",
-			Excel: "https://cdn.worldvectorlogo.com/logos/microsoft-excel-2013.svg",
+			Plotly: "https://icon.icepanel.io/Technology/svg/Ploty.svg",
+			"DuckDB": "https://upload.wikimedia.org/wikipedia/commons/4/40/DuckDB_logo.svg",
+			"Power BI": "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/power_bi.png",
+			Tableau: "https://cdn.worldvectorlogo.com/logos/tableau-logo-1.svg",
+			"Apache Superset": "https://icon.icepanel.io/Technology/svg/Apache-Subversion.svg",
+			Excel: "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Excel_Logo_256px.png",
+			"SQL Server": "https://cdn.worldvectorlogo.com/logos/microsoft-sql-server-1.svg",
 			HTML: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png",
 			CSS: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/css.png",
 			JavaScript: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/javascript.png",
+			Canva: "https://icon.icepanel.io/Technology/svg/Canva.svg",
+			"Google Analytics": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google-Analytics-Logo.png/1280px-Google-Analytics-Logo.png?20260117144756",
+			"Apache Airflow": "https://icon.icepanel.io/Technology/svg/Apache-Airflow.svg",
+			AWS: "https://icon.icepanel.io/Technology/png-shadow-512/AWS.png",
+			"Google Colab": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Colab_pic.png/1280px-Google_Colab_pic.png?20250705202320",
+			Linux: "https://icon.icepanel.io/Technology/png-shadow-512/Linux.png",
+			Ubuntu: "https://icon.icepanel.io/Technology/svg/Ubuntu.svg",
+			"VS Code": "https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg",
 			Streamlit: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/streamlit.png",
 			Git: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/git.png",
-			GitHub: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/github.png",
+			GitHub: "https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png",
 			Jupyter: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jupyter_notebook.png",
-			Anaconda: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Anaconda-Dark.svg",
+			Anaconda: "https://img.icons8.com/?size=100&id=F4uMFPZgS0gt&format=png&color=000000",
 			"Google Cloud": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/GCP-Dark.svg",
 			Kubernetes: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Kubernetes.svg",
 			Docker: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/docker.png",
 			"GitHub Actions": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/GithubActions-Dark.svg",
-			Notion: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Notion-Dark.svg",
+			"Azure DevOps": "https://icon.icepanel.io/Technology/svg/Azure-Devops.svg",
+			"Azure Data Factory": "https://az-icons.com/export/icons/679e395158754f2aa1194eb8a15ec8ec.svg",
+			Figma: "https://icon.icepanel.io/Technology/svg/Figma.svg",
+			Jira: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png",
+			Atlassian: "https://logos-world.net/wp-content/uploads/2023/03/Atlassian-Logo.png",
+			"Hugging Face": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/huggingface-color.png",
+			"Hadoop": "https://cdn.worldvectorlogo.com/logos/hadoop.svg",
+			"Apache Spark": "https://icon.icepanel.io/Technology/svg/Apache-Spark.svg",
+			Oracle: "https://icon.icepanel.io/Technology/svg/Oracle.svg",
+			Notion: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/notion.png",
 			PostgreSQL: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PostgreSQL-Dark.svg",
-			PyTorch: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PyTorch-Dark.svg",
-			Markdown: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Markdown-Dark.svg",
-			TensorFlow: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png",
-			LangChain: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/langchain_icon.png"
+			PyTorch: "https://cdn.worldvectorlogo.com/logos/pytorch-2.svg",
+			Markdown: "https://cdn.worldvectorlogo.com/logos/markdown.svg",
+			TensorFlow: "https://icon.icepanel.io/Technology/svg/TensorFlow.svg",
+			LangChain: "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.78.0/icons/langchain-color.svg",
+			OpenCV: "https://icon.icepanel.io/Technology/svg/OpenCV.svg",
+			DAX: "https://az-icons.com/export/icons/e4e7a2a46c0b319dc5989d4b4977cad1.svg",
+			Slack: "https://icon.icepanel.io/Technology/svg/Slack.svg",
+			"Microsoft Teams": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Teams_Logo_256px.png",
+			Zoom: "https://cdn.worldvectorlogo.com/logos/zoom-communications-logo.svg",
+			"Google Meet": "https://cdn.prod.website-files.com/6737568a4ac417efeb387e5a/67448915ea26862632edec16_6703e57f71488bfbf3055994_Google_Meet_Logo.svg",
+			Gmail: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/1280px-Gmail_icon_%282020%29.svg.png?20221017173631",
+			"Google Workspace": "https://cdn.worldvectorlogo.com/logos/logo-google-workspace.svg",
+			Outlook: "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Outlook_Logo_256px.png",
+			"Google Calendar": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1280px-Google_Calendar_icon_%282020%29.svg.png?20221106121915",
+			Trello: "https://cdn.worldvectorlogo.com/logos/trello.svg",
+			Confluence: "https://icon.icepanel.io/Technology/svg/Confluence.svg",
+			Asana: "https://assets.asana.biz/transform/a7a22837-213c-4d66-8ff6-ec83dbf43641/logo-secondary?io=transform:fill,width:2560&format=webp",
+			Monday: "https://cdn.worldvectorlogo.com/logos/monday-1.svg",
+			"Google Docs": "https://mailmeteor.com/logos/assets/PNG/Google_Docs_Logo_512px.png",
+			OneNote: "https://cdn.worldvectorlogo.com/logos/onenote-2.svg",
+			Miro: "https://cdn.worldvectorlogo.com/logos/miro-2.svg",
+			Lucidchart: "https://www.vectorlogo.zone/logos/lucidchart/lucidchart-icon.svg",
+			"Linux Mint": "https://cdn.worldvectorlogo.com/logos/linux-mint.svg",
+			SharePoint: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Microsoft_Office_SharePoint_%282019%E2%80%932025%29.svg/1280px-Microsoft_Office_SharePoint_%282019%E2%80%932025%29.svg.png?20190925170659",
+			PowerApps: "https://az-icons.com/export/icons/80d8079c293d8a4447ade44c7322b65d.svg",
+			Fabric: "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/fabric.png",
+			"OpenAI ChatGPT": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/openai.png",
+			"Google Gemini": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/gemini-color.png",
+			Claude: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png",
+			Cursor: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/cursor.png",
+			Ollama: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/ollama.png",
+			DeepSeek: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/deepseek-color.png",
+			Perplexity: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/perplexity-color.png",
+			"Meta AI": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/metaai-color.png",
+			Anthropic: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/anthropic.png",
+			Qwen: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/qwen-color.png",
+			Moonshot: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/moonshot.png",
+			"Amazon Bedrock": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/bedrock-color.png",
+			"GitHub Copilot": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/githubcopilot.png",
+			Lovable: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/lovable-color.png",
+			Make: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
 		};
+		// Local icon path from key (assets/images/icons/). Run: node scripts/download-skill-icons.js to populate.
+		function iconSlug(key) {
+			return key.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '').replace(/&/g, 'and');
+		}
+		function iconExt(url) {
+			const m = url && url.match(/\.(png|svg|webp)(?:\?|$)/i);
+			return (m && m[1].toLowerCase()) || 'png';
+		}
+		const iconUrlMap = {};
+		for (const k of Object.keys(iconUrlMapCdn)) {
+			const ext = iconExt(iconUrlMapCdn[k]);
+			iconUrlMap[k] = 'assets/images/icons/' + iconSlug(k) + '.' + ext;
+		}
 
 		const skillsData = {
 			"Programming": [
 				{ name: "Python", level: 90, iconUrl: iconUrlMap.Python, color: "#3776ab" },
 				{ name: "SQL", level: 85, iconUrl: iconUrlMap.SQL, color: "#336791" },
-				{ name: "R (learning)", level: 40, iconUrl: iconUrlMap["R (learning)"], color: "#276DC3" },
+				{ name: "MySQL", level: 85, iconUrl: iconUrlMap.MySQL, color: "#4479A1" },
+				{ name: "PostgreSQL", level: 80, iconUrl: iconUrlMap.PostgreSQL, color: "#336791" },
 				{ name: "HTML", level: 60, iconUrl: iconUrlMap.HTML, color: "#E34F26" },
 				{ name: "CSS", level: 60, iconUrl: iconUrlMap.CSS, color: "#1572B6" },
 				{ name: "JavaScript", level: 60, iconUrl: iconUrlMap.JavaScript, color: "#F7DF1E" },
+				{ name: "R (learning)", level: 40, iconUrl: iconUrlMap["R (learning)"], color: "#276DC3" },
 			],
 			"Data Analytics": [
 				{ name: "pandas", level: 90, iconUrl: iconUrlMap.pandas, color: "#150458" },
 				{ name: "NumPy", level: 85, iconUrl: iconUrlMap.NumPy, color: "#4DABCF" },
 				{ name: "Power BI", level: 85, iconUrl: iconUrlMap["Power BI"], color: "#F2C811" },
-				{ name: "DAX", level: 80, icon: "fas fa-code", color: "#F2C811" },
+				{ name: "DAX", level: 80, iconUrl: iconUrlMap.DAX, color: "#F2C811" },
 				{ name: "Tableau", level: 75, iconUrl: iconUrlMap.Tableau, color: "#E97627" },
+				{ name: "Apache Superset", level: 70, iconUrl: iconUrlMap["Apache Superset"], color: "#181D1F" },
 				{ name: "Excel", level: 90, iconUrl: iconUrlMap.Excel, color: "#217346" },
 				{ name: "DuckDB", level: 65, iconUrl: iconUrlMap["DuckDB"], color: "#F8C41C" },
 				{ name: "PostgreSQL", level: 80, iconUrl: iconUrlMap.PostgreSQL, color: "#336791" },
+				{ name: "MongoDB", level: 70, iconUrl: iconUrlMap.MongoDB, color: "#47A248" },
+				{ name: "SQL Server", level: 75, iconUrl: iconUrlMap["SQL Server"], color: "#CC2927" },
+				{ name: "Oracle", level: 65, iconUrl: iconUrlMap.Oracle, color: "#F80000" },
+				{ name: "Google Analytics", level: 80, iconUrl: iconUrlMap["Google Analytics"], color: "#E37400" },
+				{ name: "Hadoop", level: 60, iconUrl: iconUrlMap.Hadoop, color: "#66CCFF" },
 				{ name: "A/B Testing", level: 80, icon: "fas fa-flask", color: "#667eea" },
 				{ name: "Statistical Analysis", level: 85, icon: "fas fa-chart-line", color: "#764ba2" },
 				{ name: "Hypothesis Testing", level: 80, icon: "fas fa-check-circle", color: "#667eea" },
@@ -230,105 +280,277 @@
 				{ name: "XGBoost", level: 80, iconUrl: iconUrlMap.XGBoost, color: "#FF6B6B" },
 				{ name: "Matplotlib", level: 80, iconUrl: iconUrlMap.Matplotlib, color: "#11557C" },
 				{ name: "Seaborn", level: 75, iconUrl: iconUrlMap.Seaborn, color: "#3776ab" },
+				{ name: "Plotly", level: 75, iconUrl: iconUrlMap.Plotly, color: "#3F4F75" },
 				{ name: "statsmodels", level: 75, icon: "fas fa-chart-bar", color: "#3776ab" },
 			],
 			"Advanced DS - DL": [
 				{ name: "PyTorch", level: 70, iconUrl: iconUrlMap.PyTorch, color: "#EE4C2C" },
 				{ name: "TensorFlow", level: 65, iconUrl: iconUrlMap.TensorFlow, color: "#FF6F00" },
-				{ name: "OpenCV", level: 70, icon: "fas fa-eye", color: "#5C3EE8" },
+				{ name: "OpenCV", level: 70, iconUrl: iconUrlMap.OpenCV, color: "#5C3EE8" },
 			],
 			"AI-LLM": [
 				{ name: "LangChain", level: 60, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
+				{ name: "Hugging Face", level: 65, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
+			],
+			"AI Tools": [
+				{ name: "OpenAI ChatGPT", level: 85, iconUrl: iconUrlMap["OpenAI ChatGPT"], color: "#10A37F" },
+				{ name: "Google Gemini", level: 80, iconUrl: iconUrlMap["Google Gemini"], color: "#4285F4" },
+				{ name: "Claude", level: 80, iconUrl: iconUrlMap.Claude, color: "#FFB300" },
+				{ name: "Cursor", level: 75, iconUrl: iconUrlMap.Cursor, color: "#0EA5E9" },
+				{ name: "Hugging Face", level: 70, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
+				{ name: "Ollama", level: 75, iconUrl: iconUrlMap.Ollama, color: "#111827" },
+				{ name: "DeepSeek", level: 75, iconUrl: iconUrlMap.DeepSeek, color: "#6366F1" },
+				{ name: "Perplexity", level: 80, iconUrl: iconUrlMap.Perplexity, color: "#2563EB" },
+				{ name: "Meta AI", level: 70, iconUrl: iconUrlMap["Meta AI"], color: "#2563EB" },
+				{ name: "Anthropic", level: 75, iconUrl: iconUrlMap.Anthropic, color: "#111827" },
+				{ name: "Qwen", level: 70, iconUrl: iconUrlMap.Qwen, color: "#22C55E" },
+				{ name: "Moonshot", level: 70, iconUrl: iconUrlMap.Moonshot, color: "#F97316" },
+				{ name: "Amazon Bedrock", level: 70, iconUrl: iconUrlMap["Amazon Bedrock"], color: "#FF9900" },
+				{ name: "GitHub Copilot", level: 80, iconUrl: iconUrlMap["GitHub Copilot"], color: "#22C55E" },
+				{ name: "LangChain", level: 70, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
+				{ name: "Lovable", level: 65, iconUrl: iconUrlMap.Lovable, color: "#EC4899" },
+				{ name: "Make", level: 70, iconUrl: iconUrlMap.Make, color: "#8B5CF6" },
 			],
 			"Deployment": [
 				{ name: "Docker", level: 80, iconUrl: iconUrlMap.Docker, color: "#2496ED" },
 				{ name: "Kubernetes", level: 65, iconUrl: iconUrlMap.Kubernetes, color: "#326CE5" },
 				{ name: "GitHub Actions", level: 70, iconUrl: iconUrlMap["GitHub Actions"], color: "#2088FF" },
 				{ name: "Google Cloud", level: 70, iconUrl: iconUrlMap["Google Cloud"], color: "#4285F4" },
+				{ name: "AWS", level: 70, iconUrl: iconUrlMap.AWS, color: "#232F3E" },
+				{ name: "Apache Airflow", level: 65, iconUrl: iconUrlMap["Apache Airflow"], color: "#017CEE" },
+				{ name: "Azure DevOps", level: 65, iconUrl: iconUrlMap["Azure DevOps"], color: "#0078D7" },
+				{ name: "Azure Data Factory", level: 65, iconUrl: iconUrlMap["Azure Data Factory"], color: "#0078D4" },
 				{ name: "Streamlit", level: 85, iconUrl: iconUrlMap.Streamlit, color: "#FF4B4B" },
 			],
 			"Tools & Development": [
 				{ name: "Jupyter", level: 90, iconUrl: iconUrlMap.Jupyter, color: "#F37626" },
+				{ name: "Google Colab", level: 85, iconUrl: iconUrlMap["Google Colab"], color: "#F9AB00" },
 				{ name: "Anaconda", level: 75, iconUrl: iconUrlMap.Anaconda, color: "#43B049" },
+				{ name: "VS Code", level: 90, iconUrl: iconUrlMap["VS Code"], color: "#007ACC" },
 				{ name: "Git", level: 80, iconUrl: iconUrlMap.Git, color: "#F05032" },
 				{ name: "GitHub", level: 85, iconUrl: iconUrlMap.GitHub, color: "#181717" },
-				{ name: "Notion", level: 75, iconUrl: iconUrlMap.Notion, color: "#111827" },
+				{ name: "Figma", level: 60, iconUrl: iconUrlMap.Figma, color: "#F24E1E" },
+				{ name: "Canva", level: 75, iconUrl: iconUrlMap.Canva, color: "#00C4CC" },
+				{ name: "Jira", level: 75, iconUrl: iconUrlMap.Jira, color: "#0052CC" },
 				{ name: "Markdown", level: 80, iconUrl: iconUrlMap.Markdown, color: "#111827" },
+				{ name: "Linux", level: 70, iconUrl: iconUrlMap.Linux, color: "#FCC624" },
+				{ name: "Ubuntu", level: 70, iconUrl: iconUrlMap.Ubuntu, color: "#E95420" },
+			],
+			"Productivity & Collaboration": [
+				{ name: "Slack", level: 85, iconUrl: iconUrlMap.Slack, color: "#4A154B" },
+				{ name: "Microsoft Teams", level: 85, iconUrl: iconUrlMap["Microsoft Teams"], color: "#6264A7" },
+				{ name: "Zoom", level: 80, iconUrl: iconUrlMap.Zoom, color: "#0B5CFF" },
+				{ name: "Google Meet", level: 80, iconUrl: iconUrlMap["Google Meet"], color: "#00897B" },
+				{ name: "Gmail", level: 90, iconUrl: iconUrlMap.Gmail, color: "#EA4335" },
+				{ name: "Google Workspace", level: 85, iconUrl: iconUrlMap["Google Workspace"], color: "#4285F4" },
+				{ name: "Outlook", level: 85, iconUrl: iconUrlMap.Outlook, color: "#0078D4" },
+				{ name: "Google Calendar", level: 85, iconUrl: iconUrlMap["Google Calendar"], color: "#4285F4" },
+				{ name: "Trello", level: 80, iconUrl: iconUrlMap.Trello, color: "#0052CC" },
+				{ name: "Confluence", level: 75, iconUrl: iconUrlMap.Confluence, color: "#172B4D" },
+				{ name: "Atlassian", level: 70, iconUrl: iconUrlMap.Atlassian, color: "#0052CC" },
+				{ name: "Asana", level: 75, iconUrl: iconUrlMap.Asana, color: "#F06A6A" },
+				{ name: "Monday", level: 70, iconUrl: iconUrlMap.Monday, color: "#FF3D57" },
+				{ name: "Google Docs", level: 85, iconUrl: iconUrlMap["Google Docs"], color: "#4285F4" },
+				{ name: "OneNote", level: 75, iconUrl: iconUrlMap.OneNote, color: "#7719AA" },
+				{ name: "Notion", level: 75, iconUrl: iconUrlMap.Notion, color: "#111827" },
+				{ name: "Miro", level: 70, iconUrl: iconUrlMap.Miro, color: "#050038" },
+				{ name: "Lucidchart", level: 70, iconUrl: iconUrlMap.Lucidchart, color: "#F8D43B" },
+				{ name: "Linux Mint", level: 65, iconUrl: iconUrlMap["Linux Mint"], color: "#87CF3E" },
+				{ name: "SharePoint", level: 70, iconUrl: iconUrlMap.SharePoint, color: "#0078D4" },
+				{ name: "PowerApps", level: 65, iconUrl: iconUrlMap.PowerApps, color: "#742B1F" },
+				{ name: "Fabric", level: 65, iconUrl: iconUrlMap.Fabric, color: "#0078D4" },
 			]
 		};
 
-		// Render skills page
+		// All skills in one list (for filter, etc.)
+		function getAllSkills() {
+			const list = [];
+			for (const skills of Object.values(skillsData)) {
+				skills.forEach(s => list.push(s));
+			}
+			return list;
+		}
+
+		// Programming/tech only (for first tech-stack box)
+		function getTechStackProgramming() {
+			const out = [];
+			const push = (cat, only, except) => {
+				const skills = skillsData[cat] || [];
+				skills.forEach(s => {
+					if (only && !only.includes(s.name)) return;
+					if (except && except.includes(s.name)) return;
+					out.push(s);
+				});
+			};
+			push('Data Analytics');
+			push('Programming', null, ['HTML', 'CSS', 'JavaScript']);
+			push('Deployment', null, ['Google Cloud', 'AWS']);
+			push('Programming', ['HTML', 'CSS', 'JavaScript']);
+			push('Data Science & ML');
+			push('Advanced DS - DL');
+			push('AI-LLM');
+			push('Deployment', ['Google Cloud', 'AWS']);
+			push('Tools & Development');
+			return out;
+		}
+
+		// Non-tech / day-to-day tools only (for third tech-stack box)
+		function getTechStackNonTech() {
+			return (skillsData['Productivity & Collaboration'] || []).slice();
+		}
+
+		// AI tools only (for dedicated AI Tools section)
+		function getTechStackAiTools() {
+			return (skillsData['AI Tools'] || []).slice();
+		}
+
+		function renderTechStackIcon(skill) {
+			if (skill.iconUrl) {
+				const cdn = (iconUrlMapCdn && iconUrlMapCdn[skill.name]) || '';
+				return `
+					<div class="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex-shrink-0" title="${skill.name.replace(/"/g, '&quot;')}">
+						<img src="${skill.iconUrl}" alt="${skill.name}" class="w-7 h-7 sm:w-8 sm:h-8 object-contain tech-stack-img" data-cdn="${cdn.replace(/"/g, '&quot;')}" onerror="if(this.dataset.cdn){this.onerror=null;this.src=this.dataset.cdn}" />
+						<i class="${skill.icon || 'fas fa-tag'} text-2xl sm:text-3xl hidden" style="color: ${skill.color}; display: none;" title="${skill.name.replace(/"/g, '&quot;')}"></i>
+					</div>
+				`;
+			}
+			return `
+				<div class="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex-shrink-0" title="${skill.name.replace(/"/g, '&quot;')}">
+					<i class="${skill.icon || 'fas fa-tag'} text-2xl sm:text-3xl" style="color: ${skill.color}"></i>
+				</div>
+			`;
+		}
+
+		// Tech stack: three boxes – programming/tech, AI tools, and non-tech/tools
+		function renderTechStack() {
+			const programmingEl = document.getElementById('tech-stack-programming');
+			const aiToolsEl = document.getElementById('tech-stack-ai-tools');
+			const nonTechEl = document.getElementById('tech-stack-nontech');
+			if (programmingEl) {
+				const skills = getTechStackProgramming();
+				programmingEl.innerHTML = skills.map(renderTechStackIcon).join('');
+			}
+			if (aiToolsEl) {
+				const skills = getTechStackAiTools();
+				aiToolsEl.innerHTML = skills.map(renderTechStackIcon).join('');
+			}
+			if (nonTechEl) {
+				const skills = getTechStackNonTech();
+				nonTechEl.innerHTML = skills.map(renderTechStackIcon).join('');
+			}
+		}
+
+		// Critical grouped filters: short list linking to homepage (group = any of listed tools)
+		const filterGroups = [
+			{ key: 'Python', label: 'Python', iconUrl: iconUrlMap.Python, color: '#3776ab' },
+			{ key: 'SQL', label: 'SQL & DBs', iconUrl: iconUrlMap.SQL, color: '#336791' },
+			{ key: 'Data viz', label: 'Data viz', iconUrl: iconUrlMap.Matplotlib, color: '#11557C' },
+			{ key: 'Data cleaning', label: 'Data cleaning', iconUrl: iconUrlMap.pandas, color: '#150458' },
+			{ key: 'A/B Testing', label: 'A/B Testing', iconUrl: null, color: '#667eea', icon: 'fas fa-flask' },
+			{ key: 'Statistical Analysis', label: 'Statistical Analysis', iconUrl: null, color: '#764ba2', icon: 'fas fa-chart-line' },
+			{ key: 'BI tools', label: 'BI tools', iconUrl: iconUrlMap['Power BI'], color: '#F2C811' },
+			{ key: 'Excel', label: 'Excel', iconUrl: iconUrlMap.Excel, color: '#217346' },
+			{ key: 'Git', label: 'Git', iconUrl: iconUrlMap.Git, color: '#F05032' },
+			{ key: 'Web scraping', label: 'Web scraping', iconUrl: null, color: '#667eea', icon: 'fas fa-spider' },
+			{ key: 'Web-dev', label: 'Web-dev', iconUrl: iconUrlMap.HTML, color: '#E34F26' },
+			{ key: 'Notebook', label: 'Notebook', iconUrl: iconUrlMap.Jupyter, color: '#F37626' },
+		];
+		function renderSkillsBadges() {
+			const container = document.getElementById('skills-badges');
+			if (!container) return;
+			container.innerHTML = filterGroups.map(f => {
+				const title = `Filter projects: ${f.label}`;
+				if (f.iconUrl) {
+					const cdn = (iconUrlMapCdn && iconUrlMapCdn[f.key]) ? iconUrlMapCdn[f.key].replace(/"/g, '&quot;') : '';
+					return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><img src="${f.iconUrl}" alt="${f.label}" class="w-6 h-6 sm:w-7 sm:h-7 object-contain" data-cdn="${cdn}" onerror="if(this.dataset.cdn){this.onerror=null;this.src=this.dataset.cdn}; else{this.style.display='none'; var n=this.nextElementSibling; if(n) n.style.display='inline-block'}" /><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl hidden" style="color: ${f.color}; display: none;"></i></a>`;
+				}
+				return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl" style="color: ${f.color}"></i></a>`;
+			}).join('');
+		}
+
+		// Render one skill card (shared) – icon, name, % only; no filter link (filter is in section above)
+		function skillCardHtml(skill) {
+			const cdn = (skill.iconUrl && iconUrlMapCdn && iconUrlMapCdn[skill.name]) ? iconUrlMapCdn[skill.name].replace(/"/g, '&quot;') : '';
+			const imgHtml = skill.iconUrl
+				? `<img src="${skill.iconUrl}" alt="${skill.name}" class="h-7 w-7 object-contain flex-shrink-0" data-cdn="${cdn}" onerror="if(this.dataset.cdn){this.onerror=null;this.src=this.dataset.cdn}" />`
+				: '';
+			return `
+				<div class="skill-card bg-white dark:bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-300 p-5">
+					<div class="flex items-center gap-3 mb-3">
+						${skill.iconUrl ? imgHtml : `<i class="${skill.icon} text-2xl flex-shrink-0" style="color: ${skill.color}"></i>`}
+						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-900">${skill.name}</h3>
+					</div>
+					<div class="flex justify-between items-center text-sm text-gray-600 dark:text-gray-600">
+						<span>Proficiency</span>
+						<span class="font-semibold text-gray-800 dark:text-gray-900">${skill.level}%</span>
+					</div>
+					<div class="w-full bg-gray-200 dark:bg-gray-200 rounded-full h-2 mt-1 overflow-hidden">
+						<div class="h-full rounded-full transition-all duration-500" style="width: ${skill.level}%; background: linear-gradient(135deg, ${skill.color} 0%, ${skill.color}dd 100%);"></div>
+					</div>
+				</div>
+			`;
+		}
+
+		// Render category cards; Tools section = one box with Tech tools + Day-to-day subsections
 		function renderSkills() {
 			const container = document.getElementById('skills-container');
 			if (!container) return;
 
+			const categoryIds = { 'Programming': 'skills-programming', 'Data Analytics': 'skills-data-analytics', 'Data Science & ML': 'skills-data-science-ml', 'Advanced DS - DL': 'skills-advanced-ds', 'AI-LLM': 'skills-ai-llm', 'Deployment': 'skills-deployment', 'Tools & Development': 'skills-tools', 'Productivity & Collaboration': 'skills-productivity' };
 			let html = '';
-			for (const [category, skills] of Object.entries(skillsData)) {
+			const categories = ['Programming', 'Data Analytics', 'Data Science & ML', 'Advanced DS - DL', 'AI-LLM', 'Deployment'];
+			for (const category of categories) {
+				const skills = skillsData[category] || [];
+				const slug = categoryIds[category] || 'skills-' + category.toLowerCase().replace(/\s+&\s+/g, '-').replace(/\s+/g, '-');
 				html += `
-					<div class="skill-category">
-						<h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center">${category}</h2>
-						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							${skills.map(skill => `
-								<div class="skill-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 cursor-pointer" 
-									 onclick="filterProjectsBySkill('${skill.name}')">
-									<div class="flex items-center justify-between mb-4">
-									<div class="flex items-center gap-3">
-										${skill.iconUrl
-											? `<img src="${skill.iconUrl}" alt="${skill.name}" class="h-7 w-7 object-contain" />`
-											: `<i class="${skill.icon} text-3xl" style="color: ${skill.color}"></i>`}
-										<h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">${skill.name}</h3>
-									</div>
-									</div>
-									<div class="skill-bar-container">
-										<div class="flex justify-between items-center mb-2">
-											<span class="text-sm text-gray-600 dark:text-gray-300">Proficiency</span>
-											<span class="text-sm font-semibold text-gray-800 dark:text-gray-100">${skill.level}%</span>
-										</div>
-										<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-											<div class="skill-bar h-full rounded-full transition-all duration-1000 ease-out" 
-												 style="width: ${skill.level}%; background: linear-gradient(135deg, ${skill.color} 0%, ${skill.color}dd 100%);">
-											</div>
-										</div>
-									</div>
-								</div>
-							`).join('')}
+					<div id="${slug}" class="skill-category scroll-mt-24">
+						<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">${category}</h2>
+						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+							${skills.map(skill => skillCardHtml(skill)).join('')}
 						</div>
 					</div>
 				`;
 			}
+			// Single Tools block with two clear sections: Tech/programming | Non-tech/Tools
+			const techTools = skillsData['Tools & Development'] || [];
+			const nonTechTools = skillsData['Productivity & Collaboration'] || [];
+			html += `
+				<div id="skills-tools" class="skill-category scroll-mt-24">
+					<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Tools</h2>
+					<div class="bg-white dark:bg-white rounded-xl border border-gray-200 dark:border-gray-300 overflow-hidden shadow-sm">
+						<!-- Section 1: Tech / programming -->
+						<div class="p-6 border-b border-gray-200 dark:border-gray-300 bg-gray-50/50 dark:bg-gray-50">
+							<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-900 mb-4 flex items-center gap-2">
+								<span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary">
+									<i class="fas fa-code text-sm"></i>
+								</span>
+								Tech / programming
+							</h3>
+							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+								${techTools.map(skill => skillCardHtml(skill)).join('')}
+							</div>
+						</div>
+						<!-- Section 2: Non-tech / Tools -->
+						<div class="p-6 bg-white dark:bg-white">
+							<h3 id="skills-productivity" class="text-lg font-semibold text-gray-800 dark:text-gray-900 mb-4 flex items-center gap-2 scroll-mt-24">
+								<span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary">
+									<i class="fas fa-tools text-sm"></i>
+								</span>
+								Non-tech / Tools
+							</h3>
+							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+								${nonTechTools.map(skill => skillCardHtml(skill)).join('')}
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
 			container.innerHTML = html;
-
-			// Animate skill bars on scroll
-			const observer = new IntersectionObserver((entries) => {
-				entries.forEach(entry => {
-					if (entry.isIntersecting) {
-						const skillBar = entry.target.querySelector('.skill-bar');
-						if (skillBar) {
-							const width = skillBar.style.width;
-							skillBar.style.width = '0%';
-							setTimeout(() => {
-								skillBar.style.width = width;
-							}, 100);
-						}
-					}
-				});
-			}, { threshold: 0.1 });
-
-			document.querySelectorAll('.skill-card').forEach(card => {
-				observer.observe(card);
-			});
 		}
 
-		// Filter projects by skill
-		function filterProjectsBySkill(skillName) {
-			window.location.href = `homepage.html?filter=${encodeURIComponent(skillName)}`;
-		}
-
-		// Initialize scroll progress bar
 		function initScrollProgress() {
 			const progressBar = document.getElementById('scroll-progress');
 			if (!progressBar) return;
-
 			window.addEventListener('scroll', () => {
 				const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
 				const scrolled = (window.scrollY / windowHeight) * 100;
@@ -336,8 +558,9 @@
 			});
 		}
 
-		// Initialize on load
 		document.addEventListener('DOMContentLoaded', () => {
+			renderTechStack();
+			renderSkillsBadges();
 			renderSkills();
 			initScrollProgress();
 		});

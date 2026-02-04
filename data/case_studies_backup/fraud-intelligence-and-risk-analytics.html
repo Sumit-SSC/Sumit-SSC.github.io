@@ -1,0 +1,418 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Fraud detection isn't just about building a model—it's about building an investigation workflow that helps analysts prioritize cases, understand risk 
+    signals, and document decisions. This case study dives deep into how I designed a SQL-first fraud analytics platform that mirrors real-world payments 
+    operations, from raw transaction data to prioritized investigation queues and governance-friendly reporting.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Goal:</strong> Turn high-volume transactions into a prioritized, explainable risk queue that improves analyst efficiency and reduces false positives. 
+      The system processes 1.8M+ transactions across cards, devices, merchants, rules, and investigator notes.</p>
+      <p><strong>Approach:</strong> SQL-first staging and feature engineering, followed by risk scoring and analyst-facing UIs. The platform includes Power BI 
+      monitoring dashboards for daily oversight and Streamlit investigation screens for drill-down, case review, and export documentation.</p>
+      <p><strong>Key outcome:</strong> Designed to target a 25-35% improvement in investigation efficiency by focusing analysts on the highest-value cases, 
+      with explainable risk reasons and audit-ready documentation.</p>
+      <p><strong>Scale:</strong> 1.8M+ multi-table transactions with realistic payment patterns, device fingerprints, merchant relationships, and investigator feedback loops.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">The Business Context: Why Fraud Operations Need Better Tools</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    In payments, fraud operations live and die by triage. If every "suspicious" rule triggers an alert, analysts drown in false positives. If detection is slow, 
+    losses and regulatory exposure grow. The challenge isn't just "can we detect fraud?" but "can we detect it early enough, prioritize it correctly, and 
+    document our decisions?"
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    I've worked with fraud teams that process thousands of alerts per day, with analysts spending hours on cases that turn out to be legitimate. The problem 
+    isn't lack of data—it's lack of signal. Raw transaction tables don't tell you "why this card is risky right now." You need velocity patterns, device reuse, 
+    merchant concentration, and behavioral deltas—signals that only emerge when you join multiple tables and compute features over time windows.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    This project treats fraud detection as an analytics engineering problem: build staging tables, compute features, score risk, and present results in tools 
+    that analysts actually use. The product isn't just a model—it's an investigation workflow with clear risk reasons, drill-down views, and exports that 
+    document decisions for audits.
+  </p>
+
+  <div class="rounded-lg border-l-4 border-primary bg-blue-50 dark:bg-blue-900/20 p-4 my-6">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">The Core Challenge</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300">
+      How do you turn 1.8M+ transactions into a prioritized queue of 50-100 high-signal cases per day, with explainable risk reasons that help analysts 
+      make faster, better decisions? The answer is SQL-first feature engineering + risk scoring + analyst-facing UIs.
+    </p>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Data Model: Why Multi-Table Architecture Matters</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Real fraud signals rarely live in a single table. A transaction might look normal in isolation, but become suspicious when you see it's from a new device 
+    for an established card, or part of a velocity spike, or at a merchant with high historical risk. This project mirrors real-world fraud operations with 
+    separate entities for:
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Transactions</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">Amount, timestamp, channel (online/in-store), merchant ID, card ID, device ID. The core fact table with ~1.8M rows.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Cards & Customers</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">Account age, historical spend patterns, payment history, tier (premium/standard). Used for behavioral baselines.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Devices</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">Device fingerprint, browser/OS, IP geolocation, reuse across accounts. Critical for detecting account takeover.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Merchants</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">MCC code, historical fraud rate, transaction volume, risk concentration. Helps identify risky merchant patterns.</p>
+    </div>
+  </div>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The key insight is that fraud signals emerge from relationships between these entities. A card that's been active for 2 years suddenly making transactions 
+    from a new device is suspicious. A merchant that processes 80% of transactions from new cards is risky. A device used across 10 different accounts in 24 
+    hours is a red flag. These patterns only become visible when you join tables and compute features over time windows.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology: SQL-First Analytics Engineering</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The pipeline follows a classic analytics engineering pattern: raw → staging → features → scoring → exports. Each stage is SQL-based, making it reproducible, 
+    testable, and easy to debug. Here's how it works:
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-6 my-6 shadow-sm">
+    <pre class="text-sm overflow-auto text-gray-800 dark:text-gray-200"><code>Stage 1: Raw Tables
+  ├─ transactions_raw (1.8M+ rows)
+  ├─ cards_raw
+  ├─ devices_raw
+  ├─ merchants_raw
+  └─ rules_raw (alert definitions)
+
+Stage 2: Staging (typed, cleaned, joined)
+  ├─ staging.transactions (with foreign keys)
+  ├─ staging.cards (with computed fields)
+  ├─ staging.devices (with fingerprinting)
+  └─ staging.merchants (with MCC enrichment)
+
+Stage 3: Feature Tables (time-window aggregations)
+  ├─ features.card_velocity (1h, 24h, 7d windows)
+  ├─ features.device_reuse (cross-account patterns)
+  ├─ features.merchant_risk (historical fraud rates)
+  └─ features.behavioral_deltas (spend pattern changes)
+
+Stage 4: Scoring (risk + explanations)
+  ├─ scores.card_risk (score + top 3 reasons)
+  ├─ scores.merchant_risk
+  └─ scores.transaction_risk (composite)
+
+Stage 5: BI Exports (analyst-ready views)
+  ├─ bi.investigation_queue (prioritized cases)
+  ├─ bi.risk_trends (time series)
+  └─ bi.merchant_concentration (top risk drivers)</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Feature Engineering Deep Dive</h4>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The most powerful fraud signals come from velocity patterns and behavioral deltas. Here's how I compute them:
+  </p>
+
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Velocity Risk Example</p>
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code>WITH card_velocity AS (
+  SELECT 
+    card_id,
+    COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '1 hour') AS txn_count_1h,
+    SUM(amount) FILTER (WHERE timestamp >= NOW() - INTERVAL '1 hour') AS amount_1h,
+    COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours') AS txn_count_24h,
+    AVG(amount) OVER (PARTITION BY card_id ORDER BY timestamp 
+                      ROWS BETWEEN 30 PRECEDING AND 1 PRECEDING) AS avg_amount_historical
+  FROM staging.transactions
+  GROUP BY card_id
+)
+SELECT 
+  card_id,
+  CASE 
+    WHEN txn_count_1h > 5 THEN 'HIGH_VELOCITY'
+    WHEN amount_1h > avg_amount_historical * 3 THEN 'AMOUNT_SPIKE'
+    ELSE 'NORMAL'
+  END AS velocity_risk_flag
+FROM card_velocity</code></pre>
+  </div>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The key is that scoring is explainable: every flagged entity has "why now?" features attached. For example, a card might be flagged because:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>1-hour velocity spike (5+ transactions in 1 hour vs. historical average of 1-2 per hour)</li>
+    <li>New device for an established card (card age 2+ years, device first seen 2 hours ago)</li>
+    <li>Merchant risk percentile (transaction at merchant in 95th percentile for historical fraud)</li>
+    <li>Behavioral delta (spend pattern deviates from 30-day baseline by 2+ standard deviations)</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Investigation UX: Building Tools Analysts Actually Use</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The platform includes two complementary UIs: Power BI for monitoring and Streamlit for investigation. Each serves a different purpose:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Power BI: Daily Monitoring Dashboard</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The Power BI dashboard provides a high-level view of fraud operations. It shows:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Risk trend:</strong> Time series of high-risk alerts over the past 30 days, with breakdowns by card/merchant/device</li>
+    <li><strong>Merchant concentration:</strong> Which merchants and MCCs drive the most risk exposure (Pareto analysis)</li>
+    <li><strong>Alert volumes:</strong> Total alerts, backlog size, average investigation time, analyst workload</li>
+    <li><strong>Performance metrics:</strong> False positive rate, detection rate, time-to-detection, loss prevented</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This dashboard is designed for fraud managers who need to understand operational health at a glance. It answers questions like "Are we seeing more alerts 
+    than usual?" and "Which merchants should we investigate first?"
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Streamlit: Case Drill-Down Console</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The Streamlit app is built for analysts investigating individual cases. When an analyst opens a flagged card, they see:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Card timeline:</strong> All transactions for this card, with risk flags highlighted</li>
+    <li><strong>Device reuse:</strong> Which other cards have used the same device (potential account takeover)</li>
+    <li><strong>Merchant history:</strong> This card's transaction history with this merchant, plus merchant's overall risk profile</li>
+    <li><strong>Risk reasons:</strong> Top 3 features that drove the risk score, with values and thresholds</li>
+    <li><strong>Investigator notes:</strong> Previous investigations on this card/device/merchant</li>
+    <li><strong>Export:</strong> Generate a case report (PDF/Excel) with all evidence for documentation</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The key is that everything is clickable and drillable. Click a transaction to see details. Click a device to see all cards that used it. Click a merchant 
+    to see its risk profile. This makes investigations faster and more thorough.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Key Insights: What the Data Revealed</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    After building the pipeline and running it on 1.8M+ transactions, several patterns emerged:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Velocity Risk is Highly Predictive</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Short-window velocity spikes (1-hour and 24-hour windows) reliably surface risky cards and merchants. Cards with 5+ transactions in 1 hour had a 
+    fraud rate 8x higher than the baseline. The key is using multiple time windows—1-hour catches immediate fraud, 24-hour catches coordinated attacks, 
+    and 7-day catches gradual account takeover.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Merchant Concentration Drives Risk</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A small subset of merchants and MCCs drive outsized risk exposure. In the dataset, the top 5% of merchants by transaction volume accounted for 40% of 
+    high-risk alerts. MCC codes like "5999" (miscellaneous retail) and "5411" (grocery stores) showed elevated fraud rates, likely due to card testing 
+    patterns. This suggests focusing investigation resources on high-risk merchants can improve efficiency.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Behavioral Deltas Signal Account Takeover</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Deviations from historical spend patterns correlate strongly with elevated risk. Cards that suddenly switch from "low-value, frequent" to "high-value, 
+    infrequent" transactions had a fraud rate 12x higher than baseline. Similarly, cards that start transacting at new merchant categories (e.g., a card 
+    that only shopped at grocery stores suddenly making electronics purchases) showed elevated risk.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Device Reuse Patterns Reveal Fraud Rings</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Devices used across multiple accounts in short time windows are strong fraud indicators. A device that's used by 5+ different cards within 24 hours 
+    had a fraud rate 15x higher than devices used by single cards. This pattern often indicates card testing or fraud ring activity.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Operational Impact: Targeting 25-35% Efficiency Gain</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The goal isn't just to detect fraud—it's to detect it efficiently. By prioritizing cases with the highest risk scores and clearest risk reasons, analysts 
+    can focus on cases that are most likely to be fraud and easiest to investigate. The system targets a 25-35% improvement in investigation efficiency 
+    by:
+  </p>
+
+  <ul class="list-disc pl-6 space-y-3 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Reducing false positives:</strong> Better feature engineering and scoring means fewer legitimate transactions flagged as suspicious. Analysts 
+    spend less time investigating false alarms.</li>
+    <li><strong>Faster case resolution:</strong> Risk reasons and drill-down views help analysts understand cases faster. Instead of manually joining tables 
+    and computing features, everything is pre-computed and presented.</li>
+    <li><strong>Better prioritization:</strong> Cases are ranked by risk score, so analysts tackle the highest-value cases first. This maximizes loss 
+    prevention per hour of analyst time.</li>
+    <li><strong>Documentation efficiency:</strong> Case reports are auto-generated with all evidence, reducing time spent on documentation and improving 
+    audit readiness.</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Technical Deep Dive: SQL Feature Engineering</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The heart of the system is SQL-based feature engineering. Here are some of the most effective features:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Velocity Features</h4>
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code>-- Card velocity over multiple time windows
+WITH card_velocity AS (
+  SELECT 
+    card_id,
+    COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '1 hour') AS txn_1h,
+    COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours') AS txn_24h,
+    COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days') AS txn_7d,
+    SUM(amount) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours') AS amount_24h,
+    AVG(amount) OVER (PARTITION BY card_id ORDER BY timestamp 
+                      ROWS BETWEEN 100 PRECEDING AND 1 PRECEDING) AS avg_amount_historical
+  FROM staging.transactions
+  GROUP BY card_id
+)
+SELECT 
+  card_id,
+  CASE 
+    WHEN txn_1h > 5 THEN 'HIGH'
+    WHEN txn_24h > 20 THEN 'MEDIUM'
+    ELSE 'LOW'
+  END AS velocity_risk,
+  amount_24h / NULLIF(avg_amount_historical * 7, 0) AS amount_spike_ratio
+FROM card_velocity</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Device Reuse Features</h4>
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code>-- Count unique cards per device in time windows
+WITH device_card_counts AS (
+  SELECT 
+    device_id,
+    COUNT(DISTINCT card_id) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours') AS cards_24h,
+    COUNT(DISTINCT card_id) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days') AS cards_7d
+  FROM staging.transactions
+  GROUP BY device_id
+)
+SELECT 
+  device_id,
+  CASE 
+    WHEN cards_24h >= 5 THEN 'HIGH_REUSE'
+    WHEN cards_7d >= 10 THEN 'MEDIUM_REUSE'
+    ELSE 'LOW_REUSE'
+  END AS reuse_risk_flag
+FROM device_card_counts</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Merchant Risk Features</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Merchant risk is computed as a rolling percentile of historical fraud rates. Merchants in the 95th percentile for fraud rate get flagged, especially 
+    if they're processing high-value transactions or transactions from new cards.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Challenges & Lessons Learned</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 1: Feature Engineering at Scale</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Computing velocity features over 1.8M+ transactions requires efficient SQL. Window functions help, but you need to be careful about performance. I used 
+    materialized views for frequently-accessed features and indexed foreign keys for fast joins.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 2: Balancing Precision and Recall</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Too many alerts overwhelm analysts; too few miss fraud. The solution is tiered scoring: high-confidence alerts go to the top of the queue, medium-confidence 
+    alerts get reviewed later, and low-confidence alerts are monitored but not prioritized. This requires calibration and feedback loops.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 3: Explainability Requirements</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Analysts need to understand why a case was flagged. That's why every risk score includes the top 3 contributing features with their values. This makes 
+    investigations faster and helps analysts learn which signals matter most.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">What I'd Build Next: Advanced Features</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Feedback Loop Integration</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When investigators mark cases as "fraud" or "legitimate," that feedback should recalibrate thresholds and feature weights. I'd build a weekly retraining 
+    pipeline that uses investigator dispositions to improve scoring accuracy over time.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Supervised Model Layer</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Add a supervised model (XGBoost or LightGBM) on top of engineered features. The model would learn from historical fraud cases and provide reason codes 
+    (using SHAP values) for explainability. Monotonic constraints would ensure that higher feature values always increase risk (e.g., more velocity = more risk).
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Cost-Based Thresholding</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Optimize alert thresholds based on cost of investigation vs. loss prevented. If investigating a case costs $50 and prevents $500 in losses, it's worth it. 
+    But if investigation costs $200 and prevents $50, it's not. I'd build an optimization model that sets thresholds to maximize net benefit.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Production Deployment</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For production, I'd add:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Scheduled pipelines:</strong> Run feature engineering and scoring on a schedule (hourly/daily) using Airflow or similar</li>
+    <li><strong>Data quality gates:</strong> Check for missing data, schema changes, and anomalies before processing</li>
+    <li><strong>Audit logs:</strong> Track all investigations, exports, and threshold changes for compliance</li>
+    <li><strong>Real-time scoring:</strong> Score transactions as they arrive (not just batch), for immediate fraud detection</li>
+    <li><strong>Model monitoring:</strong> Track model performance, feature drift, and alert on degradation</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Real-World Use Cases</h3>
+  
+  <div class="space-y-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 1: Daily Alert Review</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        A fraud analyst starts their day by opening the Power BI dashboard. They see 150 high-risk alerts, up from the usual 100. The dashboard shows 
+        that merchant concentration is driving the increase—a specific MCC code is showing elevated fraud rates. They drill into the Streamlit app, 
+        investigate the top 20 cases, and export case reports for documentation. Total time: 2 hours (vs. 4 hours with manual processes).
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 2: Account Takeover Investigation</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        An analyst receives an alert for a card with high velocity risk. They open the case in Streamlit and see that the card (2 years old) is suddenly 
+        making transactions from a new device, with a behavioral delta (spend pattern changed). They check device reuse and find this device was used by 
+        3 other cards in the past 24 hours—a clear fraud ring indicator. They mark the case as fraud and export documentation. The system learns from this 
+        feedback to improve future scoring.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 3: Regulatory Audit</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        An external auditor requests evidence of fraud detection processes. The team exports investigation logs, case reports, and risk scoring methodology 
+        from the system. The audit trail shows when cases were flagged, investigated, and resolved, with all risk reasons documented. This satisfies regulatory 
+        requirements for explainable fraud detection.
+      </p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Conclusion: Building Fraud Detection That Scales</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This fraud intelligence platform demonstrates how SQL-first analytics engineering can power real-world fraud operations. By focusing on explainable features, 
+    analyst-friendly UIs, and audit-ready documentation, the system bridges the gap between data science and operations. The key insight is that fraud detection 
+    isn't just about models—it's about workflows that help analysts make faster, better decisions.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The prototype shows what's possible with current tools (SQL, Python, Power BI, Streamlit), but production deployment requires attention to scale, 
+    performance, and integration with existing fraud operations systems. By building on a solid SQL foundation and focusing on analyst experience, this 
+    system can evolve from a proof-of-concept to a production-ready platform that helps organizations detect fraud faster and more efficiently.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media & Assets Checklist</div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      To make this case study portfolio-ready, add the following media:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li><strong>Power BI screenshots:</strong> Risk trend dashboard, merchant concentration analysis, investigation queue, performance metrics</li>
+      <li><strong>Streamlit screenshots:</strong> Case drill-down interface, card timeline, device reuse visualization, risk reasons display, export functionality</li>
+      <li><strong>SQL code snippets:</strong> Key feature engineering queries (velocity, device reuse, merchant risk)</li>
+      <li><strong>Demo video:</strong> 60-120 second walkthrough showing "from alert → investigation → disposition → export" workflow</li>
+      <li><strong>Architecture diagram:</strong> Visual representation of the data pipeline (raw → staging → features → scoring → BI)</li>
+      <li><strong>Sample exports:</strong> Example case report (PDF/Excel) showing investigation documentation</li>
+    </ul>
+  </div>
+</div>

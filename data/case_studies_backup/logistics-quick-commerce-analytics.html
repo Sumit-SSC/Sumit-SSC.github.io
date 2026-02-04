@@ -1,0 +1,167 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Last-mile delivery and quick commerce depend on route optimization and demand forecasting. This case study is based on <strong>real case studies and data</strong> from e-commerce and parcel delivery (e.g. dynamic route optimization, demand forecasting, and cost drivers). It is an <strong>industry/domain</strong> learning piece, not a write-up of a personal project. The goal is to give data and operations analysts a clear picture of how logistics and quick-commerce companies use analytics to reduce cost, improve delivery performance, and forecast demand.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Last-mile delivery can represent a large share of total shipping cost (e.g. up to 53% in some U.S. e-commerce contexts). Challenges include traffic, customer availability, time windows, and variability in order volume and geography. <strong>Dynamic route optimization</strong> using predictive analytics—and in some cases ML combined with Vehicle Routing Problem (VRP) frameworks—has been shown to improve performance (e.g. on the order of 5% or more over traditional methods in published case studies). The key is to combine classical optimization (VRP, time windows, capacity) with real-time or near-real-time data (traffic, weather, order updates) so that routes are not only feasible but also cost- and time-efficient.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Demand forecasting</strong> drives inventory placement, replenishment, and capacity planning. Year-over-year or simple heuristics often fail during disruptions (e.g. pandemic, weather, promotions); probabilistic and AI-based forecasting is used to support supply chain and pricing decisions. Real implementations (e.g. parcel delivery companies, e-commerce retailers) use demand forecasting to reduce stockouts and overstock, improve delivery promise accuracy, and allocate labor and vehicles. This case study summarizes public case studies and whitepapers, expands on the metrics and methods involved, and links to the sources below.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      The remainder covers: last-mile cost drivers and metrics, route optimization and VRP, demand forecasting and inventory, data pipelines and implementation, business impact, and further reading.
+    </p>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Last-Mile Cost Drivers and Metrics</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Last-mile cost is driven by distance (route length), time (labor and vehicle hours), failed deliveries (reattempts, returns), and capacity utilization (how full each vehicle or run is). Key metrics include: cost per delivery, cost per mile or per stop, deliveries per hour (or per driver-day), first-attempt delivery rate, and average time from order to delivery. Analytics teams use these metrics to compare regions, time periods, and operational changes (e.g. new routing algorithm, new time-window policy). Segmenting by urban vs. suburban vs. rural, by day of week, and by order type (e.g. standard vs. same-day) helps identify where costs are highest and where optimization can have the largest impact.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Quick commerce (e.g. 15–30 minute delivery) adds pressure: tighter time windows, smaller batch sizes per driver, and higher labor cost per delivery. Metrics such as on-time rate, average delivery duration, and cost per order become critical. Many quick-commerce players use dark stores or micro-fulfillment and optimize both inventory placement and routing; analytics supports both demand forecasting (what to stock where) and route planning (how to dispatch and sequence deliveries).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Route Optimization and VRP</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The Vehicle Routing Problem (VRP) and its variants (e.g. VRPTW with time windows, CVRP with capacity constraints) form the backbone of route optimization. Given a set of stops, vehicle capacity, and optionally time windows and travel times, the goal is to assign stops to vehicles and sequence them so that total cost (e.g. distance or time) is minimized while all constraints are satisfied. Exact solutions are often intractable for large instances; in practice, companies use heuristics (e.g. savings algorithm, sweep, insertion) or metaheuristics (e.g. genetic algorithms, tabu search) to get good solutions quickly.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Published work on last-mile delivery has combined classical VRP with ML: for example, using decision trees or neural networks to predict travel time between stops (so that the optimizer uses more accurate inputs), or using ML to learn from historical routes and suggest sequences that outperform naive heuristics. The focus is often on <strong>decision error</strong> rather than prediction error alone—i.e. how much does the chosen route cost in practice vs. what was planned? Analytics teams use historical delivery data (actual vs. planned times, actual vs. planned routes), traffic data, and customer patterns to train and evaluate these systems. Case studies (e.g. dynamic route optimization in U.S. e-commerce) report improvements on the order of 5% or more in cost or time when moving from static or rule-based routing to dynamic, data-driven optimization.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Implementation considerations include: (1) data freshness—routes must be updated when new orders arrive or when traffic or weather changes; (2) constraint complexity—time windows, capacity, driver breaks, and vehicle compatibility all add constraints; (3) explainability—dispatchers and drivers need to understand and trust the routes; (4) robustness—when actual conditions differ from forecast, the system should degrade gracefully (e.g. fallback to manual or simpler rules).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Demand Forecasting and Inventory</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    E-commerce and parcel businesses use demand forecasting for inventory placement, replenishment, and capacity planning. Forecasts might be at the level of SKU and location, or at an aggregate level (e.g. total orders per zone per day). Simple methods (e.g. year-over-year growth, moving averages) are easy to implement but often fail during promotions, disruptions, or when demand patterns shift. Time-series methods (e.g. ARIMA, exponential smoothing) and ML-based approaches (e.g. gradient boosting, neural networks) can capture seasonality, trends, and external regressors (e.g. weather, events). Probabilistic forecasts (e.g. quantiles or full distributions) allow downstream systems to account for uncertainty: for example, safety stock can be set using the 90th percentile of demand, or capacity can be planned for a range of scenarios.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Case studies (e.g. AWS retail demand forecasting, parcel delivery demand forecasting) describe improvements in accuracy (e.g. MAPE, bias) and operational KPIs (e.g. stockouts, overstock, delivery promise accuracy) when moving from simple YoY or rule-based methods to time-series and ML-based approaches. Demand forecasts feed into inventory optimization (how much to order and where), labor scheduling (how many pickers and drivers per shift), and vehicle allocation (how many vehicles per region). In quick commerce, demand forecasting at the dark-store level directly drives what gets stocked and how much, so accuracy directly impacts both service level and waste.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Pipelines and Implementation</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Route optimization pipelines typically ingest: order data (origin, destination, time window, weight/volume), vehicle and driver data (capacity, availability, location), and contextual data (traffic, weather, road closures). Historical data on actual vs. planned times and routes is used to calibrate travel-time models and evaluate optimizer performance. Demand forecasting pipelines ingest historical orders (or shipments), optionally with covariates (promotions, calendar, weather), and produce forecasts at the required granularity and horizon. Consistency in definitions (e.g. how “delivery” is defined, how demand is attributed to date or location) is essential so that metrics are comparable across time and across experiments.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Dashboards for logistics often show cost per delivery, on-time rate, first-attempt rate, and utilization by region and time period; demand dashboards show forecast vs. actual, accuracy metrics, and inventory or capacity implications. A/B tests or before/after comparisons are used to evaluate new routing algorithms or forecasting models. Guardrail metrics (e.g. driver satisfaction, customer complaints) help ensure that optimization does not come at the cost of operational or customer experience.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Example Metrics in Practice</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    In practice, a typical logistics analytics dashboard might show: (1) <strong>Cost per delivery</strong> by region, day of week, and order type (e.g. standard vs. same-day); (2) <strong>On-time rate</strong> (delivery within promised window) by region and time period; (3) <strong>First-attempt delivery rate</strong> (share of deliveries completed on first attempt); (4) <strong>Miles or time per delivery</strong> (efficiency of routes); (5) <strong>Forecast accuracy</strong> (e.g. MAPE, bias) for demand at SKU-location or aggregate level. A/B tests for a new routing algorithm would compare treatment vs. control on cost per delivery, on-time rate, and driver utilization, with segment-level analysis (e.g. urban vs. suburban) to ensure gains are broad and guardrails (e.g. driver satisfaction) are met.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Common pitfalls include: (1) optimizing for a single metric (e.g. cost) and ignoring service (e.g. on-time rate); (2) using static travel times when traffic and conditions vary; (3) forecasting demand without accounting for promotions, weather, or events; (4) overfitting routing or demand models to historical data so they fail in novel conditions. Addressing these requires clear metric definitions, robust validation (e.g. backtesting, holdout periods), and guardrail monitoring.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact and Takeaways</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For logistics and quick commerce, analytics directly supports cost reduction and service improvement. Route optimization can reduce miles and time per delivery; demand forecasting can reduce stockouts and overstock and improve delivery promise accuracy. The main takeaways for analysts are: (1) understand cost drivers and define metrics (cost per delivery, on-time rate, etc.) clearly; (2) combine classical optimization (VRP) with data-driven inputs (travel time, demand) and ML where it adds value; (3) use probabilistic forecasts when downstream decisions need to account for uncertainty; (4) invest in data pipelines and historical evaluation so that models can be tuned and trusted; (5) use public case studies and whitepapers to learn from real implementations.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    These practices apply to any business with last-mile delivery or supply chain complexity: e-commerce, parcel, food delivery, and retail. The same principles—clear metrics, optimization plus data, forecasting with uncertainty, and robust pipelines—apply. The case studies and links below are a good starting point for building domain knowledge in logistics analytics. If you are building a portfolio or moving into operations or supply chain analytics, replicating these ideas (e.g. building a simple VRP solver, or a demand forecast with time-series or ML) will strengthen your ability to speak the language of logistics and operations in interviews and on the job.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Model: What Tables Usually Exist</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Logistics analytics becomes much easier when the core data model is consistent. In many organizations, the “minimum viable” model includes: <strong>orders</strong> (order_id, promised window, pickup/store, drop address/geo, weight/volume), <strong>stops</strong> (one order may produce multiple stops), <strong>routes</strong> (route_id, driver, vehicle, planned start/end), <strong>route_stops</strong> (the stop sequence), and <strong>events</strong> (status changes like assigned, out-for-delivery, delivered, failed, returned). To evaluate optimization, you also need <strong>planned vs. actual</strong> timestamps and distances. For forecasting, you need demand history at the right granularity (zone × day × SKU or zone × hour for quick commerce).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A common pitfall is mixing definitions across teams: “delivery date” might be order_created_date for one team and delivered_timestamp for another. If the forecast is trained on one definition but evaluated on another, accuracy metrics become meaningless. High-performing teams maintain a shared metric dictionary (on-time definition, first-attempt definition, what counts as “failed”) and enforce it via transformations and tests in the data pipeline.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">VRP Variants That Matter in Real Operations</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    “VRP” in papers is often simplified; in production, the constraints are the product. Common real-world variants include:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>VRPTW:</strong> time windows (customer availability, promised delivery slots).</li>
+    <li><strong>Pickup &amp; delivery:</strong> couriers may pick up from stores/dark stores and deliver to customers.</li>
+    <li><strong>Capacity + batching:</strong> weight/volume limits and temperature zones (cold chain) can constrain batching.</li>
+    <li><strong>Dynamic re-optimization:</strong> new orders arrive continuously; routes must be updated without chaos.</li>
+    <li><strong>Service times:</strong> each stop has handling time (handoff, signature, ID check).</li>
+    <li><strong>Driver constraints:</strong> breaks, shift end, home return rules, and skill/vehicle compatibility.</li>
+  </ul>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4 mb-4">
+    Because exact optimization is expensive, many systems use a <strong>two-stage approach</strong>: generate a feasible plan quickly (heuristics), then improve it (local search / metaheuristics) within a compute budget. Data science adds value by improving travel time estimates and by learning dispatch policies that reduce the “thrash” caused by constant re-routing.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Forecasting: Horizon, Granularity, and What “Good” Looks Like</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Demand forecasting in quick commerce is often needed at <strong>hourly</strong> or even finer resolution, because staffing and replenishment decisions are intra-day. In parcel and e-commerce, daily/weekly horizons are common for capacity and linehaul planning. Forecast design choices are business choices: you should match the horizon and granularity to the downstream decision. For example, a store-level hourly forecast is useful for pickers and riders, while a city-level weekly forecast might be enough for vehicle leasing decisions.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Accuracy metrics should reflect business cost. MAPE is common but can blow up when volumes are small; many teams use a mix of <strong>WAPE</strong> (weighted absolute percentage error), bias (systematic over/under), and service-level impact (stockouts, overtime). Probabilistic forecasts (quantiles) enable explicit trade-offs: planning at the 80th percentile reduces missed demand but increases cost. The right choice depends on the penalty of under- vs over-planning.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">How to Evaluate Optimization Changes (A/B and Before/After)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Logistics is noisy: traffic, weather, and demand shifts can swamp the effect of a routing change. Strong teams use either (1) <strong>randomized trials</strong> (zones assigned to new vs old optimizer) or (2) <strong>matched before/after</strong> designs (compare similar days and zones, controlling for demand and distance). Evaluation should include both primary outcomes (cost per stop, on-time rate) and guardrails (driver churn, customer complaints). Segmenting by density (urban vs suburban) often reveals where the optimizer really helps.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">A Practical Dashboard Spec (What Ops Teams Want)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Operational dashboards typically have a “today view” and a “trend view”. The today view includes: live order backlog, riders active, average ETA vs promise, late orders, and exceptions (failed delivery, address issues). The trend view includes: cost per delivery, on-time rate by zone, first-attempt rate, utilization, and forecast accuracy with bias. The best dashboards let managers drill from city → zone → route → stop sequence to diagnose where delays happen (pickup congestion, travel time underestimation, too-tight time windows).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Travel Time Estimation (The Hidden Lever)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Route optimization is only as good as its travel-time estimates. If the optimizer assumes 10 minutes between stops but reality is 18 minutes, the best route on paper will fail on-time. This is why many real systems invest heavily in <strong>ETA models</strong>: predicting travel time by time-of-day, day-of-week, weather, and road network patterns. Even simple approaches—separate speed profiles for peak vs off-peak—can materially improve planning accuracy. More advanced systems use machine learning on historical GPS traces and delivery outcomes to predict travel time distributions rather than a single point estimate.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Analysts can contribute by measuring where ETA error is largest (certain zones, certain hours) and quantifying the impact on SLA breaches. A useful operational metric is <strong>planned vs actual slack</strong> at each stop (how much buffer was assumed vs consumed). This helps identify whether problems come from underestimating travel time, underestimating service time, or overloading routes.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Simulation and “Digital Twins” for Operations</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Because live experiments can be risky, logistics teams often use simulation to evaluate policies before rollout. A simulation (or “digital twin”) replays orders and constraints with alternative routing or dispatch rules and estimates impacts on cost, on-time rate, and workload. While simulation is not perfect, it can quickly identify obviously bad policies and narrow down candidates. A best practice is to calibrate simulation using historical “actual” outcomes and to report uncertainty bands rather than a single number.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Inventory Placement and Micro-Fulfillment (Especially for Quick Commerce)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Quick commerce economics depends on short travel distances, which makes <strong>where inventory lives</strong> a first-order decision. Dark-store placement and SKU assortment determine whether a 15–30 minute promise is feasible without extreme rider density. Forecasting feeds replenishment, but assortment decisions also matter: stocking too many low-velocity SKUs increases waste and picking complexity. Analytics teams often evaluate assortment using metrics like velocity, margin, substitution rate, and stockout cost, and they treat “service level” as a constraint (e.g. maintain 95% fill rate for top SKUs).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Capacity Planning: Labor, Riders, and Shift Scheduling</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Forecasts and routes ultimately translate into staffing decisions: how many pickers, packers, riders, and customer support agents are needed per hour. In quick commerce, under-staffing causes late deliveries and cancellations; over-staffing destroys unit economics. Teams often convert demand forecasts into capacity using simple but effective models: expected orders per hour × average handling time per order × service-level buffer. Scheduling then becomes its own optimization problem with constraints (shift lengths, breaks, part-time availability).
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Analysts contribute by measuring <strong>utilization</strong> (busy time / paid time), identifying where bottlenecks happen (picking vs dispatch vs travel), and quantifying the cost of lateness. A good dashboard links forecast error → staffing gap → SLA impact, so the organization learns whether problems are caused by demand volatility, process changes, or routing/ETA error.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Failed Deliveries, Returns, and Exception Analytics</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Real networks have exceptions: customer not available, address issues, damaged items, and returns. These events are costly because they create reattempts and reverse logistics. Teams therefore track <strong>first-attempt success</strong>, <strong>reattempt rate</strong>, and <strong>return-to-origin rate</strong> by zone, courier, and time window. Exception analytics often reveals operational fixes that beat algorithm changes: better address validation, customer ETA communication, or smarter time-window promises.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    From a modeling perspective, exceptions can be predicted: customers with prior failures, certain building types, or certain hours may have higher failure risk. Some operations teams use this to proactively route higher-risk deliveries earlier in the route (so there is time for reattempt) or to schedule confirmation messages. Even simple rules based on historical failure rates can reduce reattempts and improve on-time performance.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Promise Management: The “SLA” Is a Product Choice</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    On-time delivery is measured against a promise window—but the promise itself is set by the business. If you promise 15 minutes everywhere, you will be late often. If you promise 60 minutes, you may lose orders. High-performing companies treat promise management as a product and analytics problem: use demand forecasts, current capacity, and ETA distributions to set realistic promises by zone and time-of-day. This is sometimes called “dynamic promise” or “delivery promise accuracy”.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Analysts measure not only on-time rate but also <strong>promise bias</strong> (are we systematically over-promising?) and <strong>customer satisfaction</strong> relative to the promise. A common pattern is that customers tolerate longer promises if they are reliable. This is where probabilistic forecasting and travel-time distributions pay off: a system can promise a window that it can meet 90–95% of the time, rather than promising an aggressive target that fails frequently.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    In practice, promise logic is often integrated into checkout: the front-end shows “delivery in 22–32 minutes” based on live capacity and predicted travel time. This turns analytics into a direct product lever that can reduce cancellations and improve trust.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Further Reading &amp; Resources (Real Links)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://eajournals.org/ejlpscm/vol12-issue-3-2024/dynamic-route-optimization-in-last-mile-delivery-using-predictive-analytics-a-case-study-of-e-commerce-in-the-u-s/" target="_blank" rel="noopener" class="text-primary hover:underline">Dynamic Route Optimization in Last-Mile Delivery Using Predictive Analytics: A Case Study of E-commerce in the U.S.</a></li>
+    <li><a href="https://docs.aws.amazon.com/whitepapers/latest/time-series-forecasting-principles-with-amazon-forecast/case-study-retail-demand-forecasting-problem-for-an-e-commerce-business.html" target="_blank" rel="noopener" class="text-primary hover:underline">Case study: Retail demand forecasting problem for an e-commerce business</a> (AWS).</li>
+    <li><a href="https://addepto.com/case-studies/demand-forecasting-case-study/" target="_blank" rel="noopener" class="text-primary hover:underline">AI-Based Demand Forecasting in Parcel Delivery</a> (case study).</li>
+  </ul>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-8">
+    Use these resources to learn how logistics and quick commerce use data. Your own projects live in the <strong>Projects</strong> section; this case study is domain learning only.
+  </p>
+</div>

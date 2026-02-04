@@ -1,0 +1,434 @@
+<div class="space-y-6">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Product analytics isn't just about dashboards—it's about building reproducible, SQL-first pipelines that turn raw clickstream data into actionable 
+    insights. This case study walks through how I designed an e-commerce analytics workflow that covers sessionization, funnel conversion, cohort retention, 
+    and A/B test evaluation, all built on the principle that SQL is the source of truth and notebooks validate statistics.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Executive Summary</div>
+    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+      <p><strong>Dataset:</strong> ~120k users, ~1M events, ~45k orders, ~400k sessions. Synthetic but realistic e-commerce data with clickstream events, 
+      order transactions, and user attributes.</p>
+      <p><strong>Outputs:</strong> Session tables, funnel tables, cohort retention tables, A/B evaluation notebook, Power BI-ready exports. All built with 
+      reproducible SQL transformations and validated with statistical notebooks.</p>
+      <p><strong>Point of view:</strong> SQL is the source of truth; notebooks validate statistics and guard against misleading conclusions. This mirrors modern 
+      analytics engineering best practices where BI datasets are built from curated tables, not ad hoc joins in dashboards.</p>
+      <p><strong>Key outcome:</strong> Demonstrated how to take raw clickstream data to BI-ready metrics with reproducible SQL, statistical validation, and 
+      clear business readouts that support product decisions.</p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">The Business Problem: Product Teams Need Reliable Metrics</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Product teams need answers to a small set of high-impact questions: where users drop in the funnel, which cohorts retain better over time, and whether 
+    an experiment genuinely improved outcomes. The challenge is that raw clickstream data is noisy: multiple devices per user, long gaps between events, 
+    partial funnels, bots, and outliers.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    I've seen teams spend weeks building dashboards only to realize later that their metrics are inconsistent—session counts don't match between tools, 
+    retention curves look wrong, and experiment results can't be reproduced. This project focuses on building "analysis-grade" tables that keep metrics 
+    consistent and reproducible.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    The key insight is that analytics engineering—building curated, documented tables from raw data—is just as important as the analysis itself. If your 
+    sessionization logic is inconsistent, your funnel metrics will be wrong. If your cohort definitions drift, your retention curves will be misleading. 
+    This project demonstrates how to build tables that are stable, documented, and validated.
+  </p>
+
+  <div class="rounded-lg border-l-4 border-primary bg-blue-50 dark:bg-blue-900/20 p-4 my-6">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">The Core Challenge</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300">
+      How do you turn noisy clickstream data into reliable, reproducible metrics that product teams can trust? The answer is SQL-first transformations 
+      with clear sessionization logic, consistent funnel definitions, and statistical validation in notebooks.
+    </p>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Data Pipeline Design: From Raw Events to BI-Ready Tables</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The pipeline follows a logical flow: raw events → sessionization → funnel flags → cohort tables → BI exports. Each stage is SQL-based and documented, 
+    making it reproducible and testable.
+  </p>
+
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 p-6 my-6 shadow-sm">
+    <pre class="text-sm overflow-auto text-gray-800 dark:text-gray-200"><code>Raw Data Layer
+  ├─ events_raw (user_id, event_type, timestamp, properties)
+  ├─ orders_raw (order_id, user_id, amount, timestamp)
+  └─ users_raw (user_id, signup_date, attributes)
+
+Sessionization Layer (SQL)
+  ├─ sessions (session_id, user_id, start_time, end_time, device, channel)
+  └─ session_events (session_id, event_sequence, conversion_flag)
+
+Funnel Layer (SQL)
+  ├─ funnel_sessions (session_id, step_1_view, step_2_cart, step_3_checkout, step_4_purchase)
+  └─ funnel_users (user_id, first_purchase_date, lifetime_value)
+
+Cohort Layer (SQL)
+  ├─ cohorts (cohort_month, user_id, first_session_date)
+  └─ retention (cohort_month, period, retained_users, retention_rate)
+
+BI Exports (Power BI-ready)
+  ├─ bi_sessions_daily (date, sessions, conversions, conversion_rate)
+  ├─ bi_funnel_steps (step, sessions, dropoff_rate)
+  └─ bi_cohort_retention (cohort_month, period_0, period_1, ..., period_12)</code></pre>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Methodology: Building Reliable Analytics Tables</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Sessionization: Defining User Sessions</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The first challenge is turning a stream of events into sessions. I use a time-window approach: if a user has no activity for 30 minutes, that's a session 
+    boundary. Within a session, I track:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Session start and end time</li>
+    <li>Device type (mobile/desktop/tablet)</li>
+    <li>Channel (organic/search/social/direct)</li>
+    <li>Conversion flag (did this session result in a purchase?)</li>
+    <li>Funnel steps completed (view → cart → checkout → purchase)</li>
+  </ul>
+
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Sessionization SQL Example</p>
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code>WITH event_gaps AS (
+  SELECT 
+    user_id,
+    event_timestamp,
+    LAG(event_timestamp) OVER (PARTITION BY user_id ORDER BY event_timestamp) AS prev_timestamp,
+    EXTRACT(EPOCH FROM (event_timestamp - LAG(event_timestamp) OVER 
+           (PARTITION BY user_id ORDER BY event_timestamp))) / 60 AS minutes_since_last_event
+  FROM staging.events
+),
+session_starts AS (
+  SELECT 
+    user_id,
+    event_timestamp,
+    CASE 
+      WHEN minutes_since_last_event > 30 OR minutes_since_last_event IS NULL THEN 1
+      ELSE 0
+    END AS is_session_start
+  FROM event_gaps
+),
+sessions AS (
+  SELECT 
+    user_id,
+    event_timestamp AS session_start,
+    ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY event_timestamp) AS session_num
+  FROM session_starts
+  WHERE is_session_start = 1
+)
+SELECT 
+  s.user_id,
+  s.session_start,
+  LEAD(s.session_start) OVER (PARTITION BY s.user_id ORDER BY s.session_start) AS session_end,
+  COUNT(DISTINCT e.event_type) AS event_types_count
+FROM sessions s
+LEFT JOIN staging.events e ON e.user_id = s.user_id 
+  AND e.event_timestamp >= s.session_start 
+  AND (e.event_timestamp < LEAD(s.session_start) OVER (PARTITION BY s.user_id ORDER BY s.session_start) 
+       OR LEAD(s.session_start) OVER (PARTITION BY s.user_id ORDER BY s.session_start) IS NULL)
+GROUP BY s.user_id, s.session_start</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Funnel Analysis: Tracking Conversion Steps</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Once sessions are defined, I compute funnel flags for each step: product view, add to cart, checkout start, purchase. The key is tracking both session-level 
+    and user-level funnels, since users can complete funnels across multiple sessions.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The funnel table includes:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Step completion flags (boolean for each step)</li>
+    <li>Time-to-step metrics (how long from session start to each step)</li>
+    <li>Dropoff rates (percentage of users who drop at each step)</li>
+    <li>Device/channel breakdowns (funnel performance by segment)</li>
+  </ul>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Cohort Retention: Measuring Long-Term Value</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Cohort analysis tracks how groups of users behave over time. I define cohorts by first session date (or first purchase date), then compute retention 
+    rates for each period (day 0, day 7, day 30, etc.). The key is consistent cohort definitions and date alignment—all users in a cohort should be measured 
+    from the same starting point.
+  </p>
+
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-5 my-4">
+    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Cohort Retention SQL Example</p>
+    <pre class="text-xs overflow-auto text-gray-800 dark:text-gray-200"><code>WITH first_sessions AS (
+  SELECT 
+    user_id,
+    MIN(session_start) AS first_session_date,
+    DATE_TRUNC('month', MIN(session_start)) AS cohort_month
+  FROM sessions
+  GROUP BY user_id
+),
+user_activity AS (
+  SELECT 
+    fs.user_id,
+    fs.cohort_month,
+    s.session_start,
+    DATE_TRUNC('month', s.session_start) AS activity_month,
+    (DATE_PART('year', s.session_start) - DATE_PART('year', fs.first_session_date)) * 12 +
+     (DATE_PART('month', s.session_start) - DATE_PART('month', fs.first_session_date)) AS period
+  FROM first_sessions fs
+  JOIN sessions s ON s.user_id = fs.user_id
+),
+cohort_sizes AS (
+  SELECT 
+    cohort_month,
+    COUNT(DISTINCT user_id) AS cohort_size
+  FROM first_sessions
+  GROUP BY cohort_month
+),
+retention AS (
+  SELECT 
+    cohort_month,
+    period,
+    COUNT(DISTINCT user_id) AS retained_users
+  FROM user_activity
+  GROUP BY cohort_month, period
+)
+SELECT 
+  r.cohort_month,
+  cs.cohort_size,
+  r.period,
+  r.retained_users,
+  r.retained_users::FLOAT / cs.cohort_size AS retention_rate
+FROM retention r
+JOIN cohort_sizes cs ON cs.cohort_month = r.cohort_month
+ORDER BY r.cohort_month, r.period</code></pre>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. A/B Test Evaluation: Statistical Rigor</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When evaluating experiments, I use difference-in-proportions tests (z-tests) for conversion rates and bootstrap confidence intervals for more complex 
+    metrics. The key is checking randomization (are control and treatment groups balanced?), computing lift with confidence intervals, and providing clear 
+    ship/hold recommendations.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The notebook includes:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Pre-test power calculations (sample size needed to detect meaningful lift)</li>
+    <li>Randomization checks (demographic balance, baseline metrics)</li>
+    <li>Difference-in-proportions test (z-test for conversion lift)</li>
+    <li>Bootstrap confidence intervals (for retention/revenue metrics)</li>
+    <li>Business readout (ship/hold recommendation with monitoring plan)</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Key Insights: What the Data Revealed</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Funnel Bottleneck: Product View → Add to Cart</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The largest drop-off occurs between product view and add to cart. Only 35% of users who view a product add it to cart, compared to 60% who add to cart 
+    then proceed to checkout. This suggests the product page might need optimization—better product images, clearer pricing, or social proof (reviews, ratings).
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Device Behavior: Desktop Outperforms Mobile</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Desktop shows higher checkout completion rates (45% vs. 32% on mobile), likely due to payment friction on mobile devices. Mobile users are more likely 
+    to abandon at checkout, suggesting the mobile checkout flow needs improvement—perhaps one-click payment options or saved payment methods.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Cohort Retention: Early Cohorts Retain Better</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Early cohorts (users who signed up in the first few months) show better retention than later cohorts. Month 1 cohort has 40% retention at month 6, while 
+    Month 6 cohort has only 25% retention at month 6. This suggests stronger onboarding effects for early users, or that the product-market fit was stronger 
+    in the early days.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Experiment Rigor: Statistical Validation Matters</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Z-tests and bootstrap confidence intervals help avoid "false wins" in noisy funnels. In one experiment, the variant showed a 2% conversion lift, but 
+    the 95% confidence interval included zero, so we held the change. In another, a 4.2% lift with a tight CI (1.1% to 7.3%) gave us confidence to ship.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">How This Maps to a Real Analytics Stack</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The structure mirrors analytics engineering best practices used at companies like dbt Labs, where SQL transformations are version-controlled, tested, 
+    and documented. The key principles are:
+  </p>
+
+  <ul class="list-disc pl-6 space-y-3 text-gray-700 dark:text-gray-300 mb-6">
+    <li><strong>Data contracts:</strong> Stable grains for BI (session/day/cohort). Once a table is defined, its grain shouldn't change without versioning. 
+    This prevents BI dashboards from breaking when underlying logic changes.</li>
+    <li><strong>Reproducibility:</strong> Deterministic SQL transformations + validation notebooks. Anyone should be able to run the pipeline and get the 
+    same results. This requires careful handling of randomness (seeds) and time-based logic (consistent date functions).</li>
+    <li><strong>Decision support:</strong> Experiment readouts written for product managers (ship/hold + monitoring plan). The analysis should answer "what 
+    should we do?" not just "what happened?"</li>
+    <li><strong>Documentation:</strong> Every table has a clear purpose, grain, and definition. This makes it easier for new team members to understand the 
+    data model and prevents metric drift.</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Technical Deep Dive: Sessionization Logic</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Sessionization is the foundation of e-commerce analytics. Get it wrong, and all downstream metrics will be wrong. Here's how I approach it:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Time-Window Sessionization</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    I use a 30-minute inactivity window: if a user has no events for 30 minutes, that's a session boundary. This is a common industry standard, but it's 
+    configurable. Some teams use 15 minutes for mobile apps, 60 minutes for web.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">User Stitching</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Users can have multiple devices and anonymous sessions before signing up. I use a combination of user_id (when available) and device_id (for anonymous 
+    sessions) to stitch sessions together. This requires careful handling of the transition from anonymous to authenticated.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Session Attributes</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Each session gets attributes that are useful for analysis:
+  </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Device type (mobile/desktop/tablet) from user agent parsing</li>
+    <li>Channel (organic/search/social/direct) from referrer analysis</li>
+    <li>Conversion flag (did this session result in a purchase?)</li>
+    <li>Session duration (time from first to last event)</li>
+    <li>Event count (how many events in this session)</li>
+  </ul>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">A/B Testing: Statistical Validation in Practice</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When evaluating experiments, I follow a rigorous process:
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Pre-Test Power Analysis</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Before running an experiment, I calculate the sample size needed to detect a meaningful lift. For a 5% conversion rate, detecting a 10% relative lift 
+    (0.5 percentage points) with 80% power requires ~15,000 users per variant. This helps set experiment duration and avoid underpowered tests.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Randomization Checks</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    I check that control and treatment groups are balanced on demographics, device types, and baseline metrics. If groups aren't balanced, the experiment 
+    might be invalid. Common checks include chi-square tests for categorical variables and t-tests for continuous variables.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Difference-in-Proportions Test</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For conversion rates, I use a z-test to compare proportions between variants. The test statistic is:
+  </p>
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4 my-4">
+    <p class="text-sm text-gray-800 dark:text-gray-200 font-mono">z = (p₁ - p₀) / √(p(1-p)(1/n₁ + 1/n₀))</p>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">where p is the pooled proportion, p₁ is treatment conversion rate, p₀ is control conversion rate</p>
+  </div>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Bootstrap Confidence Intervals</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For metrics like revenue per user or retention, I use bootstrap confidence intervals. This involves resampling the data thousands of times and computing 
+    the metric for each sample, then taking the 2.5th and 97.5th percentiles as the confidence interval. This is more robust than assuming normality.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Challenges & Lessons Learned</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 1: Sessionization Edge Cases</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Edge cases include users with multiple tabs open (events arrive out of order), bots/crawlers (generate fake sessions), and timezone issues (events from 
+    different timezones). The solution is careful event ordering, bot filtering, and consistent timezone handling.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 2: Cohort Date Alignment</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Retention curves can look wrong if cohort dates aren't aligned properly. Users who sign up on Jan 31 should be measured from Jan 31, not Feb 1. The 
+    solution is consistent date truncation (always use the same function) and clear documentation of cohort definitions.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Challenge 3: Statistical Significance vs. Business Significance</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A statistically significant lift might not be business-significant. A 0.1% conversion lift with p < 0.05 might not be worth the engineering effort to 
+    ship. The solution is to frame results in business terms: "This change increases revenue by $X per month" rather than just "p < 0.05".
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">What I'd Build Next: Advanced Analytics</h3>
+  
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">1. Multi-Touch Attribution</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Build attribution tables that assign credit for conversions across multiple touchpoints. This would include first-touch, last-touch, linear, and 
+    data-driven attribution models. The tables would help marketing teams understand which channels drive conversions.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">2. Incrementality Testing</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Design holdout experiments to measure the incremental impact of marketing campaigns on retention and revenue, not just conversion. This requires careful 
+    experimental design to avoid selection bias and ensure valid causal inference.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">3. Anomaly Detection</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Build automated anomaly detection on funnel steps and event volumes. This would alert teams when conversion rates drop unexpectedly or when traffic 
+    spikes occur, helping catch issues before they impact business metrics.
+  </p>
+
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">4. Semantic Layer</h4>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Create centralized metric definitions (e.g., "active user" = user with session in last 30 days) to reduce BI drift. This would use a tool like dbt's 
+    metrics layer or a custom semantic layer that ensures consistent definitions across dashboards and reports.
+  </p>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Real-World Use Cases</h3>
+  
+  <div class="space-y-4 my-6">
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 1: Funnel Optimization</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Product team notices conversion rate dropping. They query the funnel table and see that drop-off increased at the "add to cart" step. They investigate 
+        and find that a recent UI change made the "add to cart" button less visible. They revert the change and monitor the funnel table to confirm recovery.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 2: Cohort Retention Analysis</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Marketing team wants to understand which acquisition channels drive the best long-term retention. They join the cohort table with acquisition channel 
+        data and compute retention curves by channel. They find that organic search drives better retention than paid social, so they shift budget accordingly.
+      </p>
+    </div>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-5">
+      <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Scenario 3: Experiment Readout</h4>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        Product team runs an A/B test on checkout flow. After 2 weeks, they run the evaluation notebook. The variant shows a 4.2% conversion lift with 95% 
+        CI [1.1%, 7.3%]. The notebook recommends "ship with monitoring" and provides a monitoring plan to track retention and revenue impact post-launch.
+      </p>
+    </div>
+  </div>
+
+  <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4">Conclusion: Building Analytics That Product Teams Trust</h3>
+  
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    This e-commerce analytics project demonstrates how SQL-first pipelines can power product decisions. By focusing on reproducible transformations, statistical 
+    validation, and clear business readouts, the system bridges the gap between data engineering and product analytics. The key insight is that reliable metrics 
+    require careful engineering—sessionization logic, funnel definitions, and cohort alignment all need to be consistent and documented.
+  </p>
+
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The prototype shows what's possible with current tools (SQL, Python, DuckDB, Power BI), but production deployment requires attention to scale, 
+    performance, and integration with product tools. By building on a solid SQL foundation and focusing on reproducibility, this system can evolve from a 
+    proof-of-concept to a production-ready analytics platform that helps product teams make better decisions.
+  </p>
+
+  <div class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-6 my-8">
+    <div class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Media & Assets Checklist</div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      To make this case study portfolio-ready, add the following media:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li><strong>BI screenshots:</strong> Funnel visualization, retention cohort curves, segment performance breakdowns, time series trends</li>
+      <li><strong>Notebook screenshots:</strong> Experiment readout with statistical tests, confidence interval visualizations, randomization checks</li>
+      <li><strong>SQL code snippets:</strong> Key sessionization queries, funnel computation logic, cohort retention calculations</li>
+      <li><strong>Demo video:</strong> 60-120 second walkthrough showing "raw events → tables → dashboard → decision" workflow</li>
+      <li><strong>Architecture diagram:</strong> Visual representation of the data pipeline (raw → staging → analytics tables → BI)</li>
+      <li><strong>Sample exports:</strong> Example Power BI dashboard exports showing key metrics</li>
+    </ul>
+  </div>
+</div>

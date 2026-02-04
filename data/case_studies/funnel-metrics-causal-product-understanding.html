@@ -1,0 +1,98 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-indigo-200 dark:border-indigo-800 mb-8">
+    <p class="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-indigo-800 dark:text-indigo-200 space-y-1">
+      <p><strong>Type:</strong> Funnel vs Causal Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="underline">HBR — Causality in Analytics</a></p>
+      <p><strong>What it Shows:</strong> Funnel (steps → drop-off) vs causal graph (confounders, interventions, outcome).</p>
+      <p><strong>Why It Matters:</strong> Explains why funnels hide causality.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Funnels show where users drop—but they do not show <strong>why</strong>. Correlation between steps can mask confounders (e.g., channel, segment). This case study examines why funnel metrics alone are insufficient for product understanding and what causal alternatives (e.g., experiments, quasi-experiments) offer—using <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> and <a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a>.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Funnel illusions:</strong> Step-wise conversion can be driven by selection (who enters the funnel) rather than by the product; later steps are conditional on earlier steps, so "drop-off" is not always actionable.</li>
+      <li><strong>Causal alternatives:</strong> A/B tests for interventions; synthetic control / Causal Impact for time-series; regression discontinuity or IV where experiments are infeasible.</li>
+      <li><strong>Confounding effects:</strong> Channel, cohort, and seasonality confound funnel metrics; segment funnels and holdouts help but do not replace causal design.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Product and growth teams rely on funnels to prioritize fixes. HBR and causal-inference literature emphasize that funnel drop-off is a description, not a cause—improving a step may not lift the bottom line if the bottleneck is elsewhere or confounded. Google's Causal Impact illustrates how to attribute change to an intervention when a randomized experiment is not available.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Causal Graph / DAG</p>
+      <p><strong>Suggested Source:</strong> Google Causal Impact / HBR</p>
+      <p><strong>What it Shows:</strong> Confounders (e.g., channel) → funnel steps and outcome; intervention (e.g., new step) → outcome. Identifies what to control for.</p>
+      <p><strong>Why It Matters:</strong> Guides causal analysis design.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Funnel: user_id, step, timestamp, segment, channel. For causal work: treatment assignment (if A/B), or pre/post period and control series (if synthetic control). Confounders (channel, cohort, geography) must be available for adjustment or stratification.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Funnel: step conversion rates, overall conversion. Causal: treatment effect on outcome (e.g., sign-up, revenue); confidence interval. North star: causal effect of key interventions on business outcome, not just funnel shape.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Run A/B tests on funnel steps when possible; use Causal Impact or synthetic control for launch/feature attribution; segment funnels by channel and cohort to reduce confounding in interpretation. Document assumptions (e.g., no unmeasured confounders).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Automated funnel reporting with segment breakdowns; optional causal-effect estimation (e.g., Causal Impact API) for time-series interventions; dashboards that flag when funnel shape changes and suggest experiments.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Funnel optimization without causal checks can target the wrong step; experiments and quasi-experiments provide actionable effects; confounders (channel, seasonality) often explain funnel shifts.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Trade-off: simplicity of funnels vs. rigor of causal design. Risk: quasi-experiments rely on assumptions. Failure mode: improving a step that is not on the causal path to outcome.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decision: pair funnel reporting with causal methods (A/B, Causal Impact); prioritize experiments for key steps; interpret funnel changes in light of confounders. Outcome: better allocation of product effort to causal levers.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Quasi-experiments require assumptions; funnel steps are often overlapping (e.g., same user multiple touches). Improvements: pre-registered causal questions; mediation analysis.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Causal discovery from observational data; automated experiment recommendation from funnel analysis; integration with experimentation platforms.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Causality in Analytics</a></li>
+    <li><a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Funnels describe where users drop; they do not by themselves say why. Combine funnel metrics with causal methods (A/B tests, Causal Impact, quasi-experiments) and confounder-aware analysis so product decisions target true causes, not correlations.
+    </p>
+  </div>
+</div>
