@@ -502,10 +502,12 @@
 				const skills = skillsData[category] || [];
 				const slug = categoryIds[category] || 'skills-' + category.toLowerCase().replace(/\s+&\s+/g, '-').replace(/\s+/g, '-');
 				html += `
-					<div id="${slug}" class="skill-category scroll-mt-24">
+					<div id="${slug}" class="skill-category scroll-mt-24 mb-12">
 						<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">${category}</h2>
-						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-							${skills.map(skill => skillCardHtml(skill)).join('')}
+						<div class="bg-white dark:bg-white rounded-xl border border-gray-200 dark:border-gray-300 p-6 shadow-sm">
+							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+								${skills.map(skill => skillCardHtml(skill)).join('')}
+							</div>
 						</div>
 					</div>
 				`;
@@ -514,7 +516,7 @@
 			const techTools = skillsData['Tools & Development'] || [];
 			const nonTechTools = skillsData['Productivity & Collaboration'] || [];
 			html += `
-				<div id="skills-tools" class="skill-category scroll-mt-24">
+				<div id="skills-tools" class="skill-category scroll-mt-24 mb-12">
 					<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Tools</h2>
 					<div class="bg-white dark:bg-white rounded-xl border border-gray-200 dark:border-gray-300 overflow-hidden shadow-sm">
 						<!-- Section 1: Tech / programming -->
