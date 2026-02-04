@@ -856,6 +856,10 @@ function getPaginationSlice(total, page, firstPageCount, restPageCount) {
 }
 
 function createDashboardProjectCard(project, layoutClass = '') {
+  const isCaseStudy = project.isCaseStudy === true;
+  const detailUrl = isCaseStudy ? `case-study.html?id=${project.id}` : `project.html?id=${project.id}`;
+  const viewLabel = isCaseStudy ? 'View Case Study' : 'View Project';
+  
   const tags = (project.tools || []).slice(0, 4).map(t => 
     `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
   ).join('');
@@ -872,8 +876,10 @@ function createDashboardProjectCard(project, layoutClass = '') {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
   };
 
-  const actionButtons = [
-    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
+  const actionButtons = isCaseStudy ? [
+    { label: viewLabel, url: detailUrl, primary: true }
+  ] : [
+    { label: viewLabel, url: detailUrl, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -882,21 +888,23 @@ function createDashboardProjectCard(project, layoutClass = '') {
     { label: 'Video', url: project.video_url, icon: actionIcons.video }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
-      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">View Project</a>`;
+      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`;
     }
     return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
 
   const overlayButtons = `
-    <a href="project.html?id=${project.id}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
-      View Project
+    <a href="${detailUrl}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
+      ${viewLabel}
     </a>
   `;
+  
+  const categoryBadge = isCaseStudy ? `<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 mb-2">Case Study</span>` : '';
   
   return `
     <article class="project-card-modern bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group relative ${layoutClass}">
       <div class="relative overflow-hidden bg-gray-100">
-        <a href="project.html?id=${project.id}" class="block">
+        <a href="${detailUrl}" class="block">
           <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
         </a>
         <div class="card-hover-overlay absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -911,7 +919,8 @@ function createDashboardProjectCard(project, layoutClass = '') {
       <div class="p-6">
         <div class="flex items-start justify-between mb-3">
           <div class="flex-1">
-            <a href="project.html?id=${project.id}" class="block group-hover:text-primary transition-colors">
+            ${categoryBadge}
+            <a href="${detailUrl}" class="block group-hover:text-primary transition-colors">
               <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight">${project.title}</h3>
             </a>
             <p class="text-sm text-gray-600 leading-relaxed line-clamp-2 mb-4">${project.short_description || ''}</p>
@@ -933,6 +942,10 @@ function createDashboardProjectCard(project, layoutClass = '') {
 }
 
 function createDashboardProjectList(project, index = 0) {
+  const isCaseStudy = project.isCaseStudy === true;
+  const detailUrl = isCaseStudy ? `case-study.html?id=${project.id}` : `project.html?id=${project.id}`;
+  const viewLabel = isCaseStudy ? 'View Case Study' : 'View Project';
+  
   const tags = (project.tools || []).slice(0, 4).map(t => 
     `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
@@ -949,8 +962,10 @@ function createDashboardProjectList(project, index = 0) {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
   };
 
-  const actionButtons = [
-    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
+  const actionButtons = isCaseStudy ? [
+    { label: viewLabel, url: detailUrl, primary: true }
+  ] : [
+    { label: viewLabel, url: detailUrl, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -964,8 +979,10 @@ function createDashboardProjectList(project, index = 0) {
     return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
   }).join('');
 
-  const overlayButtons = [
-    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
+  const overlayButtons = isCaseStudy ? [
+    { label: viewLabel, url: detailUrl, primary: true }
+  ] : [
+    { label: viewLabel, url: detailUrl, primary: true },
     { label: 'GitHub', url: project.github_url },
     { label: 'Demo', url: project.demo_url },
     { label: 'Streamlit', url: project.streamlit_url },
@@ -979,12 +996,13 @@ function createDashboardProjectList(project, index = 0) {
     return `<a href="${btn.url}" ${btn.primary ? '' : 'target="_blank"'} class="px-3 py-1.5 text-xs font-semibold rounded transition-colors ${base}">${btn.label}</a>`;
   }).join('');
   
+  const categoryBadge = isCaseStudy ? `<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 mb-2">Case Study</span>` : '';
   const isReverse = index % 2 === 1;
   return `
     <article class="project-list-row ${isReverse ? 'is-reverse' : ''}">
       <div class="list-row-inner">
         <div class="list-media">
-          <a href="project.html?id=${project.id}" class="block">
+          <a href="${detailUrl}" class="block">
             <img src="${thumbnailUrl}" alt="${project.title}" class="list-image" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
           </a>
           <div class="list-hover-overlay">
@@ -998,8 +1016,9 @@ function createDashboardProjectList(project, index = 0) {
         </div>
         <div class="list-body">
           <div class="list-meta">${project.date || ''}</div>
+          ${categoryBadge}
           <h3 class="list-title">
-            <a href="project.html?id=${project.id}">${project.title}</a>
+            <a href="${detailUrl}">${project.title}</a>
           </h3>
           <p class="list-summary">${project.short_description || ''}</p>
           <div class="list-tags">
