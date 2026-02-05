@@ -2,7 +2,7 @@
   {
     "id": "recommendation-impact-beyond-clicks",
     "title": "Measuring Recommendation Impact Beyond Clicks (Netflix-style completion, delay, long-term satisfaction)",
-    "short_description": "How streaming platforms evaluate recommendation quality using completion rate, play delay, and multi-metric frameworks—backed by Netflix Tech Blog, HBR, and Gartner research.",
+    "short_description": "Design a Netflix-style recommendation system that optimizes for completion, delay, and long-term satisfaction—not just CTR—using multi-metric testing and sequential experiments.",
     "category": "Industry · Media & Streaming",
     "case_study_path": "data/case_studies/recommendation-impact-beyond-clicks.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -15,7 +15,7 @@
   {
     "id": "skip-rate-discovery-quality-music",
     "title": "Skip Rate Is Not a Failure Metric (Spotify-style discovery quality)",
-    "short_description": "How music platforms interpret skip behavior correctly—distinguishing rejection from exploration—backed by Spotify Research, Bain, and PLOS ONE.",
+    "short_description": "Reframe skips on Spotify-style products as exploration signals, and build metrics that separate healthy discovery from true rejection so you don’t turn off what’s actually working.",
     "category": "Industry · Music & Audio",
     "case_study_path": "data/case_studies/skip-rate-discovery-quality-music.html",
     "thumbnail": "assets/images/thumbs/02.jpg",
@@ -28,7 +28,7 @@
   {
     "id": "eta-accuracy-speed-quick-commerce",
     "title": "ETA Accuracy vs Speed in Quick Commerce (Uber-style last-mile SLAs)",
-    "short_description": "Why ETA accuracy matters more than raw speed for customer trust—demand forecasting, VRP trade-offs, SLA breaches, and exception handling.",
+    "short_description": "Model Uber/Instamart-style delivery networks where trustworthy ETAs, routing cost, and operational chaos collide—and show when being predictably ‘on time’ beats being randomly fast.",
     "category": "Industry · Logistics & Retail",
     "case_study_path": "data/case_studies/eta-accuracy-speed-quick-commerce.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -41,7 +41,7 @@
   {
     "id": "fraud-precision-customer-friction",
     "title": "Fraud Precision vs Customer Friction (Fintech rules+ML with guardrails)",
-    "short_description": "Designing fraud analytics that balance loss prevention and CX—rules + ML layering, label delays, and ops KPIs.",
+    "short_description": "Architect a tiered fraud engine for banks/fintech that layers rules and ML, cuts genuine fraud, and still lets good customers pay without endless OTPs, declines, and manual reviews.",
     "category": "Industry · BFSI / Payments",
     "case_study_path": "data/case_studies/fraud-precision-customer-friction.html",
     "thumbnail": "assets/images/thumbs/01.jpg",
@@ -54,7 +54,7 @@
   {
     "id": "credit-decisions-profit-systems",
     "title": "Credit Decisions as Profit Systems (BFSI PD×LGD×EAD, reject inference)",
-    "short_description": "Treating credit approval as profit optimization—PD × LGD × EAD, reject inference, vintage analysis, and bias & governance.",
+    "short_description": "Turn credit underwriting into a profit-and-governance system: PD×LGD×EAD, reject inference, fairness constraints, and policy guardrails that a risk committee would actually approve.",
     "category": "Industry · BFSI",
     "case_study_path": "data/case_studies/credit-decisions-profit-systems.html",
     "thumbnail": "assets/images/thumbs/06.jpg",
@@ -67,7 +67,7 @@
   {
     "id": "marketplace-liquidity-analytics",
     "title": "Marketplace Liquidity & Matching Analytics (Airbnb/Uber-style balancing)",
-    "short_description": "Supply–demand balance, matching efficiency, cold start, and liquidity metrics.",
+    "short_description": "Instrument an Uber/Airbnb-style marketplace with liquidity and matching metrics that expose cold starts, side-imbalances, and the exact point where more spend stops improving fills.",
     "category": "Industry · Marketplaces",
     "case_study_path": "data/case_studies/marketplace-liquidity-analytics.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -80,7 +80,7 @@
   {
     "id": "dynamic-pricing-without-black-boxes",
     "title": "Dynamic Pricing Without Black Boxes (transparent elasticity, fairness constraints)",
-    "short_description": "Explainable pricing—elasticity, fairness constraints, and transparent rules.",
+    "short_description": "Design a surge/dynamic pricing engine that leaders can defend: interpretable elasticity, hard fairness constraints, and knobs for product and policy—not a mysterious demand curve.",
     "category": "Industry · Retail & Pricing",
     "case_study_path": "data/case_studies/dynamic-pricing-without-black-boxes.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -93,7 +93,7 @@
   {
     "id": "ad-auctions-attribution-analytics",
     "title": "Ad Auctions & Attribution Analytics (quality score, bids, incrementality)",
-    "short_description": "Designing transparent ad auctions and incrementality-aware attribution—quality scores, pacing, budget guardrails, and causal lift.",
+    "short_description": "Build a Google/Meta-style auction + attribution stack that balances bids, quality score, pacing, and lift so revenue goes up without turning your product into an ad spam machine.",
     "category": "Industry · Ads & Growth",
     "case_study_path": "data/case_studies/ad-auctions-attribution-analytics.html",
     "thumbnail": "assets/images/thumbs/02.jpg",
@@ -106,7 +106,7 @@
   {
     "id": "north-star-metrics-break-scale",
     "title": "North Star Metrics That Break at Scale (product operating model)",
-    "short_description": "Why popular North Star metrics fail—metric gaming, proxy failures, and multi-metric frameworks.",
+    "short_description": "Show how beloved North Star metrics quietly break at scale, how teams game them, and how to replace them with a multi-metric operating system that survives real-world incentives.",
     "category": "Practice · Metrics & Strategy",
     "case_study_path": "data/case_studies/north-star-metrics-break-scale.html",
     "thumbnail": "assets/images/thumbs/03.jpg",
@@ -119,7 +119,7 @@
   {
     "id": "sequential-ab-testing-real-products",
     "title": "Sequential A/B Testing in Real Products (Netflix-style sequential testing)",
-    "short_description": "Moving beyond fixed-horizon experiments—sequential testing, early stopping bias, and guardrails.",
+    "short_description": "Turn experimentation into a streaming, always-on decision system using sequential testing, guardrails, and power-aware stopping rules that won’t get you fired by a statistician.",
     "category": "Practice · Experimentation",
     "case_study_path": "data/case_studies/sequential-ab-testing-real-products.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -132,7 +132,7 @@
   {
     "id": "dashboards-to-decision-systems",
     "title": "From Dashboards to Decision Systems (alerting, automation, ownership)",
-    "short_description": "Close the loop from insight to action—alerts, automation, and ownership.",
+    "short_description": "Refactor BI from pretty charts into decision systems: alerting, automation, and hard ownership so every critical metric has a human, a playbook, and a time-to-action SLA.",
     "category": "Practice · BI & Decision Intelligence",
     "case_study_path": "data/case_studies/dashboards-to-decision-systems.html",
     "thumbnail": "assets/images/thumbs/05.jpg",
@@ -145,7 +145,7 @@
   {
     "id": "why-analytics-teams-fail-impact",
     "title": "Why Analytics Teams Fail to Drive Impact (operating model, incentives, ownership)",
-    "short_description": "Organizational failure modes—incentives, org design, and tooling mismatch.",
+    "short_description": "Dissect why analytics teams stay ‘report factories’—org design, incentives, tooling—and sketch the operating model that turns your team into a decision and revenue engine.",
     "category": "Practice · Analytics Operating Model",
     "case_study_path": "data/case_studies/why-analytics-teams-fail-impact.html",
     "thumbnail": "assets/images/thumbs/03.jpg",

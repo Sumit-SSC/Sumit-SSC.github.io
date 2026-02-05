@@ -87,7 +87,7 @@ function initTheme() {
 
   // Theme + color controls - Add to navigation if it exists, otherwise create floating controls
   const nav = document.getElementById('nav');
-  const themes = ['theme-purple', 'theme-blue', 'theme-emerald', 'theme-rose', 'theme-orange', 'theme-indigo'];
+  const themes = ['theme-purple', 'theme-blue', 'theme-emerald', 'theme-rose', 'theme-orange', 'theme-indigo', 'theme-teal', 'theme-amber'];
   const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || 'theme-purple';
   let colorIndex = themes.indexOf(storedTheme);
   if (colorIndex < 0) colorIndex = 0;
@@ -230,7 +230,9 @@ function applyColorTheme(name) {
     'theme-emerald': { primary: '#10b981' },
     'theme-rose': { primary: '#f43f5e' },
     'theme-orange': { primary: '#f97316' },
-    'theme-indigo': { primary: '#6366f1' }
+    'theme-indigo': { primary: '#6366f1' },
+    'theme-teal': { primary: '#14b8a6' },
+    'theme-amber': { primary: '#f59e0b' }
   };
 
   const colors = colorMap[theme] || colorMap['theme-purple'];
@@ -257,7 +259,9 @@ function updateColorSwatch(el, theme) {
     'theme-emerald': '#10b981',
     'theme-rose': '#f43f5e',
     'theme-orange': '#f97316',
-    'theme-indigo': '#6366f1'
+    'theme-indigo': '#6366f1',
+    'theme-teal': '#14b8a6',
+    'theme-amber': '#f59e0b'
   };
   el.style.background = colorMap[theme] || colorMap['theme-purple'];
 }
@@ -648,9 +652,6 @@ function createFeaturedHeroCard(project) {
             ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
             <h4 class="text-lg font-bold text-white mb-3">${project.title}</h4>
             <p class="text-sm text-white/90 leading-relaxed mb-4">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 120) + '...' || 'Explore this project'}</p>
-            <div class="flex flex-wrap gap-2 justify-center mb-3">
-              ${tags || ''}
-            </div>
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons}
             </div>
@@ -715,9 +716,6 @@ function createFeaturedHalfCard(project) {
             ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
             <h4 class="text-base font-bold text-white mb-2">${project.title}</h4>
             <p class="text-sm text-white/90 leading-relaxed mb-3">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 100) + '...' || 'Explore this project'}</p>
-            <div class="flex flex-wrap gap-1.5 justify-center mb-2">
-              ${tags || ''}
-            </div>
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons}
             </div>
@@ -1308,10 +1306,13 @@ function renderProject(project, caseStudy, contentFromFile) {
   const main = document.getElementById("project-main");
   if (main) {
     main.innerHTML = sections.map(s => section(s.title, s.content, s.id, s.isMedia)).join('');
+    // Initialize any gallery carousels rendered inside the project content
+    initGalleryCarousels();
   }
 
   // Generate TOC
   const tocNav = document.getElementById("toc-nav");
+  const tocSelect = document.getElementById("project-toc-select");
   if (tocNav) {
     tocNav.innerHTML = sections.map(s => 
       `<a href="#${s.id}" class="block text-sm text-gray-600 hover:text-primary transition-colors py-1 toc-link" data-section="${s.id}">${s.title}</a>`
@@ -1319,6 +1320,20 @@ function renderProject(project, caseStudy, contentFromFile) {
     
     // Add scroll spy for TOC
     initTOCScrollSpy();
+  }
+
+  // Populate mobile TOC select
+  if (tocSelect) {
+    tocSelect.innerHTML = `<option value="">Select a section…</option>` + 
+      sections.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+    tocSelect.addEventListener('change', () => {
+      const id = tocSelect.value;
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   const side = document.getElementById("project-side");
@@ -1555,15 +1570,177 @@ function pdfEmbed(path, project = null) {
 
 function galleryBlock(images, project = null) {
   if (!images || images.length === 0) return "";
-  const resolvedImages = project 
+  const resolvedImages = project
     ? images.map(img => resolveAssetUrl(project, img))
     : images;
   const fallbackImage = 'assets/images/thumbs/01.jpg'; // Use actual image as fallback
+  const total = resolvedImages.length;
+
+  // Single-image gallery: keep it simple but with caption overlay
+  if (total === 1) {
+    const img = resolvedImages[0];
+    const alt = project
+      ? `${project.title} – key dashboard view`
+      : 'Project image';
+    const caption = project
+      ? `${project.title} – primary view`
+      : 'Project overview';
+    return `
+      <div class="gallery-single">
+        <figure class="gallery-slide is-active">
+          <div class="gallery-slide-inner">
+            <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
+            <figcaption class="gallery-caption">
+              <span class="gallery-caption-index">1/1</span>
+              <span class="gallery-caption-text">${caption}</span>
+            </figcaption>
+          </div>
+        </figure>
+      </div>
+    `;
+  }
+
+  // Multi-image gallery → carousel with captions and controls
+  const galleryId = project ? project.id : 'inline-gallery';
   return `
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      ${resolvedImages.map(img => `<img src="${img}" alt="Project image" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">`).join('')}
+    <div class="gallery-carousel" data-gallery="${galleryId}">
+      <div class="gallery-track">
+        ${resolvedImages
+          .map((img, index) => {
+            const position = index + 1;
+            const alt = project
+              ? `${project.title} – view ${position}`
+              : `Project image ${position}`;
+            const caption = project
+              ? `${project.title} – view ${position}`
+              : `Screenshot ${position}`;
+            return `
+              <figure class="gallery-slide ${index === 0 ? 'is-active' : ''}" data-index="${index}">
+                <div class="gallery-slide-inner">
+                  <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
+                  <figcaption class="gallery-caption">
+                    <span class="gallery-caption-index">${position}/${total}</span>
+                    <span class="gallery-caption-text">${caption}</span>
+                  </figcaption>
+                </div>
+              </figure>
+            `;
+          })
+          .join('')}
+      </div>
+      <button class="gallery-nav gallery-prev" type="button" aria-label="Previous image">
+        <span>&larr;</span>
+      </button>
+      <button class="gallery-nav gallery-next" type="button" aria-label="Next image">
+        <span>&rarr;</span>
+      </button>
+      <div class="gallery-dots" aria-label="Select image">
+        ${resolvedImages
+          .map(
+            (_img, index) => `
+          <button
+            class="gallery-dot ${index === 0 ? 'is-active' : ''}"
+            type="button"
+            data-index="${index}"
+            aria-label="Go to image ${index + 1}"
+          ></button>`
+          )
+          .join('')}
+      </div>
     </div>
   `;
+}
+
+// Initialize all gallery carousels on the current page
+function initGalleryCarousels() {
+  const carousels = document.querySelectorAll('.gallery-carousel');
+  if (!carousels.length) return;
+  carousels.forEach(setupGalleryCarousel);
+}
+
+function setupGalleryCarousel(container) {
+  const track = container.querySelector('.gallery-track');
+  const slides = Array.from(container.querySelectorAll('.gallery-slide'));
+  const dots = Array.from(container.querySelectorAll('.gallery-dot'));
+  const prevBtn = container.querySelector('.gallery-prev');
+  const nextBtn = container.querySelector('.gallery-next');
+
+  if (!track || !slides.length) return;
+
+  let current = 0;
+  let autoplayTimer = null;
+
+  function goTo(index) {
+    if (!slides.length) return;
+    const total = slides.length;
+    current = (index + total) % total;
+
+    // Slide movement
+    track.style.transform = `translateX(-${current * 100}%)`;
+
+    // Active state for slides
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('is-active', i === current);
+    });
+
+    // Active state for dots
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('is-active', i === current);
+    });
+  }
+
+  function next() {
+    goTo(current + 1);
+  }
+
+  function prev() {
+    goTo(current - 1);
+  }
+
+  function startAutoplay() {
+    if (slides.length <= 1) return;
+    stopAutoplay();
+    autoplayTimer = window.setInterval(next, 6000);
+  }
+
+  function stopAutoplay() {
+    if (autoplayTimer) {
+      window.clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+
+  // Attach events
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      prev();
+      startAutoplay();
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      next();
+      startAutoplay();
+    });
+  }
+
+  if (dots.length) {
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = parseInt(dot.dataset.index || '0', 10);
+        goTo(index);
+        startAutoplay();
+      });
+    });
+  }
+
+  container.addEventListener('mouseenter', stopAutoplay);
+  container.addEventListener('mouseleave', startAutoplay);
+
+  // Initial state
+  goTo(0);
+  startAutoplay();
 }
 
 function ensureEmbedModal() {
@@ -1630,6 +1807,7 @@ function initClickableTools() {
 function initTOCScrollSpy() {
   const sections = document.querySelectorAll('section[id]');
   const tocLinks = document.querySelectorAll('.toc-link');
+  const tocSelect = document.getElementById('project-toc-select');
   
   window.addEventListener('scroll', () => {
     let current = '';
@@ -1645,6 +1823,10 @@ function initTOCScrollSpy() {
       link.classList.remove('text-primary', 'font-semibold');
       if (link.dataset.section === current) {
         link.classList.add('text-primary', 'font-semibold');
+        // Sync mobile dropdown highlight
+        if (tocSelect && tocSelect.value !== current) {
+          tocSelect.value = current;
+        }
       }
     });
   });

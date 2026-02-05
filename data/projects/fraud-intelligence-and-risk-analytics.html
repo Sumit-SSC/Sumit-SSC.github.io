@@ -1,0 +1,278 @@
+<div class="space-y-10">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="space-y-6">
+    <div class="bg-gradient-to-r from-emerald-50 via-cyan-50 to-sky-100 dark:from-emerald-900/20 dark:via-cyan-900/20 dark:to-sky-900/20 rounded-xl p-6 border border-emerald-200 dark:border-emerald-800">
+      <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-100 mb-2">Project Overview</p>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
+        <strong>Fraud Intelligence &amp; Risk Analytics</strong> is a SQL-first fraud analytics platform that mirrors
+        how payments and card programs run fraud operations in production. It generates a realistic, multi-table transaction
+        environment (&gt;1.8M rows), builds a <strong>layered SQL pipeline</strong> (raw → staging → features), exports analytics
+        tables to <strong>Power BI</strong>, and provides a multi-page <strong>Streamlit investigation console</strong> for fraud analysts.
+      </p>
+    </div>
+
+    <p class="text-gray-700 dark:text-gray-300">
+      Instead of only training a single classification model, the project focuses on the full decision system:
+      how transactions become <strong>risk signals</strong>, how those signals feed <strong>queues and dashboards</strong>,
+      and how investigators consume them day-to-day.
+    </p>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Context & Problem Framing</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      Fraud teams in banks, card schemes, and fintechs face two opposing failure modes:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Too many alerts:</strong> analysts drown in false positives, queue SLAs slip, and costs escalate.</li>
+      <li><strong>Too few alerts:</strong> fraud slips through undetected, driving losses and regulatory exposure.</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-300">
+      Raw transaction data is noisy: the same card and device can be safe or risky depending on velocity, geography,
+      merchant behavior, and customer history. A useful fraud analytics system needs to:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li>Transform raw events into <strong>business-readable features</strong> (velocity, merchant risk, patterns).</li>
+      <li>Expose <strong>risk scores and explanations</strong> that investigators can trust.</li>
+      <li>Provide <strong>dashboards and queues</strong> that prioritize the highest-value work.</li>
+    </ul>
+    <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border-l-4 border-amber-500">
+      <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-1">Goal</p>
+      <p class="text-sm text-amber-800 dark:text-amber-200">
+        Build an end-to-end fraud analytics prototype that a fraud operations lead could recognize:
+        data model, SQL layers, BI dashboards, and investigation screens—not just a Jupyter notebook.
+      </p>
+    </div>
+  </section>
+
+  <!-- APPROACH -->
+  <section id="approach" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Architecture & Analytical Approach</h2>
+
+    <!-- Data Model -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. Data Model & Pipeline Stages</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The project is structured as a modern analytics pipeline:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>Raw Data → SQL Staging → Feature Tables → BI Exports → Apps (Power BI, Streamlit)</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        The <code>sql/</code> folder implements a canonical layered design:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>DDL:</strong> card, device, merchant, transaction, rule, and investigation tables.</li>
+        <li><strong>Staging:</strong> clean &amp; standardize source fields, derive canonical IDs, normalize currencies.</li>
+        <li><strong>Features:</strong> aggregation tables for <em>velocity</em>, <em>merchant concentration</em>, <em>behavioral deltas</em>, etc.</li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>-- Example: velocity feature engineering (simplified)
+WITH tx_window AS (
+  SELECT
+    card_id,
+    tx_id,
+    tx_timestamp,
+    amount,
+    COUNT(*) OVER (
+      PARTITION BY card_id
+      ORDER BY tx_timestamp
+      RANGE BETWEEN INTERVAL 15 MINUTE PRECEDING AND CURRENT ROW
+    ) AS tx_count_15m,
+    SUM(amount) OVER (
+      PARTITION BY card_id
+      ORDER BY tx_timestamp
+      RANGE BETWEEN INTERVAL 15 MINUTE PRECEDING AND CURRENT ROW
+    ) AS tx_amount_15m
+  FROM raw.transactions
+)
+SELECT
+  card_id,
+  tx_id,
+  tx_timestamp,
+  tx_count_15m,
+  tx_amount_15m,
+  tx_count_15m &gt;= 5      AS high_velocity_flag,
+  tx_amount_15m &gt;= 5000  AS high_velocity_amount_flag
+FROM tx_window;</code></pre>
+    </section>
+
+    <!-- Project Structure & Orchestration -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Repository Layout & Orchestration</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The top-level README describes a production-like repository structure:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>fraud-intelligence-and-risk-analytics/
+├── streamlit_app.py           # Unified entry point (mode selector)
+├── streamlit_app/             # Routing and shared config
+├── app/                       # Advanced investigation app (multi-page Streamlit)
+├── app-vizulation/            # Lightweight analytics app
+├── sql/                       # DDL, staging, features
+├── src/                       # Pipeline orchestration scripts
+├── notebooks/                 # Storytelling + experimentation
+├── data/                      # raw / processed / BI-ready
+├── models/                    # persisted ML models
+└── powerbi/ &amp; docs/          # BI artifacts and documentation</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        The typical run sequence on a new machine:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code># Install environment (uv recommended)
+uv sync
+
+# Generate synthetic but realistic payments data
+uv run python src/generate_raw_data.py
+
+# Load data into MySQL (or chosen warehouse)
+uv run python src/load_raw_data.py
+
+# Execute SQL pipeline (DDL, staging, features)
+# See sql/README.md for exact order
+
+# Export BI-ready tables
+uv run python src/export_bi_data.py
+
+# Launch Streamlit investigation console
+uv run streamlit run streamlit_app.py</code></pre>
+    </section>
+
+    <!-- BI & Streamlit -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. BI Dashboards & Investigation Apps</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Two consumption layers sit on top of the analytics tables:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Power BI Fraud Analytics Dashboard</strong> – high-level KPIs (fraud rate, loss, false-positive rate),
+          trends, and breakdowns by merchant, MCC, geography, and channel.
+        </li>
+        <li>
+          <strong>Streamlit Investigation Console</strong> – multi-page app for analysts:
+          transaction overviews, risk explanations, analytics views, and exportable documentation.
+        </li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>&lt;iframe title="Fraud_Analytics"
+        width="1140" height="541.25"
+        src="https://app.powerbi.com/reportEmbed?reportId=31b9f9b4-cda8-4ca2-9412-5cbeb3b3acfb&amp;autoAuth=true&amp;embeddedDemo=true"
+        frameborder="0" allowFullScreen="true"&gt;&lt;/iframe&gt;</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        This embed is referenced in the README and wired into the portfolio through the <code>powerbi_embed_url</code> field in
+        <code>data/projects.json</code>, so the project page can show a live or demo Power BI dashboard in a dedicated section.
+      </p>
+    </section>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section id="insights" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Insights, Findings & Business Impact</h2>
+
+    <!-- Key Findings -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Key Findings</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Velocity is a strong risk indicator.</strong>
+          Cards with unusual short-window velocity (e.g., ≥5 transactions in 15 minutes or large cumulative amounts)
+          show materially higher fraud rates in synthetic data, echoing real-world patterns in card and wallet fraud.
+        </li>
+        <li>
+          <strong>Merchant risk is concentrated.</strong>
+          A small set of merchants/MCCs contributes a disproportionate share of flagged and confirmed fraud, suggesting
+          targeted monitoring and contractual controls.
+        </li>
+        <li>
+          <strong>Behavioral anomalies matter.</strong>
+          Deviations from a card’s historical behavior (spend spikes, geography shifts) provide high-signal features,
+          especially when combined with basic rules.
+        </li>
+        <li>
+          <strong>Queue design is as important as scoring.</strong>
+          Risk scores are surfaced as prioritized queues, with explanations and filters, instead of a flat list of alerts.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Trade-offs -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Trade-offs & Failure Modes</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The project deliberately focuses on <strong>analytics and decision support</strong> rather than only optimizing a single
+        ML model. Some trade-offs:
+      </p>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Synthetic data vs real-world noise.</strong>
+          Synthetic data preserves privacy but cannot capture all long-tail patterns and adversarial behavior;
+          the focus is on structure and workflow.
+        </li>
+        <li>
+          <strong>Limited ML complexity.</strong>
+          Models (where used) are intentionally simple and interpretable; the heavy lifting is in SQL feature engineering
+          and operationalization.
+        </li>
+        <li>
+          <strong>Single-tenant setup.</strong>
+          The current design assumes one dataset and one organization; multi-tenant, multi-market architectures would add
+          complexity around schemas and metadata.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Impact -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Business Impact & Relevance</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        For interviews or stakeholder reviews, the platform demonstrates:
+      </p>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          Ability to design a <strong>full fraud analytics system</strong>, not just a model notebook.
+        </li>
+        <li>
+          Familiarity with <strong>risk operations metrics</strong> (false-positive rate, queue SLAs, investigation efficiency).
+        </li>
+        <li>
+          Comfort with <strong>SQL pipelines</strong>, BI exports, and building analyst-facing tools in Streamlit.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Limitations & Future Work -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Limitations & Future Enhancements</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Real-time streaming.</strong>
+          Current flows are batch-oriented; adding Kafka or Kinesis-style streaming would mirror real-time authorization flows.
+        </li>
+        <li>
+          <strong>Model monitoring.</strong>
+          The platform could track model drift, threshold stability, and population stability indices for fraud models.
+        </li>
+        <li>
+          <strong>Case management integration.</strong>
+          Integrating with ticketing/case systems would complete the loop from alert → investigation → resolution → feedback.
+        </li>
+      </ul>
+    </section>
+  </section>
+
+  <!-- MEDIA -->
+  <section id="media" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Dashboards & How to Explore</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      On the portfolio project page, this article is complemented by:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li>A live (or demo) <strong>Power BI</strong> fraud dashboard embed.</li>
+      <li>Screenshots of the <strong>Streamlit investigation console</strong> pages.</li>
+      <li>Optional architecture and pipeline diagrams from <code>docs/</code>.</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-300">
+      Reviewers can follow the README-linked run instructions to reproduce the environment, then use the portfolio write-up
+      to understand the design decisions, trade-offs, and how the system would scale in a production fraud team.
+    </p>
+  </section>
+
+</div>
+

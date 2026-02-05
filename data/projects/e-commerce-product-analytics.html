@@ -1,0 +1,282 @@
+<div class="space-y-10">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="space-y-6">
+    <div class="bg-gradient-to-r from-indigo-50 via-sky-50 to-emerald-100 dark:from-indigo-900/20 dark:via-sky-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-indigo-200 dark:border-indigo-800">
+      <p class="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2">Project Overview</p>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
+        <strong>E-commerce Product Analytics</strong> is an end-to-end analytics system that turns simulated clickstream
+        and order data into decision-ready metrics for funnels, cohort retention, and A/B testing. It uses <strong>DuckDB + SQL</strong>
+        as the core analytics engine, <strong>Python</strong> for data generation and orchestration, and produces <strong>Power BI–ready exports</strong>
+        plus notebooks for statistical validation.
+      </p>
+    </div>
+
+    <p class="text-gray-700 dark:text-gray-300">
+      Instead of a single notebook, the project is structured like a real analytics stack:
+      raw data generation, database loading, SQL transformations, Jupyter analyses, and BI dashboards—all governed by a
+      clear run sequence and documentation.
+    </p>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Context & Problem Framing</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      E-commerce product and growth teams ask three recurring questions:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Where are users dropping in the funnel?</strong> (visit → view → add-to-cart → checkout → purchase)</li>
+      <li><strong>How well do cohorts retain?</strong> (by signup week, channel, device, or campaign)</li>
+      <li><strong>Did this experiment actually work?</strong> (and is the effect size worth shipping?)</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-300">
+      Many portfolio projects stop at EDA or a single model, but real teams need a <strong>reproducible analytics pipeline</strong> that:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li>Generates or ingests realistic clickstream + order data.</li>
+      <li>Materializes consistent, queryable tables for funnels and cohorts.</li>
+      <li>Supports A/B test readouts with statistically valid methods.</li>
+      <li>Exports <strong>tidy tables for BI tools</strong> so decisions can be communicated clearly.</li>
+    </ul>
+  </section>
+
+  <!-- APPROACH -->
+  <section id="approach" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Architecture & Methodology</h2>
+
+    <!-- Data & Architecture -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. Data Architecture & Dataset Scale</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The project simulates a mid-sized e-commerce site:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>~120,000 users</li>
+        <li>~1,000,000 events (page views, product views, add-to-cart, checkout, purchase)</li>
+        <li>~45,000 orders</li>
+        <li>~400,000 sessions (after 30-minute timeout sessionization)</li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>E-commerce-Product-Analytics/
+├── data/
+│   ├── raw/          # users.csv, events.csv, orders.csv
+│   └── powerbi/      # funnel_metrics.csv, cohort_retention.csv, ab_test_summary.csv
+├── sql/
+│   └── analytics/    # sessionization, funnel, cohorts, retention, BI views
+├── src/              # data_generator.py, load_to_db.py, helpers
+├── scripts/          # materialize_tables.py, export_powerbi_data.py
+├── notebooks/        # cohort + A/B test analysis
+└── bi/               # Power BI dashboards (pbix)</code></pre>
+    </section>
+
+    <!-- Pipeline Flow -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Pipeline Flow & Orchestration</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The high-level flow:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>Raw Generator → DuckDB Load → SQL Transformations → Analytics Outputs → Power BI / Notebooks</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        The README prescribes a concise run sequence using <code>uv</code>:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code># Clone + install
+git clone https://github.com/Sumit-SC/E-commerce-Product-Analytics.git
+cd E-commerce-Product-Analytics
+uv sync
+
+# 1) Generate synthetic data
+uv run python src/data_generator.py
+
+# 2) Load into DuckDB
+uv run python src/load_to_db.py
+
+# 3) Materialize analytics tables
+uv run python scripts/materialize_tables.py
+
+# 4) Export BI views
+uv run python scripts/export_powerbi_data.py</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        This pattern mirrors how production teams treat analytics: <strong>code-first, reproducible, and environment-aware</strong>.
+      </p>
+    </section>
+
+    <!-- SQL for Funnels & Cohorts -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Funnel & Cohort SQL</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Funnels and cohorts are implemented with a sequence of SQL scripts in <code>sql/analytics/</code>:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>01_sessionization.sql
+02_funnel.sql
+03_cohorts.sql
+04_cohort_retention_query.sql
+05_cohort_retention_rates.sql
+06_powerbi_views.sql</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        Example: sessionization (30-minute timeout) and funnel flagging:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>-- Sessionization (simplified)
+CREATE TABLE analytics.user_sessions AS
+SELECT
+  user_id,
+  session_id,
+  MIN(event_time) AS session_start,
+  MAX(event_time) AS session_end,
+  COUNT(*) AS event_count
+FROM (
+  SELECT
+    user_id,
+    event_time,
+    SUM(session_break) OVER (
+      PARTITION BY user_id
+      ORDER BY event_time
+    ) AS session_id
+  FROM (
+    SELECT
+      user_id,
+      event_time,
+      CASE
+        WHEN LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time)
+             IS NULL THEN 1
+        WHEN event_time - LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time)
+             &gt; INTERVAL '30' MINUTE THEN 1
+        ELSE 0
+      END AS session_break
+    FROM raw.events
+  )
+)
+GROUP BY user_id, session_id;</code></pre>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto mt-4"><code>-- Funnel flags
+CREATE TABLE analytics.funnel_sessions AS
+SELECT
+  s.user_id,
+  s.session_id,
+  MAX(CASE WHEN e.event_name = 'product_view'     THEN 1 ELSE 0 END) AS viewed,
+  MAX(CASE WHEN e.event_name = 'add_to_cart'      THEN 1 ELSE 0 END) AS added_to_cart,
+  MAX(CASE WHEN e.event_name = 'checkout_start'   THEN 1 ELSE 0 END) AS checkout_started,
+  MAX(CASE WHEN e.event_name = 'purchase_complete' THEN 1 ELSE 0 END) AS purchased
+FROM analytics.user_sessions s
+JOIN raw.events e
+  ON s.user_id = e.user_id
+ AND e.event_time BETWEEN s.session_start AND s.session_end
+GROUP BY s.user_id, s.session_id;</code></pre>
+    </section>
+
+    <!-- A/B Testing -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. A/B Test Evaluation</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        A/B tests are evaluated using both SQL and Python notebooks. The README and notebooks implement:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Pre-test power calculations.</li>
+        <li>Randomization checks (balance across covariates).</li>
+        <li>Difference-in-proportions tests for conversion.</li>
+        <li>Bootstrap confidence intervals for robustness.</li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>from statsmodels.stats.proportion import proportions_ztest
+
+def conversion_lift(control_success, control_total, variant_success, variant_total):
+    stat, pval = proportions_ztest(
+        [variant_success, control_success],
+        [variant_total, control_total],
+        alternative="larger",
+    )
+    control_rate = control_success / control_total
+    variant_rate = variant_success / variant_total
+    lift = variant_rate - control_rate
+    return {"lift": lift, "p_value": pval}</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        These results are then exported to <code>data/powerbi/ab_test_summary.csv</code> so the BI layer can tell a clean, exec-friendly story.
+      </p>
+    </section>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section id="insights" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Insights, Trade-offs & Business Impact</h2>
+
+    <!-- Findings -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Key Findings</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Funnel bottlenecks are visible and explainable.</strong>
+          The largest synthetic drop-off occurs between <em>product_view</em> and <em>add_to_cart</em>, highlighting merchandising,
+          pricing, and UX opportunities.
+        </li>
+        <li>
+          <strong>Retention cohorts behave realistically.</strong>
+          Early cohorts show stronger repeat behavior, then retention curves flatten, mirroring typical e-commerce lifecycle patterns.
+        </li>
+        <li>
+          <strong>A/B tests become reproducible, not ad-hoc.</strong>
+          Having the full sequence in code—generation, load, SQL flags, stats—means the experiment can be re-run and audited.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Trade-offs -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Trade-offs & Design Decisions</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>DuckDB as analytics engine.</strong>
+          DuckDB provides a local, SQL-first experience without needing a full warehouse; easy to ship in a portfolio.
+        </li>
+        <li>
+          <strong>SQL-first metrics, Python-second.</strong>
+          Core metrics live in SQL views and tables, while notebooks focus on visualization and statistical checks.
+        </li>
+        <li>
+          <strong>Synthetic data, realistic patterns.</strong>
+          As with other projects, synthetic data protects privacy while still exercising realistic analytics logic.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Impact -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Business Impact & Portfolio Story</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        For hiring managers and interviewers, this project demonstrates:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Ability to design an <strong>analytics data model</strong> for e-commerce.</li>
+        <li>Confidence with <strong>SQL transformations</strong> and reproducible pipelines.</li>
+        <li>Understanding of <strong>funnel and retention metrics</strong> beyond “just a chart”.</li>
+        <li>Familiarity with <strong>experiment evaluation</strong> and statistical tooling.</li>
+      </ul>
+    </section>
+
+    <!-- Limitations & Future -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">8. Limitations & Future Scope</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>Connect to a real e-commerce dataset or public benchmark for external validation.</li>
+        <li>Add near-real-time views (hourly refresh) to simulate live funnel monitoring.</li>
+        <li>Extend A/B analysis to <strong>sequential testing</strong> and <strong>multi-armed bandits</strong> for more advanced experimentation.</li>
+        <li>Ship a small, focused <strong>Streamlit dashboard</strong> for product managers to interact with core metrics without opening BI tools.</li>
+      </ul>
+    </section>
+  </section>
+
+  <!-- MEDIA -->
+  <section id="media" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Assets & Exploration Guide</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      The portfolio project page can combine this write-up with:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li>Power BI dashboard screenshots or embeds based on <code>data/powerbi/*.csv</code>.</li>
+      <li>Snippets from notebooks (<code>01_cohort_retention_analysis.ipynb</code>, <code>02_ab_test_analysis.ipynb</code>).</li>
+      <li>A short Loom/YouTube demo walking through the funnel and retention views.</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-300">
+      Together, they show not just that the metrics exist, but that they are grounded in a <strong>clean, code-first analytics pipeline</strong>
+      that a real product analytics team could extend.
+    </p>
+  </section>
+
+</div>
+

@@ -2,7 +2,7 @@
   {
     "id": "ai-governance-workbench",
     "title": "AI Governance Workbench",
-    "short_description": "Streamlit app for AI governance dashboards, RAG summarization, compliance checks, and analytics.",
+    "short_description": "Streamlit workbench for AI governance teams—dashboards, RAG-backed policy review, and compliance evidence in one place.",
     "full_description": "<p>Built a multi‑module Streamlit application to explore responsible AI governance end‑to‑end. The workbench combines dashboards, interactive data visualization, document summarization, and an AI chat assistant powered by Google Gemini with RAG.</p><p>The app is designed for analysts and governance teams to translate policy text into actionable insights, document evidence, and communicate risks clearly to stakeholders.</p><p><strong>Core idea:</strong> unify policy review + analytics + explainable Q&A into a single governance workspace.</p>",
     "problem_statement": "<p>AI governance teams need tools to evaluate policy coverage, communicate risks, and operationalize responsible AI guidelines across diverse datasets and documents.</p><ul><li>How do we summarize and audit policy text quickly?</li><li>How do we visualize governance KPIs and risk trends for leadership?</li><li>How can stakeholders query documents with context using RAG?</li></ul><p>Traditional workflows rely on manual review, which is slow and hard to scale. This project prototypes a faster, explainable alternative.</p>",
     "approach": "<p><strong>Modules:</strong></p><ol><li>Governance dashboard with simulated KPI trends.</li><li>Data visualizer with multi‑chart analysis and user‑selected axes.</li><li>Document summarizer with flashcards + RAG context.</li><li>Compliance audit prototype with report export.</li><li>AI chat assistant for governance Q&A.</li></ol><p><strong>Repository layout:</strong></p><pre><code>MBA-AI_Governance_LLM-App/\n├── app.py            # Streamlit entry\n├── .streamlit/       # secrets config\n├── requirements.txt  # dependencies\n└── README.md         # setup + usage\n</code></pre><p><strong>Example workflow:</strong></p><pre><code>Upload policy → Summarize → Run audit → Ask questions → Export report</code></pre>",
@@ -15,6 +15,7 @@
     "images": [
       "assets/images/fulls/03.jpg"
     ],
+    "content_path": "data/projects/ai-governance-workbench.html",
     "show_apps_section": true,
     "notebook_url": "",
     "video_url": "",
@@ -31,7 +32,7 @@
   {
     "id": "fraud-intelligence-and-risk-analytics",
     "title": "Fraud Intelligence & Risk Analytics",
-    "short_description": "SQL-first fraud analytics platform with risk scoring, BI exports, and Streamlit investigation dashboards.",
+    "short_description": "End-to-end fraud intelligence stack—SQL staging, risk scores, Power BI monitoring, and Streamlit investigation consoles.",
     "full_description": "<p>Built a fraud intelligence platform that mirrors how payments teams monitor risk in production. The system creates a multi‑table transaction environment, applies SQL‑first staging and feature engineering, and delivers prioritized investigation views for analysts.</p><p>Deliverables include a Power BI monitoring dashboard for daily oversight and Streamlit investigation screens for drill‑down, case review, and export documentation.</p><p><strong>Scale:</strong> 1.8M+ multi‑table transactions across cards, devices, merchants, rules, and investigator notes.</p>",
     "problem_statement": "<p>Fraud teams must spot high‑risk activity in large transaction volumes without drowning in false positives or missing real fraud.</p><ul><li>Excess alerts drive analyst burnout and operational cost.</li><li>Missed or delayed detections increase loss and regulatory risk.</li><li>Raw transaction tables lack explainable, action‑ready signals.</li></ul><p>The goal is to turn raw payments data into high‑signal queues with business‑readable risk context.</p>",
     "approach": "<p><strong>Pipeline stages:</strong></p><ol><li>Generate synthetic but representative payment data.</li><li>Load raw tables into MySQL.</li><li>SQL raw → staging → features for velocity, merchant risk, device patterns, and behavioral deltas.</li><li>Risk scoring and explanations.</li><li>BI exports and monitoring dashboards.</li><li>Streamlit investigation console for drill‑down.</li></ol><p><strong>Repository layout:</strong></p><pre><code>fraud-intelligence-and-risk-analytics/\n├── sql/              # DDL, staging, features\n├── src/              # pipeline orchestration\n├── app/              # advanced Streamlit investigation\n├── app-vizulation/   # lightweight analytics view\n├── powerbi/          # dashboards\n├── data/             # raw + BI exports\n└── models/           # persisted models\n</code></pre><p><strong>Run sequence (local):</strong></p><pre><code>uv sync\nuv run python src/generate_raw_data.py\nuv run python src/load_raw_data.py\n# Run SQL stages in sql/README.md\nuv run python src/export_bi_data.py\nuv run streamlit run streamlit_app.py\n</code></pre><p><strong>Why it stands out:</strong> The project mirrors real fraud operations with staging layers, feature tables, and analyst‑ready views, not just a model demo.</p>",
@@ -44,6 +45,7 @@
     "images": [
       "assets/images/fulls/01.jpg"
     ],
+    "content_path": "data/projects/fraud-intelligence-and-risk-analytics.html",
     "show_apps_section": true,
     "notebook_url": "",
     "video_url": "",
@@ -60,7 +62,7 @@
   {
     "id": "e-commerce-product-analytics",
     "title": "E-commerce Product Analytics",
-    "short_description": "Funnel, cohort retention, and A/B testing analytics with BI-ready exports.",
+    "short_description": "Full e-commerce analytics pipeline—synthetic clickstream, SQL funnels, cohort retention, and BI-ready exports for decision makers.",
     "full_description": "<p>Built a production‑style analytics workflow for e‑commerce data covering sessionization, funnel conversion, cohort retention, and A/B test evaluation. The pipeline generates realistic clickstream + order data, materializes analytics tables in DuckDB, and exports Power BI‑ready datasets.</p><p>The design mirrors a modern analytics stack where SQL is the source of truth and notebooks validate statistical results with clear business readouts.</p><p><strong>Dataset scale:</strong> ~120k users, ~1M events, ~45k orders, and ~400k sessions.</p>",
     "problem_statement": "<p>Product teams need reliable funnel and retention analytics to improve conversion and repeat purchase behavior. Experiment decisions must be supported by rigorous statistics.</p><ul><li>Where are users dropping in the funnel?</li><li>Which cohorts retain better over time?</li><li>Did the experiment lift conversion in a statistically valid way?</li></ul><p>This project demonstrates how to take raw clickstream data to BI‑ready metrics with reproducible SQL and notebook validation.</p>",
     "approach": "<p><strong>Pipeline flow:</strong></p><ol><li>Generate synthetic users, events, and orders.</li><li>Load data into DuckDB with typed tables.</li><li>Run SQL for sessionization, funnel flags, and cohort tables.</li><li>Compute retention rates and export BI‑ready views.</li><li>Validate results in notebooks (retention + A/B tests).</li></ol><p><strong>Repository layout:</strong></p><pre><code>E-commerce-Product-Analytics/\n├── src/        # data generation + load\n├── sql/        # sessionization + funnel + cohorts\n├── scripts/    # materialize + export\n├── notebooks/  # cohort + A/B analysis\n└── data/       # raw + powerbi exports\n</code></pre><p><strong>Run sequence (local):</strong></p><pre><code>uv sync\nuv run python src/data_generator.py\nuv run python src/load_to_db.py\nuv run python scripts/materialize_tables.py\nuv run python scripts/export_powerbi_data.py\n</code></pre><p><strong>Why it stands out:</strong> Includes statistical validation (z‑tests + bootstrap CIs) alongside production‑style SQL transformations.</p>",
@@ -73,6 +75,7 @@
     "images": [
       "assets/images/fulls/04.jpg"
     ],
+    "content_path": "data/projects/e-commerce-product-analytics.html",
     "show_apps_section": true,
     "notebook_url": "",
     "video_url": "",
@@ -89,7 +92,7 @@
   {
     "id": "churn-retention-analytics",
     "title": "Churn & Retention Analytics",
-    "short_description": "End-to-end churn analytics with ML risk scoring and a retention strategy simulator.",
+    "short_description": "Churn lab that goes from raw events to ML risk scores and a Streamlit retention simulator for ROI‑driven interventions.",
     "full_description": "<p>Built an end‑to‑end churn analytics system that turns raw customer activity into actionable retention strategies. The workflow generates synthetic customer and usage data, engineers features in SQL, trains ML risk models, and powers a Streamlit retention simulator for ROI planning.</p><p>The project demonstrates the full analytics lifecycle from data generation to decision support tooling and ties model outputs to business actions.</p><p><strong>Dataset scale:</strong> 92,610 customers with realistic usage, billing, and support behavior.</p>",
     "problem_statement": "<p>Subscription businesses need to identify at‑risk customers early and allocate retention spend where it delivers the highest ROI.</p><ul><li>Detect churn risk in the 31‑45 day intervention window.</li><li>Prioritize high‑value, high‑risk segments.</li><li>Simulate retention offers to optimize ROI.</li></ul><p>This project bridges prediction and decisioning by embedding risk scores into a retention simulator.</p>",
     "approach": "<p><strong>Pipeline stages:</strong></p><ol><li>Synthetic data generation with retention probability curves.</li><li>SQL staging, data quality checks, and feature engineering.</li><li>EDA and lifecycle segmentation.</li><li>Model training and explainability (LR + Random Forest).</li><li>Retention strategy simulator for ROI planning.</li></ol><p><strong>Repository layout:</strong></p><pre><code>churn-retention-analytics/\n├── pipeline/   # data generation + SQL + training\n├── sql/        # staging + features\n├── src/        # EDA + helpers\n├── app/        # retention simulator\n├── docs/       # stage write-ups\n└── models/     # trained artifacts\n</code></pre><p><strong>Feature engineering (example):</strong></p><pre><code>WITH usage_trends AS (\n  SELECT customer_id,\n         AVG(usage_minutes) AS avg_usage_minutes,\n         (AVG(CASE WHEN date >= CURRENT_DATE - 30 THEN usage_minutes END) -\n          AVG(CASE WHEN date < CURRENT_DATE - 30 THEN usage_minutes END))\n         / NULLIF(AVG(CASE WHEN date < CURRENT_DATE - 30 THEN usage_minutes END), 0)\n         AS usage_trend_30d\n  FROM staging.usage_daily\n  GROUP BY customer_id\n)\n</code></pre><p><strong>Model training (example):</strong></p><pre><code>rf_model = RandomForestClassifier(\n  n_estimators=200,\n  max_depth=8,\n  min_samples_leaf=100,\n  class_weight='balanced',\n  random_state=42,\n)\n</code></pre><p><strong>Why it stands out:</strong> Includes a retention simulator that turns model outputs into ROI‑based intervention decisions.</p>",
@@ -102,6 +105,7 @@
     "images": [
       "assets/images/fulls/06.jpg"
     ],
+    "content_path": "data/projects/churn-retention-analytics.html",
     "show_apps_section": true,
     "notebook_url": "",
     "video_url": "",
@@ -118,7 +122,7 @@
   {
     "id": "used-car-price",
     "title": "Used Car Price Prediction",
-    "short_description": "End-to-end ML pipeline: EDA, feature engineering, model selection, deployment.",
+    "short_description": "End-to-end used-car pricing pipeline—EDA, feature engineering, tuned tree models, plus a Streamlit app and BI assets for business users.",
     "full_description": "Built a regression pipeline to predict used car prices using Python (pandas, scikit-learn). Applied feature engineering for age, drivetrain, fuel type, and mileage. Tuned tree-based models and evaluated with cross-validation, then exposed a simple prediction app for business users.",
     "problem_statement": "Estimate fair market value of used cars to improve resale pricing and reduce inventory holding costs.",
     "approach": "Data profiling and cleaning; feature engineering (age, brand segments); model benchmarking (Random Forest, XGBoost, LightGBM); SHAP for explainability; Streamlit for inference UI.",
@@ -144,7 +148,7 @@
   {
     "id": "customer-churn",
     "title": "Customer Churn Analysis & Retention",
-    "short_description": "Churn risk scoring and driver analysis to prioritize retention actions.",
+    "short_description": "Churn risk scoring and driver analysis with a Power BI dashboard that turns SQL cohorts and XGBoost models into concrete retention playbooks.",
     "full_description": "Built a churn propensity model and driver analysis to identify high-risk cohorts. Combined SQL cohorting, Python modeling, and BI storytelling for stakeholders.",
     "problem_statement": "Reduce churn and protect recurring revenue by targeting high-risk cohorts with tailored offers.",
     "approach": "Cohort analysis in SQL; feature engineering (tenure, usage, support tickets, payments); model with XGBoost; SHAP for drivers; dashboard for business teams.",
@@ -170,7 +174,7 @@
   {
     "id": "sales-bi-dashboard",
     "title": "Sales Performance BI Dashboard",
-    "short_description": "Executive Power BI dashboard for revenue, margin, and regional performance.",
+    "short_description": "Executive-grade Power BI dashboard for revenue, margin, and regional performance, with drill-through and PBIX/PDF assets for leadership reviews.",
     "full_description": "Designed a BI dashboard to monitor revenue, margin, and growth across regions and segments. Built DAX measures for YoY, variance, and contribution analysis.",
     "problem_statement": "Give leadership a single source of truth for sales performance and margin health.",
     "approach": "Modeled fact/dimension tables; created DAX KPIs (YoY, MoM, mix); built drill-through for region/segment; published to Power BI Service.",
@@ -196,7 +200,7 @@
   {
     "id": "ab-testing",
     "title": "Product AB Test Evaluation",
-    "short_description": "Designed and evaluated an experiment to measure conversion lift with clean stats.",
+    "short_description": "Hands-on A/B test readout—power analysis, clean stats, and a slide deck that makes ship/hold decisions easy to explain.",
     "full_description": "Evaluated an A/B test for a product funnel change. Checked randomization, ran power analysis, measured lift with confidence intervals, and provided decision guidance.",
     "problem_statement": "Determine whether variant improves conversion without harming retention or revenue per user.",
     "approach": "Pre-test power calc; randomization checks; difference-in-proportions test; delta method CI; holdout on retention; readout with recommendations.",
@@ -222,7 +226,7 @@
   {
     "id": "oil-spill-classification",
     "title": "Oil Spill Classification using ML",
-    "short_description": "Machine Learning-Based Ocean Patch Classification Dataset: Predicting Oil Spills in Satellite Images through Advanced Feature Analysis.",
+    "short_description": "Environmental ML project that classifies oil spills in satellite patches using engineered features, multiple models, and a fully documented notebook.",
     "full_description": "Built a classification model to detect oil spills in satellite images using machine learning techniques. Applied feature engineering and various ML algorithms to achieve high accuracy.",
     "problem_statement": "Detect and classify oil spills in satellite imagery to enable rapid environmental response.",
     "approach": "Image preprocessing, feature extraction, model training with multiple algorithms (Random Forest, SVM, Neural Networks), evaluation and optimization.",
@@ -248,7 +252,7 @@
   {
     "id": "car-features-impact",
     "title": "Impact Of Car Features - EDA & Dashboarding",
-    "short_description": "Unveiling Market Dynamics: Exploring the Influence of Car Features on Selling Prices through in-depth Analysis with Python, Excel, and Power BI.",
+    "short_description": "EDA + dashboarding project on how car features drive price, combining Python analysis with interactive Power BI and Excel views for stakeholders.",
     "full_description": "Comprehensive EDA study analyzing how different car features impact selling prices. Created interactive dashboards in Power BI and Excel to visualize key insights.",
     "problem_statement": "Understand which car features drive pricing decisions in the used car market.",
     "approach": "Data cleaning and EDA in Python, feature correlation analysis, dashboard creation in Power BI and Excel, visualization of key drivers.",

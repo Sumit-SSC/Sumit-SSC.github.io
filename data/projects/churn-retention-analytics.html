@@ -1,0 +1,248 @@
+<div class="space-y-10">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="space-y-6">
+    <div class="bg-gradient-to-r from-rose-50 via-amber-50 to-emerald-100 dark:from-rose-900/20 dark:via-amber-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-rose-200 dark:border-rose-800">
+      <p class="text-sm font-semibold text-rose-900 dark:text-rose-100 mb-2">Project Overview</p>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
+        <strong>Churn &amp; Retention Analytics</strong> is a full lifecycle project that takes synthetic subscription data
+        from raw events to <strong>SQL features</strong>, <strong>ML risk scores</strong>, and a <strong>Streamlit retention simulator</strong>
+        for ROI-based decision making. It combines analytics engineering, modeling, and product thinking into a single,
+        interview-ready system.
+      </p>
+    </div>
+
+    <p class="text-gray-700 dark:text-gray-300">
+      The system is designed as if it were serving a SaaS or subscription business: it identifies at-risk customers in a
+      31–45 day window, prioritizes segments by risk and value, and helps test retention strategies (discounts, support upgrades,
+      feature unlocks) under cost and ROI constraints.
+    </p>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Context & Problem Framing</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      Churn is a critical business problem for SaaS, telecom, fintech, and any subscription or recurring revenue model.
+      Leaders ask:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Who is about to churn, and when?</strong></li>
+      <li><strong>Which customers are worth saving?</strong> (high value, high risk)</li>
+      <li><strong>Which retention levers pay back?</strong> (discounts, support, features)</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-300">
+      Many churn projects stop at a predictive model; this project goes further by:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li>Generating realistic lifecycle data for ~100k customers.</li>
+      <li>Building a <strong>SQL-first feature pipeline</strong> with clear data quality checks.</li>
+      <li>Training <strong>Logistic Regression and Random Forest</strong> models for risk scoring.</li>
+      <li>Surfacing these scores and features in a <strong>Streamlit retention simulator</strong> where business users can play with strategies and see ROI.</li>
+    </ul>
+  </section>
+
+  <!-- APPROACH -->
+  <section id="approach" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Architecture, Data & Modeling</h2>
+
+    <!-- Architecture -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. High-Level Architecture</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The README summarizes the system as:
+      </p>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>Raw Data → SQL Feature Engineering → EDA &amp; Lifecycle Analysis → ML Models → Retention Simulator</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        The repository is split into clear stages:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><code>pipeline/</code> – orchestration of data generation, SQL, and training.</li>
+        <li><code>sql/</code> – staging, feature tables, and data quality checks.</li>
+        <li><code>src/</code> – EDA helpers and supporting Python modules.</li>
+        <li><code>models/</code> – stored model artifacts and metadata.</li>
+        <li><code>app/</code> – Streamlit retention simulator.</li>
+        <li><code>docs/</code> – narrative per-stage documentation and interview guide.</li>
+      </ul>
+    </section>
+
+    <!-- Data Generation -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Data Generation & Lifecycle Modeling</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Synthetic data is generated to match realistic behavior:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>~92,610 customers.</li>
+        <li>Usage, billing, and support logs with seasonality and noise.</li>
+        <li>Plan tiers (Free, Basic, Pro, Enterprise) with different churn profiles.</li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code># Pseudocode-style snippet for customer generation
+def generate_customers(n_customers: int = 100_000) -&gt; pd.DataFrame:
+    customers = pd.DataFrame({
+        "customer_id": range(1, n_customers + 1),
+        "signup_date": np.random.choice(pd.date_range("2022-01-01", "2024-12-31"), n_customers),
+        "plan": np.random.choice(["Free", "Basic", "Pro", "Enterprise"], n_customers, p=[0.45, 0.35, 0.18, 0.02]),
+        "region": np.random.choice(["NA", "EU", "APAC", "LATAM"], n_customers),
+    })
+    # Additional attributes and base churn probabilities per plan...
+    return customers</code></pre>
+    </section>
+
+    <!-- SQL Feature Engineering -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. SQL Feature Engineering & Data Quality</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The <code>sql/</code> layer turns raw usage, billing, and support logs into analysis-ready features:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>30-day usage trends.</li>
+        <li>Payment issues and dunning status.</li>
+        <li>Support ticket volume and recency.</li>
+        <li>Lifecycle stage (Onboarding, Active, At-Risk, Churned).</li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>WITH usage_trends AS (
+  SELECT
+    customer_id,
+    AVG(usage_minutes) AS avg_usage_minutes,
+    (
+      AVG(CASE WHEN usage_date &gt;= CURRENT_DATE - INTERVAL '30' DAY THEN usage_minutes END)
+      - AVG(CASE WHEN usage_date &lt; CURRENT_DATE - INTERVAL '30' DAY THEN usage_minutes END)
+    ) / NULLIF(AVG(CASE WHEN usage_date &lt; CURRENT_DATE - INTERVAL '30' DAY THEN usage_minutes END), 0)
+    AS usage_trend_30d
+  FROM staging.usage_daily
+  GROUP BY customer_id
+)
+SELECT
+  u.customer_id,
+  u.avg_usage_minutes,
+  u.usage_trend_30d,
+  p.payment_issue_count_90d,
+  s.support_ticket_count_90d
+FROM usage_trends u
+LEFT JOIN features.payment_signals p USING (customer_id)
+LEFT JOIN features.support_signals s USING (customer_id);</code></pre>
+    </section>
+
+    <!-- Modeling -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Modeling & Explainability</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Two models are trained for risk scoring:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>Logistic Regression</strong> as an interpretable baseline.</li>
+        <li><strong>Random Forest</strong> as a stronger, non-linear model.</li>
+      </ul>
+      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>rf_model = RandomForestClassifier(
+    n_estimators=200,
+    max_depth=8,
+    min_samples_leaf=100,
+    class_weight="balanced",
+    random_state=42,
+)
+rf_model.fit(X_train, y_train)
+
+y_pred_proba = rf_model.predict_proba(X_valid)[:, 1]
+roc_auc = roc_auc_score(y_valid, y_pred_proba)</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        Explainability is handled using SHAP, with a focus on <strong>global feature importance</strong> for communication:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Usage trend (30-day).</li>
+        <li>Number of payment issues.</li>
+        <li>Support ticket volume.</li>
+        <li>Plan tier.</li>
+        <li>Active days.</li>
+      </ul>
+    </section>
+
+    <!-- Retention Simulator -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Retention Strategy Simulator (Streamlit)</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The <strong>Streamlit retention simulator</strong> is where models and features become business decisions:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Filter by segment (plan, region, lifecycle stage).</li>
+        <li>Set risk thresholds and choose interventions (discount, support, feature unlock).</li>
+        <li>Estimate churn reduction per strategy.</li>
+        <li>Compute intervention cost and retained revenue → <strong>net ROI</strong>.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        This is surfaced in the portfolio via the <code>streamlit_url</code> field when deployed, turning the project into a
+        live, explorative tool rather than a static report.
+      </p>
+    </section>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section id="insights" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Insights, Findings & Business Impact</h2>
+
+    <!-- Key Results -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Key Results (From README)</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>Baseline churn:</strong> ~7.58% across the synthetic portfolio.</li>
+        <li><strong>Random Forest performance:</strong> ROC AUC 0.96, Precision@Top 10% = 51%.</li>
+        <li><strong>Top 10% risk customers:</strong> 51% churn probability vs 7.58% baseline.</li>
+        <li><strong>Best ROI strategy:</strong> Priority support on high-value customers, yielding ~2.3× ROI in the simulator.</li>
+      </ul>
+    </section>
+
+    <!-- Executive Insights -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Executive Insights</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Usage decline is the strongest signal.</strong>
+          Declining 30-day usage is a more powerful predictor than static attributes alone, supporting lifecycle-based
+          interventions (e.g., reactivation campaigns).
+        </li>
+        <li>
+          <strong>Plan tier structures risk.</strong>
+          Free/Basic tiers are much riskier than Enterprise, which supports tier-specific strategies and SLAs.
+        </li>
+        <li>
+          <strong>Payment and support friction compound churn.</strong>
+          Payment issues and heavy support load together create a 4.5× higher risk segment in synthetic data.
+        </li>
+        <li>
+          <strong>Intervention timing matters.</strong>
+          The 31–45 day window provides a meaningful chance to intervene before churn becomes irreversible.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Trade-offs & Limitations -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">8. Trade-offs, Limitations & Future Work</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>Synthetic data:</strong> safer for a portfolio, but real-world evaluation would refine thresholds and calibration.</li>
+        <li><strong>Focus on tabular ML:</strong> deep learning is intentionally avoided; the system emphasizes features and explainability.</li>
+        <li><strong>No production scheduler:</strong> pipeline is triggered manually via scripts; in production, this would be Airflow/DBT/Jobs.</li>
+        <li><strong>Future scope:</strong> add cohort dashboards in a BI tool and integrate with real CRM or billing systems.</li>
+      </ul>
+    </section>
+  </section>
+
+  <!-- MEDIA -->
+  <section id="media" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Simulator & How to Explore</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      On the portfolio project page, this long-form write-up is complemented by:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li>Optional <strong>Streamlit app link</strong> (retention simulator) via <code>streamlit_url</code>.</li>
+      <li>EDA and model screenshots from notebooks (<code>eda_outputs/</code>).</li>
+      <li>Architecture and pipeline diagrams from <code>docs/</code>.</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-300">
+      For reviewers, the fastest understanding path is: skim this article, then open the simulator to experiment with
+      thresholds and strategies—seeing how analytics and ML translate to specific, measurable churn decisions.
+    </p>
+  </section>
+
+</div>
+
