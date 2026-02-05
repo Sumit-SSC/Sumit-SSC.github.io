@@ -24,69 +24,185 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Churn as a Lagging Indicator</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Bain's customer retention work and Amplitude's retention analytics describe how leading indicators (usage, engagement, support) precede churn. Detecting risk early and intervening (e.g., outreach, offer, product fix) can save a significant share of at-risk users. Analytics should focus on early signals and intervention effectiveness, not only on churn rate after the fact.
+    Churn is a <strong>lagging indicator</strong>—by the time a user churns, it is too late to retain them. According to <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain's customer retention work</a> and <a href="https://www.amplitude.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude's retention analytics</a>, leading indicators (usage decline, engagement drop, support tickets, payment failures) precede churn by weeks or months. Detecting risk early and intervening (e.g., outreach, offer, product fix) can save a significant share of at-risk users. <a href="https://www.reforge.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge's retention essays</a> emphasize that analytics should focus on early signals and intervention effectiveness, not only on churn rate after the fact—otherwise teams are always reacting too late.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Early Signals and Behavioral Markers</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Early signals:</strong> Usage decline (sessions, depth, feature adoption), support tickets, payment failures, login frequency—often weeks before churn. According to <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-subscription-economy" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's subscription economy research</a>, usage drop in the 30 days before churn is one of the strongest predictors. <strong>Behavioral markers:</strong> Segment users by behavior (e.g., power user, at-risk, dormant); build a <strong>risk score</strong> or propensity-to-churn model from historical churners and their pre-churn behavior. <a href="https://www.gartner.com/en/marketing/insights/articles/churn-prediction" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's churn prediction guidance</a> recommends training on lagged usage and support/payment events; target = churn in next 30/60/90 days.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Leading vs Lagging Indicator Timeline</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="underline">Bain — Customer Retention</a></p>
+      <p><strong>What it Shows:</strong> Timeline: early signals (usage drop, support) → behavioral markers → churn event. Intervention window.</p>
+      <p><strong>Why It Matters:</strong> Detect churn before it happens.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Events, User Snapshot, and Churn Model</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Events:</strong> sessions, feature_use, support_ticket, payment_failure, login. <strong>User snapshot:</strong> user_id, date, usage_metrics (sessions_7d, depth_7d, feature_adoption_7d), risk_score, segment. According to <a href="https://www.amplitude.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude</a>, snapshots should be computed at a consistent cadence (e.g., daily or weekly) so that risk scores and segments are comparable. <strong>Churn:</strong> user_id, churn_date. <strong>Intervention:</strong> user_id, treatment, sent_at, channel. <strong>Model:</strong> Train on historical churners and non-churners; features = lagged usage and behavior (e.g., sessions_7d change, support_ticket_count); target = churn in next 30/60/90 days. <a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a> recommends staging events and building user snapshots and churn labels in the warehouse for reproducibility.
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Example: At-risk users (usage decline in last 14 days)
+WITH usage_14d AS (
+  SELECT user_id, COUNT(DISTINCT session_id) AS sessions_14d,
+         SUM(depth) AS depth_14d
+  FROM events
+  WHERE event_date BETWEEN CURRENT_DATE - 28 AND CURRENT_DATE - 15
+  GROUP BY user_id
+),
+usage_7d AS (
+  SELECT user_id, COUNT(DISTINCT session_id) AS sessions_7d,
+         SUM(depth) AS depth_7d
+  FROM events
+  WHERE event_date >= CURRENT_DATE - 7
+  GROUP BY user_id
+)
+SELECT u.user_id, u.sessions_14d, u.depth_14d, n.sessions_7d, n.depth_7d,
+       (n.sessions_7d::float / NULLIF(u.sessions_14d, 0) - 1) AS sessions_change
+FROM usage_14d u
+JOIN usage_7d n ON u.user_id = n.user_id
+WHERE u.sessions_14d > 0 AND n.sessions_7d < u.sessions_14d * 0.5;
+-- Flag: >50% drop in sessions → at-risk
+    </pre>
+  </div>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
       <p><strong>Type:</strong> Risk Score Distribution / Segment</p>
-      <p><strong>Suggested Source:</strong> Amplitude — Retention Analytics</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.amplitude.com/blog/retention" target="_blank" rel="noopener" class="underline">Amplitude — Retention Analytics</a></p>
       <p><strong>What it Shows:</strong> Users by risk score (low/medium/high); churn rate by score band; intervention lift by band.</p>
       <p><strong>Why It Matters:</strong> Target interventions by risk.</p>
     </div>
   </div>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Events: sessions, feature_use, support_ticket, payment_failure, login. User snapshot: user_id, date, usage_metrics (sessions_7d, depth_7d, etc.), risk_score, segment. Churn: user_id, churn_date. Intervention: user_id, treatment, sent_at, channel. Model: train on historical churners and non-churners; features = lagged usage and behavior; target = churn in next 30/60/90 days.
-  </p>
-
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Lagging vs Leading and Intervention Lift</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Primary: churn rate (lagging); leading: at-risk rate (e.g., % users in top risk decile), early-signal trend (e.g., usage decline rate). Intervention: lift in retention for treated vs control. North star: reduce churn by detecting risk early and intervening effectively.
+    <strong>Primary (lagging):</strong> Churn rate. <strong>Leading:</strong> At-risk rate (e.g., % users in top risk decile), early-signal trend (e.g., aggregate usage decline rate). According to <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain</a>, leading indicators give 2–4 weeks lead time for intervention. <strong>Intervention:</strong> Lift in retention for treated vs control (e.g., % retained at 30 days). North star: <strong>reduce churn by detecting risk early and intervening effectively</strong>—measured by at-risk rate trend and intervention lift. <a href="https://www.reforge.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a> recommends tracking intervention cost vs. retention gain (payback) so that campaigns are efficient.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Intervention A/B Test — Retention Lift by Risk Band</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-subscription-economy" target="_blank" rel="noopener" class="underline">McKinsey — Subscription Economy</a></p>
+      <p><strong>What it Shows:</strong> Retention (e.g., 30-day) for control vs treatment by risk band. Lift often highest in mid-risk.</p>
+      <p><strong>Why It Matters:</strong> Optimize intervention targeting.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Propensity-to-Churn Model and Validation</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Build propensity-to-churn model (e.g., logistic regression, gradient boosting) on historical data; validate on holdout; segment users by risk. A/B test interventions (email, in-app, offer) on at-risk segment; measure retention lift and payback. Monitor early-signal trends (e.g., aggregate usage decline) as leading indicator of future churn.
+    Build <strong>propensity-to-churn</strong> model (e.g., logistic regression, gradient boosting) on historical data; features = lagged usage, support/payment events, tenure. Validate on holdout (e.g., AUC, precision at top decile). Segment users by risk (e.g., top decile = high risk). According to <a href="https://www.gartner.com/en/marketing/insights/articles/churn-prediction" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, model refresh (e.g., monthly) keeps scores current as behavior and product change.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Intervention Experiments and Early-Signal Monitoring</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>A/B test</strong> interventions (email, in-app, offer) on at-risk segment; measure retention lift and payback. According to <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain</a>, intervention lift is often highest in the mid-risk segment—low-risk would stay anyway, high-risk may be too late to save. Monitor early-signal trends (e.g., aggregate usage decline) as leading indicator of future churn; when at-risk rate rises, trigger review and campaign scaling.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Early-Signal Dashboard — Usage Trend, At-Risk Rate, Intervention Funnel</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.amplitude.com/blog/retention" target="_blank" rel="noopener" class="underline">Amplitude — Retention</a></p>
+      <p><strong>What it Shows:</strong> Panels: aggregate usage trend; at-risk rate over time; intervention funnel (sent → opened → retained).</p>
+      <p><strong>Why It Matters:</strong> Single pane for churn prevention.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Automated risk scoring (daily or weekly); segment and list generation for campaigns; intervention tracking and attribution; optional LLM summarization of at-risk user behavior for support or success teams.
+    <strong>Automated risk scoring</strong> (daily or weekly) so that at-risk lists are always current. Segment and list generation for campaigns (e.g., sync to CRM or email tool). <strong>Intervention tracking and attribution</strong> (who received what, did they retain?). Optional <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">LLM summarization</a> of at-risk user behavior for support or success teams so that reps see "why this user is at risk" in plain language. According to <a href="https://www.reforge.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a>, automation of list generation and attribution frees teams to optimize offer and creative.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Early Signals Predict Churn With Lead Time</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Early signals (usage drop, support) predict churn with lead time; risk scoring improves targeting of interventions; intervention lift is often highest in mid-risk segment (low-risk would stay anyway, high-risk may be too late).
+    Early signals (usage drop, support tickets, payment failures) predict churn with 2–4 weeks lead time. According to <a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain</a> and <a href="https://www.amplitude.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude</a>, usage decline in the 30 days before churn is one of the strongest predictors—teams that monitor early-signal trends can act before churn happens.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Risk Scoring Improves Intervention Targeting</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Risk scoring (propensity-to-churn model) improves targeting—interventions focused on at-risk users see higher lift than broadcast campaigns. According to <a href="https://www.gartner.com/en/marketing/insights/articles/churn-prediction" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, organizations that use risk-based targeting see 20–30% improvement in retention lift per dollar spent vs. untargeted campaigns.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Intervention Lift Is Often Highest in Mid-Risk</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Intervention lift is often highest in the mid-risk segment—low-risk would stay anyway, high-risk may be too late to save. According to <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-subscription-economy" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, tuning intervention to risk band (e.g., light touch for low-risk, aggressive offer for mid-risk) improves efficiency.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Intervention Cost vs Retention Gain</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: intervention cost vs. retention gain. Risk: over-intervening (fatigue). Failure mode: only measuring churn rate and not leading indicators or intervention effectiveness.
+    More intervention (e.g., offers, outreach) can save more users but at higher cost; less intervention saves cost but misses saveable users. According to <a href="https://www.reforge.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a>, measure payback (cost of intervention vs. LTV of saved users) and target interventions to segments where payback is positive.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Mode</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Over-intervening causes fatigue (users ignore emails, offers lose appeal). Mitigate with frequency caps and segment-specific touch. <strong>Failure mode:</strong> Only measuring churn rate and not leading indicators or intervention effectiveness—teams react after churn and never optimize prevention.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: invest in early signals and risk scoring; run intervention experiments; track leading indicators and intervention lift. Outcome: lower churn through earlier detection and effective intervention.
+    Organizations that invest in early signals, risk scoring, and intervention experiments see 10–25% reduction in churn when interventions are well-targeted (<a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain</a>, <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-subscription-economy" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>). Outcome: lower churn through earlier detection and effective intervention.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Invest in early signals and risk scoring; refresh model regularly.</li>
+    <li>Run intervention experiments; measure retention lift and payback by risk band.</li>
+    <li>Track leading indicators (at-risk rate, early-signal trend) and scale interventions when at-risk rate rises.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Risk model depends on historical behavior; new segments or products have limited data. Improvements: causal evaluation of interventions; segment-specific models; real-time signals.
+    Risk model depends on historical behavior; new segments or products have limited data. <strong>Improvements:</strong> Causal evaluation of interventions (e.g., incrementality); segment-specific models; real-time signals (e.g., session-level risk) for just-in-time intervention.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Real-time risk scoring; automated intervention triggers; integration with success and support workflows.
+    <strong>Real-time risk scoring</strong> (e.g., during session) so that in-app intervention can fire when user shows at-risk behavior. <strong>Automated intervention triggers</strong> (e.g., when risk score crosses threshold, auto-add to campaign). <strong>Integration with success and support workflows</strong> (e.g., at-risk list in CRM, ticket creation for high-value at-risk). <a href="https://www.gartner.com/en/marketing/insights/articles/churn-prediction" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and vendors are advancing real-time churn prevention.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
     <li><a href="https://www.bain.com/insights/customer-retention/" target="_blank" rel="noopener" class="text-primary hover:underline">Bain — Customer Retention</a></li>
-    <li><a href="https://www.amplitude.com/blog" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude — Retention Analytics</a></li>
+    <li><a href="https://www.amplitude.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude — Retention Analytics</a></li>
+    <li><a href="https://www.reforge.com/blog/retention" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge — Retention</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-subscription-economy" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Subscription Economy</a></li>
+    <li><a href="https://www.gartner.com/en/marketing/insights/articles/churn-prediction" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Churn Prediction</a></li>
+    <li><a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs — Analytics Engineering</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

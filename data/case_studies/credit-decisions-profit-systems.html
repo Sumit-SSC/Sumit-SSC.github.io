@@ -26,8 +26,21 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">From Classification to Profit Optimization</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Lenders maximize long-term profit by approving applicants whose expected revenue exceeds expected loss. McKinsey's credit risk analytics work emphasizes moving from "good/bad" scoring to economic decision frameworks. Basel capital and IFRS 9 ECL rely on PD, LGD, and EAD; analytics teams must produce estimates that are consistent with both profit and regulation.
+    Credit approval is often treated as a binary approve/decline problem: score applicants, set a cutoff, approve above and decline below. In practice, lending is a <strong>profit optimization</strong> problem. According to <a href="https://www.mckinsey.com/industries/financial-services/our-insights/credit-risk-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's credit risk analytics research</a>, lenders maximize long-term profit by approving applicants whose expected revenue (interest, fees) exceeds expected loss (default × loss given default). A high-risk applicant with high revenue potential may be more profitable than a low-risk applicant with thin margins.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The <a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="text-primary hover:underline">Basel framework</a> and <a href="https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/" target="_blank" rel="noopener" class="text-primary hover:underline">IFRS 9</a> (Expected Credit Loss) rely on three core components: <strong>Probability of Default (PD)</strong>, <strong>Loss Given Default (LGD)</strong>, and <strong>Exposure at Default (EAD)</strong>. Analytics teams must produce estimates that are consistent with both profit optimization and regulatory capital and provisioning. This dual objective—profit and compliance—drives the need for transparent, auditable models and decision frameworks.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Business Stakes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For retail lenders, a 1% improvement in risk-adjusted profit per approved account can translate to tens of millions in annual profit. According to <a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's credit risk research</a>, lenders that shift from accuracy-optimized scorecards to profit-optimized decision frameworks see 10-20% improvements in portfolio economics. The mechanism: profit-optimal cutoffs often differ from accuracy-optimal cutoffs; approving more marginal but profitable applicants increases volume and revenue without proportionally increasing loss.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    However, profit optimization must be balanced with fairness and governance. <a href="https://www.consumerfinance.gov/rules-policy/regulations/1002/" target="_blank" rel="noopener" class="text-primary hover:underline">ECOA</a> (Equal Credit Opportunity Act) and fair lending regulations require that credit decisions do not discriminate on protected characteristics. Analytics teams must design profit frameworks that incorporate fairness constraints—either as hard constraints (e.g., no disparate impact) or as guardrail metrics monitored alongside profit.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
@@ -41,54 +54,354 @@
   </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Application and Decision Data</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Application (applicant_id, features, decision, score); performance (account_id, monthly_snapshot, default_flag, EAD, recovery); reject pool (applicant_id, features, no outcome). PD models use performance data; reject inference augments with rejected applicants via parceling or reweighting. Vintage = cohort by origination date; track default rate and loss by vintage and month.
+    Credit analytics requires tracking the full lifecycle: application, decision, account performance, and default/recovery. The typical schema captures application-level features (bureau score, income, debt-to-income, employment), decision (approve/decline, limit, pricing), and outcome (default flag, EAD at default, recovery amount). According to <a href="https://www.mckinsey.com/industries/financial-services/our-insights/credit-risk-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's credit risk research</a>, data quality and consistency across these stages are critical for PD/LGD estimation and profit calibration.
   </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Core Credit Data Schema
+applications: applicant_id, application_date, bureau_score, income, dti,
+              employment_tenure, product_type, requested_limit, decision, approved_limit, apr
+performance:  account_id, applicant_id, origination_date, monthly_snapshot_date,
+              balance, arrears_days, default_flag, ead_at_default, recovery_amount
+reject_pool:  applicant_id, application_date, features, decision (decline), score
+    </pre>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Reject Inference: The Missing-Outcome Problem</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A fundamental challenge in credit analytics is <strong>reject inference</strong>: applicants who were declined have no observed outcome (default or repayment). Training PD models only on approved accounts introduces <strong>selection bias</strong>—the approved population is a non-random subset, typically lower risk than the full applicant pool. According to <a href="https://www.bis.org/publ/bcbs_wp22.pdf" target="_blank" rel="noopener" class="text-primary hover:underline">Basel Committee research</a>, this can lead to overly optimistic PD estimates and suboptimal cutoffs when the model is applied to new applicants.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Common reject-inference methods include: (1) <strong>Parceling</strong>—assigning rejected applicants to good/bad based on their score rank relative to approved accounts; (2) <strong>Reweighting</strong>—weighting approved accounts to approximate the full applicant distribution; (3) <strong>Augmentation</strong>—using external data (e.g., bureau performance on other products) to infer outcomes for rejects. Each method has assumptions and limitations; the choice depends on data availability and regulatory acceptance.
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Expected Profit per Applicant (simplified)
+-- E[Profit] = (1 - PD) * Revenue - PD * LGD * EAD
+WITH applicant_scores AS (
+  SELECT applicant_id, pd_score, lgd_estimate, ead_estimate, revenue_estimate
+  FROM applications a
+  JOIN pd_model p ON a.features = p.features
+  JOIN lgd_model l ON a.features = l.features
+)
+SELECT applicant_id,
+  (1 - pd_score) * revenue_estimate - pd_score * lgd_estimate * ead_estimate AS expected_profit
+FROM applicant_scores;
+    </pre>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Vintage Analysis: Cohort Performance Over Time</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Vintage analysis</strong> tracks cohort performance over time—e.g., default rate by origination month and months-on-book. According to <a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's credit risk research</a>, vintage curves reveal model drift (are recent vintages performing as predicted?), policy impact (did a cutoff change improve or worsen quality?), and economic cycles (do default rates spike in recessions?). Lenders use vintage analysis for IFRS 9 staging, capital planning, and model validation.
+  </p>
+  
+  <!-- IMAGE 2: After Data Landscape -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Vintage Curve / Cohort Performance</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Credit Risk Vintage Analysis</a></p>
+      <p><strong>What it Shows:</strong> X-axis = months on book, Y-axis = cumulative default rate (%). Multiple lines, one per origination cohort (e.g., 2022-Q1, 2022-Q2). Shows how default develops over time and how recent vintages compare to older ones.</p>
+      <p><strong>Why It Matters:</strong> Visualizes model calibration and policy impact—key for governance and capital planning.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The PD × LGD × EAD Decomposition</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    <strong>Primary:</strong> Expected profit per decision (or portfolio NIM / loss ratio). <strong>Secondary:</strong> PD/LGD calibration, approval rate, default rate by segment. <strong>Guardrails:</strong> Fairness metrics, capital adequacy, model stability. North star: risk-adjusted profit within governance constraints.
+    Expected loss for a loan is: <strong>EL = PD × LGD × EAD</strong>. Revenue is typically interest and fees over the life of the loan. Expected profit = Revenue − EL (simplified; in practice, discounting and prepayment matter). According to <a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="text-primary hover:underline">Basel guidance</a>, PD is the probability of default over a defined horizon (e.g., 12 months); LGD is the fraction of EAD lost at default (1 − recovery rate); EAD is exposure at default (outstanding balance plus undrawn commitment). Scorecards and ML models can output PD directly; LGD and EAD often come from separate models or rules.
   </p>
+  
+  <div class="grid md:grid-cols-3 gap-4 my-6">
+    <div class="bg-slate-50 dark:bg-slate-900/20 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+      <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Primary Metrics</h4>
+      <ul class="text-sm text-slate-700 dark:text-slate-300 list-disc pl-4 space-y-1">
+        <li>Expected profit per decision</li>
+        <li>Portfolio NIM (net interest margin)</li>
+        <li>Loss ratio (credit cost / revenue)</li>
+      </ul>
+    </div>
+    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+      <h4 class="font-bold text-blue-900 dark:text-blue-100 mb-2">Secondary Metrics</h4>
+      <ul class="text-sm text-blue-700 dark:text-blue-300 list-disc pl-4 space-y-1">
+        <li>PD/LGD calibration (actual vs predicted)</li>
+        <li>Approval rate by segment</li>
+        <li>Default rate by segment</li>
+      </ul>
+    </div>
+    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
+      <h4 class="font-bold text-red-900 dark:text-red-100 mb-2">Guardrails</h4>
+      <ul class="text-sm text-red-700 dark:text-red-300 list-disc pl-4 space-y-1">
+        <li>Fairness (adverse action, disparity)</li>
+        <li>Capital adequacy</li>
+        <li>Model stability (vintage)</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- IMAGE 3: Metric Tree -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Metric Tree / Profit Decomposition</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Credit Risk Metric Hierarchy</a></p>
+      <p><strong>What it Shows:</strong> Tree with "Risk-Adjusted Profit" at root → Revenue (interest, fees) and Expected Loss (PD × LGD × EAD). PD/LGD/EAD each branch to data sources and models. Guardrails (fairness, capital) as side branches.</p>
+      <p><strong>Why It Matters:</strong> Frames credit as profit system, not just risk classification.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Profit-Optimal vs Accuracy-Optimal Cutoffs</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Maximizing classification accuracy (e.g., AUC) does not maximize profit. The profit-optimal cutoff is where marginal expected profit of one more approval equals zero. According to <a href="https://www.mckinsey.com/industries/financial-services/our-insights/credit-risk-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's credit risk research</a>, this cutoff can be significantly lower than the accuracy-optimal cutoff when revenue per good customer is high and loss per bad customer is moderate—implying more approvals and higher volume. Conversely, when loss given default is very high, the profit-optimal cutoff may be more conservative. Backtesting profit at different score cutoffs is essential.
+  </p>
+  
+  <div class="overflow-x-auto my-6">
+    <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Score Cutoff</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Approval Rate</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Default Rate</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">E[Profit] per Account</th>
+          <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 border-b">Portfolio Profit</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">700 (Conservative)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">40%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">2.1%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">$180</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">$72</td>
+        </tr>
+        <tr class="bg-primary/5">
+          <td class="px-4 py-2 font-medium">650 (Profit-Optimal)</td>
+          <td class="px-4 py-2 font-medium">58%</td>
+          <td class="px-4 py-2 font-medium">3.4%</td>
+          <td class="px-4 py-2 font-medium">$142</td>
+          <td class="px-4 py-2 font-medium">$82</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">600 (Aggressive)</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">72%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">5.2%</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">$85</td>
+          <td class="px-4 py-2 text-gray-700 dark:text-gray-300">$61</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Backtesting Profit at Score Cutoffs</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Backtest profit at different score cutoffs; A/B test policy (e.g., new cutoff or new model) on approval rate, default rate, and profit. Vintage analysis: default rate by origination cohort and age; monitor drift. Reject inference: compare portfolio performance with and without augmentation; document assumptions.
+    The core analytical exercise is to backtest expected profit at different score cutoffs using historical application and performance data. For each candidate cutoff, compute: (1) approval rate (fraction of applicants above cutoff); (2) default rate among approved (from performance data); (3) expected profit per approved account = (1 − PD) × Revenue − PD × LGD × EAD, averaged over approved cohort. According to <a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's credit risk research</a>, the cutoff that maximizes total portfolio profit (approval rate × E[profit] per approved) is the profit-optimal policy. This can be done segment-by-segment (e.g., by product, channel) to allow segment-specific cutoffs.
+  </p>
+  
+  <!-- IMAGE 4: Profit Curve -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Line Chart — Expected Profit vs Score Cutoff</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Credit Profit Curve</a></p>
+      <p><strong>What it Shows:</strong> X-axis = score cutoff (e.g., 550–750), Y-axis = expected profit per applicant (or portfolio profit). Inverted-U curve: low cutoff (approve many) → high default, lower profit; high cutoff (approve few) → low volume, lower profit; optimum in between. Annotated with profit-optimal cutoff.</p>
+      <p><strong>Why It Matters:</strong> Replaces "maximize AUC" with "maximize profit at threshold."</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Testing Policy Changes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When introducing a new cutoff or new model, A/B testing allows measurement of approval rate, default rate, and profit in a controlled way. Treatment group receives new policy; control receives incumbent. Outcomes (default, revenue) are observed over 12–24 months. According to <a href="https://hbr.org/2020/06/a-refresher-on-ab-testing" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's A/B testing guidance</a>, pre-register primary metric (e.g., risk-adjusted profit per applicant) and guardrails (fairness, default rate by segment). Use sequential or fixed-horizon design; report confidence intervals. Credit experiments are long-horizon—interim metrics (e.g., early delinquency) can proxy for default.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Vintage Analysis for Model Validation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Vintage analysis—default rate by origination cohort and months-on-book—surfaces model drift and policy impact. If recent vintages default at higher rates than predicted by PD model, the model may be stale or the population may have shifted. <a href="https://www.bis.org/publ/bcbs_wp22.pdf" target="_blank" rel="noopener" class="text-primary hover:underline">Basel Committee guidance</a> emphasizes backtesting and benchmarking; vintage curves are a key tool. Run vintage analysis quarterly; trigger model review when actual default rates exceed predicted by a material margin.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Automated PD/LGD Model Retraining</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Automated PD/LGD model retraining with vintage and reject-inference; profit-curve dashboards; fairness dashboards (approval/default by segment); model documentation and change logs for governance.
+    PD and LGD models require periodic retraining as new performance data arrives and population shifts. According to <a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's credit risk research</a>, leading lenders retrain PD models every 6–12 months, incorporating reject inference and vintage-weighted samples. LGD models are retrained less frequently (12–24 months) due to fewer default events. Automation pipelines: (1) extract performance and application data; (2) apply reject-inference; (3) train PD/LGD models; (4) backtest profit curves; (5) document and version for governance.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Profit-Curve and Fairness Dashboards</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Dashboards that surface expected profit by score band, approval rate by segment, and default rate by vintage enable continuous monitoring. Fairness dashboards—approval rate and default rate by protected group (e.g., geography, age band)—support ECOA compliance and adverse action documentation. <a href="https://www.consumerfinance.gov/rules-policy/regulations/1002/" target="_blank" rel="noopener" class="text-primary hover:underline">ECOA</a> requires that applicants receive reasons for adverse action; model documentation and score reason codes must support explainability.
+  </p>
+  
+  <!-- IMAGE 5: Dashboard -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup / Credit Risk Control Tower</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="underline">Gartner — Credit Risk Dashboards</a></p>
+      <p><strong>What it Shows:</strong> 4-panel: (1) Profit curve and current cutoff, (2) Vintage curves by cohort, (3) Approval/default rate by segment, (4) Fairness metrics (approval rate by protected group, disparity ratios).</p>
+      <p><strong>Why It Matters:</strong> Single pane for profit, risk, and fairness—key for governance.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Model Documentation and Change Logs</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Regulatory expectations (SR 11-7, IFRS 9) require model documentation: purpose, data, methodology, validation, limitations. Automated change logs—version control for model code, features, and hyperparameters—support auditability. When cutoffs or models change, document rationale and expected impact; track actual vs expected post-deployment.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Profit-Optimal Cutoff Often Differs from Accuracy-Optimal</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Profit-optimal cutoff often differs from accuracy-optimal; vintage analysis surfaces policy and economic effects; reject inference improves representativeness but adds assumption risk; fairness constraints can be incorporated as constraints on threshold or segment-level policies.
+    Across multiple lenders and products, the cutoff that maximizes AUC or classification accuracy is often more conservative than the cutoff that maximizes expected profit. According to <a href="https://www.mckinsey.com/industries/financial-services/our-insights/credit-risk-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's credit risk research</a>, the gap can be 50–100 score points—approving 10–20% more applicants at the profit-optimal cutoff. The mechanism: marginal applicants (just above profit-optimal cutoff) have positive expected profit; excluding them to improve accuracy leaves money on the table.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Vintage Analysis Surfaces Policy and Economic Effects</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Vintage curves reveal whether recent cohorts perform as predicted. A sudden worsening in recent vintages may indicate model drift, loosening policy, or economic stress. According to <a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's credit risk research</a>, lenders that run vintage analysis quarterly and trigger model review when actual default exceeds predicted by >20% see fewer capital surprises and better IFRS 9 staging.
+  </p>
+  
+  <!-- IMAGE 6: Decision Flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow / Credit Decision Framework</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="underline">Basel — Credit Decision Framework</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: Application → PD/LGD/EAD → E[Profit] → "E[Profit] > 0?" → Approve; "Fairness OK?" → Yes → Book. "E[Profit] < 0?" → Decline; Adverse Action Notice. Guardrails (capital, concentration) as side checks.</p>
+      <p><strong>Why It Matters:</strong> Repeatable, auditable credit decision process.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Reject Inference Improves Representativeness But Adds Assumption Risk</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reject inference methods (parceling, reweighting, augmentation) improve model representativeness to the full applicant pool and can shift profit-optimal cutoffs. However, each method relies on assumptions (e.g., parceling assumes score rank among rejects mirrors outcome). When assumptions are wrong, reject inference can bias PD estimates. Document assumptions; compare portfolio performance with and without reject inference in backtests.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 4: Fairness Constraints Can Be Incorporated as Constraints or Guardrails</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Profit optimization can be constrained by fairness: e.g., no disparate impact (approval rate ratio between protected groups above a threshold). According to <a href="https://www.consumerfinance.gov/rules-policy/regulations/1002/" target="_blank" rel="noopener" class="text-primary hover:underline">ECOA</a> and fair lending guidance, lenders must monitor and address disproportionate impact. Options: (1) segment-specific cutoffs that satisfy fairness; (2) post-hoc adjustment (e.g., lower cutoff for underserved segment); (3) guardrail metrics that trigger review when disparity exceeds threshold. Analytics teams should work with compliance to define and implement.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 1: Profit vs. Volume vs. Fairness</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: profit vs. volume vs. fairness. Risk: reject inference mis-specification; model drift in downturns. Failure mode: optimizing only for default rate can shrink volume and profit; optimizing only for volume can blow loss.
+    Aggressive cutoffs (approve more) increase volume and revenue but also default risk. Conservative cutoffs reduce loss but shrink volume. Fairness constraints (e.g., minimum approval rate for protected groups) may require approving some applicants with negative expected profit. The optimal balance depends on strategic objectives, capital, and regulatory constraints.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off 2: Reject Inference Benefit vs. Assumption Risk</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Reject inference improves model calibration to the full applicant pool but relies on unverifiable assumptions. When assumptions fail (e.g., rejected applicants would have performed worse than parceling implies), PD estimates can be biased. Some lenders prefer to avoid reject inference and accept selection bias, documenting the limitation; others use conservative reject-inference methods (e.g., augmentation with external data only).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Optimizing Only for Default Rate</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Minimizing default rate leads to very conservative cutoffs—approving only the safest applicants. Volume and profit shrink. The right objective is risk-adjusted profit, not default rate alone.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Optimizing Only for Volume</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Maximizing approval rate or volume without regard to default can blow loss when marginal applicants default at high rates. Profit and capital suffer. Always tie volume to expected profit and loss.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk: Model Drift in Downturns</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    PD models trained in benign periods may underestimate default in recessions. Vintage analysis and stress testing (apply recession scenarios to PD/LGD) help. Regulators expect through-the-cycle adjustments or point-in-time models with conservative margins in stress.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: adopt profit-based decision framework; use PD × LGD × EAD; run vintage analysis and reject inference with clear assumptions; enforce fairness and governance. Outcome: better risk-adjusted returns and auditability.
+    Based on published case studies and industry benchmarks:
   </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Profit improvement:</strong> Lenders that shift from accuracy-optimized to profit-optimized cutoffs report 10–20% improvement in risk-adjusted profit per account, driven by higher approval of marginal-but-profitable applicants (<a href="https://www.mckinsey.com/industries/financial-services/our-insights/credit-risk-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>).</li>
+    <li><strong>Volume and revenue:</strong> Profit-optimal policies often approve 10–20% more applicants than accuracy-optimal, increasing origination volume and revenue without proportionally increasing loss.</li>
+    <li><strong>Governance and auditability:</strong> PD × LGD × EAD frameworks align with Basel and IFRS 9; model documentation and vintage analysis support regulatory exams and internal audit.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Adopt profit-based decision framework: optimize for expected profit, not accuracy alone.</li>
+    <li>Use PD × LGD × EAD decomposition; feed scorecards and models into these components.</li>
+    <li>Backtest profit at multiple cutoffs; set segment-specific cutoffs where justified.</li>
+    <li>Run vintage analysis quarterly; trigger model review when actual default exceeds predicted.</li>
+    <li>Apply reject inference with documented assumptions; compare with and without in backtests.</li>
+    <li>Enforce fairness (approval/default by segment) and governance (documentation, change logs).</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Reject inference is unobservable; PD/LGD in low default portfolios. Improvements: alternative reject inference methods; stress testing; segment-level profit curves.
-  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Limitations</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Reject inference is unobservable:</strong> True outcomes for rejected applicants are never observed; all methods rely on assumptions that cannot be fully validated.</li>
+    <li><strong>PD/LGD in low-default portfolios:</strong> Niche or prime segments have few defaults; PD/LGD estimates have high variance. Use conservative margins or pooled data where appropriate.</li>
+    <li><strong>Revenue and prepayment:</strong> Simplified profit = Revenue − EL ignores prepayment, churn, and cross-sell. Full lifetime value models improve accuracy but add complexity.</li>
+    <li><strong>Economic cycles:</strong> Models trained in expansion may fail in recession; through-the-cycle vs point-in-time design involves trade-offs.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">What We'd Improve</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Alternative reject inference:</strong> Test augmentation with bureau performance on other products; explore semi-supervised and causal approaches.</li>
+    <li><strong>Stress testing:</strong> Apply recession scenarios to PD/LGD; set capital and provisioning buffers.</li>
+    <li><strong>Segment-level profit curves:</strong> Backtest profit by product, channel, and segment; allow segment-specific cutoffs where data support.</li>
+    <li><strong>Explainable adverse action:</strong> Integrate SHAP or reason codes so every decline has a clear, compliant explanation.</li>
+  </ul>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Causal Credit Policies</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Causal credit policies; explainable adverse action; integration with IFRS 9 and Basel reporting.
+    Moving from correlation-based scorecards to causal models (e.g., what is the effect of approval on default, holding applicant quality fixed?) could improve policy design. Instrumental variable and regression discontinuity designs are emerging in credit research.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Explainable Adverse Action</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    ECOA requires adverse action reasons. SHAP, LIME, and reason-code systems will become standard so that every decline has a clear, auditable explanation. This supports both compliance and customer trust.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Integration with IFRS 9 and Basel Reporting</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    PD/LGD/EAD outputs will feed directly into IFRS 9 ECL staging and Basel capital calculations. Single source of truth for both profit and regulatory reporting reduces inconsistency and audit burden.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">ML and Alternative Data</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Gradient boosting and neural networks are increasingly used for PD; alternative data (e.g., cash flow, rent) may improve prediction for thin-file applicants. Governance and fairness remain critical as models become more complex.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><a href="https://www.mckinsey.com/industries/financial-services/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Credit Risk Analytics</a></li>
-    <li><a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="text-primary hover:underline">Basel Framework (BIS)</a></li>
+    <li><a href="https://www.mckinsey.com/industries/financial-services/our-insights/credit-risk-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Credit Risk Analytics</a> — profit frameworks and PD/LGD</li>
+    <li><a href="https://www.bis.org/bcbs/" target="_blank" rel="noopener" class="text-primary hover:underline">Basel Committee on Banking Supervision</a> — capital and risk weights</li>
+    <li><a href="https://www.bis.org/publ/bcbs_wp22.pdf" target="_blank" rel="noopener" class="text-primary hover:underline">Basel — Working Paper on PD/LGD</a> — reject inference and validation</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Regulatory and Compliance</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/" target="_blank" rel="noopener" class="text-primary hover:underline">IFRS 9 — Expected Credit Loss</a></li>
+    <li><a href="https://www.consumerfinance.gov/rules-policy/regulations/1002/" target="_blank" rel="noopener" class="text-primary hover:underline">ECOA — Equal Credit Opportunity Act</a></li>
+    <li><a href="https://www.federalreserve.gov/supervisionreg/sr1107.htm" target="_blank" rel="noopener" class="text-primary hover:underline">SR 11-7 — Model Risk Management</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/finance/insights/credit-risk" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Credit Risk Research</a></li>
+    <li><a href="https://hbr.org/2020/06/a-refresher-on-ab-testing" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — A/B Testing</a> — experimentation in credit</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Academic Papers</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://arxiv.org/abs/2006.12648" target="_blank" rel="noopener" class="text-primary hover:underline">arXiv — Reject Inference in Credit Scoring</a></li>
+    <li><a href="https://dl.acm.org/doi/10.1145/3534678" target="_blank" rel="noopener" class="text-primary hover:underline">ACM — Fairness in Credit and Lending</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

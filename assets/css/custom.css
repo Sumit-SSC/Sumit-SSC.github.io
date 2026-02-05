@@ -201,6 +201,32 @@
 	transform: translateY(-5px);
 }
 
+/* Skills page dark mode: force white/light background on sections and cards so icons stay visible */
+html.dark .skills-page .skills-icons-box,
+html.dark .skills-page .skill-card,
+html.dark .skills-page .skill-category > div.rounded-xl,
+body.dark-theme .skills-page .skills-icons-box,
+body.dark-theme .skills-page .skill-card,
+body.dark-theme .skills-page .skill-category > div.rounded-xl {
+	background-color: #ffffff !important;
+}
+html.dark .skills-page .skills-icons-box,
+html.dark .skills-page .skill-category > div.rounded-xl,
+body.dark-theme .skills-page .skills-icons-box,
+body.dark-theme .skills-page .skill-category > div.rounded-xl {
+	border-color: #e5e7eb !important;
+}
+html.dark .skills-page #skills-tools > .rounded-xl,
+body.dark-theme .skills-page #skills-tools > .rounded-xl {
+	background-color: #ffffff !important;
+	border-color: #e5e7eb !important;
+}
+html.dark .skills-page #skills-tools > .rounded-xl > .p-6,
+body.dark-theme .skills-page #skills-tools > .rounded-xl > .p-6 {
+	background-color: #ffffff !important;
+	border-color: #e5e7eb !important;
+}
+
 /* Clickable tool tags in project cards */
 .project-card a[href*="filter"],
 .project-card-modern a[href*="filter"] {

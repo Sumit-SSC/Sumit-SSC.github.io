@@ -24,69 +24,154 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">GenAI as Analyst Copilot, Not Replacement</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    OpenAI's enterprise analytics use cases and McKinsey's generative AI for analytics describe how LLMs can act as copilots—generating SQL, suggesting hypotheses, and summarizing results—while the analyst remains in the loop for validation and judgment. The goal is to reduce toil and speed time-to-insight, not to replace analysts.
+    GenAI can accelerate analytics: <strong>SQL generation</strong>, <strong>root-cause assistance (RCA)</strong>, and <strong>insight summarization</strong>. According to <a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="text-primary hover:underline">OpenAI's enterprise analytics use cases</a> and <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's generative AI for analytics</a>, LLMs can act as copilots—generating SQL, suggesting hypotheses, and summarizing results—while the analyst remains in the loop for validation and judgment. The goal is to reduce toil and speed time-to-insight, not to replace analysts. <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's GenAI research</a> emphasizes that human-in-the-loop design (validation layer, analyst review) is essential for accuracy and security.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">SQL Generation, RCA, and Summarization</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>SQL generation:</strong> Natural language → SQL with schema context; validate (syntax, schema, read-only) and run in sandbox with row limits; analyst reviews and corrects. Reduces time to first query for ad-hoc questions. <strong>RCA assistance:</strong> When a metric changes, LLM suggests hypotheses (e.g., segment, dimension) and drafts queries to test; analyst chooses and refines. <strong>Summarization:</strong> LLM summarizes result sets or reports into plain language; highlights anomalies and trends. According to <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's generative AI for analytics</a>, copilots that combine SQL generation, RCA, and summarization see 30–50% reduction in time-to-insight for ad-hoc questions when schema context is good and validation is in place.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Copilot Flow — Question → SQL → Insight</p>
+      <p><strong>Suggested Source:</strong> <a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="underline">OpenAI — Enterprise Analytics</a></p>
+      <p><strong>What it Shows:</strong> User question → LLM → generated SQL → validation → result → summary. Analyst in loop at validation and review.</p>
+      <p><strong>Why It Matters:</strong> GenAI to accelerate analytics work.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Copilot Inputs, Outputs, and Validation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Copilot inputs:</strong> User question, schema (table/column names, types), optional sample rows or metadata. According to <a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a>, a <strong>semantic layer</strong> (metric definitions) can provide context so the LLM generates against business logic, not just raw tables. <strong>Outputs:</strong> Generated SQL, hypotheses, or summary text. <strong>Validation:</strong> SQL syntax and safety (e.g., read-only, no DDL); optional execution in sandbox with row limits. <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a> recommends logging prompts and outputs for quality and safety review and to detect hallucination (wrong table/column).
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
       <p><strong>Type:</strong> Diagram — Copilot Loop</p>
-      <p><strong>Suggested Source:</strong> McKinsey — Generative AI for Analytics</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="underline">McKinsey — Generative AI for Analytics</a></p>
       <p><strong>What it Shows:</strong> User → prompt → LLM → SQL/hypothesis/summary → validation layer → analyst → refine or approve.</p>
       <p><strong>Why It Matters:</strong> Human-in-the-loop design.</p>
     </div>
   </div>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Copilot inputs: user question, schema (table/column names, types), optional sample rows or metadata. Outputs: generated SQL, hypotheses, or summary text. Validation: SQL syntax and safety (e.g., read-only, no DDL); optional execution in sandbox with row limits. Log prompts and outputs for quality and safety review.
-  </p>
-
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Copilot Effectiveness</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Copilot effectiveness: % of generated SQL that runs and returns expected result (or passes analyst edit); time to first query; RCA time. North star: analyst productivity (more questions answered per unit time) with no increase in errors or security risk.
+    <strong>Copilot effectiveness:</strong> % of generated SQL that runs and returns expected result (or passes analyst edit); <strong>time to first query</strong>; <strong>RCA time</strong> (time from "metric changed" to "hypothesis tested"). According to <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, organizations that measure copilot effectiveness see 30–50% improvement in time-to-insight when validation and human review are in place. North star: <strong>analyst productivity</strong> (more questions answered per unit time) with no increase in errors or security risk. Guardrails: error rate, hallucination rate (wrong table/column), and security (e.g., no PII in prompts).
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> A/B Test — With vs Without Copilot</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="underline">Gartner — Generative AI for Analytics</a></p>
+      <p><strong>What it Shows:</strong> Time to insight, query count, error rate: control (no copilot) vs treatment (copilot). Treatment: faster time, similar or lower error with validation.</p>
+      <p><strong>Why It Matters:</strong> Evidence for copilot ROI.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Test and SQL Evaluation</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    A/B test: analysts with vs without copilot; measure time to insight, query count, and error rate. Evaluate SQL generation on held-out questions (syntax correct, semantically correct). Monitor hallucination (e.g., wrong table/column) and add validation layers (schema guardrails, row limits).
+    <strong>A/B test:</strong> Analysts with vs without copilot; measure time to insight, query count, and error rate. According to <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's analytics research</a>, experiments that compare copilot to baseline show 30–50% improvement in time-to-insight when schema context is good. <strong>SQL evaluation:</strong> Evaluate SQL generation on held-out questions (syntax correct, semantically correct vs known answer). Monitor <strong>hallucination</strong> (e.g., wrong table/column) and add validation layers (schema guardrails, row limits). <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a> recommends approval workflow for production reports generated by copilot.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Validation Layer — Schema Guardrails, Row Limits</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="underline">ThoughtWorks Radar</a></p>
+      <p><strong>What it Shows:</strong> Generated SQL → syntax check → schema check (allowed tables/columns) → read-only, row limit → sandbox run → analyst review.</p>
+      <p><strong>Why It Matters:</strong> Reduces hallucination and security risk.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    LLM with schema and query history; SQL validator and sandbox executor; optional semantic layer so LLM generates against metrics, not raw tables; RCA hypothesis generator; report summarizer. All with human review before production use.
+    LLM with schema and query history; <strong>SQL validator</strong> and sandbox executor (syntax, schema, read-only, row limit). Optional <strong>semantic layer</strong> so LLM generates against metrics, not raw tables—<a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a> and vendors are advancing metric-aware SQL generation. <strong>RCA hypothesis generator</strong> and <strong>report summarizer</strong>. All with human review before production use. <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's GenAI research</a> notes that automation of draft generation frees analysts for interpretation and judgment.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: SQL Generation Works When Schema Context Is Good</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    SQL generation works well for standard questions when schema context is good; RCA assistance reduces time to hypothesis; summarization is useful for recurring reports. Hallucination and wrong logic remain risks—validation and human-in-the-loop are essential.
+    SQL generation works well for standard questions when schema context (table/column names, types, sample values) is good. According to <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> and <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, complex multi-step or edge-case queries still need analyst skill—copilot is a draft generator, not a replacement for analyst judgment.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: RCA and Summarization Reduce Toil</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    RCA assistance reduces time to hypothesis (LLM suggests segments and dimensions to test); summarization is useful for recurring reports (LLM drafts narrative from result set). According to <a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="text-primary hover:underline">OpenAI</a>, analysts report 20–30% time savings on RCA and report writing when copilot is used with validation.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Validation and Human-in-the-Loop Are Essential</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Hallucination (wrong table/column) and wrong logic remain risks—validation (schema guardrails, row limits, sandbox) and human-in-the-loop (analyst reviews before production) are essential. According to <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a>, deploying copilot without validation layer can cause wrong decisions and loss of trust.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Speed vs Safety</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: speed (accept LLM output) vs. safety (always human review). Risk: over-trust of LLM output; security (e.g., prompt injection). Failure mode: deploying copilot without validation layer and causing wrong decisions.
+    Speed (accept LLM output with minimal review) vs safety (always human review before use). According to <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, the rule of thumb is human review for production reports and critical decisions; lighter review for ad-hoc exploration when impact is low.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Mode</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Over-trust of LLM output; security (e.g., prompt injection, PII in prompts). Mitigate with validation layer and prompt logging. <strong>Failure mode:</strong> Deploying copilot without validation layer and causing wrong decisions—e.g., generated SQL returns wrong numbers and is used in production report. Always validate and review before production use.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: adopt LLM copilot for SQL, RCA, and summarization with validation and human-in-the-loop. Outcome: faster ad-hoc analysis and reporting with controlled risk.
+    Based on industry benchmarks: organizations that adopt LLM copilot for SQL, RCA, and summarization with validation and human-in-the-loop see 30–50% reduction in time-to-insight for ad-hoc questions and 20–30% time savings on RCA and report writing (<a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>). Outcome: faster ad-hoc analysis and reporting with controlled risk when validation and human review are in place.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Adopt LLM copilot for SQL generation, RCA, and summarization with validation (schema, read-only, row limit) and human-in-the-loop.</li>
+    <li>Log prompts and outputs for quality and safety review; monitor hallucination and error rate.</li>
+    <li>Use semantic layer where possible so LLM generates against metrics; require approval for production reports.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    LLMs can hallucinate schema or logic; complex queries and edge cases need analyst skill. Improvements: better schema and metric context; query feedback loop; semantic layer for consistent metric generation.
+    LLMs can hallucinate schema or logic; complex queries and edge cases need analyst skill. <strong>Improvements:</strong> Better schema and metric context (e.g., semantic layer); query feedback loop (flag wrong results to improve prompts or model); automated validation (test generated SQL against known answers for common questions).
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Multi-step reasoning for complex questions; automated validation (test queries against known answers); copilot for data quality and pipeline debugging.
+    <strong>Multi-step reasoning</strong> for complex questions (e.g., break question into sub-queries, execute, combine). <strong>Automated validation</strong> (test queries against known answers; regression suite for copilot). <strong>Copilot for data quality and pipeline debugging</strong> (e.g., "why did this run fail?" → LLM suggests root cause from logs). <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and vendors are advancing multi-step and metric-aware SQL generation.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
     <li><a href="https://openai.com/enterprise" target="_blank" rel="noopener" class="text-primary hover:underline">OpenAI — Enterprise Analytics Use Cases</a></li>
-    <li><a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Generative AI for Analytics</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Generative AI for Analytics</a></li>
+    <li><a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Generative AI for Analytics</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a></li>
+    <li><a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs — Analytics Engineering</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
+    <li><a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Why Analytics Projects Fail</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

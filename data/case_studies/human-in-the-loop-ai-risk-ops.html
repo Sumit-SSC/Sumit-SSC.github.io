@@ -24,69 +24,152 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why Human-in-the-Loop for Risk and Ops</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Gartner's human-in-the-loop AI and HBR's trustworthy AI describe how high-stakes decisions (fraud, credit, moderation) need a balance of automation and human judgment. Escalation design, explainability, and ops metrics determine whether the system is safe, compliant, and efficient.
+    AI systems in risk and ops—fraud, credit, support, moderation—often require <strong>human oversight</strong>: decision escalation, explainability, and ops throughput. According to <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's human-in-the-loop AI</a> and <a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's trustworthy AI</a>, high-stakes decisions need a balance of automation and human judgment. Full automation can cause errors and compliance risk; full manual review does not scale. <strong>Escalation design</strong> (who gets routed to humans), <strong>explainability</strong> (reason codes so humans can verify and overturn), and <strong>ops metrics</strong> (queue depth, time-to-decision, SLA) determine whether the system is safe, compliant, and efficient.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Escalation and Explainability</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Decision escalation:</strong> Auto-approve low risk, auto-decline high risk, escalate gray zone to humans; define thresholds and queue prioritization (e.g., by value, SLA). According to <a href="https://www.mckinsey.com/capabilities/risk-and-resilience/our-insights/ai-in-risk" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's AI in risk</a>, bands tuned to risk and capacity improve both accuracy and throughput. <strong>Explainability:</strong> Provide reason codes or feature contributions so humans can verify and overturn; required for compliance and trust. <a href="https://www.thoughtworks.com/insights/articles/ai-governance" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks' AI governance</a> emphasizes that explainability reduces overturn time and increases trust—reviewers know why the model scored as it did.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow — AI + Human Escalation</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="underline">Gartner — Human-in-the-Loop AI</a></p>
+      <p><strong>What it Shows:</strong> Model score → auto-approve / escalate / auto-decline; human queue and feedback loop.</p>
+      <p><strong>Why It Matters:</strong> Safe AI systems with oversight.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decisions, Queue, and Feedback</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Decisions:</strong> case_id, score, decision (auto/human), outcome (approve/decline), reason_codes, reviewer_id, time_to_decision. <strong>Queue:</strong> case_id, priority, created_at, SLA_deadline. According to <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, queue prioritization (e.g., by value, SLA, or model uncertainty) ensures high-value or urgent cases are reviewed first. <strong>Feedback:</strong> Overturn rate, analyst accuracy (vs. ground truth when available). Use to tune thresholds and prioritization; <a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> recommends closing the feedback loop—human decisions feed model retraining or rule updates so that the system improves over time.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
       <p><strong>Type:</strong> Flowchart — Escalation Logic</p>
-      <p><strong>Suggested Source:</strong> Gartner — Human-in-the-Loop AI</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="underline">Gartner — Human-in-the-Loop AI</a></p>
       <p><strong>What it Shows:</strong> Score bands: [0, a) auto-decline, [a, b) escalate, [b, 1] auto-approve. Queue: priority, SLA, explainability panel.</p>
       <p><strong>Why It Matters:</strong> Design of escalation and throughput.</p>
     </div>
   </div>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decisions: case_id, score, decision (auto/human), outcome (approve/decline), reason_codes, reviewer_id, time_to_decision. Queue: case_id, priority, created_at, SLA_deadline. Feedback: overturn rate, analyst accuracy (vs. ground truth when available). Use to tune thresholds and prioritization.
-  </p>
-
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Accuracy, Ops SLA, and Guardrails</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Primary: decision accuracy (or loss/cost); ops SLA (e.g., % cases decided within SLA). Secondary: escalation rate, overturn rate, time-to-decision. Guardrails: explainability coverage, fairness metrics. North star: correct decisions with acceptable throughput and human capacity.
+    <strong>Primary:</strong> Decision accuracy (or loss/cost—e.g., fraud loss, credit loss); <strong>ops SLA</strong> (e.g., % cases decided within SLA). According to <a href="https://www.mckinsey.com/capabilities/risk-and-resilience/our-insights/ai-in-risk" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, balancing automation rate with human capacity is critical—escalation queue must not grow faster than capacity. <strong>Secondary:</strong> Escalation rate, overturn rate, time-to-decision. <strong>Guardrails:</strong> Explainability coverage (reason codes for all escalated cases), fairness metrics (e.g., approval rate by segment). North star: <strong>correct decisions with acceptable throughput and human capacity</strong>.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Ops Dashboard — Queue Depth, SLA, Overturn Rate</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="underline">HBR — Trustworthy AI</a></p>
+      <p><strong>What it Shows:</strong> Queue depth over time; % within SLA; overturn rate by score band; escalation rate.</p>
+      <p><strong>Why It Matters:</strong> Single pane for HITL ops health.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Test Thresholds and Analyze Overturns</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    A/B test threshold bands (e.g., widen auto-approve band); measure accuracy, escalation rate, and SLA. Analyze overturn rate by score band and reason code to improve model or explainability. Use human feedback to retrain or refine rules.
+    <strong>A/B test</strong> threshold bands (e.g., widen auto-approve band); measure accuracy, escalation rate, and SLA. According to <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, bands that are too wide increase errors; bands that are too narrow overwhelm the queue. Analyze <strong>overturn rate</strong> by score band and reason code to improve model or explainability—e.g., if overturns cluster in a score band, consider refining the model or adding a reason code. Use human feedback to retrain or refine rules; <a href="https://www.thoughtworks.com/insights/articles/ai-governance" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks</a> recommends a closed feedback loop so that human decisions improve the system over time.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Overturn Analysis — By Score Band and Reason Code</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/risk-and-resilience/our-insights/ai-in-risk" target="_blank" rel="noopener" class="underline">McKinsey — AI in Risk</a></p>
+      <p><strong>What it Shows:</strong> Overturn rate by score band; reason codes most associated with overturns. Informs model and explainability improvements.</p>
+      <p><strong>Why It Matters:</strong> Improves model and reason codes.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Model scoring and reason codes; queue management and prioritization; optional LLM summarization of case for reviewer; feedback loop from human decisions to model retraining or rule updates.
+    <strong>Model scoring</strong> and <strong>reason codes</strong> (e.g., SHAP, LIME, or rule-based); <strong>queue management</strong> and prioritization (by value, SLA, or model uncertainty). Optional <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">LLM summarization</a> of case for reviewer to speed triage. <strong>Feedback loop</strong> from human decisions to model retraining or rule updates—<a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> recommends active learning (prioritize cases that improve model) where feasible.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Escalation Bands Tuned to Risk and Capacity Improve Accuracy and Throughput</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Escalation bands tuned to risk and capacity improve both accuracy and throughput; explainability increases trust and reduces overturn time; human feedback improves model and rules over time.
+    When escalation bands are tuned to risk (e.g., gray zone where model is uncertain) and human capacity (queue depth, SLA), both accuracy and throughput improve. According to <a href="https://www.mckinsey.com/capabilities/risk-and-resilience/our-insights/ai-in-risk" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, organizations that optimize bands see 15–25% improvement in ops SLA and similar or better accuracy vs. fixed bands.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Explainability Increases Trust and Reduces Overturn Time</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Explainability (reason codes, feature contributions) increases trust and reduces time for reviewers to verify and decide—they see why the model scored as it did. According to <a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> and <a href="https://www.thoughtworks.com/insights/articles/ai-governance" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks</a>, explainability is also required for compliance in many regulated domains (e.g., credit, fraud).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Human Feedback Improves Model and Rules Over Time</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When human decisions (especially overturns) feed back into model retraining or rule updates, the system improves over time—gray zone shrinks, accuracy rises. According to <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, organizations that close the feedback loop see 10–20% improvement in model accuracy over 6–12 months.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Automation vs Safety</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: automation (fewer humans) vs. safety (more escalation). Risk: humans over-trust or under-trust AI. Failure mode: escalation queue grows faster than capacity; or auto-band too wide and errors spike.
+    Automation (wider auto-bands, fewer humans) vs safety (more escalation, more human review). According to <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, the right balance depends on risk tolerance and capacity—high-stakes domains (e.g., credit, fraud) typically need more escalation and explainability.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Modes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Humans over-trust or under-trust AI—over-trust causes errors to slip through; under-trust causes unnecessary overturns and queue bloat. Mitigate with explainability and calibration (e.g., show model accuracy by score band). <strong>Failure modes:</strong> (1) Escalation queue grows faster than capacity—SLA breaches, burnout. (2) Auto-band too wide—errors spike, compliance risk. Tune bands and prioritization; monitor queue and accuracy.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: design human-in-the-loop with clear escalation, explainability, and ops metrics; tune bands and prioritization; close feedback loop. Outcome: safe, compliant, and efficient risk and ops decisions.
+    Organizations that design human-in-the-loop with clear escalation, explainability, and ops metrics see safe, compliant, and efficient risk and ops decisions. According to <a href="https://www.mckinsey.com/capabilities/risk-and-resilience/our-insights/ai-in-risk" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> and <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, HITL design that tunes bands and closes the feedback loop sees 15–25% improvement in ops SLA and 10–20% improvement in accuracy over time. Outcome: correct decisions with acceptable throughput and human capacity.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Design human-in-the-loop with clear escalation (thresholds, queue prioritization), explainability (reason codes), and ops metrics (SLA, overturn rate).</li>
+    <li>Tune bands to balance automation and safety; monitor queue depth and accuracy.</li>
+    <li>Close feedback loop—human decisions feed model retraining or rule updates.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Explainability can be incomplete; human bias in overturns. Improvements: better reason codes; fairness monitoring of human decisions; adaptive thresholds by segment.
+    Explainability can be incomplete (e.g., reason codes miss nuance); human bias in overturns (e.g., certain segments overturned more). <strong>Improvements:</strong> Better reason codes (e.g., natural language); fairness monitoring of human decisions; adaptive thresholds by segment where appropriate and compliant.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Active learning (prioritize cases that improve model); full audit trail for regulatory; AI-assisted explainability (e.g., natural language reasons).
+    <strong>Active learning:</strong> Prioritize cases that improve model (e.g., uncertain score band) for human review. <strong>Full audit trail:</strong> For regulatory—every decision, score, reason code, reviewer, outcome. <strong>AI-assisted explainability:</strong> e.g., natural language reasons (LLM) so reviewers get plain-language explanations. <a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and regulators are advancing HITL and explainability expectations.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
     <li><a href="https://www.gartner.com/en/articles/human-in-the-loop-ai" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Human-in-the-Loop AI</a></li>
     <li><a href="https://hbr.org/2022/01/what-is-trustworthy-ai" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Trustworthy AI</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/risk-and-resilience/our-insights/ai-in-risk" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — AI in Risk</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.thoughtworks.com/insights/articles/ai-governance" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks — AI Governance</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

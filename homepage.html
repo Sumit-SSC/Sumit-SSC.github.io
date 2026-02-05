@@ -114,6 +114,11 @@
 			</div>
 			<h2 id="view-title" class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center flex-1">Featured Projects</h2>
 			<div id="view-switcher-right" class="w-32 flex-shrink-0 flex justify-end min-h-[2rem]">
+				<!-- Archived Case Studies (shown only in case-studies view) -->
+				<a id="view-go-to-archive" href="case-studies-archive.html" class="view-archive-btn hidden inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors font-medium text-sm">
+					<span>Archived posts</span>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0l-2 7H8l-2-7m14 0H4"></path></svg>
+				</a>
 				<!-- Go to Case Studies (shown only in projects view) -->
 				<button id="view-go-to-case-studies" type="button" class="view-arrow-btn inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors font-medium text-sm">
 					<span>Case Studies</span>
@@ -162,7 +167,7 @@
 		<!-- Case Studies view (replaces projects content when toggled) -->
 		<div id="case-studies-view" class="hidden">
 			<p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">Long-form analytics and data science write-ups: methodology, results, and 2026+ perspectives on data-rich domains, AI-ML integration, and decision science.</p>
-			<div id="case-studies-grid" class="case-studies-grid"></div>
+			<div id="case-studies-grid" class="case-studies-grid" data-tier="featured"></div>
 		</div>
 	</main>
 

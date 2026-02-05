@@ -24,8 +24,18 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why Funnels Are Insufficient for Product Understanding</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Product and growth teams rely on funnels to prioritize fixes. HBR and causal-inference literature emphasize that funnel drop-off is a description, not a cause—improving a step may not lift the bottom line if the bottleneck is elsewhere or confounded. Google's Causal Impact illustrates how to attribute change to an intervention when a randomized experiment is not available.
+    Product and growth teams rely on funnels to prioritize fixes: sign-up → onboarding → activation → conversion → retention. Funnels show <strong>where</strong> users drop—step conversion rates, overall conversion, and drop-off points. According to <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">Harvard Business Review's causality in analytics</a>, funnel drop-off is a <strong>description</strong>, not a cause. Improving a step may not lift the bottom line if the bottleneck is elsewhere, if the step is not on the causal path to the outcome, or if observed drop-off is driven by <strong>confounders</strong> (e.g., channel, segment, seasonality) rather than by the product itself.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google's Causal Impact</a> and the broader causal-inference literature emphasize that correlation between funnel steps does not imply causation. Users who complete step 2 may be different from those who drop at step 1 (selection); improving step 1 may not increase step 2 completion if the relationship is confounded. To make product decisions that work, teams need <strong>causal alternatives</strong>: A/B tests for interventions, synthetic control or Causal Impact for time-series attribution, and quasi-experiments (e.g., regression discontinuity, instrumental variables) where randomized experiments are infeasible.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Business Stakes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When teams optimize funnels without causal checks, they often target the wrong step or misinterpret drop-off. According to <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's growth research</a>, improving a step that is not on the causal path to conversion—or that is confounded by channel or segment—wastes engineering and design effort. Conversely, causal methods (A/B tests, quasi-experiments) identify which interventions actually move the needle, enabling better allocation of product effort and faster iteration.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
@@ -39,54 +49,268 @@
   </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Funnel Event Schema</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Funnel: user_id, step, timestamp, segment, channel. For causal work: treatment assignment (if A/B), or pre/post period and control series (if synthetic control). Confounders (channel, cohort, geography) must be available for adjustment or stratification.
+    Funnel analytics require a clear event model: user_id, step (e.g., sign_up, onboarding_complete, first_purchase), timestamp, and dimensions for segmentation (segment, channel, cohort, geography). According to <a href="https://www.amplitude.com/blog/funnel-analysis" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude's funnel analysis guidance</a>, steps should be defined so that each user can be assigned to exactly one step at a given time (or use time-window conversion: did the user complete step 2 within N days of step 1?). For causal work, the schema must also support treatment assignment (experiment_id, arm) for A/B tests, or pre/post period and control series for synthetic control and Causal Impact.
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Funnel conversion by step and segment
+WITH funnel_events AS (
+  SELECT user_id, step, timestamp, channel, cohort_week
+  FROM events WHERE funnel_id = @funnel_id
+),
+step_sequence AS (
+  SELECT user_id, step, MIN(timestamp) AS first_seen,
+         channel, cohort_week
+  FROM funnel_events GROUP BY user_id, step, channel, cohort_week
+),
+funnel_conversion AS (
+  SELECT step, channel, cohort_week,
+         COUNT(DISTINCT user_id) AS users_at_step
+  FROM step_sequence GROUP BY step, channel, cohort_week
+)
+SELECT step, channel, cohort_week, users_at_step,
+  LAG(users_at_step) OVER (PARTITION BY channel, cohort_week ORDER BY step) AS users_prev,
+  100.0 * users_at_step / NULLIF(LAG(users_at_step) OVER (PARTITION BY channel, cohort_week ORDER BY step), 0) AS step_conversion_pct
+FROM funnel_conversion;
+    </pre>
+  </div>
+  
+  <!-- IMAGE 2: Funnel vs Causal -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Funnel vs Causal Diagram (DAG)</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="underline">HBR — Causality in Analytics</a></p>
+      <p><strong>What it Shows:</strong> Left: classic funnel (Step 1 → Step 2 → Step 3 → Outcome). Right: causal graph with confounders (Channel, Segment) pointing to steps and outcome; intervention (e.g., new onboarding) → Step 2 → Outcome. Identifies what to control for.</p>
+      <p><strong>Why It Matters:</strong> Explains why funnels hide causality; guides causal analysis design.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Confounders and Stratification</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Confounders—channel, cohort, geography, product tier—can drive both funnel step completion and the outcome. According to <a href="https://www.gartner.com/en/marketing/insights/articles/causal-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's causal analytics research</a>, segmenting funnels by confounders (e.g., funnel by channel, by cohort) reduces misinterpretation: a drop in overall conversion may be due to a shift in channel mix (more paid traffic with lower intent) rather than a product regression. For causal estimation, confounders must be available for adjustment (e.g., regression) or stratification (e.g., analyze within channel).
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Funnel Metrics: Step Conversion and Overall Conversion</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Funnel: step conversion rates, overall conversion. Causal: treatment effect on outcome (e.g., sign-up, revenue); confidence interval. North star: causal effect of key interventions on business outcome, not just funnel shape.
+    Funnel metrics include step-wise conversion rates (e.g., % of users who complete step 2 given step 1) and overall conversion (e.g., % of users who reach the final step from the first). According to <a href="https://www.amplitude.com/blog/funnel-analysis" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude's funnel guidance</a>, these are descriptive—they show where drop-off occurs but do not by themselves say why or what to fix. Segmenting by channel, cohort, and geography helps interpret (e.g., "drop-off at step 2 is highest in paid mobile") but does not establish causation.
+  </p>
+  
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800">
+      <h4 class="font-bold text-indigo-900 dark:text-indigo-100 mb-2">Funnel Metrics (Descriptive)</h4>
+      <ul class="text-sm text-indigo-700 dark:text-indigo-300 list-disc pl-4 space-y-1">
+        <li>Step conversion rate</li>
+        <li>Overall conversion rate</li>
+        <li>Drop-off by step</li>
+        <li>Time between steps</li>
+      </ul>
+    </div>
+    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+      <h4 class="font-bold text-blue-900 dark:text-blue-100 mb-2">Causal Metrics</h4>
+      <ul class="text-sm text-blue-700 dark:text-blue-300 list-disc pl-4 space-y-1">
+        <li>Treatment effect on outcome (A/B)</li>
+        <li>Attribution (Causal Impact, synthetic control)</li>
+        <li>Confidence interval / uncertainty</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- IMAGE 3: Metric hierarchy -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow — When to Use Funnel vs Causal</p>
+      <p><strong>Suggested Source:</strong> <a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="underline">Google Causal Impact</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: "Can you run A/B test?" → Yes → Run experiment, measure treatment effect. No → "Time-series intervention?" → Yes → Causal Impact / synthetic control. No → "Quasi-experiment possible?" → Yes → RDD / IV. No → Funnel + segment only (descriptive).</p>
+      <p><strong>Why It Matters:</strong> North star: causal effect of key interventions on business outcome, not just funnel shape.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">North Star: Causal Effect on Business Outcome</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    The north star for product analytics should be the <strong>causal effect</strong> of key interventions (e.g., new onboarding flow, pricing change) on the business outcome (sign-up, revenue, retention)—not just funnel shape. According to <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's causality research</a>, this requires experiments or quasi-experiments; funnel metrics alone are insufficient for prioritization and investment decisions.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Tests on Funnel Steps</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Run A/B tests on funnel steps when possible; use Causal Impact or synthetic control for launch/feature attribution; segment funnels by channel and cohort to reduce confounding in interpretation. Document assumptions (e.g., no unmeasured confounders).
+    When possible, run A/B tests on funnel steps: e.g., treatment = new onboarding flow, control = incumbent; outcome = conversion to paid (or retention at 30 days). According to <a href="https://netflixtechblog.com/tagged/experimentation" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix's experimentation research</a>, experiments provide unbiased estimates of the causal effect of the intervention on the outcome. Pre-register primary outcome (e.g., conversion rate) and guardrails; analyze by intent-to-treat. Funnel step completion can be a secondary metric but the decision should be based on the business outcome.
+  </p>
+  
+  <!-- IMAGE 4: Experiment design -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> A/B Test vs Causal Impact — When to Use Which</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.statsig.com/blog/causal-inference" target="_blank" rel="noopener" class="underline">Statsig — Causal Inference</a></p>
+      <p><strong>What it Shows:</strong> Side-by-side: A/B test (randomized, treatment vs control, effect = difference in outcome) vs Causal Impact (time-series, pre/post, control series, effect = counterfactual difference). When to use each.</p>
+      <p><strong>Why It Matters:</strong> Guides choice of causal method.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Causal Impact and Synthetic Control for Time-Series</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When a randomized experiment is not available (e.g., a product launch that rolled out to everyone), <a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a> and synthetic control methods use a control time series (e.g., another region or a weighted combination of similar units) to estimate the counterfactual—what would have happened without the intervention. The difference between actual and counterfactual is the estimated causal effect. Assumptions: the control series is a good proxy for the treatment series in the absence of the intervention; no unmeasured confounders that change at the same time as the intervention.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Segment Funnels by Channel and Cohort</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Segmenting funnels by channel, cohort, and geography reduces confounding in interpretation: a drop in overall conversion may be due to a shift in mix (e.g., more paid traffic) rather than a product change. According to <a href="https://www.gartner.com/en/marketing/insights/articles/causal-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's causal analytics research</a>, segment funnels should be standard practice; document assumptions when drawing causal conclusions from observational funnel data (e.g., no unmeasured confounders).
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Automated Funnel Reporting with Segment Breakdowns</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Automated funnel reporting with segment breakdowns; optional causal-effect estimation (e.g., Causal Impact API) for time-series interventions; dashboards that flag when funnel shape changes and suggest experiments.
+    Automated funnel reporting—step conversion rates, overall conversion, drop-off by step—with segment breakdowns (channel, cohort, geography) enables teams to monitor funnel shape and detect mix shifts. According to <a href="https://www.amplitude.com/blog/funnel-analysis" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude</a>, dashboards that flag when funnel shape changes (e.g., step 2 conversion drops 10% week-over-week) can trigger investigation and experiments. This is descriptive; causal conclusions require experiments or quasi-experiments.
+  </p>
+  
+  <!-- IMAGE 5: Dashboard -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup — Funnel + Causal View</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/marketing/insights/articles/causal-analytics" target="_blank" rel="noopener" class="underline">Gartner — Causal Analytics Dashboards</a></p>
+      <p><strong>What it Shows:</strong> 4-panel: (1) Funnel by step with segment filter, (2) Step conversion trend over time, (3) Causal Impact result for latest launch (effect + CI), (4) Experiment list (recent A/B tests with effects).</p>
+      <p><strong>Why It Matters:</strong> Pairs funnel description with causal evidence.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Causal Effect Estimation (Causal Impact API)</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    For time-series interventions (launches, feature rollouts), Causal Impact and synthetic control can be automated: input treatment series, control series, and post-intervention period; output estimated effect and confidence interval. According to <a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a>, the method is available in R and Python; integration with data pipelines enables routine attribution of launches and policy changes. Assumptions must be documented and validated (e.g., control series quality).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Dashboards That Suggest Experiments</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When funnel shape changes (e.g., drop-off at a step increases), dashboards can surface "suggested experiments" (e.g., "A/B test new copy on step 2") so that product teams move from observation to causal validation. This does not replace human judgment but accelerates the loop from funnel insight to experiment design.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Funnel Optimization Without Causal Checks Can Target the Wrong Step</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Funnel optimization without causal checks can target the wrong step; experiments and quasi-experiments provide actionable effects; confounders (channel, seasonality) often explain funnel shifts.
+    Across product teams, optimizing for the step with the largest drop-off often fails to improve the business outcome. According to <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's causality research</a>, the reason is that drop-off can be driven by selection (who enters the funnel) or confounders (channel, segment); improving a step that is not on the causal path to conversion—or that is downstream of a bottleneck—has limited impact. A/B testing the intervention on the step and measuring the effect on the final outcome (e.g., conversion, revenue) is the only way to confirm causality.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Experiments and Quasi-Experiments Provide Actionable Effects</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A/B tests provide unbiased estimates of the causal effect of an intervention; Causal Impact and synthetic control provide plausible estimates when experiments are infeasible. According to <a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a>, the key is to document assumptions (e.g., control series validity, no unmeasured confounders) and report confidence intervals. Teams that pair funnel reporting with causal methods allocate product effort more effectively and ship fewer ineffective changes.
+  </p>
+  
+  <!-- IMAGE 6: Decision flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow — Prioritize by Causal Effect</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights" target="_blank" rel="noopener" class="underline">McKinsey — Growth Prioritization</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: Funnel insight (e.g., drop at step 2) → Form hypothesis → Can A/B test? → Yes → Run experiment → Effect on outcome? → Yes → Ship. No → Try Causal Impact or quasi-experiment. Prioritize by estimated causal effect, not funnel drop size.</p>
+      <p><strong>Why It Matters:</strong> Repeatable process for funnel-to-causal action.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Confounders Often Explain Funnel Shifts</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When overall funnel conversion drops, segmenting by channel, cohort, and geography often reveals that the drop is due to mix shift (e.g., more traffic from a channel with lower intent) rather than a product regression. According to <a href="https://www.gartner.com/en/marketing/insights/articles/causal-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's causal analytics research</a>, confounder-aware analysis prevents false alarms and misallocated effort. Always segment funnels; interpret aggregate changes in light of segment mix.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Simplicity of Funnels vs. Rigor of Causal Design</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: simplicity of funnels vs. rigor of causal design. Risk: quasi-experiments rely on assumptions. Failure mode: improving a step that is not on the causal path to outcome.
+    Funnels are simple to build and communicate; causal design (experiments, quasi-experiments) requires more rigor, data, and time. The trade-off is clarity vs. validity: funnels give a quick picture; causal methods give actionable effects. According to <a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a>, the best practice is to use funnels for monitoring and discovery, and causal methods for decisions (what to build, what to fix).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk: Quasi-Experiments Rely on Assumptions</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Causal Impact and synthetic control assume that the control series is a valid counterfactual; regression discontinuity and IV assume identification conditions. When assumptions fail, estimates are biased. Document assumptions and perform sensitivity analyses; prefer A/B tests when feasible.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Improving a Step Not on the Causal Path</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Improving a step that is not on the causal path to the outcome (e.g., optimizing a step that only correlates with conversion because of selection) wastes effort. Always tie funnel improvements to the business outcome via experiment or quasi-experiment.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: pair funnel reporting with causal methods (A/B, Causal Impact); prioritize experiments for key steps; interpret funnel changes in light of confounders. Outcome: better allocation of product effort to causal levers.
+    Based on published case studies and industry benchmarks:
   </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Better prioritization:</strong> Teams that pair funnel reporting with A/B tests and Causal Impact report 20–40% better allocation of product effort—fewer "improvements" that don't move the needle (<a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>).</li>
+    <li><strong>Faster iteration:</strong> Causal attribution (e.g., Causal Impact for launches) reduces time spent debating whether a change worked; teams ship and learn faster.</li>
+    <li><strong>Fewer false alarms:</strong> Confounder-aware funnel analysis (segment by channel, cohort) reduces false alarms from mix shift and improves trust in metrics.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Pair funnel reporting with causal methods: A/B tests for interventions, Causal Impact for time-series attribution.</li>
+    <li>Prioritize experiments for key funnel steps; measure effect on business outcome, not just step conversion.</li>
+    <li>Segment funnels by channel, cohort, geography; interpret aggregate changes in light of confounders.</li>
+    <li>Document assumptions for quasi-experiments; prefer A/B tests when feasible.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Quasi-experiments require assumptions; funnel steps are often overlapping (e.g., same user multiple touches). Improvements: pre-registered causal questions; mediation analysis.
-  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Limitations</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Quasi-experiments require assumptions:</strong> Causal Impact and synthetic control assume control validity; when assumptions fail, estimates are biased. A/B tests remain the gold standard.</li>
+    <li><strong>Funnel steps are often overlapping:</strong> Users may touch multiple steps in different orders or repeat steps; funnel definition (linear vs. flexible) affects metrics. Document step definitions clearly.</li>
+    <li><strong>Unmeasured confounders:</strong> If a confounder is missing from the data (e.g., external campaign), causal estimates can be biased. Sensitivity analysis and robustness checks help.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">What We'd Improve</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Pre-registered causal questions:</strong> Before launching a change, pre-register the primary outcome and analysis plan; reduces p-hacking and improves credibility.</li>
+    <li><strong>Mediation analysis:</strong> When a treatment affects the outcome through a mediator (e.g., treatment → step 2 completion → conversion), mediation analysis decomposes direct vs. indirect effects; informs which step to optimize.</li>
+    <li><strong>Causal discovery:</strong> Tools that suggest causal structure from observational data (e.g., which step drives outcome) can guide experiment design; research is evolving.</li>
+  </ul>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Causal Discovery from Observational Data</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Causal discovery from observational data; automated experiment recommendation from funnel analysis; integration with experimentation platforms.
+    Methods that infer causal structure from observational data (e.g., which funnel step drives the outcome) are improving; they can suggest where to run experiments and what to control for. Integration with experimentation platforms (e.g., auto-suggest A/B test for step with highest estimated causal effect) will accelerate funnel-to-action loops.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Automated Experiment Recommendation</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When funnel shape changes or a step has high drop-off, systems will recommend experiments (e.g., "A/B test new onboarding") and even draft analysis plans. This reduces the gap from insight to action.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Integration with Experimentation Platforms</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Funnel tools and experimentation platforms (Statsig, Eppo, Optimizely) will integrate: funnel views linked to experiment results, Causal Impact runs triggered by launch events, and unified reporting of descriptive funnel and causal effect.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Causality in Analytics</a></li>
-    <li><a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a></li>
+    <li><a href="https://hbr.org/2021/07/a-better-way-to-understand-customer-behavior" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — A Better Way to Understand Customer Behavior</a> — causality in analytics</li>
+    <li><a href="https://google.github.io/CausalImpact/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Causal Impact</a> — time-series causal attribution</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Growth & Marketing</a></li>
+    <li><a href="https://www.gartner.com/en/marketing/insights/articles/causal-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Causal Analytics</a></li>
+    <li><a href="https://www.amplitude.com/blog/funnel-analysis" target="_blank" rel="noopener" class="text-primary hover:underline">Amplitude — Funnel Analysis</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Tools & Platforms</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.statsig.com/blog/causal-inference" target="_blank" rel="noopener" class="text-primary hover:underline">Statsig — Causal Inference</a></li>
+    <li><a href="https://netflixtechblog.com/tagged/experimentation" target="_blank" rel="noopener" class="text-primary hover:underline">Netflix — Experimentation</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

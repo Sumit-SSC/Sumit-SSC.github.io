@@ -341,9 +341,13 @@ function routePage() {
     
     loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
     renderFeaturedSection(); // Featured layout (hero + halves)
-    renderCaseStudiesSection(); // Case Studies grid (populates #case-studies-grid inside #case-studies-view)
     initViewModeToggle(); // Initialize view mode toggle
     initViewSwitcher(); // Toggle between Projects content and Case Studies content (same page)
+  }
+
+  // Case studies grid (homepage + archive page)
+  if (document.getElementById('case-studies-grid')) {
+    renderCaseStudiesSection();
   }
 
   // Load case study page (standalone long-form article)
@@ -447,6 +451,7 @@ function initViewSwitcher() {
   const viewTitle = document.getElementById('view-title');
   const backBtn = document.getElementById('view-back-to-projects');
   const arrowBtn = document.getElementById('view-go-to-case-studies');
+  const archiveBtn = document.getElementById('view-go-to-archive');
   const sectionTabs = document.getElementById('section-tabs');
 
   if (!projectsView || !caseStudiesView || !viewTitle || !backBtn || !arrowBtn) return;
@@ -457,6 +462,7 @@ function initViewSwitcher() {
     viewTitle.textContent = 'Featured Projects';
     backBtn.classList.add('hidden');
     arrowBtn.classList.remove('hidden');
+    if (archiveBtn) archiveBtn.classList.add('hidden');
     if (sectionTabs) sectionTabs.classList.remove('hidden');
   }
 
@@ -466,11 +472,20 @@ function initViewSwitcher() {
     viewTitle.textContent = 'Case Studies';
     backBtn.classList.remove('hidden');
     arrowBtn.classList.add('hidden');
+    if (archiveBtn) archiveBtn.classList.remove('hidden');
     if (sectionTabs) sectionTabs.classList.add('hidden');
   }
 
   arrowBtn.addEventListener('click', showCaseStudies);
   backBtn.addEventListener('click', showProjects);
+
+  // Deep-link support (e.g., returning from archive)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('view') === 'case-studies') {
+    showCaseStudies();
+  } else {
+    showProjects();
+  }
 }
 
 /* ---------- CASE STUDIES SECTION (Medium / TDS style) ---------- */
@@ -495,7 +510,16 @@ async function renderCaseStudiesSection() {
     return;
   }
 
-  grid.innerHTML = caseStudies.map(cs => createCaseStudyCard(cs)).join('');
+  const requestedTier = (grid.dataset.tier || '').trim().toLowerCase();
+  const normalizedTier = requestedTier === 'archive' ? 'archive' : (requestedTier === 'featured' ? 'featured' : null);
+  const filtered = normalizedTier ? caseStudies.filter(cs => (cs.tier || 'featured') === normalizedTier) : caseStudies;
+
+  if (!filtered.length) {
+    grid.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-12">No case studies in this section yet.</p>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(cs => createCaseStudyCard(cs)).join('');
 }
 
 function createCaseStudyCard(caseStudy) {
@@ -1150,9 +1174,43 @@ async function loadCaseStudyPage() {
     if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
     const html = await res.text();
     container.innerHTML = html;
+    renderRelatedCaseStudiesCallout(caseStudy, caseStudies);
   } catch (e) {
     container.innerHTML = '<p class="text-gray-500">Case study content could not be loaded. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
   }
+}
+
+function renderRelatedCaseStudiesCallout(caseStudy, allCaseStudies) {
+  const relatedIds = Array.isArray(caseStudy.related_case_studies) ? caseStudy.related_case_studies : [];
+  if (!relatedIds.length) return;
+  const related = relatedIds
+    .map(id => allCaseStudies.find(cs => cs.id === id))
+    .filter(Boolean)
+    .slice(0, 6);
+  if (!related.length) return;
+
+  const container = document.getElementById('case-study-content');
+  if (!container) return;
+
+  const items = related.map(cs => `
+    <a href="case-study.html?id=${encodeURIComponent(cs.id)}" class="block p-3 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 hover:border-primary/60 hover:bg-white dark:hover:bg-gray-800 transition-colors">
+      <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">${cs.category || 'Further study'}</div>
+      <div class="font-semibold text-gray-800 dark:text-gray-100">${cs.title}</div>
+      <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">${(cs.short_description || '').replace(/<[^>]*>/g, '').substring(0, 140)}${(cs.short_description || '').length > 140 ? '…' : ''}</div>
+    </a>
+  `).join('');
+
+  const callout = document.createElement('section');
+  callout.className = 'mt-10 p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40';
+  callout.innerHTML = `
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Related further studies</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Cross-links from Featured → Archive (same depth; organized for focus).</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${items}</div>
+    <div class="mt-4">
+      <a href="case-studies-archive.html" class="text-sm font-semibold text-primary hover:underline">Browse the Archive →</a>
+    </div>
+  `;
+  container.appendChild(callout);
 }
 
 /* ---------- PROJECT DETAIL PAGE ---------- */

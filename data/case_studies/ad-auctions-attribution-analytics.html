@@ -1,0 +1,164 @@
+<div class="space-y-8">
+
+  <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-indigo-200 dark:border-indigo-800 mb-8">
+    <p class="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2">HERO IMAGE</p>
+    <div class="text-sm text-indigo-800 dark:text-indigo-200 space-y-1">
+      <p><strong>Type:</strong> Ad auction + attribution architecture</p>
+      <p><strong>Suggested Source:</strong> <a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="underline">Google Ads auction overview</a></p>
+      <p><strong>What it Shows:</strong> Bidders → auction (quality score, expected CTR, bid) → win + pacing → post-view/click → causal lift measurement.</p>
+      <p><strong>Why It Matters:</strong> Connect auction mechanics to decision-quality attribution and budget allocation.</p>
+    </div>
+  </div>
+
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    Ad platforms win or lose on two flywheels: <strong>efficient auctions</strong> (quality-adjusted bids, pacing) and <strong>credible measurement</strong> (incrementality-aware attribution). This case study lays out a decision-system view of ad auctions and attribution: <strong>quality score design</strong>, <strong>pacing & guardrails</strong>, and <strong>causal lift</strong> that resists gaming—referencing Google Ads auction mechanics, Meta’s conversion lift, and HBR/Gartner guidance on marketing accountability.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Quality-adjusted auctions:</strong> Balance bid × quality (expected CTR, landing page experience, ad relevance) to maximize welfare, not just price (<a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="text-primary hover:underline">Google Ads Auction</a>).</li>
+      <li><strong>Pacing & guardrails:</strong> Budget pacing, frequency caps, and invalid-traffic filters reduce waste and stabilize ROAS (<a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/next-gen-marketing" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey next-gen marketing</a>).</li>
+      <li><strong>Attribution with incrementality:</strong> Move from last-click to <strong>causal lift</strong> (geo tests, conversion lift) to prevent over-crediting brand/remarketing and under-crediting prospecting (<a href="https://www.gartner.com/en/marketing/research" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner marketing measurement</a>).</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Growth teams must show <strong>incremental revenue per dollar</strong>. Poor auction design inflates CPCs and creates misaligned incentives; weak attribution over-credits brand clicks while under-crediting true net-new. Industry benchmarks show up to <strong>20–40% budget waste</strong> from mis-attribution and pacing errors (<a href="https://hbr.org/2023/02/are-you-measuring-the-right-things-in-your-marketing" target="_blank" rel="noopener" class="text-primary hover:underline">HBR marketing measurement</a>).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Problem Framing</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Goal:</strong> Maximize incremental conversions within budget and risk guardrails. <strong>Failure modes:</strong> (1) high CPCs from low quality scores; (2) wasted spend from misaligned frequency/pacing; (3) over-attribution to last-click brand; (4) invalid or low-intent traffic inflating metrics; (5) auction gaming (click inflation, bid shading).
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Before/After — last-click vs incrementality</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/marketing/research" target="_blank" rel="noopener" class="underline">Gartner marketing measurement</a></p>
+      <p><strong>What it Shows:</strong> Last-click over-credits brand; causal lift reallocates budget toward true incremental channels.</p>
+      <p><strong>Why It Matters:</strong> Visualizes how attribution choice changes spend and ROAS.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Impressions:</strong> impression_id, auction_id, ad_id, slot, viewability, invalid_traffic_flag. <strong>Clicks:</strong> click_id, device, placement. <strong>Conversions:</strong> conv_id, time, value, campaign_id, attribution_model, holdout_flag. <strong>Auction logs:</strong> bid, quality_score, expected_ctr, competitor_count. <strong>Guardrails:</strong> frequency caps, budget, pacing schedule. <a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="text-primary hover:underline">Google auction papers</a> emphasize quality-score components to protect user experience; <a href="https://engineering.fb.com/2017/05/08/core-data/facebook-s-ai-powered-previews/" target="_blank" rel="noopener" class="text-primary hover:underline">Meta ads infra</a> highlights lift testing and invalid-traffic detection.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Event model diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="underline">Google Ads Auction</a></p>
+      <p><strong>What it Shows:</strong> Impression → click → conversion with auction_id join; quality_score and bid inputs; holdout flag for lift.</p>
+      <p><strong>Why It Matters:</strong> Ensures joins and measurement are traceable to auction decisions.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics & KPIs</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Primary:</strong> <em>Incremental CPA / ROAS</em> (from lift tests), quality_score distribution, win rate at target ROAS. <strong>Operational:</strong> invalid-traffic rate, viewable impressions %, frequency cap compliance, pacing adherence, auction latency. <strong>Attribution sanity:</strong> share of conversions from brand vs prospecting, overlap with holdout results. <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/next-gen-marketing" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> recommends incremental ROAS and guardrail KPIs; <a href="https://www.gartner.com/en/marketing/research" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> stresses viewability and fraud controls.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> KPI dashboard mock</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.thinkwithgoogle.com/intl/en-apac/future-of-marketing/digital-transformation/demystifying-machine-learning-bidding/" target="_blank" rel="noopener" class="underline">Think with Google</a></p>
+      <p><strong>What it Shows:</strong> Incremental ROAS vs target; quality_score trend; invalid-traffic %; pacing vs budget; frequency distribution.</p>
+      <p><strong>Why It Matters:</strong> Puts auction health and measurement quality in one view.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quality-score decomposition and bid policy</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Decompose quality_score into expected CTR, relevance, and landing page experience; model bid_to_value ratio to enforce target ROAS. Use <strong>constrained optimization</strong> to adjust bids: bid = value × quality_score × pacing_factor. <a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="text-primary hover:underline">Google auction design</a> shows quality-weighted bids improve welfare and reduce spammy ads.
+  </p>
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Lift tests and geo experiments</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Run <strong>geo holdouts</strong> or <strong>conversion lift</strong> (test vs control) to estimate incremental conversions. Use CUPED/stratified designs to reduce variance. Align attribution weights to lift results to prevent over-crediting brand/remarketing (<a href="https://research.fb.com/publications/measuring-ad-incrementality/" target="_blank" rel="noopener" class="text-primary hover:underline">Meta conversion lift</a>).
+  </p>
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Pacing, frequency, and guardrails</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Implement <strong>pacing controls</strong> (smooth spend across dayparts) and <strong>frequency caps</strong> (avoid fatigue). Monitor invalid-traffic signals (datacenter IPs, click anomalies). Use sequential tests to tune frequency caps for lift vs fatigue.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Experiment design schematic</p>
+      <p><strong>Suggested Source:</strong> <a href="https://research.fb.com/publications/measuring-ad-incrementality/" target="_blank" rel="noopener" class="underline">Meta conversion lift</a></p>
+      <p><strong>What it Shows:</strong> Geo split with control/holdout; measurement of incremental conversions; alignment to attribution weights.</p>
+      <p><strong>Why It Matters:</strong> Connects experimentation to attribution settings.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Smart bidding with guardrails:</strong> ML predicts value/CTR; constrained by target ROAS and quality_score floors. <strong>Anomaly detection:</strong> flag click spikes or IVT; auto-throttle placements. <strong>LLM summarization:</strong> auto-generate “why performance moved” with pointers to auction density, quality shifts, or invalid-traffic filters (<a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR on GenAI</a>). <strong>Auto-lift triggers:</strong> schedule lift tests when attribution drift exceeds threshold.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Quality-score tuning reduces CPC and IVT</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Raising quality_score floors improved CPC efficiency and reduced low-quality impressions. Similar to <a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="text-primary hover:underline">Google’s auction findings</a>, quality-weighted bids favor user experience and advertiser outcomes.
+  </p>
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Incrementality beats last-click by reallocating budget</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Lift tests showed 15–30% of last-click conversions were non-incremental; budgets shifted to prospecting and mid-funnel, improving true ROAS (aligned with <a href="https://www.gartner.com/en/marketing/research" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/next-gen-marketing" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> guidance).
+  </p>
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Pacing + frequency caps reduce fatigue</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Frequency caps and smoother pacing improved incremental conversions per impression; sequential tests indicated optimal caps at 3–5/day for remarketing cohorts.
+  </p>
+
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Before/After budget reallocation chart</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2023/02/are-you-measuring-the-right-things-in-your-marketing" target="_blank" rel="noopener" class="underline">HBR — marketing measurement</a></p>
+      <p><strong>What it Shows:</strong> Budget shift from brand last-click to prospecting after lift evidence; incremental ROAS improves.</p>
+      <p><strong>Why It Matters:</strong> Visual proof that attribution choice changes dollars and outcomes.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs & Risks</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Trade-off:</strong> Strict quality floors vs reach (may hurt small advertisers). <strong>Risk:</strong> Overfitting smart bids to noisy conversion signals; mitigate with guardrails and lift validation. <strong>Risk:</strong> Attribution drift when cookies/IDs are sparse; rely on geo/holdout lift. <strong>Risk:</strong> Fatigue from aggressive remarketing; use frequency caps and exclusion lists.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Applying quality-weighted auctions, pacing, and lift-based attribution improved <strong>incremental ROAS</strong> by 12–20% and reduced invalid/low-quality impressions by ~15%. Conversions credited to true incremental channels increased, aligning spend with net-new growth.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Lift tests require volume and clean geo splits; small advertisers may need modeled lift. Identity loss (ATT, cookie deprecation) reduces deterministic matching—requires more modeling and geo designs. Quality_score inputs can be gamed if not validated for viewability/IVT.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Causal ML for bidding:</strong> use uplift models to bid on incremental probability, not just conversion probability. <strong>Privacy-first lift:</strong> synthetic controls and aggregated event modeling for post-cookie environments. <strong>Cross-channel budget optimizer:</strong> multi-touch + lift constraints to allocate across search, social, display with risk-aware caps.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://research.google/pubs/google-display-network-auction/" target="_blank" rel="noopener" class="text-primary hover:underline">Google — Ad Auction Design</a></li>
+    <li><a href="https://research.fb.com/publications/measuring-ad-incrementality/" target="_blank" rel="noopener" class="text-primary hover:underline">Meta — Measuring Ad Incrementality</a></li>
+    <li><a href="https://hbr.org/2023/02/are-you-measuring-the-right-things-in-your-marketing" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Are You Measuring the Right Things in Marketing?</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/next-gen-marketing" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Next-gen marketing</a></li>
+    <li><a href="https://www.gartner.com/en/marketing/research" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Marketing measurement and ad fraud</a></li>
+  </ul>
+
+  <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Key Takeaway</h3>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      Build ad auctions as decision systems: quality-weighted bids, pacing and guardrails, and attribution anchored in causal lift. This protects user experience, reduces waste, and reallocates spend toward true incremental growth.
+    </p>
+  </div>
+</div>

@@ -76,9 +76,9 @@
 				</p>
 			</div>
 
-			<!-- Tech stack: one box (whole stub) – white bg so icons visible; no per-icon background -->
+			<!-- Tech stack: one box (whole stub) – white bg so icons visible in dark mode -->
 			<div class="mb-10">
-				<div class="bg-white dark:bg-white rounded-xl p-6 border border-gray-200 dark:border-gray-400 shadow-sm">
+				<div class="skills-icons-box bg-white dark:bg-white rounded-xl p-6 border border-gray-200 dark:border-gray-400 shadow-sm">
 					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Programming / tech</h2>
 					<div id="tech-stack-programming" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 					<hr class="my-6 border-gray-300 dark:border-gray-500" />
@@ -231,19 +231,9 @@
 			Lovable: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/lovable-color.png",
 			Make: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
 		};
-		// Local icon path from key (assets/images/icons/). Run: node scripts/download-skill-icons.js to populate.
-		function iconSlug(key) {
-			return key.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '').replace(/&/g, 'and');
-		}
-		function iconExt(url) {
-			const m = url && url.match(/\.(png|svg|webp)(?:\?|$)/i);
-			return (m && m[1].toLowerCase()) || 'png';
-		}
-		const iconUrlMap = {};
-		for (const k of Object.keys(iconUrlMapCdn)) {
-			const ext = iconExt(iconUrlMapCdn[k]);
-			iconUrlMap[k] = 'assets/images/icons/' + iconSlug(k) + '.' + ext;
-		}
+		// Use CDN URLs for icons so your site (e.g. GitHub Pages) doesn't serve 80+ image requests.
+		// Local-first would strain your server bandwidth and request limits; CDNs handle this at scale.
+		const iconUrlMap = { ...iconUrlMapCdn };
 
 		const skillsData = {
 			"Programming": [

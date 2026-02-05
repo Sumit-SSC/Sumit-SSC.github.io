@@ -24,69 +24,152 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Prompt-Driven vs SQL-First</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Towards Data Science and ThoughtWorks Radar discuss the rise of prompt-driven analytics and the need to balance accessibility with reliability. SQL-first remains the source of truth for critical metrics and regulatory reporting; prompt-driven can accelerate ad-hoc and exploratory use when validation and guardrails are in place.
+    <strong>Prompt-driven analytics</strong> (natural language → LLM → SQL → result) promises accessibility—anyone can ask a question in plain language. <strong>SQL-first</strong> remains the standard for reliability and control: versioned queries, lineage, and human authorship. According to <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a> and <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's generative AI for analytics</a>, the rise of prompt-driven analytics requires balancing accessibility with reliability: SQL-first for critical metrics and regulatory reporting; prompt-driven for ad-hoc and exploratory use when validation and guardrails are in place.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Hallucination Risk and Validation Layers</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Hallucination risk:</strong> LLMs can generate plausible but wrong SQL (wrong table, column, or logic). According to <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's GenAI for analytics</a>, validation (syntax, schema, dry-run, row limits) and human review reduce but do not eliminate risk. <strong>Validation layers:</strong> Schema guardrails (only allowed tables/columns); read-only and row-limit enforcement; test against known answers for common questions; optional approval workflow for production reports. <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's GenAI research</a> emphasizes that hybrid workflows (prompt for exploration and first draft; SQL for production and critical metrics) balance speed and reliability.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
-      <p><strong>Type:</strong> Table — Prompt vs SQL</p>
-      <p><strong>Suggested Source:</strong> ThoughtWorks Radar</p>
+      <p><strong>Type:</strong> Comparison — Prompt vs SQL Workflow</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="underline">ThoughtWorks Radar</a></p>
+      <p><strong>What it Shows:</strong> Left: natural language → LLM → SQL → result. Right: analyst writes SQL → run → result. Reliability and validation layers.</p>
+      <p><strong>Why It Matters:</strong> Compare reliability of LLM queries vs SQL.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Prompt-Driven and SQL-First Data</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Prompt-driven:</strong> User question, generated SQL, validation result (pass/fail), execution result, feedback (correct/incorrect). Log for quality and hallucination monitoring. <strong>SQL-first:</strong> Query repo, versioned SQL, lineage. According to <a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a>, a <strong>semantic layer</strong>—metric definitions (name, SQL or logic, dimensions)—ensures both humans and LLM query consistent logic. When the LLM generates against the semantic layer (e.g., "revenue by region" maps to a defined metric), prompt-driven and SQL-first produce the same numbers. <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a> recommends semantic layer as the bridge so that prompt-driven does not invent logic that diverges from production SQL.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Table — Prompt vs SQL by Use Case</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="underline">ThoughtWorks Radar</a></p>
       <p><strong>What it Shows:</strong> Rows: use case (ad-hoc, production, compliance). Columns: prompt-driven (pros/cons), SQL-first (pros/cons), recommendation (hybrid).</p>
       <p><strong>Why It Matters:</strong> When to use which approach.</p>
     </div>
   </div>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Prompt-driven: user question, generated SQL, validation result (pass/fail), execution result, feedback (correct/incorrect). SQL-first: query repo, versioned SQL, lineage. Semantic layer: metric definitions (name, SQL or logic, dimensions) so both humans and LLM query consistent logic.
-  </p>
-
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Prompt-Driven and SQL-First Effectiveness</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Prompt-driven: % queries that pass validation, % that return correct result (vs. known answer or human check), time to first result. SQL-first: query reuse, lineage coverage. North star: right answer for the right use case—prompt for exploration, SQL for production.
+    <strong>Prompt-driven:</strong> % queries that pass validation, % that return correct result (vs. known answer or human check), time to first result. According to <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, organizations that measure prompt-driven effectiveness see 60–80% of ad-hoc questions pass validation when schema and semantic layer context are good—but correctness for complex questions is lower. <strong>SQL-first:</strong> Query reuse, lineage coverage. North star: <strong>right answer for the right use case</strong>—prompt for exploration and first draft; SQL for production and compliance.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Validation Funnel — Pass Rate, Correctness</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="underline">McKinsey — GenAI for Analytics</a></p>
+      <p><strong>What it Shows:</strong> Queries generated → syntax pass → schema pass → correct result (vs golden). Drop-off at each stage.</p>
+      <p><strong>Why It Matters:</strong> Where prompt-driven fails and needs guardrails.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Evaluate and A/B Test</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Evaluate LLM SQL on benchmark questions (syntax, semantic correctness); A/B test prompt vs SQL for ad-hoc questions (time, accuracy). Implement validation layers and measure rejection rate and false positive/negative. Use semantic layer for critical metrics so prompt-driven generates against same logic as SQL-first.
+    <strong>Evaluate</strong> LLM SQL on benchmark questions (syntax correct, semantically correct vs known answer). According to <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, standard questions (e.g., "revenue by region") often pass at 70–80%; complex multi-step questions drop to 40–50%. <strong>A/B test</strong> prompt vs SQL for ad-hoc questions (time, accuracy)—prompt-driven is faster for first result but may need correction. Implement validation layers and measure rejection rate and false positive/negative. Use <strong>semantic layer</strong> for critical metrics so prompt-driven generates against same logic as SQL-first; <a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a> and vendors are advancing metric-aware NL interfaces.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Hybrid Workflow — Prompt Draft → SQL Production</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="underline">ThoughtWorks Radar</a></p>
+      <p><strong>What it Shows:</strong> User asks in NL → LLM generates SQL → analyst reviews/edits → if production, save as versioned SQL; if ad-hoc, run with validation. Semantic layer in middle.</p>
+      <p><strong>Why It Matters:</strong> Balances speed and reliability.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    LLM with schema and semantic layer context; validator (syntax, schema, row limit); optional auto-test against golden queries; human-in-the-loop for production. Feedback loop: flag wrong results to improve prompts or model.
+    LLM with <strong>schema and semantic layer context</strong> so generated SQL uses allowed tables and metric definitions. <strong>Validator</strong> (syntax, schema, row limit); optional auto-test against golden queries for common questions. Human-in-the-loop for production—approval workflow before prompt-driven result becomes a report or dashboard. <strong>Feedback loop:</strong> Flag wrong results to improve prompts or model. According to <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's GenAI research</a>, governance for prompt-driven (who can ask what, what can be exported) will become standard as adoption grows.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Prompt-Driven Speeds Exploration but Needs Validation for Critical Use</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Prompt-driven speeds exploration but requires validation and human review for critical use; semantic layer improves consistency between prompt and SQL; hybrid (prompt for draft, SQL for production) balances speed and reliability.
+    Prompt-driven speeds exploration and first draft—time to first result is often 50–70% faster than writing SQL from scratch. According to <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a>, for production or compliance, validation and human review are essential—do not ship prompt-driven output to production without review.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Semantic Layer Improves Consistency</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When prompt-driven generates against a <strong>semantic layer</strong> (metric definitions), prompt and SQL-first use the same business logic—"revenue" is defined once. According to <a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a>, semantic layer reduces divergence and improves correctness for prompt-generated queries.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Hybrid Balances Speed and Reliability</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Hybrid</strong> (prompt for draft, SQL for production) balances speed and reliability: use prompt for exploration and first draft; promote to versioned SQL for production and critical metrics. According to <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, organizations that adopt hybrid workflows see faster exploration without sacrificing reliability for production and compliance.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Accessibility vs Reliability</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: accessibility (prompt) vs. reliability (SQL). Risk: over-trust of LLM output. Failure mode: using prompt-driven for production or compliance without validation and approval.
+    Prompt-driven is accessible (anyone can ask in NL) but carries hallucination risk; SQL-first is reliable (versioned, human-authored) but requires analyst skill. According to <a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a>, use prompt for exploration and ad-hoc; use SQL for production and compliance.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Mode</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Over-trust of LLM output—users may assume prompt-driven result is correct. Mitigate with validation and clear labeling ("AI-generated, verify before use"). <strong>Failure mode:</strong> Using prompt-driven for production or compliance without validation and approval—wrong numbers in reports or regulatory submission. Always validate and require approval for production use.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: use prompt-driven for ad-hoc and exploration with validation; keep SQL-first for production and compliance; adopt semantic layer and hybrid workflow. Outcome: faster exploration without sacrificing reliability where it matters.
+    Organizations that use prompt-driven for ad-hoc and exploration with validation, and SQL-first for production and compliance, see faster exploration (50–70% faster time to first result for ad-hoc) without sacrificing reliability (<a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>). Outcome: right answer for the right use case when semantic layer and hybrid workflow are adopted.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Use prompt-driven for ad-hoc and exploration with validation (schema, row limit); keep SQL-first for production and compliance.</li>
+    <li>Adopt semantic layer so prompt-driven and SQL-first use consistent metric definitions.</li>
+    <li>Hybrid workflow: prompt for draft; promote to versioned SQL for production; require approval for sensitive or production use.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    LLM SQL quality depends on schema and prompt; complex multi-step questions still need analysts. Improvements: better schema and metric context; query benchmarks and regression tests; approval workflows for sensitive data.
+    LLM SQL quality depends on schema and prompt; complex multi-step questions still need analysts. <strong>Improvements:</strong> Better schema and metric context (semantic layer); query benchmarks and regression tests for common questions; approval workflows for sensitive data; governance (who can ask what, what can be exported).
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Natural language to semantic-layer metrics (no raw SQL); automated correctness checks; governance for prompt-driven (who can ask what, what can be exported).
+    <strong>Natural language to semantic-layer metrics:</strong> User asks in NL; system maps to metric (no raw SQL)—reduces hallucination by constraining to defined metrics. <strong>Automated correctness checks:</strong> Test prompt-generated queries against known answers; regression suite. <strong>Governance for prompt-driven:</strong> Who can ask what, what can be exported, audit trail for compliance. <a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and vendors are advancing NL-to-metric and governance.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><a href="https://towardsdatascience.com" target="_blank" rel="noopener" class="text-primary hover:underline">Towards Data Science — LLM Analytics</a></li>
     <li><a href="https://www.thoughtworks.com/radar" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks Radar</a></li>
+    <li><a href="https://www.gartner.com/en/articles/generative-ai-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Generative AI for Analytics</a></li>
+    <li><a href="https://www.getdbt.com/analytics-engineering/" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs — Analytics Engineering</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — GenAI for Analytics</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

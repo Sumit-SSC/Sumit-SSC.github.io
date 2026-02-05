@@ -1,81 +1,161 @@
 [
   {
     "id": "recommendation-impact-beyond-clicks",
-    "title": "Measuring Recommendation Impact Beyond Clicks: Completion, Delay, and Long-Term Satisfaction",
+    "title": "Measuring Recommendation Impact Beyond Clicks (Netflix-style completion, delay, long-term satisfaction)",
     "short_description": "How streaming platforms evaluate recommendation quality using completion rate, play delay, and multi-metric frameworks—backed by Netflix Tech Blog, HBR, and Gartner research.",
     "category": "Industry · Media & Streaming",
     "case_study_path": "data/case_studies/recommendation-impact-beyond-clicks.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "A/B Testing", "Sequential Testing", "Interleaving", "Power BI", "Python"],
     "date": "2026",
-    "case_study_read_mins": 18
+    "case_study_read_mins": 18,
+    "tier": "featured",
+    "related_case_studies": ["metric-gaming-goodharts-law", "funnel-metrics-causal-product-understanding"]
   },
   {
     "id": "skip-rate-discovery-quality-music",
-    "title": "Skip Rate Is Not a Failure Metric: Evaluating Discovery Quality in Music Products",
+    "title": "Skip Rate Is Not a Failure Metric (Spotify-style discovery quality)",
     "short_description": "How music platforms interpret skip behavior correctly—distinguishing rejection from exploration—backed by Spotify Research, Bain, and PLOS ONE.",
     "category": "Industry · Music & Audio",
     "case_study_path": "data/case_studies/skip-rate-discovery-quality-music.html",
     "thumbnail": "assets/images/thumbs/02.jpg",
     "tools": ["SQL", "Session Analytics", "Cohort Analysis", "Power BI", "Python", "LLMs"],
     "date": "2026",
-    "case_study_read_mins": 17
+    "case_study_read_mins": 17,
+    "tier": "featured",
+    "related_case_studies": ["funnel-metrics-causal-product-understanding", "metric-gaming-goodharts-law"]
   },
   {
     "id": "eta-accuracy-speed-quick-commerce",
-    "title": "ETA Accuracy vs Speed in Quick Commerce",
+    "title": "ETA Accuracy vs Speed in Quick Commerce (Uber-style last-mile SLAs)",
     "short_description": "Why ETA accuracy matters more than raw speed for customer trust—demand forecasting, VRP trade-offs, SLA breaches, and exception handling.",
     "category": "Industry · Logistics & Retail",
     "case_study_path": "data/case_studies/eta-accuracy-speed-quick-commerce.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "Demand Forecasting", "Power BI", "Python", "VRP"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "featured",
+    "related_case_studies": ["marketplace-liquidity-analytics", "dynamic-pricing-without-black-boxes"]
   },
   {
     "id": "fraud-precision-customer-friction",
-    "title": "Fraud Precision vs Customer Friction",
+    "title": "Fraud Precision vs Customer Friction (Fintech rules+ML with guardrails)",
     "short_description": "Designing fraud analytics that balance loss prevention and CX—rules + ML layering, label delays, and ops KPIs.",
     "category": "Industry · BFSI / Payments",
     "case_study_path": "data/case_studies/fraud-precision-customer-friction.html",
     "thumbnail": "assets/images/thumbs/01.jpg",
     "tools": ["SQL", "Power BI", "Rules Engine", "ML", "Python"],
     "date": "2026",
-    "case_study_read_mins": 15
+    "case_study_read_mins": 15,
+    "tier": "featured",
+    "related_case_studies": ["human-in-the-loop-ai-risk-ops", "credit-decisions-profit-systems"]
   },
   {
     "id": "credit-decisions-profit-systems",
-    "title": "Credit Decisions as Profit Systems",
+    "title": "Credit Decisions as Profit Systems (BFSI PD×LGD×EAD, reject inference)",
     "short_description": "Treating credit approval as profit optimization—PD × LGD × EAD, reject inference, vintage analysis, and bias & governance.",
     "category": "Industry · BFSI",
     "case_study_path": "data/case_studies/credit-decisions-profit-systems.html",
     "thumbnail": "assets/images/thumbs/06.jpg",
     "tools": ["SQL", "Scorecards", "Power BI", "Python", "Risk Metrics"],
     "date": "2026",
-    "case_study_read_mins": 16
+    "case_study_read_mins": 16,
+    "tier": "featured",
+    "related_case_studies": ["fraud-precision-customer-friction", "human-in-the-loop-ai-risk-ops"]
+  },
+  {
+    "id": "marketplace-liquidity-analytics",
+    "title": "Marketplace Liquidity & Matching Analytics (Airbnb/Uber-style balancing)",
+    "short_description": "Supply–demand balance, matching efficiency, cold start, and liquidity metrics.",
+    "category": "Industry · Marketplaces",
+    "case_study_path": "data/case_studies/marketplace-liquidity-analytics.html",
+    "thumbnail": "assets/images/thumbs/04.jpg",
+    "tools": ["SQL", "Power BI", "Python"],
+    "date": "2026",
+    "case_study_read_mins": 14,
+    "tier": "featured",
+    "related_case_studies": ["eta-accuracy-speed-quick-commerce", "dynamic-pricing-without-black-boxes"]
+  },
+  {
+    "id": "dynamic-pricing-without-black-boxes",
+    "title": "Dynamic Pricing Without Black Boxes (transparent elasticity, fairness constraints)",
+    "short_description": "Explainable pricing—elasticity, fairness constraints, and transparent rules.",
+    "category": "Industry · Retail & Pricing",
+    "case_study_path": "data/case_studies/dynamic-pricing-without-black-boxes.html",
+    "thumbnail": "assets/images/thumbs/04.jpg",
+    "tools": ["SQL", "Power BI", "Python", "Elasticity"],
+    "date": "2026",
+    "case_study_read_mins": 14,
+    "tier": "featured",
+    "related_case_studies": ["marketplace-liquidity-analytics", "eta-accuracy-speed-quick-commerce"]
+  },
+  {
+    "id": "ad-auctions-attribution-analytics",
+    "title": "Ad Auctions & Attribution Analytics (quality score, bids, incrementality)",
+    "short_description": "Designing transparent ad auctions and incrementality-aware attribution—quality scores, pacing, budget guardrails, and causal lift.",
+    "category": "Industry · Ads & Growth",
+    "case_study_path": "data/case_studies/ad-auctions-attribution-analytics.html",
+    "thumbnail": "assets/images/thumbs/02.jpg",
+    "tools": ["SQL", "Auction Dynamics", "Power BI", "Python", "Causal Lift"],
+    "date": "2026",
+    "case_study_read_mins": 16,
+    "tier": "featured",
+    "related_case_studies": ["sequential-ab-testing-real-products", "metric-gaming-goodharts-law", "prompt-driven-analytics-vs-sql-first"]
   },
   {
     "id": "north-star-metrics-break-scale",
-    "title": "North Star Metrics That Break at Scale",
+    "title": "North Star Metrics That Break at Scale (product operating model)",
     "short_description": "Why popular North Star metrics fail—metric gaming, proxy failures, and multi-metric frameworks.",
     "category": "Practice · Metrics & Strategy",
     "case_study_path": "data/case_studies/north-star-metrics-break-scale.html",
     "thumbnail": "assets/images/thumbs/03.jpg",
     "tools": ["SQL", "Power BI", "KPI Design", "Analytics"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "featured",
+    "related_case_studies": ["metric-gaming-goodharts-law", "prompt-driven-analytics-vs-sql-first"]
   },
   {
     "id": "sequential-ab-testing-real-products",
-    "title": "Sequential A/B Testing in Real Products",
+    "title": "Sequential A/B Testing in Real Products (Netflix-style sequential testing)",
     "short_description": "Moving beyond fixed-horizon experiments—sequential testing, early stopping bias, and guardrails.",
     "category": "Practice · Experimentation",
     "case_study_path": "data/case_studies/sequential-ab-testing-real-products.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "A/B Testing", "Power BI", "Python", "Statistics"],
     "date": "2026",
-    "case_study_read_mins": 15
+    "case_study_read_mins": 15,
+    "tier": "featured",
+    "related_case_studies": ["metric-gaming-goodharts-law", "prompt-driven-analytics-vs-sql-first"]
   },
+  {
+    "id": "dashboards-to-decision-systems",
+    "title": "From Dashboards to Decision Systems (alerting, automation, ownership)",
+    "short_description": "Close the loop from insight to action—alerts, automation, and ownership.",
+    "category": "Practice · BI & Decision Intelligence",
+    "case_study_path": "data/case_studies/dashboards-to-decision-systems.html",
+    "thumbnail": "assets/images/thumbs/05.jpg",
+    "tools": ["Power BI", "SQL", "Alerting", "Workflow"],
+    "date": "2026",
+    "case_study_read_mins": 13,
+    "tier": "featured",
+    "related_case_studies": ["why-analytics-teams-fail-impact", "bi-dashboards-decision-interfaces"]
+  },
+  {
+    "id": "why-analytics-teams-fail-impact",
+    "title": "Why Analytics Teams Fail to Drive Impact (operating model, incentives, ownership)",
+    "short_description": "Organizational failure modes—incentives, org design, and tooling mismatch.",
+    "category": "Practice · Analytics Operating Model",
+    "case_study_path": "data/case_studies/why-analytics-teams-fail-impact.html",
+    "thumbnail": "assets/images/thumbs/03.jpg",
+    "tools": ["SQL", "Power BI", "Impact Tracking"],
+    "date": "2026",
+    "case_study_read_mins": 13,
+    "tier": "featured",
+    "related_case_studies": ["dashboards-to-decision-systems", "ai-governance-analytics-teams"]
+  },
+
   {
     "id": "funnel-metrics-causal-product-understanding",
     "title": "Funnel Metrics vs Causal Product Understanding",
@@ -85,7 +165,8 @@
     "thumbnail": "assets/images/thumbs/03.jpg",
     "tools": ["SQL", "Power BI", "Causal Impact", "Python"],
     "date": "2026",
-    "case_study_read_mins": 13
+    "case_study_read_mins": 13,
+    "tier": "archive"
   },
   {
     "id": "metric-gaming-goodharts-law",
@@ -96,7 +177,8 @@
     "thumbnail": "assets/images/thumbs/03.jpg",
     "tools": ["SQL", "Power BI", "KPI Design", "Analytics"],
     "date": "2026",
-    "case_study_read_mins": 13
+    "case_study_read_mins": 13,
+    "tier": "archive"
   },
   {
     "id": "measuring-long-term-value-subscriptions",
@@ -107,7 +189,8 @@
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "Cohort Analysis", "Power BI", "Python"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "event-taxonomy-design-product-analytics",
@@ -118,7 +201,8 @@
     "thumbnail": "assets/images/thumbs/05.jpg",
     "tools": ["SQL", "Segment", "Amplitude", "dbt"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "analytics-engineering-data-contracts",
@@ -129,7 +213,8 @@
     "thumbnail": "assets/images/thumbs/05.jpg",
     "tools": ["dbt", "SQL", "Data Contracts", "Power BI"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "bi-dashboards-decision-interfaces",
@@ -140,7 +225,8 @@
     "thumbnail": "assets/images/thumbs/05.jpg",
     "tools": ["Power BI", "Tableau", "SQL", "KPI Design"],
     "date": "2026",
-    "case_study_read_mins": 13
+    "case_study_read_mins": 13,
+    "tier": "archive"
   },
   {
     "id": "observability-analytics-pipelines",
@@ -151,7 +237,8 @@
     "thumbnail": "assets/images/thumbs/05.jpg",
     "tools": ["dbt", "SQL", "Monte Carlo", "Datadog"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "warehouse-first-analytics-reverse-etl",
@@ -162,7 +249,8 @@
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "Hightouch", "Snowflake", "dbt"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "llms-analyst-copilots",
@@ -173,7 +261,8 @@
     "thumbnail": "assets/images/thumbs/06.jpg",
     "tools": ["SQL", "Python", "LLMs", "Power BI"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "human-in-the-loop-ai-risk-ops",
@@ -184,7 +273,8 @@
     "thumbnail": "assets/images/thumbs/01.jpg",
     "tools": ["SQL", "Power BI", "ML", "Python"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "prompt-driven-analytics-vs-sql-first",
@@ -195,83 +285,43 @@
     "thumbnail": "assets/images/thumbs/06.jpg",
     "tools": ["SQL", "LLMs", "Semantic Layer", "Power BI"],
     "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "churn-lagging-indicator",
-    "title": "Churn as a Lagging Indicator: Early Signals, Risk Scoring, and Intervention",
+    "title": "Churn as a Lagging Indicator (early signals, interventions)",
     "short_description": "Detect churn risk earlier—early signals, behavioral markers, and intervention analytics.",
     "category": "Practice · Retention & Subscriptions",
     "case_study_path": "data/case_studies/churn-lagging-indicator.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "Cohort Analysis", "Power BI", "Python", "Risk Scoring"],
     "date": "2026",
-    "case_study_read_mins": 14
-  },
-  {
-    "id": "marketplace-liquidity-analytics",
-    "title": "Marketplace Liquidity Analytics",
-    "short_description": "Supply–demand balance, matching efficiency, cold start, and liquidity metrics.",
-    "category": "Industry · Marketplaces",
-    "case_study_path": "data/case_studies/marketplace-liquidity-analytics.html",
-    "thumbnail": "assets/images/thumbs/04.jpg",
-    "tools": ["SQL", "Power BI", "Python"],
-    "date": "2026",
-    "case_study_read_mins": 14
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "retention-vs-growth-tradeoffs",
-    "title": "Retention vs Growth Trade-offs",
+    "title": "Retention vs Growth Trade-offs (cohort payback, blended CAC/LTV)",
     "short_description": "Balance acquisition and retention using cohort economics and payback periods.",
     "category": "Practice · Growth & Metrics",
     "case_study_path": "data/case_studies/retention-vs-growth-tradeoffs.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
     "tools": ["SQL", "Cohort Analysis", "Power BI", "Python"],
     "date": "2026",
-    "case_study_read_mins": 14
-  },
-  {
-    "id": "why-analytics-teams-fail-impact",
-    "title": "Why Analytics Teams Fail to Drive Impact",
-    "short_description": "Organizational failure modes—incentives, org design, and tooling mismatch.",
-    "category": "Practice · Analytics Operating Model",
-    "case_study_path": "data/case_studies/why-analytics-teams-fail-impact.html",
-    "thumbnail": "assets/images/thumbs/03.jpg",
-    "tools": ["SQL", "Power BI", "Impact Tracking"],
-    "date": "2026",
-    "case_study_read_mins": 13
+    "case_study_read_mins": 14,
+    "tier": "archive"
   },
   {
     "id": "ai-governance-analytics-teams",
-    "title": "AI Governance for Analytics Teams",
+    "title": "AI Governance for Analytics Teams (risk, bias, accountability)",
     "short_description": "Bias monitoring, model accountability, and regulatory readiness.",
     "category": "Practice · AI & Governance",
     "case_study_path": "data/case_studies/ai-governance-analytics-teams.html",
     "thumbnail": "assets/images/thumbs/06.jpg",
     "tools": ["SQL", "Power BI", "Python", "Model Registry"],
     "date": "2026",
-    "case_study_read_mins": 13
-  },
-  {
-    "id": "dynamic-pricing-without-black-boxes",
-    "title": "Dynamic Pricing Without Black Boxes",
-    "short_description": "Explainable pricing—elasticity, fairness constraints, and transparent rules.",
-    "category": "Industry · Retail & Pricing",
-    "case_study_path": "data/case_studies/dynamic-pricing-without-black-boxes.html",
-    "thumbnail": "assets/images/thumbs/04.jpg",
-    "tools": ["SQL", "Power BI", "Python", "Elasticity"],
-    "date": "2026",
-    "case_study_read_mins": 14
-  },
-  {
-    "id": "dashboards-to-decision-systems",
-    "title": "From Dashboards to Decision Systems",
-    "short_description": "Close the loop from insight to action—alerts, automation, and ownership.",
-    "category": "Practice · BI & Decision Intelligence",
-    "case_study_path": "data/case_studies/dashboards-to-decision-systems.html",
-    "thumbnail": "assets/images/thumbs/05.jpg",
-    "tools": ["Power BI", "SQL", "Alerting", "Workflow"],
-    "date": "2026",
-    "case_study_read_mins": 13
+    "case_study_read_mins": 13,
+    "tier": "archive"
   }
 ]

@@ -24,69 +24,181 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why Data Pipelines Need Observability</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Monte Carlo's data observability blog and Datadog's data quality content emphasize that data pipelines fail in ways that are invisible without monitoring—late data, schema drift, volume drops. Observability (freshness, volume, schema, quality) gives teams the same visibility they have for application logs and metrics.
+    Analytics pipelines should be monitored like production systems: <strong>data freshness</strong>, <strong>volume anomalies</strong>, and <strong>trust metrics</strong>. According to <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo's data observability blog</a>, data pipelines fail in ways that are invisible without monitoring—late data, schema drift, volume drops—and organizations spend 30–40% of analytics engineering time on firefighting when observability is absent. <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog's data observability content</a> emphasizes that observability (freshness, volume, schema, quality) gives teams the same visibility they have for application logs and metrics—so that breakages are detected and resolved before consumers are impacted.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Cost of Blind Pipelines</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When pipelines run without observability, breakages (e.g., source stops, schema change, duplicate load) go undetected until a consumer notices wrong or stale numbers. According to <a href="https://www.thoughtworks.com/insights/articles/data-contracts" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks' data contracts article</a>, silent failures erode trust and multiply time-to-resolve because root cause is discovered late. The fix is to instrument pipelines with run metadata and quality checks, store time-series of freshness and volume, set thresholds, and alert when breached—so that <strong>mean time to detect (MTTD)</strong> and <strong>mean time to resolve (MTTR)</strong> drop and trust in analytics rises. <a href="https://www.getdbt.com/blog/analytics-engineering-best-practices" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs' best practices</a> recommend freshness and quality tests as first-class pipeline outputs.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
-      <p><strong>Type:</strong> Dashboard — Pipeline Health</p>
-      <p><strong>Suggested Source:</strong> Monte Carlo / Datadog</p>
-      <p><strong>What it Shows:</strong> Tables/models with freshness (last run, SLA status), volume trend, quality score; alert log.</p>
-      <p><strong>Why It Matters:</strong> Single pane for pipeline health.</p>
+      <p><strong>Type:</strong> Pipeline Observability Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="underline">Monte Carlo — Data Observability</a></p>
+      <p><strong>What it Shows:</strong> Pipeline stages with freshness, volume, and quality checks; alerts and lineage. Same mental model as app observability.</p>
+      <p><strong>Why It Matters:</strong> Monitor data like production systems.</p>
     </div>
   </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Pipeline Metadata and Observability Store</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Pipeline metadata: run_id, model/table, start_time, end_time, rows_affected, status. Quality checks: null_rate, duplicate_count, schema_diff. Observability store: time-series of freshness, volume, and quality per asset; alerts when thresholds are breached.
+    <strong>Pipeline metadata:</strong> run_id, model/table, start_time, end_time, rows_affected, status. <strong>Quality checks:</strong> null_rate, duplicate_count, schema_diff, referential integrity. According to <a href="https://docs.getdbt.com/reference/resource-properties/freshness" target="_blank" rel="noopener" class="text-primary hover:underline">dbt's freshness and tests</a>, these can be generated by dbt or similar tools and stored in an observability store. <strong>Observability store:</strong> time-series of freshness (last successful run, max timestamp per table), volume (row count per run or day), and quality (pass/fail per check) per asset; alerts when thresholds are breached. <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo</a> and <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog</a> recommend lineage so that when an upstream asset fails, impact scope (downstream tables, dashboards) is visible.
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Example: Freshness and volume time-series (conceptual)
+-- run_metadata: run_id, model, start_time, end_time, rows_affected, status
+SELECT model, date_trunc('day', end_time) AS run_date,
+       MAX(end_time) AS last_run,
+       SUM(rows_affected) AS rows_loaded,
+       COUNT(*) AS run_count
+FROM run_metadata
+WHERE status = 'success' AND end_time >= CURRENT_DATE - 30
+GROUP BY model, date_trunc('day', end_time);
+-- Compare last_run to SLA (e.g., daily by 9am); alert if breached
+-- Compare rows_loaded to prior days; alert on sudden drop or spike
+    </pre>
+  </div>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard — Pipeline Health</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="underline">Monte Carlo</a> / <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="underline">Datadog</a></p>
+      <p><strong>What it Shows:</strong> Tables/models with freshness (last run, SLA status), volume trend, quality score; alert log.</p>
+      <p><strong>Why It Matters:</strong> Single pane for pipeline health.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Lineage and Impact Scope</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Lineage</strong> (upstream and downstream dependencies per asset) accelerates impact analysis: when an upstream table fails or changes, lineage shows which downstream models and dashboards are affected. According to <a href="https://www.gartner.com/en/information-technology/glossary/data-lineage" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's data lineage research</a>, organizations with lineage reduce MTTR by 40–50% because impact scope is known immediately.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary: Freshness SLA and MTTD/MTTR</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Primary: % assets within freshness SLA; mean time to detect (MTTD) and mean time to resolve (MTTR) for incidents. Secondary: volume anomaly rate, quality check pass rate. North star: zero undetected data incidents—all issues surfaced before consumers are impacted.
+    <strong>Primary:</strong> % of assets within freshness SLA (e.g., daily table fresh by 9am); <strong>mean time to detect (MTTD)</strong> and <strong>mean time to resolve (MTTR)</strong> for incidents. According to <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo</a>, organizations that adopt observability see 50–70% faster MTTD and 40–60% faster MTTR. <strong>Secondary:</strong> volume anomaly rate, quality check pass rate. North star: <strong>zero undetected data incidents</strong>—all issues surfaced before consumers are impacted.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> MTTD / MTTR Trend and SLA Adherence</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="underline">Datadog — Data Observability</a></p>
+      <p><strong>What it Shows:</strong> Time-series: % assets within SLA; MTTD and MTTR per incident. Goal: SLA adherence up, MTTD/MTTR down.</p>
+      <p><strong>Why It Matters:</strong> Tracks observability effectiveness.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Instrument, Store, Alert, Review</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Instrument pipelines with run metadata and quality checks; store time-series of freshness, volume, and quality; set thresholds and alert (e.g., Slack, PagerDuty); review MTTD/MTTR and tune thresholds. Use lineage to scope impact when an upstream asset fails.
+    Instrument pipelines with run metadata and quality checks (e.g., dbt test, Great Expectations); store time-series of freshness, volume, and quality in an observability store. Set thresholds (e.g., freshness: warn after 1 day, error after 2 days; volume: alert on ±30% vs 7-day average) and alert (e.g., Slack, PagerDuty). According to <a href="https://www.getdbt.com/blog/analytics-engineering-best-practices" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a>, run contract and freshness checks in CI and on schedule so that breakages are caught early. Review MTTD/MTTR monthly and tune thresholds to balance alert volume and missed incidents.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Use Lineage for Impact Scope</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When an upstream asset fails, use lineage to scope impact—which downstream models and dashboards are affected? Notify owners and consumers so that they are not blind. According to <a href="https://www.thoughtworks.com/insights/articles/data-contracts" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks</a>, lineage plus contracts (schema, freshness) reduce both MTTD and MTTR and improve trust.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Lineage Graph — Upstream / Downstream Impact</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="underline">Monte Carlo</a> / OpenLineage</p>
+      <p><strong>What it Shows:</strong> Graph of tables/models; when one fails, highlighted downstream impact (dashboards, reports).</p>
+      <p><strong>Why It Matters:</strong> Accelerates impact analysis and notification.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Anomaly Detection and Root-Cause Suggestions</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Anomaly detection on volume and key metrics (e.g., ML-based); auto-suggested thresholds from historical variance; optional root-cause suggestions (e.g., upstream failure, schema change); LLM summarization of incident for triage.
+    <strong>Anomaly detection</strong> on volume and key metrics (e.g., ML-based) can flag sudden drops or spikes that indicate pipeline or source issues—reducing false negatives. Auto-suggested thresholds from historical variance reduce manual tuning. Optional <strong>root-cause suggestions</strong> (e.g., "upstream table X failed," "schema change in source") and <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">LLM summarization of incident</a> for triage speed resolution. According to <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog</a>, automation of detection and triage frees engineers for deeper fixes.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Freshness Is the Highest-Impact Signal</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Freshness is the highest-impact signal; volume anomalies catch many pipeline and source issues; schema and quality checks prevent silent corruption; lineage accelerates impact analysis.
+    <strong>Freshness</strong> (when did data last arrive?) is often the first and highest-impact observability signal—late data is the most common cause of "wrong number" incidents. According to <a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo</a>, defining and monitoring freshness SLA catches 50%+ of breakages early.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Volume and Quality Prevent Silent Corruption</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Volume anomalies</strong> (row count drops or spikes) catch many pipeline and source issues (e.g., duplicate load, partial failure). <strong>Schema and quality checks</strong> (null rate, duplicates, referential integrity) prevent silent corruption—data that lands but is wrong. According to <a href="https://www.getdbt.com/blog/analytics-engineering-best-practices" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs</a>, quality tests are as important as freshness for trust.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Lineage Accelerates Impact Analysis</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When an upstream asset fails, <strong>lineage</strong> shows which downstream models and dashboards are affected—reducing MTTR by 40–50% (<a href="https://www.gartner.com/en/information-technology/glossary/data-lineage" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>). Organizations that combine freshness, volume, quality, and lineage see the largest improvement in MTTD and MTTR.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Alert Volume vs Missed Incidents</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: alert volume (sensitive) vs. missed incidents (insensitive). Risk: alert fatigue. Failure mode: monitoring only freshness and missing schema or quality issues.
+    Sensitive thresholds (e.g., small deviation triggers alert) catch more issues but cause <strong>alert fatigue</strong>; insensitive thresholds miss incidents. According to <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog</a>, tune thresholds using historical incident and false-alarm rates; use anomaly detection to reduce noise while catching true breaks.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Mode</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Alert fatigue when thresholds are too sensitive—teams ignore alerts. <strong>Failure mode:</strong> Monitoring only freshness and missing schema or quality issues (e.g., data lands on time but is wrong). Cover freshness, volume, and quality; add lineage for impact.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: adopt observability for critical pipelines—freshness, volume, quality; alert and review MTTD/MTTR. Outcome: faster detection and resolution of data issues; higher trust in analytics.
+    Based on industry benchmarks: organizations that adopt observability (freshness, volume, quality, lineage) see 50–70% faster MTTD, 40–60% faster MTTR, and 30–40% reduction in firefighting time (<a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo</a>, <a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog</a>). Outcome: faster detection and resolution of data issues; higher trust in analytics.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Adopt observability for critical pipelines—freshness, volume, quality; store time-series and alert on breach.</li>
+    <li>Use lineage to scope impact when upstream fails; notify owners and consumers.</li>
+    <li>Review MTTD/MTTR and tune thresholds to balance alert volume and missed incidents.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Semantic quality (e.g., "revenue is wrong") is hard to automate. Improvements: business-rule checks; consumer feedback loop; integration with data contracts.
+    <strong>Semantic quality</strong> (e.g., "revenue is wrong" despite correct schema and freshness) is hard to automate. <strong>Improvements:</strong> Business-rule checks (e.g., revenue within expected range); consumer feedback loop (e.g., "this number looks wrong"); integration with data contracts so that schema and freshness are contractually enforced and observability validates against contracts.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Predictive alerts (before breach); cross-pipeline correlation; regulatory and compliance reporting (lineage + SLA).
+    <strong>Predictive alerts</strong> (before breach—e.g., "run will likely be late based on current progress"). <strong>Cross-pipeline correlation</strong> (e.g., same source fails in multiple pipelines). <strong>Regulatory and compliance reporting</strong> (lineage + SLA for auditability). <a href="https://www.gartner.com/en/information-technology/glossary/data-lineage" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> notes growing demand for observability and lineage in regulated industries.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><a href="https://www.montecarlodata.com/blog/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo — Data Observability</a></li>
+    <li><a href="https://www.montecarlodata.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Monte Carlo — Data Observability</a></li>
     <li><a href="https://www.datadoghq.com/blog/data-observability/" target="_blank" rel="noopener" class="text-primary hover:underline">Datadog — Data Observability</a></li>
+    <li><a href="https://docs.getdbt.com/reference/resource-properties/freshness" target="_blank" rel="noopener" class="text-primary hover:underline">dbt — Freshness and Tests</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.thoughtworks.com/insights/articles/data-contracts" target="_blank" rel="noopener" class="text-primary hover:underline">ThoughtWorks — Data Contracts</a></li>
+    <li><a href="https://www.getdbt.com/blog/analytics-engineering-best-practices" target="_blank" rel="noopener" class="text-primary hover:underline">dbt Labs — Analytics Engineering Best Practices</a></li>
+    <li><a href="https://www.gartner.com/en/information-technology/glossary/data-lineage" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Data Lineage</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

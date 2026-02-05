@@ -24,69 +24,157 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why Liquidity Drives Marketplace Success</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Airbnb's engineering blog and a16z's marketplace content describe how liquidity—supply and demand in balance—drives marketplace success. Too little supply: demand goes unmet (bad experience). Too little demand: supply sits idle (churn). Analytics should diagnose imbalance (where, when) and inform growth or rebalancing (e.g., incentives, pricing).
+    Marketplace health depends on <strong>liquidity</strong>: supply and demand in balance so that matching is efficient and both sides are satisfied. According to <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">Andreessen Horowitz's marketplace guide</a> and <a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="text-primary hover:underline">Airbnb Engineering</a>, too little supply: demand goes unmet (bad experience, demand churn). Too little demand: supply sits idle (supply churn). <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/marketplace-economics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's marketplace economics</a> emphasizes that analytics should diagnose imbalance (where, when—geo × time) and inform growth or rebalancing (e.g., incentives for supply in low-supply zones, pricing/surge for demand in high-demand zones).
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Matching Efficiency, Cold Start, and Liquidity Metrics</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Matching efficiency:</strong> % of demand that finds a match (e.g., booking rate, fill rate); time to match; quality of match. Low liquidity degrades matching—fewer options, longer wait. <strong>Cold start:</strong> New supply (e.g., new listing) or new demand (e.g., new user) has no history; liquidity metrics and matching suffer until enough data and density. According to <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a>, cold start is a major drag on new cohorts—segment and track cold-start cohorts separately. <strong>Liquidity metrics:</strong> Supply–demand ratio by geo/time; depth (e.g., listings per zone, requests per zone); utilization (% supply that gets a match). Use to diagnose imbalance and prioritize growth or rebalancing.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Supply–Demand Balance Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="underline">Airbnb Engineering</a></p>
+      <p><strong>What it Shows:</strong> Supply vs demand by geo/time; matching efficiency; cold start. Liquidity metrics.</p>
+      <p><strong>Why It Matters:</strong> Diagnose supply-demand imbalance.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Supply, Demand, Match, and Cold-Start</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Supply:</strong> listing_id, geo, time_slot, attributes, created_at. <strong>Demand:</strong> request_id, geo, time_slot, user_id, created_at. <strong>Match:</strong> request_id, listing_id, matched_at, outcome (booked, no_match, etc.). According to <a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="text-primary hover:underline">Airbnb Engineering</a>, aggregations by geo and time (supply count, demand count, fill rate, time-to-match) are the core of liquidity dashboards. <strong>Cold-start:</strong> Segment by supply_age or demand_age (e.g., first 30 days) so that new supply/demand is tracked separately—<a href="https://www.gartner.com/en/information-technology/glossary/marketplace-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's marketplace analytics</a> recommends cold-start conversion (e.g., % new listings that get first booking in 30 days) as a guardrail.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
       <p><strong>Type:</strong> Heatmap — Supply/Demand by Geo and Time</p>
-      <p><strong>Suggested Source:</strong> Airbnb Engineering</p>
+      <p><strong>Suggested Source:</strong> <a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="underline">Airbnb Engineering</a></p>
       <p><strong>What it Shows:</strong> Geo × time grid; color = supply–demand ratio or fill rate. Highlights under- and over-supplied zones.</p>
       <p><strong>Why It Matters:</strong> Diagnose imbalance and prioritize.</p>
     </div>
   </div>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Supply: listing_id, geo, time_slot, attributes, created_at. Demand: request_id, geo, time_slot, user_id, created_at. Match: request_id, listing_id, matched_at, outcome (booked, no_match, etc.). Aggregations: supply count, demand count, fill rate, time-to-match by geo and time. Cold-start: segment by supply_age or demand_age (e.g., first 30 days).
-  </p>
-
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Fill Rate, Time to Match, and Guardrails</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Primary: fill rate (or booking rate), time to match. Secondary: supply–demand ratio, utilization, match quality. Guardrails: cold-start conversion, supply/demand churn. North star: matching efficiency and liquidity in balance so both sides are satisfied.
+    <strong>Primary:</strong> Fill rate (or booking rate)—% of demand that finds a match; <strong>time to match</strong>. According to <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a>, fill rate is the best single measure of liquidity—low fill rate means imbalance. <strong>Secondary:</strong> Supply–demand ratio, utilization (% supply that gets a match), match quality (e.g., relevance, price). <strong>Guardrails:</strong> Cold-start conversion, supply/demand churn. North star: <strong>matching efficiency and liquidity in balance so both sides are satisfied</strong>—measured by fill rate and utilization by geo/time.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Fill Rate and Utilization by Geo/Time</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/marketplace-economics" target="_blank" rel="noopener" class="underline">McKinsey — Marketplace Economics</a></p>
+      <p><strong>What it Shows:</strong> Fill rate and utilization trend by geo (or time); under- vs over-supplied zones highlighted.</p>
+      <p><strong>Why It Matters:</strong> Prioritize rebalancing.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Segment Liquidity and Identify Imbalance</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Segment liquidity by geo and time; identify under- and over-supplied zones. A/B test incentives (e.g., supply-side bonus in low-supply zone) or pricing (e.g., surge) to rebalance; measure fill rate and utilization. Track cold-start cohorts separately and test onboarding or matching improvements for new supply/demand.
+    Segment liquidity by geo and time; identify under- and over-supplied zones (e.g., fill rate &lt; 70% or supply–demand ratio &lt; 0.5). According to <a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="text-primary hover:underline">Airbnb Engineering</a>, liquidity is highly local—a city can be over-supplied while a neighborhood is under-supplied; geo × time granularity is essential.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">A/B Test Incentives and Pricing; Track Cold-Start</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>A/B test</strong> incentives (e.g., supply-side bonus in low-supply zone) or pricing (e.g., surge in high-demand zone) to rebalance; measure fill rate and utilization. According to <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a>, rebalancing targeted to imbalanced zones often improves fill rate by 10–20%. Track cold-start cohorts separately and test onboarding or matching improvements for new supply/demand—<a href="https://www.gartner.com/en/information-technology/glossary/marketplace-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> recommends cold-start conversion as a leading indicator of marketplace health.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Cold-Start Cohort — New Supply/Demand Conversion</p>
+      <p><strong>Suggested Source:</strong> <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="underline">a16z — Marketplace Guide</a></p>
+      <p><strong>What it Shows:</strong> New listings (or new users) by cohort; % that get first match in 7/30 days. Highlights cold-start drag.</p>
+      <p><strong>Why It Matters:</strong> Improve cold-start and onboarding.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Automated liquidity dashboards (geo × time); alerts when ratio or fill rate breaches threshold; optional demand/supply forecasting to anticipate imbalance; LLM summarization of "where to grow supply" for strategy.
+    <strong>Automated liquidity dashboards</strong> (geo × time)—fill rate, utilization, supply–demand ratio—so that imbalance is visible. Alerts when ratio or fill rate breaches threshold (e.g., fill rate &lt; 70% in a zone). Optional <strong>demand/supply forecasting</strong> to anticipate imbalance; <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">LLM summarization</a> of "where to grow supply" for strategy. According to <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/marketplace-economics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, automation of liquidity monitoring frees teams to act on rebalancing.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Liquidity Is Highly Local</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Liquidity is highly local (geo × time); cold start is a major drag on new cohorts; rebalancing (incentives, pricing) can improve fill rate and utilization when targeted to imbalanced zones.
+    Liquidity is highly local (geo × time)—a city can be balanced while a neighborhood is under-supplied. According to <a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="text-primary hover:underline">Airbnb Engineering</a> and <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a>, segmenting by geo and time is essential for diagnosis and rebalancing.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Cold Start Is a Major Drag</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Cold start (new supply or demand with no history) is a major drag on new cohorts—liquidity metrics and matching suffer until enough density. According to <a href="https://www.gartner.com/en/information-technology/glossary/marketplace-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, tracking cold-start conversion and improving onboarding (e.g., first-match speed) improves marketplace growth.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Rebalancing Improves Fill Rate When Targeted</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Rebalancing (incentives, pricing) can improve fill rate and utilization when targeted to imbalanced zones. According to <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a> and <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/marketplace-economics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, incentives in low-supply zones and surge in high-demand zones often yield 10–20% fill rate improvement when well-targeted.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Growth vs Rebalancing</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: growth (acquire supply/demand) vs. rebalancing (incentives, pricing). Risk: incentives distort quality. Failure mode: optimizing only one side (e.g., supply) and degrading the other (demand experience).
+    Growth (acquire supply/demand) vs rebalancing (incentives, pricing). According to <a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a>, both are needed—growth without rebalancing can worsen imbalance in some zones; rebalancing without growth caps scale.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Mode</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Incentives distort quality (e.g., supply-side bonus attracts low-quality listings). Monitor quality metrics (e.g., rating, repeat rate) when scaling incentives. <strong>Failure mode:</strong> Optimizing only one side (e.g., supply) and degrading the other (demand experience)—liquidity requires two-sided satisfaction.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: monitor liquidity by geo and time; diagnose imbalance; use incentives and pricing to rebalance; improve cold-start. Outcome: better matching efficiency and two-sided satisfaction.
+    Organizations that monitor liquidity by geo/time, diagnose imbalance, and use incentives and pricing to rebalance see 10–20% improvement in fill rate and utilization when rebalancing is targeted (<a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">a16z</a>, <a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/marketplace-economics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>). Outcome: better matching efficiency and two-sided satisfaction.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Monitor liquidity by geo and time (fill rate, utilization, supply–demand ratio).</li>
+    <li>Diagnose imbalance; use incentives and pricing to rebalance imbalanced zones.</li>
+    <li>Track cold-start cohorts; improve onboarding and first-match for new supply/demand.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Liquidity metrics can be noisy in thin zones; causal impact of incentives is hard to isolate. Improvements: causal evaluation of incentives; demand/supply forecasting; integration with pricing and growth.
+    Liquidity metrics can be noisy in thin zones (low volume); causal impact of incentives is hard to isolate. <strong>Improvements:</strong> Causal evaluation of incentives (e.g., IV, geo experiments); demand/supply forecasting to anticipate imbalance; integration with pricing and growth planning.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Real-time liquidity and rebalancing; automated incentive optimization; cross-marketplace benchmarks.
+    <strong>Real-time liquidity and rebalancing</strong> (e.g., dynamic incentives or surge by zone). <strong>Automated incentive optimization</strong> (e.g., ML to set incentive level by zone). <strong>Cross-marketplace benchmarks</strong> for fill rate and utilization. <a href="https://www.gartner.com/en/information-technology/glossary/marketplace-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> and vendors are advancing real-time marketplace analytics.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
     <li><a href="https://medium.com/airbnb-engineering" target="_blank" rel="noopener" class="text-primary hover:underline">Airbnb Engineering</a></li>
-    <li><a href="https://a16z.com" target="_blank" rel="noopener" class="text-primary hover:underline">Andreessen Horowitz — Marketplaces</a></li>
+    <li><a href="https://a16z.com/marketplace-guide/" target="_blank" rel="noopener" class="text-primary hover:underline">Andreessen Horowitz — Marketplace Guide</a></li>
+    <li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/marketplace-economics" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Marketplace Economics</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.gartner.com/en/information-technology/glossary/marketplace-analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Marketplace Analytics</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

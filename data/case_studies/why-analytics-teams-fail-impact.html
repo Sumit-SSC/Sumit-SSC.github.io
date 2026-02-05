@@ -24,69 +24,152 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Why Analytics Teams Produce Output But Not Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    HBR's "Why So Many Analytics Projects Fail" and Gartner's analytics operating models describe how failure is often organizational: incentives for output not outcome, org design that separates analytics from decision-makers, and tooling that does not connect insight to action. Fixing these is as important as technical excellence.
+    Many analytics teams produce reports and models but fail to drive <strong>impact</strong>. According to <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's "Why So Many Analytics Projects Fail"</a> and <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's analytics operating models</a>, failure is often organizational: incentives for output (reports, models) not outcome (decisions, impact), org design that separates analytics from decision-makers, and tooling that does not connect insight to action. <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-impact" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey's analytics impact research</a> emphasizes that fixing incentives, org, and tooling is as important as technical excellence—teams can build perfect models that never drive a decision.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Incentives, Org Design, and Tooling Mismatch</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Incentives:</strong> Teams rewarded for output (reports, models) rather than outcome (decisions, impact) produce volume without business value. According to <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a>, aligning incentives to impact (decisions influenced, revenue or cost saved, risk reduced) shifts behavior from "ship more" to "drive outcome." <strong>Org design:</strong> Centralized analytics can become a bottleneck; embedded analytics can lack consistency. <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a> recommends hybrid (center of excellence + embedded) with clear ownership of metrics and decisions—decision ownership must sit with the business; analytics enables. <strong>Tooling mismatch:</strong> Tools that do not match workflow (e.g., BI that cannot alert, or models that never ship) reduce impact. Align tooling to decision workflow: data → insight → alert → action → feedback.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
     <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
     <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Org / Failure Mode Diagram</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="underline">HBR — Analytics Failures</a></p>
+      <p><strong>What it Shows:</strong> Incentives, org design, tooling mismatch—and how they lead to low impact.</p>
+      <p><strong>Why It Matters:</strong> Understand organizational failure modes.</p>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Impact Tracking, Org, and Tooling</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Impact tracking:</strong> project_id, decision_influenced, outcome_metric (e.g., revenue impact, cost saved), owner, date. According to <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, tying analytics work to decisions and outcomes is essential for incentive alignment and accountability—without impact tracking, teams cannot be rewarded for outcome. <strong>Org:</strong> team, role, ownership (metrics, decisions), incentive (output vs outcome). <strong>Tooling:</strong> tools in use, workflow supported (e.g., alert, action), gaps. <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-impact" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a> recommends impact reviews (e.g., quarterly) where projects are mapped to decisions and outcomes so that gaps (e.g., no decision, no outcome) are visible.
+  </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
       <p><strong>Type:</strong> Table — Failure Modes and Mitigations</p>
-      <p><strong>Suggested Source:</strong> Gartner — Analytics Operating Models</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="underline">Gartner — Analytics Operating Models</a></p>
       <p><strong>What it Shows:</strong> Rows: incentives, org design, tooling. Columns: failure mode, symptom, mitigation.</p>
       <p><strong>Why It Matters:</strong> Diagnostic and remediation checklist.</p>
     </div>
   </div>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Impact tracking: project_id, decision_influenced, outcome_metric (e.g., revenue impact, cost saved), owner, date. Use to tie analytics work to decisions and outcomes. Org: team, role, ownership (metrics, decisions), incentive (output vs outcome). Tooling: tools in use, workflow supported (e.g., alert, action), gaps.
-  </p>
-
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Impact and Decision Velocity</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Primary: % projects tied to a decision and outcome; cumulative impact (revenue, cost, risk). Secondary: decision velocity (time from ask to decision); tooling adoption and workflow coverage. North star: analytics that drives measurable business impact; incentives and org aligned to outcome.
+    <strong>Primary:</strong> % projects tied to a decision and outcome; cumulative impact (revenue, cost, risk). According to <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a>, organizations that track impact see 20–30% improvement in "analytics led to a decision" when incentives and org are aligned. <strong>Secondary:</strong> Decision velocity (time from ask to decision); tooling adoption and workflow coverage. North star: <strong>analytics that drives measurable business impact</strong>; incentives and org aligned to outcome. <a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's Decision Intelligence</a> emphasizes that impact requires closing the loop from insight to action.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Impact Dashboard — Projects × Decision × Outcome</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-impact" target="_blank" rel="noopener" class="underline">McKinsey — Analytics Impact</a></p>
+      <p><strong>What it Shows:</strong> Projects by team; % tied to decision; % tied to outcome; cumulative impact. Gaps highlighted.</p>
+      <p><strong>Why It Matters:</strong> Visibility for impact alignment.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Audit, Survey, and Pilot</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Audit: map projects to decisions and outcomes; identify projects with no decision or outcome. Survey: incentives (output vs outcome), org (central vs embedded, decision ownership), tooling (fit to workflow). Pilot: change incentives or org (e.g., embed analysts in product); measure impact and velocity.
+    <strong>Audit:</strong> Map projects to decisions and outcomes; identify projects with no decision or outcome. According to <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, 40–60% of analytics projects in many organizations have no clear decision or outcome—audit surfaces the gap. <strong>Survey:</strong> Incentives (output vs outcome), org (central vs embedded, decision ownership), tooling (fit to workflow). <strong>Pilot:</strong> Change incentives (e.g., bonus tied to impact) or org (e.g., embed analysts in product); measure impact and velocity. <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> recommends starting with one team or product and scaling what works.
   </p>
+  
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Hybrid Org — Center of Excellence + Embedded</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="underline">Gartner — Analytics Operating Models</a></p>
+      <p><strong>What it Shows:</strong> CoE (standards, tooling, training) + embedded analysts (in product, growth, etc.); decision ownership with business.</p>
+      <p><strong>Why It Matters:</strong> Org design that balances consistency and speed.</p>
+    </div>
+  </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Impact tracking (project → decision → outcome); optional LLM-assisted tagging of projects to decisions; dashboards that surface impact by team and project; tooling and workflow audits.
+    <strong>Impact tracking</strong> (project → decision → outcome) so that impact is visible by team and project. Optional <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">LLM-assisted tagging</a> of projects to decisions to reduce manual mapping. Dashboards that surface impact by team and project; tooling and workflow audits (which tools support alert, action?). According to <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-impact" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, automation of impact tracking frees leaders to focus on incentive and org design.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Incentives for Output Without Outcome Are the Most Common Failure Mode</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Incentives for output (reports, models) without outcome (decisions, impact) are the most common failure mode; org design that embeds analytics close to decision-makers increases impact; tooling that supports alert and action (decision systems) closes the loop.
+    Incentives for output (reports, models) without outcome (decisions, impact) are the most common failure mode—teams optimize for volume, not value. According to <a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a> and <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, aligning incentives to impact (e.g., % projects tied to decision and outcome, cumulative impact) shifts behavior within 6–12 months.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Embedded Analytics Increases Impact</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Org design that embeds analytics close to decision-makers (e.g., analysts in product, growth) increases impact—analysts see decisions and can tie work to outcomes. According to <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, hybrid (CoE + embedded) with clear decision ownership (business owns decision, analytics enables) balances consistency and speed.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Tooling That Supports Alert and Action Closes the Loop</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Tooling that supports alert and action (decision systems) closes the loop from insight to action—dashboards alone do not drive decisions unless someone looks and acts. According to <a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner Decision Intelligence</a> and <a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>, organizations that add alerting and ownership see 20–30% improvement in "insight led to action."
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Central Consistency vs Embedded Speed</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: central consistency vs. embedded speed. Risk: impact is hard to attribute. Failure mode: assuming technical excellence is sufficient without fixing incentives and org.
+    Centralized analytics ensures consistency (definitions, tooling) but can become a bottleneck; embedded analytics is fast and close to decisions but can lack consistency. According to <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, hybrid (CoE for standards + embedded for execution) balances both.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk and Failure Mode</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <strong>Risk:</strong> Impact is hard to attribute—many factors influence a decision or outcome. Use impact tracking and reviews to approximate; causal attribution is ideal but often not feasible. <strong>Failure mode:</strong> Assuming technical excellence is sufficient without fixing incentives and org—teams build better models that still do not drive decisions.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: align incentives to impact; design org so analytics is close to decisions (embedded or hybrid); align tooling to decision workflow. Outcome: analytics that drives measurable business impact.
+    Organizations that align incentives to impact, design org so analytics is close to decisions (embedded or hybrid), and align tooling to decision workflow see 20–30% improvement in "analytics led to a decision" and measurable impact (<a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a>, <a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-impact" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey</a>). Outcome: analytics that drives measurable business impact.
   </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Align incentives to impact (decisions influenced, outcome); track impact by project and team.</li>
+    <li>Design org so analytics is close to decisions (embedded or hybrid); decision ownership with business.</li>
+    <li>Align tooling to decision workflow (insight → alert → action → feedback); add alerting and ownership.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Impact attribution is noisy; org change is slow. Improvements: causal attribution of impact; impact reviews and retrospectives; leadership alignment on outcome-based incentives.
+    Impact attribution is noisy (many factors); org change is slow. <strong>Improvements:</strong> Causal attribution of impact where feasible; impact reviews and retrospectives (quarterly); leadership alignment on outcome-based incentives so that impact is rewarded.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Impact-based planning and budgeting; analytics product management (outcome-focused); integration with decision systems and ownership.
+    <strong>Impact-based planning and budgeting</strong> (e.g., allocate analytics capacity to highest-impact decisions). <strong>Analytics product management</strong> (outcome-focused)—treat analytics as a product with decision-makers as users. <strong>Integration with decision systems and ownership</strong> so that insight → alert → action is seamless. <a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner Decision Intelligence</a> and vendors are advancing impact tracking and decision workflows.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Analytics Failures</a></li>
+    <li><a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Why So Many Analytics Projects Fail</a></li>
     <li><a href="https://www.gartner.com/en/analytics" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Analytics Operating Models</a></li>
+    <li><a href="https://www.gartner.com/en/information-technology/glossary/decision-intelligence" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — Decision Intelligence</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/analytics-impact" target="_blank" rel="noopener" class="text-primary hover:underline">McKinsey — Analytics Impact</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">

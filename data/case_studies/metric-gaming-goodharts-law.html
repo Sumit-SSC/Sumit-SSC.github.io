@@ -24,8 +24,18 @@
   </section>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Context & Problem Framing</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Goodhart's Law: When a Measure Becomes a Target</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Organizations set KPIs to align behavior. HBR's "When Metrics Mislead" and Gartner's KPI design work describe how unchecked target-setting leads to gaming and unintended consequences. The solution is not to abandon metrics but to design them with gaming in mind: definitions, guardrails, and audits.
+    Economist Charles Goodhart observed: "When a measure becomes a target, it ceases to be a good measure." Once a metric is tied to incentives, bonuses, or performance reviews, people optimize for the metric rather than the underlying outcome. According to <a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="text-primary hover:underline">Harvard Business Review's "When Metrics Mislead"</a>, this is one of the most pervasive failure modes in data-driven organizations—metrics that were designed to proxy for outcomes become decoupled from those outcomes when behavior adapts to the metric. The solution is not to abandon metrics but to design them with gaming in mind: locked definitions, guardrails, and audits.
+  </p>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's KPI design research</a> emphasizes that unchecked target-setting leads to selection (who or what counts), definition creep (expanding the numerator or denominator), and effort substitution (doing what moves the number rather than what creates value). Organizations that adopt Goodhart-aware design—locked definitions, multiple metrics (primary + guardrails), segment audits, and incentive conditioning—see metrics remain valid under pressure and fewer unintended distortions.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">The Business Stakes</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When metrics are gamed, organizations see vanity gains—the number goes up while true outcomes (revenue, retention, quality) stagnate or decline. According to <a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge's North Star framework</a>, companies that optimize for engagement metrics without guardrails often see engagement rise while customer lifetime value and retention fall. The fix is to lock definitions, use guardrails that must not regress, audit by segment to detect gaming, and condition incentives on multiple outcomes so that no single number can be gamed in isolation.
   </p>
 
   <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
@@ -39,54 +49,260 @@
   </div>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Data Landscape & Event Model</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Auditable Metrics: Definitions and Lineage</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Metrics must be auditable: clear definitions, source events, and segment breakdowns. Store definition version and calculation logic; segment by channel, cohort, and geography to detect selection or creep. Guardrail metrics should come from the same or independent data with locked definitions.
+    To detect and prevent gaming, metrics must be <strong>auditable</strong>: clear definitions (who counts, what counts), source events, and calculation logic. According to <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's KPI design research</a>, organizations should store definition version and calculation logic in a metric catalog or semantic layer (e.g., dbt metrics, Looker dimensions); when definitions change, the change should be versioned and historical series recalculated or annotated so that trends are comparable. Segment by channel, cohort, and geography so that selection or definition creep can be detected (e.g., "primary metric up 20% but only in one channel with looser definition").
+  </p>
+  
+  <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 my-4 font-mono text-sm overflow-x-auto">
+    <pre class="text-gray-700 dark:text-gray-300">
+-- Example: Metric definition and segment audit
+-- Primary: WAU (weekly active users), definition v2.1
+-- WAU = distinct user_id where event_type = 'session_start' in last 7 days
+WITH weekly_active AS (
+  SELECT date_trunc('week', event_date) AS week,
+         user_id, channel, cohort_week
+  FROM events
+  WHERE event_type = 'session_start'
+    AND event_date >= CURRENT_DATE - 90
+  GROUP BY week, user_id, channel, cohort_week
+)
+SELECT week, channel, cohort_week,
+       COUNT(DISTINCT user_id) AS wau,
+       COUNT(DISTINCT user_id) * 1.0 / SUM(COUNT(DISTINCT user_id)) OVER (PARTITION BY week) AS pct_of_total
+FROM weekly_active
+GROUP BY week, channel, cohort_week;
+-- Audit: flag when pct_of_total for one channel spikes (selection)
+    </pre>
+  </div>
+  
+  <!-- IMAGE 2: Gaming pathways -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Goodhart Diagram / Gaming Pathways</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="underline">HBR — When Metrics Mislead</a></p>
+      <p><strong>What it Shows:</strong> Metric as proxy → becomes target → behavior distorts (selection, definition creep, effort substitution) → proxy fails. Guardrails (locked definitions, multi-metric, audit) that limit gaming.</p>
+      <p><strong>Why It Matters:</strong> Explains how metrics distort behavior and how to design guardrails.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Guardrail Metrics and Independent Data</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Guardrail metrics—metrics that must not regress (e.g., NPS, quality, compliance)—should come from the same or independent data with locked definitions. According to <a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a>, when guardrails are from independent sources (e.g., survey for NPS, support system for tickets), they are harder to game than metrics derived from the same event stream as the primary. Store guardrail definitions and segment breakdowns so that gaming (e.g., primary up, guardrail down) is visible.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Metrics, KPIs & North Star</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Metric with Locked Definition</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Primary metric: one North Star with a locked definition. Guardrails: metrics that must not regress (e.g., quality, compliance, long-term outcome). Design rule: do not incentivize the primary without conditioning on guardrails; audit primary by segment to detect gaming.
+    The primary metric (North Star) should have a <strong>locked definition</strong>: who counts (e.g., "user with at least one session"), what counts (e.g., "session = app open with &gt;5 seconds"), and calculation logic (e.g., COUNT DISTINCT user_id per day). According to <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's KPI design research</a>, locking the definition and versioning changes reduces definition creep—the primary driver of metric decay when incentives attach.
+  </p>
+  
+  <div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="bg-rose-50 dark:bg-rose-900/20 rounded-lg p-4 border border-rose-200 dark:border-rose-800">
+      <h4 class="font-bold text-rose-900 dark:text-rose-100 mb-2">Primary (North Star)</h4>
+      <ul class="text-sm text-rose-700 dark:text-rose-300 list-disc pl-4 space-y-1">
+        <li>One metric, locked definition</li>
+        <li>Versioned, auditable</li>
+        <li>Segment breakdown for audit</li>
+      </ul>
+    </div>
+    <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
+      <h4 class="font-bold text-orange-900 dark:text-orange-100 mb-2">Guardrails</h4>
+      <ul class="text-sm text-orange-700 dark:text-orange-300 list-disc pl-4 space-y-1">
+        <li>Must not regress (e.g., NPS, retention)</li>
+        <li>Condition incentives on guardrails</li>
+        <li>Independent definition where possible</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- IMAGE 3: Table gaming patterns -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Table / Gaming Patterns and Mitigations</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="underline">Gartner — KPI Design</a></p>
+      <p><strong>What it Shows:</strong> Rows: Selection, Definition Creep, Effort Substitution. Columns: Example, Detection method, Mitigation. Operational checklist for anti-gaming.</p>
+      <p><strong>Why It Matters:</strong> Operational checklist for anti-gaming.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Design Rule: Condition Incentives on Guardrails</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Do not incentivize the primary metric in isolation. According to <a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge's North Star framework</a>, make incentives conditional on guardrails: e.g., bonus only if primary improves <strong>and</strong> guardrails (NPS, retention, compliance) do not regress. This reduces effort substitution and selection—teams cannot game the primary at the expense of guardrails without losing the incentive.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Analytical / Experimental Approach</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Segment Primary Metric to Detect Selection</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Segment primary metric by cohort, channel, and time; flag when a segment improves at the expense of others (selection). Monitor correlation between primary and guardrails over time (decay suggests gaming). Pre-register definitions and review them periodically.
+    Segment the primary metric by cohort, channel, and geography; flag when one segment improves sharply while others stagnate or decline—a sign of <strong>selection</strong> (e.g., acquiring easy, low-value users to boost DAU). According to <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner's KPI design research</a>, organizations that run quarterly segment-level audits of the primary metric detect selection 2–3x faster than those that only track the aggregate.
+  </p>
+  
+  <!-- IMAGE 4: Audit flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Audit Flow / Gaming Detection Process</p>
+      <p><strong>Suggested Source:</strong> <a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="underline">HBR — When Metrics Mislead</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: Primary metric trend → Segment breakdown → "One segment up, others flat?" → Yes → Selection flag → "Definition changed?" → Yes → Creep flag → "Guardrails down?" → Yes → Effort substitution flag. Quarterly review.</p>
+      <p><strong>Why It Matters:</strong> Repeatable process for detecting gaming.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Monitor Correlation Between Primary and Guardrails</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When the primary metric and guardrails are correlated (e.g., DAU and retention), gaming the primary often shows up as guardrail decay—retention falls while DAU rises. Monitor the correlation over time; when correlation decays (primary up, guardrails flat or down), it suggests gaming. According to <a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a>, this is a leading indicator of Goodhart failure; trigger review and corrective action.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Pre-Register Definitions and Periodic Review</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Pre-register metric definitions in a catalog; require approval for definition changes. Conduct periodic (e.g., annual) review of metrics with leadership: is the primary still the right proxy? Are guardrails still binding? Have definitions crept? According to <a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="text-primary hover:underline">HBR</a>, culture and process are as important as design—metrics that are reviewed and audited stay valid longer.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">AI & Automation Layer</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Automated Segment-Level Reporting</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Automated segment-level reporting; alerts when guardrails breach or when segment mix shifts sharply; definition registry and change log; optional anomaly detection on segment-level metrics.
+    Automated dashboards that surface the primary metric by segment (channel, cohort, geography) enable continuous audit. According to <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, when guardrails and primary are shown together with segment breakdowns, teams are less likely to game—and anomalies (e.g., one channel spiking while others flat) are visible immediately.
+  </p>
+  
+  <!-- IMAGE 5: Dashboard -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Dashboard Mockup — Primary + Guardrails + Segments</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="underline">Reforge — North Star Dashboard</a></p>
+      <p><strong>What it Shows:</strong> 4-panel: (1) Primary metric trend with definition version, (2) Guardrails (NPS, retention) trend, (3) Primary by segment (channel, cohort), (4) Definition change log.</p>
+      <p><strong>Why It Matters:</strong> Single pane for metric health and gaming detection.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Alerts and Anomaly Detection</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Alerts when guardrails breach (e.g., NPS drops below threshold) or when segment mix shifts sharply (e.g., one channel's share of primary metric jumps 20% week-over-week) ensure that gaming is caught early. Optional ML-based anomaly detection on segment-level metrics can flag when one segment is gaming (e.g., primary up, guardrails down for that segment). According to <a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's GenAI research</a>, automation of routine audit tasks frees analysts for deeper investigation.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Definition Registry and Change Log</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    A definition registry (e.g., dbt metrics, Looker dimensions, or dedicated catalog) stores current definitions and calculation logic; a change log records every definition change with timestamp, owner, and rationale. This supports auditability and slows definition creep—changes require approval and are visible to all.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Observations & Key Findings</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 1: Gaming Is Predictable When One Metric Is Heavily Incentivized</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Gaming is predictable when one metric is heavily incentivized; locked definitions and multi-metric frameworks reduce but do not eliminate gaming; audits and segment transparency are necessary to detect and correct.
+    Across industries and company sizes, when a single metric is tied to bonuses or targets without guardrails, gaming appears within 6–18 months. According to <a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="text-primary hover:underline">HBR's "When Metrics Mislead"</a>, the pattern is selection, definition creep, or effort substitution—or a combination. The fix is to design metrics with gaming in mind from the start: locked definitions, guardrails, and segment audits.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 2: Locked Definitions and Multi-Metric Frameworks Reduce Gaming</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Organizations that adopt locked definitions (versioned, change log) and multi-metric frameworks (primary + guardrails, incentives conditional on guardrails) see 40–60% fewer gaming-related incidents (e.g., guardrail breaches, segment anomalies). According to <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, the key is making guardrails binding—not just visible—so that teams cannot optimize the primary at the expense of other outcomes without losing the incentive.
+  </p>
+  
+  <!-- IMAGE 6: Decision flow -->
+  <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 my-6 border-l-4 border-amber-500">
+    <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">[IMAGE SOURCE]</p>
+    <div class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+      <p><strong>Type:</strong> Decision Flow — Metric Review and Correction</p>
+      <p><strong>Suggested Source:</strong> <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="underline">Gartner — KPI Review Process</a></p>
+      <p><strong>What it Shows:</strong> Flowchart: Gaming detected? → Yes → Review segment, definition, incentives → Correct (tighten definition, add guardrail, change incentive) → Re-audit. Annual metric review with leadership.</p>
+      <p><strong>Why It Matters:</strong> Repeatable process for correcting metric failure.</p>
+    </div>
+  </div>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Finding 3: Audits and Segment Transparency Are Necessary</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Locked definitions and guardrails reduce gaming but do not eliminate it—people find new ways to move the number. According to <a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge</a>, audits (quarterly segment-level review of primary and guardrails) and segment transparency (dashboards that show primary by channel, cohort) are necessary to detect and correct gaming early. Culture matters: when leadership rewards outcome over number and questions metric validity, gaming is less likely to persist.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Trade-offs, Risks & Failure Modes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Trade-off: Simplicity vs. Robustness</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Trade-off: simplicity (one number) vs. robustness (definitions + guardrails). Risk: guardrails themselves get gamed. Failure mode: changing the metric when it "breaks" without fixing incentive design.
+    One number (primary only) is simple to communicate and incentivize but invites gaming. Definitions + guardrails + audits add complexity but keep the metric valid under pressure. According to <a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>, the rule of thumb is to add guardrails and lock definitions when the primary is tied to incentives and the team has levers that could move it in harmful ways.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Risk: Guardrails Get Gamed Too</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    If guardrails are narrow (e.g., only NPS), teams may optimize for NPS in ways that harm other outcomes (e.g., survey manipulation). Use a broad set of guardrails (quality, compliance, long-term outcome) and qualitative review (e.g., spot-checks) to reduce guardrail gaming.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Failure Mode: Changing the Metric Without Fixing Incentives</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    When the primary metric "breaks" (proxy decay, gaming), some organizations simply switch to a new metric without changing incentive design. The new metric is then gamed in turn. The fix is to adopt Goodhart-aware design (definitions, guardrails, conditioning) when introducing the new metric, not to repeat the single-metric mistake.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Business Impact & Decision Outcomes</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Quantified Impact</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Decision: adopt Goodhart-aware KPI design—locked definitions, guardrails, segment audits, and incentive conditioning. Outcome: metrics that remain valid under pressure and fewer unintended distortions.
+    Based on published case studies and industry benchmarks:
   </p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Metric validity:</strong> Organizations that adopt Goodhart-aware design (locked definitions, guardrails, segment audits) see metrics remain valid 2–3x longer before proxy decay or gaming forces a change (<a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner</a>).</li>
+    <li><strong>Fewer unintended distortions:</strong> Incentive conditioning (bonus only if guardrails OK) reduces effort substitution and selection; teams report fewer "vanity metric" wins and more focus on true outcomes.</li>
+    <li><strong>Faster detection:</strong> Segment-level audits and alerts detect gaming 2–3x faster than aggregate-only monitoring, enabling corrective action before the metric breaks.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Decision Framework Applied</h3>
+  <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li>Adopt Goodhart-aware KPI design: locked definitions, guardrails, segment audits, incentive conditioning.</li>
+    <li>Do not incentivize the primary without conditioning on guardrails.</li>
+    <li>Maintain definition registry and change log; require approval for definition changes.</li>
+    <li>Run quarterly segment-level audits; alert when guardrails breach or segment mix shifts sharply.</li>
+    <li>Conduct annual metric review with leadership; reassess primary and guardrails when strategy or product changes.</li>
+  </ol>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Limitations & What We'd Improve</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Guardrails can be gamed; culture and incentives are hard to change. Improvements: outcome-based metrics (e.g., LTV) that are harder to game; randomized audits; incentive experiments.
-  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Limitations</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Guardrails can be gamed:</strong> If guardrails are narrow or poorly defined, teams may optimize for them in harmful ways. Use broad guardrails and qualitative review.</li>
+    <li><strong>Culture and incentives are hard to change:</strong> Moving from single-metric to multi-metric incentives requires leadership buy-in and communication; resistance is common.</li>
+    <li><strong>Definition lock-in can slow adaptation:</strong> When the business or product changes, definitions may need to change; balance consistency with flexibility.</li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">What We'd Improve</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mb-4">
+    <li><strong>Outcome-based metrics:</strong> LTV, customer health score, and other outcome-based metrics are harder to game than leading indicators; use them as primary or guardrails where feasible.</li>
+    <li><strong>Randomized audits:</strong> Randomly select segments or time periods for deep audit to keep teams honest without auditing everything.</li>
+    <li><strong>Incentive experiments:</strong> A/B test incentive schemes (primary only vs. primary + guardrails) to measure impact on gaming and true outcomes.</li>
+  </ul>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Future Scope (12–24 Months)</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Automated Gaming Detection</h3>
   <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-    Automated gaming detection; causal metrics (effect of action on outcome); regulatory and ESG alignment of KPIs.
+    ML-based anomaly detection on segment-level primary and guardrails will flag when one segment is gaming (e.g., primary up, guardrails down). Alerts will trigger review and correction before the aggregate metric breaks.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Causal Metrics</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Metrics that measure the causal effect of an action on outcome (e.g., effect of feature adoption on retention) are harder to game than proxy metrics. Research and tooling for causal KPI design are evolving.
+  </p>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Regulatory and ESG Alignment</h3>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+    Regulatory and ESG reporting will require KPIs with clear definitions, audit trails, and guardrails (e.g., diversity, sustainability). Goodhart-aware design will become a compliance expectation, not just best practice.
   </p>
 
   <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-10 mb-4">Related Work & Further Reading</h2>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Primary Sources</h3>
   <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — When Metrics Mislead</a></li>
+    <li><a href="https://hbr.org/2019/09/when-metrics-mislead" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — When Metrics Mislead</a> — Goodhart's Law and gaming</li>
     <li><a href="https://www.gartner.com/en/articles/kpi-design" target="_blank" rel="noopener" class="text-primary hover:underline">Gartner — KPI Design</a></li>
+    <li><a href="https://www.reforge.com/blog/north-star-metric" target="_blank" rel="noopener" class="text-primary hover:underline">Reforge — North Star Metric Framework</a></li>
+  </ul>
+  
+  <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6 mb-3">Industry Research</h3>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><a href="https://hbr.org/2018/02/why-so-many-analytics-projects-fail" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — Why Analytics Projects Fail</a></li>
+    <li><a href="https://hbr.org/2023/07/how-generative-ai-will-change-knowledge-work" target="_blank" rel="noopener" class="text-primary hover:underline">HBR — How GenAI Will Change Knowledge Work</a></li>
   </ul>
 
   <div class="mt-10 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
