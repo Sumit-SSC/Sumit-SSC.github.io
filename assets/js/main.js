@@ -617,11 +617,9 @@ function createFeaturedHeroCard(project) {
   ).join('');
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
-    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
-    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
-    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
-    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
-    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4l9 5 9-5-9-4-9 4zm0 4.5v7.25L12 20l9-4.25V8.5L12 13 3 8.5z"/></svg>`,
+    notebook: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 4h10M9 4v16"/></svg>`,
+    link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
   const actionButtons = [
     { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
@@ -681,11 +679,9 @@ function createFeaturedHalfCard(project) {
   ).join('');
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
-    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
-    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
-    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
-    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
-    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+    streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4l9 5 9-5-9-4-9 4zm0 4.5v7.25L12 20l9-4.25V8.5L12 13 3 8.5z"/></svg>`,
+    notebook: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 4h10M9 4v16"/></svg>`,
+    link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
   const actionButtons = [
     { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
@@ -898,16 +894,21 @@ function createDashboardProjectCard(project, layoutClass = '') {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
   };
 
+  const genericLink =
+    project.demo_url ||
+    project.slide_pdf_path ||
+    project.pbix_download_path ||
+    project.medium_url ||
+    project.kaggle_url;
+
   const actionButtons = isCaseStudy ? [
     { label: viewLabel, url: detailUrl, primary: true }
   ] : [
     { label: viewLabel, url: detailUrl, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
-    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
-    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
-    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
-    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
-    { label: 'Video', url: project.video_url, icon: actionIcons.video }
+    { label: 'Streamlit App', url: project.streamlit_url, icon: actionIcons.streamlit },
+    { label: 'Notebook', url: project.notebook_url, icon: actionIcons.notebook },
+    { label: 'More', url: genericLink, icon: actionIcons.link }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
       return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`;
@@ -984,16 +985,21 @@ function createDashboardProjectList(project, index = 0) {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
   };
 
+  const genericLink =
+    project.demo_url ||
+    project.slide_pdf_path ||
+    project.pbix_download_path ||
+    project.medium_url ||
+    project.kaggle_url;
+
   const actionButtons = isCaseStudy ? [
     { label: viewLabel, url: detailUrl, primary: true }
   ] : [
     { label: viewLabel, url: detailUrl, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
-    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
-    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
-    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
-    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
-    { label: 'Video', url: project.video_url, icon: actionIcons.video }
+    { label: 'Streamlit App', url: project.streamlit_url, icon: actionIcons.streamlit },
+    { label: 'Notebook', url: project.notebook_url, icon: actionIcons.notebook },
+    { label: 'More', url: genericLink, icon: actionIcons.link }
   ].filter(btn => btn.url).map(btn => {
     if (btn.primary) {
       return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">View Project</a>`;
@@ -1568,6 +1574,35 @@ function pdfEmbed(path, project = null) {
   return `<iframe src="${resolvedPath}" width="100%" height="600" frameborder="0"></iframe>`;
 }
 
+// Infer a human-friendly caption from an image file name (fallbacks to project title + view index)
+function inferImageCaption(imgPath, project = null, position = 1) {
+  if (!imgPath) {
+    return project ? `${project.title} – view ${position}` : `Screenshot ${position}`;
+  }
+  // Strip query/hash and extension
+  const cleanPath = imgPath.split(/[?#]/)[0];
+  const file = cleanPath.split('/').pop() || '';
+  let base = file.replace(/\.[^/.]+$/, '');
+  if (!base) {
+    return project ? `${project.title} – view ${position}` : `Screenshot ${position}`;
+  }
+  // If purely numeric (e.g. 01, 02) fall back to generic caption
+  if (/^\d+$/.test(base)) {
+    return project ? `${project.title} – view ${position}` : `Screenshot ${position}`;
+  }
+  // Replace separators with spaces and normalize
+  base = base.replace(/[_-]+/g, ' ').trim().replace(/\s+/g, ' ');
+  if (!base) {
+    return project ? `${project.title} – view ${position}` : `Screenshot ${position}`;
+  }
+  // Title-case words
+  base = base
+    .split(' ')
+    .map(w => w ? w.charAt(0).toUpperCase() + w.slice(1) : '')
+    .join(' ');
+  return base;
+}
+
 function galleryBlock(images, project = null) {
   if (!images || images.length === 0) return "";
   const resolvedImages = project
@@ -1579,12 +1614,8 @@ function galleryBlock(images, project = null) {
   // Single-image gallery: keep it simple but with caption overlay
   if (total === 1) {
     const img = resolvedImages[0];
-    const alt = project
-      ? `${project.title} – key dashboard view`
-      : 'Project image';
-    const caption = project
-      ? `${project.title} – primary view`
-      : 'Project overview';
+    const caption = inferImageCaption(images[0] || img, project, 1);
+    const alt = caption || (project ? `${project.title} – key dashboard view` : 'Project image');
     return `
       <div class="gallery-single">
         <figure class="gallery-slide is-active">
@@ -1608,14 +1639,11 @@ function galleryBlock(images, project = null) {
         ${resolvedImages
           .map((img, index) => {
             const position = index + 1;
-            const alt = project
-              ? `${project.title} – view ${position}`
-              : `Project image ${position}`;
-            const caption = project
-              ? `${project.title} – view ${position}`
-              : `Screenshot ${position}`;
+            const originalPath = images[index] || img;
+            const caption = inferImageCaption(originalPath, project, position);
+            const alt = caption || (project ? `${project.title} – view ${position}` : `Project image ${position}`);
             return `
-              <figure class="gallery-slide ${index === 0 ? 'is-active' : ''}" data-index="${index}">
+              <figure class="gallery-slide ${index === 0 ? 'is-center' : 'is-hidden'}" data-index="${index}">
                 <div class="gallery-slide-inner">
                   <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
                   <figcaption class="gallery-caption">
@@ -1675,15 +1703,32 @@ function setupGalleryCarousel(container) {
     const total = slides.length;
     current = (index + total) % total;
 
-    // Slide movement
-    track.style.transform = `translateX(-${current * 100}%)`;
+    const prevIndex = (current - 1 + total) % total;
+    const nextIndex = (current + 1) % total;
 
-    // Active state for slides
     slides.forEach((slide, i) => {
-      slide.classList.toggle('is-active', i === current);
+      slide.classList.remove('is-center', 'is-left', 'is-right', 'is-hidden');
+      if (total === 1) {
+        slide.classList.add(i === current ? 'is-center' : 'is-hidden');
+      } else if (total === 2) {
+        if (i === current) {
+          slide.classList.add('is-center');
+        } else {
+          slide.classList.add('is-right');
+        }
+      } else {
+        if (i === current) {
+          slide.classList.add('is-center');
+        } else if (i === prevIndex) {
+          slide.classList.add('is-left');
+        } else if (i === nextIndex) {
+          slide.classList.add('is-right');
+        } else {
+          slide.classList.add('is-hidden');
+        }
+      }
     });
 
-    // Active state for dots
     dots.forEach((dot, i) => {
       dot.classList.toggle('is-active', i === current);
     });
