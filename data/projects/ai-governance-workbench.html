@@ -1,313 +1,270 @@
 <div class="space-y-10">
 
-  <!-- OVERVIEW -->
+  <!-- OVERVIEW / HERO + EXECUTIVE SUMMARY -->
   <section id="overview" class="space-y-6">
+    <!-- Hero -->
     <div class="bg-gradient-to-r from-primary/10 via-accent/10 to-purple-100 dark:from-primary/20 dark:via-accent/20 dark:to-purple-900/20 rounded-xl p-6 border border-primary/20">
       <p class="text-sm font-semibold text-primary mb-2">Project Overview</p>
       <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
-        The <strong>AI Governance Workbench</strong> is a multi-module <strong>Streamlit</strong> application that simulates how real AI governance teams work:
-        dashboards for risk KPIs, a data visualizer for governance datasets, an AI-assisted <strong>document summarizer</strong> and flashcards engine,
-        a prototype <strong>compliance audit</strong> workflow, and a <strong>Gemini + RAG chat assistant</strong> over uploaded policy documents.
-        The goal is to turn abstract AI policy into a concrete, end-to-end decision system that a governance team could actually use.
+        The <strong>AI Governance Workbench</strong> is a SQL‑ and Streamlit‑first control room for AI governance teams: it combines
+        <strong>risk dashboards</strong>, <strong>document summarization</strong>, <strong>compliance audits</strong>, and a <strong>Gemini + RAG assistant</strong>
+        into one place so policy owners can see AI system health and answer “are we covered?” in minutes instead of weeks.
       </p>
     </div>
 
-    <div class="space-y-4 text-gray-700 dark:text-gray-300">
-      <p>
-        Rather than building “just another LLM demo”, this project is framed as a <strong>governance control room</strong>:
-        a single place where policy owners, data analysts, and risk officers can see AI deployment health, summarize documentation, audit gaps,
-        and ask questions in natural language—with a clear link back to the underlying text and data.
-      </p>
-      <p>
-        The implementation is backed by <strong>Google Gemini</strong> for generative tasks, <strong>FAISS</strong> for retrieval, and
-        a modular Streamlit layout that can be deployed on Streamlit Cloud or run locally via <code>uv</code> or <code>pip</code>.
-      </p>
+    <!-- Executive Summary -->
+    <div class="space-y-3 text-gray-700 dark:text-gray-300">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Executive Summary</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          <strong>Business problem:</strong> AI/LLM deployments move fast, but governance still runs on PDFs, spreadsheets, and email threads,
+          making it hard to see what is in scope, which controls are missing, and who owns the risk.
+        </li>
+        <li>
+          <strong>What was built:</strong> a multi‑module Streamlit workbench with governance KPIs, a data visualizer, policy summarizer + flashcards,
+          a compliance audit prototype, and a Gemini‑backed Q&amp;A assistant grounded in uploaded documents.
+        </li>
+        <li>
+          <strong>Why it matters operationally:</strong> turns static AI policies into a repeatable workflow for reviews, evidence collection,
+          and go/no‑go decisions across many systems.
+        </li>
+        <li>
+          <strong>Scale &amp; realism:</strong> simulated but structured tables for systems, policies, controls, evidence, and incidents that mirror
+          what real governance teams track.
+        </li>
+        <li>
+          <strong>Key insights:</strong> governance can be productized, LLMs are most useful in the “last mile” (summaries, explanations),
+          and KPIs like incident aging and evidence coverage are as important as traditional model metrics.
+        </li>
+        <li>
+          <strong>Indicative impact:</strong> a workbench like this can materially reduce <em>time‑to‑review</em> and improve <em>evidence coverage</em>,
+          giving leaders a clearer, auditable view of AI risk without hiring a large new team.
+        </li>
+      </ul>
     </div>
   </section>
 
   <!-- PROBLEM STATEMENT -->
   <section id="problem" class="space-y-6">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Context & Problem Framing</h2>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Problem: Fragmented AI Governance Workflows</h2>
 
     <div class="space-y-4 text-gray-700 dark:text-gray-300">
       <p>
-        Most organizations now experiment with AI and LLMs, but <strong>governance workflows are still spreadsheets + PDFs + emails</strong>.
-        Policy documents live in shared drives, model cards are scattered, and risk owners rely on manual reviews and status meetings.
-        That makes it hard to answer basic questions:
+        Most organizations now run pilots or production workloads with AI and LLMs, but <strong>governance has not kept up</strong>.
+        Policies live in PDFs on shared drives, model cards sit in separate tools, and incident logs and evidence are scattered across
+        email threads, tickets, and spreadsheets.
       </p>
       <ul class="list-disc pl-6 space-y-2">
-        <li>Which AI systems are in scope for a particular policy or regulation?</li>
-        <li>Where are the <strong>gaps</strong> in documentation and evidence?</li>
-        <li>How are <strong>governance KPIs</strong> trending: incidents, exceptions, overdue reviews?</li>
-        <li>Can a non-technical stakeholder ask, in plain language, “Are we compliant with X?” and see <strong>why</strong>?</li>
+        <li><strong>No single view of AI systems in scope</strong> for a given policy, framework, or regulation.</li>
+        <li><strong>Manual, slow reviews</strong> where teams read long documents and try to remember what was checked last time.</li>
+        <li><strong>Poor evidence coverage:</strong> it is hard to see which controls have concrete artifacts attached vs just checkboxes.</li>
+        <li><strong>Limited transparency:</strong> leaders cannot easily answer “Where are we exposed?” or “What changed since last quarter?”.</li>
       </ul>
       <p>
-        Governance teams also need <strong>repeatable workflows</strong>: they perform the same steps (collect policies, review against frameworks,
-        document evidence, brief stakeholders) across multiple models and products. A governance workbench should make those workflows faster,
-        more auditable, and easier to explain.
+        Governance teams need a <strong>repeatable decision system</strong>, not another static report: something that turns policies, inventories,
+        incidents, and evidence into workflows they can run every time a new AI system comes online.
       </p>
     </div>
 
     <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border-l-4 border-amber-500">
-      <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">Framing</p>
+      <p class="text-sm font-mono font-semibold text-amber-900 dark:text-amber-100 mb-2">Goal</p>
       <p class="text-sm text-amber-800 dark:text-amber-200">
-        Treat AI governance as a <strong>decision system</strong>: inputs are policies, model inventories, incidents, and controls;
-        outputs are decisions about risk acceptance, mitigations, and go/no-go for deployments.
-        The workbench is a prototype of that system.
+        Prototype an AI governance workbench that a real governance lead could recognize: one place to see systems and KPIs, summarize
+        and audit policies, attach evidence, and ask grounded questions about risk and compliance.
       </p>
     </div>
   </section>
 
-  <!-- APPROACH / METHODOLOGY -->
+  <!-- APPROACH / METHODOLOGY + DATA & SYSTEM DESIGN + APPLICATIONS -->
   <section id="approach" class="space-y-8">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Solution Architecture & Approach</h2>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Solution Architecture, Data Model &amp; Applications</h2>
 
-    <!-- 1. Data & Event Model -->
+    <!-- 1. Approach / Methodology -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. Data & Event Model</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. How the workbench is designed</h3>
       <p class="text-gray-700 dark:text-gray-300">
-        The workbench organizes governance information into a small set of conceptual tables:
+        The workbench treats AI governance as a <strong>decision system</strong> rather than a static set of documents. All core concepts
+        (systems, policies, controls, evidence, incidents) are represented in simple tables and surfaced through a small number of
+        high‑value workflows in Streamlit.
       </p>
-      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
-        <li><strong>Systems:</strong> AI/ML systems in scope (id, owner, domain, data type, risk tier).</li>
-        <li><strong>Policies & Controls:</strong> documents, sections, and mapped control requirements.</li>
-        <li><strong>Evidence items:</strong> links to model cards, risk assessments, test reports, and sign-offs.</li>
-        <li><strong>Incidents & exceptions:</strong> timestamps, severity, system, owner, resolution state.</li>
-        <li><strong>Usage logs:</strong> user interactions in the app (what was summarized, which checks ran).</li>
-      </ul>
       <p class="text-gray-700 dark:text-gray-300">
-        In the current version, these entities are simulated or loaded from CSVs, but the layout mirrors how a real governance team
-        would want to track AI systems and their obligations.
+        Instead of building a single “mega dashboard”, the design favors <strong>modular views</strong> that match how governance teams
+        actually work day‑to‑day: monitor KPIs, explore data, review policies, run audits, and answer ad‑hoc questions.
       </p>
-    </section>
-
-    <!-- 2. Streamlit Modules -->
-    <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Streamlit Modules</h3>
-      <p class="text-gray-700 dark:text-gray-300">
-        The application is organized as multiple Streamlit “views”, each solving a specific part of the governance workflow:
-      </p>
-      <ol class="list-decimal pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-        <li>
-          <strong>Governance Dashboard</strong> – KPI tiles (systems in scope, open incidents, overdue reviews),
-          time-series charts for incidents and exceptions, heatmaps by domain and risk tier.
-        </li>
-        <li>
-          <strong>Data Visualizer</strong> – upload CSV/JSON/XLSX or use sample datasets; build bar/line/scatter/heatmap charts,
-          with automatic summary stats for selected columns.
-        </li>
-        <li>
-          <strong>Document Summarizer & Flashcards</strong> – upload policy PDFs/TXT/DOCX, run Gemini summarization,
-          generate Q&A-style flashcards to quickly teach the policy to someone new.
-        </li>
-        <li>
-          <strong>Compliance Audit Prototype</strong> – scan a policy document for the presence of predefined governance indicators
-          (e.g., data lineage, human oversight, fairness) and generate a markdown report.
-        </li>
-        <li>
-          <strong>AI Chat Assistant (with RAG)</strong> – ask questions like “Where do we mention human oversight?” or
-          “What are our obligations under X?”, using FAISS-based retrieval over uploaded documents plus Gemini responses.
-        </li>
-      </ol>
-    </section>
-
-    <!-- 3. LLM & RAG Design -->
-    <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. LLM & RAG Design</h3>
-      <p class="text-gray-700 dark:text-gray-300">
-        The LLM layer uses <strong>Google Gemini</strong> as the foundation model and a simple RAG pipeline for document-grounded answers:
-      </p>
-      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>import google.generativeai as genai
-from my_rag import embed_chunks, build_faiss_index, retrieve_top_k
-
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-
-def answer_with_rag(question: str, documents: list[str]) -&gt; str:
-    # 1) Chunk + embed
-    chunks = chunk_documents(documents)
-    index = build_faiss_index(embed_chunks(chunks))
-
-    # 2) Retrieve relevant context
-    context_chunks = retrieve_top_k(index, question, k=6)
-    context_text = "\n\n".join(context_chunks)
-
-    # 3) Ask Gemini with explicit grounding instructions
-    prompt = f"""
-    You are an AI governance assistant. Answer using ONLY the context below.
-    If you are not sure, say you don't know.
-
-    Context:
-    {context_text}
-
-    Question: {question}
-    """
-
-    response = genai.GenerativeModel("gemini-1.5-flash-latest").generate_content(prompt)
-    return response.text.strip()</code></pre>
-      <p class="text-gray-700 dark:text-gray-300">
-        The key design choice is to <strong>treat the LLM as a decision-support layer</strong>, not a source of truth.
-        The app always keeps a clear separation between:
-      </p>
-      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
-        <li>Raw policy text (stored, chunked, and retrievable)</li>
-        <li>LLM summaries and answers, which are <em>derived views</em> of that text</li>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>SQL + tables as the backbone</strong>, so changes are transparent and reviewable.</li>
+        <li><strong>Streamlit modules as the UX layer</strong>, giving non‑technical users a clean way to interact with governance data.</li>
+        <li><strong>Gemini + RAG as assistive tooling</strong>, confined to summarization and Q&amp;A grounded in stored documents.</li>
       </ul>
     </section>
 
-    <!-- 4. Running Locally -->
+    <!-- 2. Data & System Design -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Local Development & Deployment</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Data &amp; System Design</h3>
       <p class="text-gray-700 dark:text-gray-300">
-        The README documents two main ways to run the app: <strong>uv</strong> (recommended) and <strong>pip + venv</strong>.
+        Governance information is modeled as a set of tidy tables:
       </p>
-      <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code># Clone the repository
-git clone https://github.com/Sumit-SC/MBA-AI_Governance_LLM-App.git
-cd MBA-AI_Governance_LLM-App
-
-# Option A — uv (recommended)
-uv init --name "mba-ai-governance-llm-app"
-uv add -r requirements.txt
-uv venv
-uv sync
-
-# Configure secrets (.streamlit/secrets.toml)
-echo 'GOOGLE_API_KEY="YOUR_GEMINI_API_KEY_HERE"' &gt; .streamlit/secrets.toml
-
-# Run the app
-uv run streamlit run app.py</code></pre>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>Systems:</strong> AI/ML systems in scope (id, owner, domain, risk tier).</li>
+        <li><strong>Policies &amp; Controls:</strong> documents, sections, mapped control requirements.</li>
+        <li><strong>Evidence:</strong> links to model cards, assessments, tests, and sign‑offs.</li>
+        <li><strong>Incidents &amp; exceptions:</strong> timestamps, severity, status, owning team.</li>
+        <li><strong>Usage logs:</strong> how the workbench itself is used (summaries, audits, questions).</li>
+      </ul>
       <p class="text-gray-700 dark:text-gray-300">
-        The same app is also deployable on <strong>Streamlit Community Cloud</strong>; the README includes a ready-to-use “Deploy to Streamlit”
-        badge and guidance on storing the Gemini API key in Streamlit secrets.
+        In this portfolio version, these tables are populated from CSV and synthetic data, but the structure mirrors what a real
+        governance function would expect from a model registry and incident system.
       </p>
+
+```md
+<!-- PLACEHOLDER: System Architecture Diagram
+Data → SQL Layers → Feature Store → Power BI / Streamlit
+-->
+```
+
+      <p class="text-gray-700 dark:text-gray-300">
+        This architecture keeps the LLM layer clearly separated from system of record data: the assistant reads from curated tables
+        and documents, rather than directly querying production systems.
+      </p>
+    </section>
+
+    <!-- 3. Applications & Dashboards (Streamlit Modules) -->
+    <section class="space-y-4">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Applications &amp; Workbench Modules</h3>
+
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Governance Dashboard</h4>
+        <p class="text-gray-700 dark:text-gray-300">
+          A high‑level view of <strong>systems in scope</strong>, <strong>open incidents</strong>, <strong>overdue reviews</strong>, and
+          other KPIs that AI governance leaders track. Heatmaps and time‑series views show incident aging and exceptions by domain or tier.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Data Visualizer</h4>
+        <p class="text-gray-700 dark:text-gray-300">
+          A flexible visual layer for governance datasets (inventories, incidents, assessments). Users can upload CSV/JSON/XLSX or use
+          sample data, then build charts to explore trends and outliers without leaving the workbench.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Policy Summarizer &amp; Flashcards</h4>
+        <p class="text-gray-700 dark:text-gray-300">
+          Upload policy PDFs or DOCX files, generate structured summaries, and create flashcards to quickly onboard reviewers to new frameworks
+          or internal guidelines.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Compliance Audit Prototype</h4>
+        <p class="text-gray-700 dark:text-gray-300">
+          A simple audit engine scans documents for indicators like <em>data lineage</em>, <em>human oversight</em>, or <em>fairness</em>,
+          and produces a markdown‑style report that highlights strengths and gaps.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Gemini + RAG Assistant</h4>
+        <p class="text-gray-700 dark:text-gray-300">
+          A Q&amp;A interface where users can ask “Where do we talk about human oversight?” or “Which systems are impacted by X regulation?”
+          and get answers grounded in uploaded documents and structured metadata—not model guesses alone.
+        </p>
+      </div>
     </section>
   </section>
 
   <!-- INSIGHTS & OUTCOMES -->
   <section id="insights" class="space-y-8">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Observations, Trade-offs & Impact</h2>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Analysis, Insights &amp; Business Impact</h2>
 
-    <!-- Observations & Key Findings -->
+    <!-- 4. Analysis & Insights -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Observations & Key Findings</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Analysis &amp; Key Insights</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
         <li>
-          <strong>Governance can be productized.</strong>
-          Turning static documents into interactive modules (dashboards, summarizer, audits) makes governance feel like a workflow,
-          not a one-off review.
+          <strong>Governance can be productized.</strong><br />
+          Observation: turning static documents into interactive modules (dashboards, summarizer, audits) makes governance feel like a workflow,
+          not a one‑off review.<br />
+          Why it matters: productized workflows scale better across many AI systems and reduce dependency on a few experts.
         </li>
         <li>
-          <strong>LLM value is highest in “last mile” tasks.</strong>
-          Gemini and RAG work best when they summarize, prioritize, or explain; the app still keeps humans in the loop for judgement calls.
+          <strong>LLMs add the most value in the last mile.</strong><br />
+          Observation: Gemini and RAG work best when they summarize, prioritize, or explain; judgement stays with humans.<br />
+          Why it matters: treating LLMs as assistive tools lowers risk while still improving reviewer productivity.
         </li>
         <li>
-          <strong>RAG needs good information design.</strong>
-          Chunking, metadata (system, domain, control type), and simple filters dramatically improve answer quality compared to “just call the LLM”.
+          <strong>Information design is critical for RAG.</strong><br />
+          Observation: adding metadata (system, domain, control type) and curated chunks dramatically improves answer quality.<br />
+          Why it matters: good retrieval design is as important as model choice when building governance assistants.
         </li>
         <li>
-          <strong>Governance KPIs are as important as model metrics.</strong>
-          Tracking “incident aging”, “overdue reviews”, and “evidence coverage” is as critical as precision/recall in real-world AI programs.
+          <strong>Governance KPIs need equal footing with model metrics.</strong><br />
+          Observation: incident aging, overdue reviews, and evidence coverage are as critical as precision/recall.<br />
+          Why it matters: this reframes success from “is the model good?” to “is the AI program governed well?”.
         </li>
       </ul>
     </section>
 
-    <!-- Trade-offs & Risks -->
+    <!-- 5. Results & Business Impact -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Trade-offs & Risks</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Results &amp; Business Impact (Indicative)</h3>
       <p class="text-gray-700 dark:text-gray-300">
-        The workbench intentionally makes several trade-offs:
+        Even with synthetic and demo data, the workbench mirrors impact levers that real AI governance leaders care about:
       </p>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-        <li>
-          <strong>Synthetic vs real data.</strong>
-          To avoid handling sensitive data, the app uses synthetic or sample datasets. This keeps it portfolio-safe, but real-world integration
-          (e.g., into model registries or ticketing systems) would require additional engineering and security work.
-        </li>
-        <li>
-          <strong>Rule-based audits vs dynamic policies.</strong>
-          The compliance audit prototype uses a fixed set of indicators (e.g., “mentions human oversight”). In production, organizations
-          would want configurable rule sets and versioning per framework.
-        </li>
-        <li>
-          <strong>Model access and cost.</strong>
-          Gemini API usage has cost and rate limits. The app uses <code>gemini-1.5-flash</code> and caches or constrains calls where possible,
-          but a real deployment would need quotas, logging, and fallbacks.
-        </li>
-        <li>
-          <strong>Answer reliability.</strong>
-          Even with RAG, LLMs can occasionally overstate or misinterpret policy text. The app mitigates this by surfacing the underlying
-          chunks and treating outputs as decision support, not binding truth.
-        </li>
+        <li><strong>Faster reviews:</strong> centralizing KPIs, documents, and audits reduces time-to-review for AI systems.</li>
+        <li><strong>Better evidence coverage:</strong> mapping controls to concrete artifacts clarifies where obligations are under-served.</li>
+        <li><strong>Shared understanding:</strong> dashboards, summaries, and Q&amp;A give legal, risk, and engineering a common view of AI risk.</li>
+        <li><strong>Auditability:</strong> explicit tables and logs make it easier to show what was reviewed and when.</li>
       </ul>
     </section>
 
-    <!-- Business Impact -->
+    <!-- 6. Recommendations -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Business Impact & Decision Outcomes</h3>
-      <p class="text-gray-700 dark:text-gray-300">
-        While this project runs on synthetic and demo data, it mirrors impact levers that real AI governance leaders care about:
-      </p>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Recommendations for Governance Teams</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-        <li>Reducing <strong>time-to-review</strong> for AI policies and model documentation.</li>
-        <li>Improving <strong>evidence coverage</strong> by mapping controls to actual artifacts, not just checklists.</li>
-        <li>Providing a <strong>central workspace</strong> where policy owners, AI teams, and risk officers collaborate.</li>
-        <li>Making <strong>go/no-go decisions</strong> on AI deployments more transparent and auditable.</li>
+        <li>Start with a clear <strong>system inventory and control map</strong> before introducing complex tooling.</li>
+        <li>Define and track a small set of <strong>governance KPIs</strong> (incident aging, overdue reviews, evidence coverage).</li>
+        <li>Use LLMs for <strong>summaries and explanations</strong>, not for final policy decisions.</li>
+        <li>Embed governance workflows into day‑to‑day work, not just annual reviews or audits.</li>
       </ul>
-      <p class="text-gray-700 dark:text-gray-300">
-        For interviewing and portfolio purposes, the workbench demonstrates the ability to design <strong>full decision systems</strong>,
-        not just isolated models or dashboards.
-      </p>
     </section>
 
-    <!-- Limitations & Future Scope -->
+    <!-- 7. Future Work -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">8. Limitations & Future Scope</h3>
-      <p class="text-gray-700 dark:text-gray-300">
-        The current version is a strong demo, but there are clear paths to production-grade maturity:
-      </p>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Future Work</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-        <li>
-          <strong>Integrate with model registry / inventory.</strong>
-          Link systems and controls directly to a model registry (e.g., MLflow, internal inventory) instead of simulated CSVs.
-        </li>
-        <li>
-          <strong>Advanced policy parsing.</strong>
-          Use NLP for entity extraction (e.g., references to data types, roles, legal articles) to enrich the search and audit views.
-        </li>
-        <li>
-          <strong>Multi-user workflows.</strong>
-          Add authentication and persistent state so multiple reviewers can work on the same system and track who did what, when.
-        </li>
-        <li>
-          <strong>Configurable rule engine.</strong>
-          Let governance teams define and version their own rule sets per framework (e.g., EU AI Act, NIST AI RMF).
-        </li>
+        <li>Integrate with a real model registry and incident system instead of CSV‑backed tables.</li>
+        <li>Add multi‑user workflows with authentication, roles, and review assignments.</li>
+        <li>Extend the audit engine with configurable rule sets per framework (EU AI Act, NIST AI RMF, internal standards).</li>
+        <li>Introduce trend analysis and alerting for governance KPIs (e.g., spikes in incidents or overdue reviews).</li>
       </ul>
     </section>
   </section>
 
   <!-- MEDIA & ASSETS -->
   <section id="media" class="space-y-6">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Assets & How to Explore</h2>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Assets &amp; How to Explore</h2>
 
-    <div class="space-y-4 text-gray-700 dark:text-gray-300">
-      <p>
-        The portfolio project page already links to the live Streamlit deployment and any future assets. Suggested assets to showcase:
-      </p>
-      <ul class="list-disc pl-6 space-y-1">
-        <li><strong>Live app:</strong> Streamlit deployment URL (linked via <code>streamlit_url</code> in <code>data/projects.json</code>).</li>
-        <li><strong>Screenshots:</strong> Governance dashboard, Data Visualizer, Summarizer + flashcards, Audit report, and Chat assistant.</li>
-        <li><strong>Architecture diagram:</strong> Illustrating data flow and LLM/RAG integration.</li>
-        <li><strong>Optional demo video:</strong> 3–5 minute walkthrough hosted on Loom or YouTube.</li>
-      </ul>
-      <p>
-        For reviewers, the quickest way to understand the project is:
-      </p>
-      <ol class="list-decimal pl-6 space-y-1">
-        <li>Open the <strong>live Streamlit app</strong> and explore each module from the sidebar.</li>
-        <li>Skim the <strong>GitHub README</strong> for architecture and setup details.</li>
-        <li>Read this long-form write-up on the portfolio to see the decisions and trade-offs behind the implementation.</li>
-      </ol>
-    </div>
+    <p class="text-gray-700 dark:text-gray-300">
+      The portfolio project page connects this narrative to the working assets so reviewers can see the workbench in action.
+    </p>
+
+```md
+<!-- PLACEHOLDER: 2–3 min Demo Video (Loom / YouTube) -->
+```
+
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li><strong>Live app:</strong> Streamlit deployment URL via <code>streamlit_url</code> in <code>data/projects.json</code>.</li>
+      <li><strong>Screenshots:</strong> governance dashboard, data visualizer, summarizer + flashcards, audit report, and RAG assistant.</li>
+      <li><strong>Architecture diagrams:</strong> showing how data, SQL, and the Gemini/RAG layer connect.</li>
+    </ul>
+
+    <p class="text-gray-700 dark:text-gray-300">
+      GitHub, documentation, and deployment links are maintained in <code>data/projects.json</code>, so they stay in sync with the
+      portfolio layout and the underlying repository.
+    </p>
   </section>
 
 </div>
