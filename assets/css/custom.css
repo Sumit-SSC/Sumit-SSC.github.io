@@ -2504,6 +2504,31 @@ body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
   display: none;
 }
 
+/* Both controls (centered when both views are visible) */
+#both-controls {
+  transition: opacity 0.3s ease;
+}
+
+#both-controls.hidden {
+  display: none;
+}
+
+/* Subtle button styles for resume toggles */
+#show-portfolio,
+#back-to-resume,
+#show-both,
+#go-back {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+#show-portfolio svg,
+#back-to-resume svg,
+#go-back svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
 /* Color theme variants (controlled via data-color-theme on <html>) */
 /* CSS Variables for dynamic color theming */
 :root {

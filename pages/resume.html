@@ -80,14 +80,24 @@
 			<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
 				<!-- Control Buttons (shown in portfolio view) -->
 				<div id="portfolio-controls" class="hidden mb-6 flex items-center justify-between">
-					<button id="back-to-resume" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold">
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<button id="back-to-resume" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+						<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
 						</svg>
 						Back to Resume
 					</button>
-					<button id="show-both" class="px-6 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold">
+					<button id="show-both" class="px-4 py-1.5 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
 						Show Both
+					</button>
+				</div>
+
+				<!-- Control Button (shown when both are visible - centered) -->
+				<div id="both-controls" class="hidden mb-6 flex items-center justify-center">
+					<button id="go-back" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+						<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+						</svg>
+						Go Back
 					</button>
 				</div>
 
@@ -97,9 +107,9 @@
 					<div id="actual-resume" class="resume-view-panel">
 						<div class="flex justify-between items-center mb-4">
 							<h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">My Resume</h3>
-							<button id="show-portfolio" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold">
+							<button id="show-portfolio" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
 								View Portfolio
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
 								</svg>
 							</button>
@@ -205,16 +215,24 @@
 		// Resume view state management
 		// States: 'resume-only', 'portfolio-only', 'both'
 		let currentView = 'resume-only';
+		let previousView = 'resume-only'; // Track previous view before "Show Both"
 		
 		const resumePanel = document.getElementById('actual-resume');
 		const portfolioPanel = document.getElementById('portfolio-resume');
 		const portfolioControls = document.getElementById('portfolio-controls');
+		const bothControls = document.getElementById('both-controls');
 		const showPortfolioBtn = document.getElementById('show-portfolio');
 		const backToResumeBtn = document.getElementById('back-to-resume');
 		const showBothBtn = document.getElementById('show-both');
+		const goBackBtn = document.getElementById('go-back');
 		const resumeContainer = document.getElementById('resume-container');
 
 		function updateView(newView) {
+			// Track previous view if not going to "both"
+			if (newView !== 'both' && currentView !== 'both') {
+				previousView = currentView;
+			}
+			
 			currentView = newView;
 			
 			// Reset classes
@@ -222,6 +240,7 @@
 			portfolioPanel.classList.remove('hidden', 'w-full', 'w-1/2');
 			resumeContainer.classList.remove('grid');
 			portfolioControls.classList.add('hidden');
+			bothControls.classList.add('hidden');
 			
 			if (newView === 'resume-only') {
 				// Show only resume (default)
@@ -243,13 +262,14 @@
 				resumeContainer.classList.add('grid');
 				resumePanel.classList.add('w-full');
 				portfolioPanel.classList.add('w-full');
-				portfolioControls.classList.remove('hidden');
+				bothControls.classList.remove('hidden');
 				showPortfolioBtn.classList.add('hidden');
 			}
 		}
 
 		// Button event handlers
 		showPortfolioBtn?.addEventListener('click', () => {
+			previousView = 'resume-only';
 			updateView('portfolio-only');
 		});
 
@@ -258,7 +278,13 @@
 		});
 
 		showBothBtn?.addEventListener('click', () => {
+			previousView = currentView; // Remember current view before showing both
 			updateView('both');
+		});
+
+		goBackBtn?.addEventListener('click', () => {
+			// Go back to the previous view (either resume-only or portfolio-only)
+			updateView(previousView);
 		});
 
 		// Initialize default view
