@@ -10,7 +10,9 @@ function getBasePath() {
   return window.location.pathname.includes('/pages/') ? '' : 'pages/';
 }
 function getHomeUrl() {
-  return getBasePath() === 'pages/' ? 'index.html' : '../index.html';
+  // When in pages/, return homepage.html (projects page)
+  // When in root, return index.html (main landing page)
+  return getBasePath() === 'pages/' ? 'index.html' : 'homepage.html';
 }
 // Data path: same for fetch so it works from root and from pages/
 function getDataBase() {
@@ -224,11 +226,19 @@ function applyTheme(theme) {
   if (theme === 'dark') {
     root.classList.add('dark-theme');
     root.classList.add('dark');
-    if (body) body.classList.add('dark-theme');
+    if (body) {
+      body.classList.add('dark-theme');
+      body.classList.remove('light');
+      body.classList.add('dark');
+    }
   } else {
     root.classList.remove('dark-theme');
     root.classList.remove('dark');
-    if (body) body.classList.remove('dark-theme');
+    if (body) {
+      body.classList.remove('dark-theme');
+      body.classList.remove('dark');
+      body.classList.add('light');
+    }
   }
   window.dispatchEvent(new Event('theme-changed'));
 }
@@ -241,14 +251,20 @@ function applyColorTheme(name) {
   root.dataset.colorTheme = theme;
 
   const colorMap = {
-    'theme-indigo': { primary: '#4f46e5' }, // indigo-600
-    'theme-slate': { primary: '#0f172a' },  // slate-900 (ink)
-    'theme-teal': { primary: '#0d9488' }    // teal-600
+    // neutral-professional (default) – analytics / decision-science
+    'theme-indigo': { primary: '#3B4CCA', accent: '#2CB1A6' },
+    // cool-tech – more blue/teal emphasis
+    'theme-slate': { primary: '#2563EB', accent: '#0EA5E9' },
+    // warm-product-analytics – warmer primary
+    'theme-teal': { primary: '#F97316', accent: '#F97316' }
   };
 
   const colors = colorMap[theme] || colorMap['theme-indigo'];
 
-  // Palette controls accent only (theme-agnostic)
+  // Accent themes override only primary/accent brand tokens
+  root.style.setProperty('--primary', colors.primary);
+  root.style.setProperty('--accent', colors.accent || colors.primary);
+  // Derive backwards-compat helpers
   root.style.setProperty('--accent-primary', colors.primary);
   root.style.setProperty('--accent-contrast', '#ffffff');
   root.style.setProperty('--button-bg', colors.primary);
@@ -265,9 +281,9 @@ function applyColorTheme(name) {
 
 function updateColorSwatch(el, theme) {
   const colorMap = {
-    'theme-indigo': '#4f46e5',
-    'theme-slate': '#0f172a',
-    'theme-teal': '#0d9488'
+    'theme-indigo': '#3B4CCA',
+    'theme-slate': '#2563EB',
+    'theme-teal': '#F97316'
   };
   el.style.background = colorMap[theme] || colorMap['theme-indigo'];
 }
@@ -1320,7 +1336,14 @@ function renderProject(project, caseStudy, contentFromFile) {
       isMedia: false
     });
   }
-  if (project.notebook_url) sections.push({ id: 'notebook', title: 'Notebook (Code Walkthrough)', content: notebookEmbed(project.notebook_url), isMedia: true });
+  if (project.notebook_url) {
+    sections.push({
+      id: 'notebook',
+      title: 'Notebook (Code Walkthrough)',
+      content: '<p class="text-sm text-gray-600 dark:text-gray-300">The full notebook is available via the “View Notebook” button in the Tools / Artifacts panel.</p>',
+      isMedia: false
+    });
+  }
   if (mediaNotes) sections.push({ id: 'media', title: 'Media & Assets', content: mediaNotes });
   if (shouldShowAppsSection(project)) {
     sections.push({ id: 'apps', title: 'Applications & Dashboards', content: appsSection(project), isMedia: true });
@@ -1414,16 +1437,20 @@ function caseStudyAssetsCallout(project) {
     project.slide_pdf_path ? { label: 'PDF', url: resolveAssetUrl(project, project.slide_pdf_path) } : null,
   ].filter(Boolean);
 
-  const pill = (l) =>
-    `<a href="${l.url}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">${l.label}</a>`;
+  const pill = (l, isPrimary = false) =>
+    `<a href="${l.url}" target="_blank" rel="noopener" class="artifact-button ${isPrimary ? 'artifact-button--primary' : 'artifact-button--ghost'}">${l.label}</a>`;
 
   const empty = `<span class="text-xs text-gray-500 dark:text-gray-300">Add links (GitHub/Demo/Streamlit/Power BI/Video/PBIX/PDF) in <code>data/projects.json</code>.</span>`;
 
+  const itemsHtml = links.length || downloads.length
+    ? `${links.map((l, index) => pill(l, index === 0)).join('')}${downloads.map(d => pill(d, false)).join('')}`
+    : empty;
+
   return `
-    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 p-4">
-      <div class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2">Explore assets</div>
-      <div class="flex flex-wrap gap-2">
-        ${links.length || downloads.length ? `${links.map(pill).join('')}${downloads.map(pill).join('')}` : empty}
+    <div class="artifact-container">
+      <div class="artifact-container-header">Explore assets</div>
+      <div class="artifact-buttons">
+        ${itemsHtml}
       </div>
     </div>
   `;
@@ -1436,7 +1463,7 @@ function section(title, content, id = null, isMedia = false) {
     <section id="${sectionId}" class="mb-12 scroll-mt-24">
       <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">${title}</h2>
       ${isMedia
-        ? `<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">${content}</div>`
+        ? `<div class="media-container">${content}</div>`
         : `<div class="text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">${content}</div>`}
     </section>
   `;
@@ -1481,7 +1508,7 @@ function mediaBlock(title, content) {
   return `
     <section id="${sectionId}" class="mb-12 scroll-mt-24">
       <h2 class="text-3xl font-bold text-gray-800 mb-4">${title}</h2>
-      <div class="bg-gray-100 rounded-lg p-4">${content}</div>
+      <div class="media-container">${content}</div>
     </section>
   `;
 }
@@ -1532,7 +1559,7 @@ function streamlitEmbed(url) {
       <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${url}?embed=true', 'Streamlit App')">
         Expand
       </button>
-      <iframe src="${url}?embed=true" frameborder="0" allowfullscreen></iframe>
+      <iframe src="${url}?embed=true" frameborder="0" allowfullscreen loading="lazy"></iframe>
     </div>
   `;
 }
@@ -1544,12 +1571,19 @@ function powerBiBlock(embedUrl, downloadPath, project = null) {
         <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Power BI Dashboard')">
           Expand
         </button>
-        <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
+        <iframe src="${embedUrl}" frameborder="0" allowfullscreen loading="lazy"></iframe>
       </div>
     `;
   } else if (downloadPath) {
     const resolvedUrl = project ? resolveAssetUrl(project, downloadPath) : downloadPath;
-    return `<a href="${resolvedUrl}" download class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">Download PBIX File</a>`;
+    return `
+      <div class="artifact-container">
+        <div class="artifact-container-header">Power BI Artifact</div>
+        <div class="artifact-buttons">
+          <a href="${resolvedUrl}" download class="artifact-button artifact-button--primary">Download PBIX</a>
+        </div>
+      </div>
+    `;
   }
   return "";
 }
@@ -1564,7 +1598,7 @@ function videoEmbed(url) {
           <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Video Walkthrough')">
             Expand
           </button>
-          <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
       `;
     }
@@ -1586,18 +1620,26 @@ function notebookEmbed(url) {
   const isGithub = url.includes("github.com") && url.includes(".ipynb");
   const embedUrl = isGithub ? url.replace("https://github.com/", "https://nbviewer.org/github/") : url;
   return `
-    <div class="embed-container">
-      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Notebook Preview')">
-        Expand
-      </button>
-      <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
+    <div class="artifact-container">
+      <div class="artifact-container-header">Notebook</div>
+      <div class="artifact-buttons">
+        <button type="button" class="artifact-button artifact-button--primary" onclick="openEmbedModal('${embedUrl}', 'Notebook Preview')">
+          View Notebook
+        </button>
+      </div>
     </div>
   `;
 }
 
 function pdfEmbed(path, project = null) {
   const resolvedPath = project ? resolveAssetUrl(project, path) : path;
-  return `<iframe src="${resolvedPath}" width="100%" height="600" frameborder="0"></iframe>`;
+  return `
+    <div class="media-container">
+      <div class="embed-container embed-pdf">
+        <iframe src="${resolvedPath}" width="100%" height="100%" frameborder="0" loading="lazy"></iframe>
+      </div>
+    </div>
+  `;
 }
 
 // Infer a human-friendly caption from an image file name (fallbacks to project title + view index)
@@ -1643,7 +1685,8 @@ function galleryBlock(images, project = null) {
     const caption = inferImageCaption(images[0] || img, project, 1);
     const alt = caption || (project ? `${project.title} – key dashboard view` : 'Project image');
     return `
-      <div class="gallery-single">
+      <div class="media-container">
+        <div class="gallery-single">
         <figure class="gallery-slide is-active">
           <div class="gallery-slide-inner">
             <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
@@ -1653,6 +1696,7 @@ function galleryBlock(images, project = null) {
             </figcaption>
           </div>
         </figure>
+        </div>
       </div>
     `;
   }
@@ -1660,8 +1704,10 @@ function galleryBlock(images, project = null) {
   // Multi-image gallery → carousel with captions and controls
   const galleryId = project ? project.id : 'inline-gallery';
   return `
-    <div class="gallery-carousel" data-gallery="${galleryId}">
+    <div class="media-container">
+      <div class="gallery-carousel" data-gallery="${galleryId}">
       <div class="gallery-track">
+        <div class="gallery-track-inner">
         ${resolvedImages
           .map((img, index) => {
             const position = index + 1;
@@ -1669,9 +1715,9 @@ function galleryBlock(images, project = null) {
             const caption = inferImageCaption(originalPath, project, position);
             const alt = caption || (project ? `${project.title} – view ${position}` : `Project image ${position}`);
             return `
-              <figure class="gallery-slide ${index === 0 ? 'is-center' : 'is-hidden'}" data-index="${index}">
+              <figure class="gallery-slide ${index === 0 ? 'is-center' : index === 1 ? 'is-right' : 'is-hidden'}" data-index="${index}">
                 <div class="gallery-slide-inner">
-                  <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
+                  <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="lazy">
                   <figcaption class="gallery-caption">
                     <span class="gallery-caption-index">${position}/${total}</span>
                     <span class="gallery-caption-text">${caption}</span>
@@ -1681,6 +1727,7 @@ function galleryBlock(images, project = null) {
             `;
           })
           .join('')}
+        </div>
       </div>
       <button class="gallery-nav gallery-prev" type="button" aria-label="Previous image">
         <span>&larr;</span>
@@ -1702,6 +1749,7 @@ function galleryBlock(images, project = null) {
           .join('')}
       </div>
     </div>
+  </div>
   `;
 }
 
@@ -1714,33 +1762,75 @@ function initGalleryCarousels() {
 
 function setupGalleryCarousel(container) {
   const track = container.querySelector('.gallery-track');
+  const trackInner = container.querySelector('.gallery-track-inner');
   const slides = Array.from(container.querySelectorAll('.gallery-slide'));
   const dots = Array.from(container.querySelectorAll('.gallery-dot'));
   const prevBtn = container.querySelector('.gallery-prev');
   const nextBtn = container.querySelector('.gallery-next');
 
-  if (!track || !slides.length) return;
+  if (!track || !trackInner || !slides.length) return;
 
+  const total = slides.length;
   let current = 0;
   let autoplayTimer = null;
+  let isPaused = false;
 
-  function goTo(index) {
-    if (!slides.length) return;
-    const total = slides.length;
-    current = (index + total) % total;
+  // Set track-inner width to accommodate all slides
+  // Each slide is 15% (side) or 70% (center) of viewport width
+  // Total width needed: (total - 1) * 15% + 70% = 15 * total + 55%
+  // But we need to account for all slides being laid out
+  // Actually, simpler: make it wide enough (each slide takes its percentage of viewport)
+  // Track-inner should be at least: sum of all slide widths
+  // For N slides: (N-1) * 15% + 70% = 15N + 55%
+  const trackInnerWidth = total > 1 ? (total - 1) * 15 + 70 : 100;
+  trackInner.style.width = `${trackInnerWidth}%`;
 
+  // Calculate translate percentage to center the active slide
+  // Layout: each slide is 15% (side) or 70% (center) of viewport width
+  // Track-inner contains all slides in a flex row
+  // To center slide i: translate track-inner so slide i's center aligns with viewport center (50%)
+  function updateCarousel() {
+    if (total === 0) return;
+
+    let translatePercent = 0;
+    
+    if (total === 1) {
+      translatePercent = 0;
+    } else {
+      // Calculate cumulative width of slides before current slide
+      // Each slide before current is 15% (side) when not center
+      let cumulativeWidth = 0;
+      for (let i = 0; i < current; i++) {
+        cumulativeWidth += 15; // Previous slides are 15% (sides)
+      }
+      
+      // Current slide is 70% wide, its center is at cumulativeWidth + 35%
+      // Viewport center is at 50% of viewport
+      // We need to translate track-inner so that (cumulativeWidth + 35%) aligns with 50%
+      // Since track-inner is wider than viewport, we translate by the difference
+      // Translate by: 50% - (cumulativeWidth + 35%) = 15% - cumulativeWidth
+      // But wait, we're translating the track-inner, so we need to move it left (negative)
+      // If slide center is at cumulativeWidth + 35%, and we want it at 50%,
+      // we translate by: 50% - (cumulativeWidth + 35%) = 15% - cumulativeWidth
+      translatePercent = 50 - (cumulativeWidth + 35);
+    }
+
+    // Update track transform - translate track-inner to center the current slide
+    trackInner.style.transform = `translateX(${translatePercent}%)`;
+
+    // Update slide classes
     const prevIndex = (current - 1 + total) % total;
     const nextIndex = (current + 1) % total;
 
     slides.forEach((slide, i) => {
       slide.classList.remove('is-center', 'is-left', 'is-right', 'is-hidden');
       if (total === 1) {
-        slide.classList.add(i === current ? 'is-center' : 'is-hidden');
+        slide.classList.add('is-center');
       } else if (total === 2) {
         if (i === current) {
           slide.classList.add('is-center');
         } else {
-          slide.classList.add('is-right');
+          slide.classList.add(i === prevIndex ? 'is-left' : 'is-right');
         }
       } else {
         if (i === current) {
@@ -1755,9 +1845,16 @@ function setupGalleryCarousel(container) {
       }
     });
 
+    // Update dots
     dots.forEach((dot, i) => {
       dot.classList.toggle('is-active', i === current);
     });
+  }
+
+  function goTo(index) {
+    if (total === 0) return;
+    current = (index + total) % total;
+    updateCarousel();
   }
 
   function next() {
@@ -1769,9 +1866,11 @@ function setupGalleryCarousel(container) {
   }
 
   function startAutoplay() {
-    if (slides.length <= 1) return;
+    if (isPaused || total <= 1) return;
     stopAutoplay();
-    autoplayTimer = window.setInterval(next, 6000);
+    autoplayTimer = window.setInterval(() => {
+      if (!isPaused) next();
+    }, 7000); // 7s interval - calm and professional
   }
 
   function stopAutoplay() {
@@ -1785,14 +1884,16 @@ function setupGalleryCarousel(container) {
   if (prevBtn) {
     prevBtn.addEventListener('click', () => {
       prev();
-      startAutoplay();
+      stopAutoplay();
+      setTimeout(startAutoplay, 3000); // Resume after 3s pause
     });
   }
 
   if (nextBtn) {
     nextBtn.addEventListener('click', () => {
       next();
-      startAutoplay();
+      stopAutoplay();
+      setTimeout(startAutoplay, 3000); // Resume after 3s pause
     });
   }
 
@@ -1801,16 +1902,51 @@ function setupGalleryCarousel(container) {
       dot.addEventListener('click', () => {
         const index = parseInt(dot.dataset.index || '0', 10);
         goTo(index);
-        startAutoplay();
+        stopAutoplay();
+        setTimeout(startAutoplay, 3000);
       });
     });
   }
 
-  container.addEventListener('mouseenter', stopAutoplay);
-  container.addEventListener('mouseleave', startAutoplay);
+  // Pause on hover/interaction
+  container.addEventListener('mouseenter', () => {
+    isPaused = true;
+    stopAutoplay();
+  });
+
+  container.addEventListener('mouseleave', () => {
+    isPaused = false;
+    startAutoplay();
+  });
+
+  // Touch/swipe support for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  container.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    isPaused = true;
+    stopAutoplay();
+  });
+
+  container.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = touchStartX - touchEndX;
+    if (Math.abs(swipeDistance) > 50) {
+      if (swipeDistance > 0) {
+        next();
+      } else {
+        prev();
+      }
+    }
+    setTimeout(() => {
+      isPaused = false;
+      startAutoplay();
+    }, 3000);
+  });
 
   // Initial state
-  goTo(0);
+  updateCarousel();
   startAutoplay();
 }
 
@@ -1824,10 +1960,13 @@ function ensureEmbedModal() {
     <div class="embed-modal-content">
       <div class="embed-modal-header">
         <h3 id="embed-modal-title">Preview</h3>
-        <button type="button" class="embed-modal-close" onclick="closeEmbedModal()">✕</button>
+        <div class="embed-modal-actions">
+          <a id="embed-modal-open-link" href="#" target="_blank" rel="noopener" class="embed-modal-open-link">Open in new tab</a>
+          <button type="button" class="embed-modal-close" onclick="closeEmbedModal()">✕</button>
+        </div>
       </div>
       <div class="embed-modal-body">
-        <iframe id="embed-modal-iframe" src="" frameborder="0" allowfullscreen></iframe>
+        <iframe id="embed-modal-iframe" src="" frameborder="0" allowfullscreen loading="lazy"></iframe>
       </div>
     </div>
   `;
@@ -1839,8 +1978,10 @@ function openEmbedModal(url, title) {
   const modal = document.getElementById('embed-modal');
   const iframe = document.getElementById('embed-modal-iframe');
   const modalTitle = document.getElementById('embed-modal-title');
+  const openLink = document.getElementById('embed-modal-open-link');
   if (iframe) iframe.src = url;
   if (modalTitle) modalTitle.textContent = title || 'Preview';
+  if (openLink) openLink.href = url;
   if (modal) modal.classList.remove('hidden');
 }
 
@@ -1851,13 +1992,20 @@ function closeEmbedModal() {
   if (modal) modal.classList.add('hidden');
 }
 
+// Close embed modal on ESC key
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' || event.key === 'Esc') {
+    closeEmbedModal();
+  }
+});
+
 function toolsBlock(tools, projectId) {
   if (!tools || tools.length === 0) return "";
   return `
-    <div class="bg-gray-50 rounded-lg p-6 mb-6">
-      <h3 class="text-xl font-bold text-gray-800 mb-4">Tools & Stack</h3>
-      <div class="flex flex-wrap gap-2">
-        ${tools.map(t => `<button class="tool-badge px-3 py-1 bg-primary text-white rounded text-sm cursor-pointer hover:bg-accent transition-colors" data-tool="${t}" data-project-id="${projectId}">${t}</button>`).join('')}
+    <div class="artifact-container">
+      <div class="artifact-container-header">Tools & Stack</div>
+      <div class="artifact-buttons">
+        ${tools.map(t => `<button class="tool-badge artifact-button artifact-button--ghost" data-tool="${t}" data-project-id="${projectId}">${t}</button>`).join('')}
       </div>
     </div>
   `;
@@ -1891,9 +2039,9 @@ function initTOCScrollSpy() {
     });
     
     tocLinks.forEach(link => {
-      link.classList.remove('text-primary', 'font-semibold');
+      link.classList.remove('text-primary', 'font-semibold', 'toc-link-active');
       if (link.dataset.section === current) {
-        link.classList.add('text-primary', 'font-semibold');
+        link.classList.add('text-primary', 'font-semibold', 'toc-link-active');
         // Sync mobile dropdown highlight
         if (tocSelect && tocSelect.value !== current) {
           tocSelect.value = current;
@@ -1917,16 +2065,36 @@ function initTOCScrollSpy() {
 
 function linksBlock(project) {
   const links = [];
-  if (project.github_url) links.push(`<a href="${project.github_url}" target="_blank" class="block px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors mb-2">GitHub</a>`);
-  if (project.demo_url) links.push(`<a href="${project.demo_url}" target="_blank" class="block px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors mb-2">Live Demo</a>`);
-  if (project.medium_url) links.push(`<a href="${project.medium_url}" target="_blank" class="block px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors mb-2">Medium</a>`);
-  if (project.kaggle_url) links.push(`<a href="${project.kaggle_url}" target="_blank" class="block px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors mb-2">Kaggle</a>`);
+  if (project.github_url) links.push({ label: 'View Code', url: project.github_url, primary: true });
+  if (project.demo_url) links.push({ label: 'Live Demo', url: project.demo_url, primary: !project.github_url });
+  if (project.medium_url) links.push({ label: 'Medium Article', url: project.medium_url, primary: false });
+  if (project.kaggle_url) links.push({ label: 'Kaggle Notebook', url: project.kaggle_url, primary: false });
+  if (project.notebook_url && !project.kaggle_url) {
+    // Prefer nbviewer for GitHub-hosted notebooks
+    const isGithub = project.notebook_url.includes("github.com") && project.notebook_url.includes(".ipynb");
+    const embedUrl = isGithub ? project.notebook_url.replace("https://github.com/", "https://nbviewer.org/github/") : project.notebook_url;
+    links.push({ label: 'View Notebook', url: embedUrl, primary: !project.github_url && !project.demo_url });
+  } else if (!project.kaggle_url) {
+    // Template for notebook button even if URL not yet provided
+    links.push({ label: 'View Notebook', url: '', primary: false });
+  }
   
   if (links.length === 0) return "";
   return `
-    <div class="bg-gray-50 rounded-lg p-6">
-      <h3 class="text-xl font-bold text-gray-800 mb-4">Links</h3>
-      ${links.join('')}
+    <div class="artifact-container">
+      <div class="artifact-container-header">Tools &amp; Artifacts</div>
+      <div class="artifact-buttons">
+        ${links
+          .map(link => {
+            const isNotebook = link.label.toLowerCase().includes('notebook');
+            const isCode = link.label.toLowerCase().includes('code');
+            if (isNotebook || isCode) {
+              return `<button type="button" class="artifact-button ${link.primary ? 'artifact-button--primary' : 'artifact-button--ghost'}" ${link.url ? `onclick="openEmbedModal('${link.url}', '${link.label}')"` : 'disabled aria-disabled="true"'}>${link.label}</button>`;
+            }
+            return `<a href="${link.url}" target="_blank" rel="noopener" class="artifact-button ${link.primary ? 'artifact-button--primary' : 'artifact-button--ghost'}">${link.label}</a>`;
+          })
+          .join('')}
+      </div>
     </div>
   `;
 }

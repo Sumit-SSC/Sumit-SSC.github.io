@@ -3,6 +3,120 @@
    Minimal additions to Tailwind
    =================================================== */
 
+/* ------------------------------------------------------------------
+   Global color tokens (light/dark + brand)
+   ------------------------------------------------------------------ */
+
+:root {
+  /* Brand (accent themes may override primary/accent via JS) */
+  --primary: #3B4CCA;
+  --secondary: #64748B;
+  --accent: #2CB1A6;
+
+  /* Light Mode */
+  --bg-light: #F8FAFC;
+  --surface-light: #FFFFFF;
+  --text-primary-light: #0F172A;
+  --text-secondary-light: #475569;
+  --border-light: #E2E8F0;
+
+  /* Dark Mode */
+  --bg-dark: #0B1220;
+  --surface-dark: #111827;
+  --text-primary-dark: #E5E7EB;
+  --text-secondary-dark: #9CA3AF;
+  --border-dark: #1F2937;
+
+  /* Backwards-compat accents used across existing CSS */
+  --accent-primary: var(--primary);
+  --accent-contrast: #FFFFFF;
+  --button-bg: var(--primary);
+  --button-text: #FFFFFF;
+}
+
+/* Base background + text mapping */
+body.light {
+  background-color: var(--bg-light);
+  color: var(--text-primary-light);
+}
+
+body.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-primary-dark);
+}
+
+/* Primary text elements */
+body.light h1,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light h5,
+body.light h6,
+body.light .card-title,
+body.light .section-title {
+  color: var(--text-primary-light);
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark .card-title,
+body.dark .section-title {
+  color: var(--text-primary-dark);
+}
+
+/* Body/secondary text */
+body.light p,
+body.light li,
+body.light span {
+  color: var(--text-primary-light);
+}
+
+body.dark p,
+body.dark li,
+body.dark span {
+  color: var(--text-primary-dark);
+}
+
+body.light .text-secondary,
+body.light .meta,
+body.light .caption {
+  color: var(--text-secondary-light);
+}
+
+body.dark .text-secondary,
+body.dark .meta,
+body.dark .caption {
+  color: var(--text-secondary-dark);
+}
+
+/* Navigation + footer text map to tokens rather than raw gray/white */
+body.light nav a,
+body.light header a,
+body.light footer,
+body.light footer a {
+  color: var(--text-secondary-light);
+}
+
+body.dark nav a,
+body.dark header a,
+body.dark footer,
+body.dark footer a {
+  color: var(--text-secondary-dark);
+}
+
+body.light nav a:hover,
+body.light header a:hover,
+body.light footer a:hover,
+body.dark nav a:hover,
+body.dark header a:hover,
+body.dark footer a:hover {
+  color: var(--accent);
+}
+
 /* Animations */
 @keyframes fade-in-up {
   from {
@@ -548,17 +662,50 @@ html.dark-theme .btn-primary:hover {
   color: #9ca3af !important;
 }
 
+/* Media & embed wrappers
+   ------------------------------------------------------------------ */
+
+.media-container {
+  width: 100%;
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--surface-light);
+  border: 1px solid var(--border-light);
+}
+
+.dark-theme .media-container {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+}
+
+.media-container img,
+.media-container video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+}
+
 /* Responsive embeds */
 .embed-container {
   position: relative;
   width: 100%;
   padding-top: 56.25%; /* 16:9 */
-  background: #0b1220;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   overflow: hidden;
+  background-color: var(--surface-light);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.20);
 }
 
-.embed-container iframe {
+.dark-theme .embed-container {
+  background-color: var(--surface-dark);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+.embed-container iframe,
+.embed-container video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -566,11 +713,14 @@ html.dark-theme .btn-primary:hover {
   border: 0;
 }
 
-.embed-container video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+/* PDF-specific embed (scroll-contained, no page hijack) */
+.embed-container.embed-pdf {
+  padding-top: 0;
+  height: min(70vh, 640px);
+}
+
+.embed-container.embed-pdf iframe {
+  position: relative;
 }
 
 .embed-expand-btn {
@@ -612,7 +762,7 @@ html.dark-theme .btn-primary:hover {
   max-width: 1100px;
   width: 90%;
   margin: 5vh auto;
-  background: #0b1220;
+  background: var(--surface-dark);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
@@ -630,6 +780,22 @@ html.dark-theme .btn-primary:hover {
 .embed-modal-header h3 {
   margin: 0;
   font-size: 16px;
+}
+
+.embed-modal-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.embed-modal-open-link {
+  font-size: 12px;
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+
+.embed-modal-open-link:hover {
+  color: #c4b5fd;
 }
 
 .embed-modal-close {
@@ -652,6 +818,133 @@ html.dark-theme .btn-primary:hover {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+/* Artifacts (downloads / code / notebooks) */
+.artifact-container {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  background-color: color-mix(in srgb, var(--surface-light) 95%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-light) 40%, transparent);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.dark-theme .artifact-container {
+  background-color: color-mix(in srgb, var(--surface-dark) 95%, transparent);
+  border-color: color-mix(in srgb, var(--border-dark) 50%, transparent);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.artifact-container-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary-light);
+}
+
+.dark-theme .artifact-container-header {
+  color: var(--text-secondary-dark);
+}
+
+.artifact-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.artifact-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid var(--border-light);
+  background-color: var(--surface-light);
+  color: var(--text-primary-light);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.artifact-button--primary {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border-color: transparent;
+}
+
+.artifact-button--ghost {
+  background-color: transparent;
+}
+
+.dark-theme .artifact-button {
+  border-color: var(--border-dark);
+  background-color: var(--surface-dark);
+  color: var(--text-primary-dark);
+}
+
+.artifact-button:hover {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--accent-contrast);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.3);
+}
+
+.artifact-button--primary:hover {
+  background-color: var(--accent-primary);
+}
+
+/* Project page TOC links (with left ribbon indicator) */
+.toc-link {
+  display: block;
+  padding: 0.25rem 0.75rem 0.25rem 0.75rem;
+  margin: 0.15rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary-light);
+  border-radius: 999px;
+  border-left: 3px solid transparent;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.toc-link:hover {
+  background-color: color-mix(in srgb, var(--accent-primary) 5%, var(--surface-light));
+  color: var(--text-primary-light);
+}
+
+.toc-link.toc-link-active {
+  border-left-color: var(--accent-primary);
+  background-color: color-mix(in srgb, var(--accent-primary) 10%, var(--surface-light));
+  color: var(--text-primary-light);
+  font-weight: 600;
+}
+
+.dark-theme .toc-link {
+  color: var(--text-secondary-dark);
+}
+
+.dark-theme .toc-link:hover {
+  background-color: color-mix(in srgb, var(--accent-primary) 8%, var(--surface-dark));
+  color: var(--text-primary-dark);
+}
+
+.dark-theme .toc-link.toc-link-active {
+  border-left-color: var(--accent-primary);
+  background-color: color-mix(in srgb, var(--accent-primary) 24%, var(--surface-dark));
+  color: var(--text-primary-dark);
+  font-weight: 600;
+}
+
+/* Tools & Stack badges (reuse artifact button but slightly smaller) */
+.tool-badge {
+  font-size: 0.75rem;
+  padding-inline: 0.75rem;
 }
 
 /* Final theme overrides (force readable text in dark mode) */
@@ -1632,52 +1925,77 @@ body:not(.dark-theme) .dashboard-intro .more:after {
 
 .gallery-track {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  padding-bottom: 56.25%; /* 16:9 aspect ratio - FIXED for all slides */
+  overflow: hidden;
+  width: 100%;
+}
+
+.gallery-track-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .gallery-slide {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.7);
-  opacity: 0;
-  filter: grayscale(1) brightness(0.6);
-  transition: transform 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
+  flex: 0 0 auto;
+  width: 15%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  opacity: 0.5;
+  filter: grayscale(1) brightness(0.4);
+  transition: opacity 0.5s ease, filter 0.5s ease;
   pointer-events: none;
+  overflow: hidden;
+  position: relative;
 }
 
 .gallery-slide-inner {
   position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
+  /* Aspect ratio enforced by parent .gallery-track padding-bottom: 56.25% (16:9) */
+  /* No need for aspect-ratio property here since height is 100% of track */
 }
 
 .gallery-slide-inner img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  transition: transform 0.4s ease;
+  /* Prevent image distortion - container defines size */
 }
 
-/* Center (focused) slide */
+/* Center (focused) slide - 70% width */
 .gallery-slide.is-center {
+  width: 70%;
   opacity: 1;
   filter: none;
-  transform: translate(-50%, -50%) scale(1);
   z-index: 3;
   pointer-events: auto;
 }
 
-/* Left and right supporting slides */
+/* Left and right supporting slides - 15% each */
 .gallery-slide.is-left {
-  opacity: 0.9;
-  transform: translate(-115%, -50%) scale(0.85);
+  width: 15%;
+  opacity: 0.5;
+  filter: grayscale(1) brightness(0.4);
   z-index: 2;
 }
 
 .gallery-slide.is-right {
-  opacity: 0.9;
-  transform: translate(15%, -50%) scale(0.85);
+  width: 15%;
+  opacity: 0.5;
+  filter: grayscale(1) brightness(0.4);
   z-index: 2;
 }
 
@@ -1685,6 +2003,7 @@ body:not(.dark-theme) .dashboard-intro .more:after {
   opacity: 0;
   pointer-events: none;
   z-index: 1;
+  width: 0;
 }
 
 .gallery-caption {
@@ -1693,17 +2012,26 @@ body:not(.dark-theme) .dashboard-intro .more:after {
   right: 0;
   bottom: 0;
   padding: 0.75rem 1rem;
-  display: flex;
+  display: none; /* Hidden by default */
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #f9fafb;
+  color: var(--text-primary-light);
   background: linear-gradient(to top, rgba(15, 23, 42, 0.9), transparent);
+}
+
+.dark-theme .gallery-caption {
+  color: var(--text-primary-dark);
 }
 
 body:not(.dark-theme) .gallery-caption {
   background: linear-gradient(to top, rgba(15, 23, 42, 0.8), transparent);
+}
+
+/* Caption ONLY visible on center slide */
+.gallery-slide.is-center .gallery-caption {
+  display: flex;
 }
 
 .gallery-caption-index {
@@ -2147,6 +2475,35 @@ body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
   right: 10px;
 }
 
+/* Resume view panels (new toggle system) */
+.resume-view-panel {
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.resume-view-panel.hidden {
+  display: none;
+}
+
+#resume-container.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+#resume-container.grid .resume-view-panel {
+  width: 100%;
+}
+
+/* Portfolio controls */
+#portfolio-controls {
+  transition: opacity 0.3s ease;
+}
+
+#portfolio-controls.hidden {
+  display: none;
+}
+
 /* Color theme variants (controlled via data-color-theme on <html>) */
 /* CSS Variables for dynamic color theming */
 :root {
@@ -2241,7 +2598,8 @@ body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
 }
 
 [data-color-theme="theme-teal"] .scroll-progress {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  /* Warm product-analytics theme (orange) */
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
 }
 
 [data-color-theme="theme-amber"] .scroll-progress {
@@ -2778,6 +3136,10 @@ body:not(.dark-theme) .skill-badge-active {
     grid-template-columns: 1fr !important;
   }
 
+  #resume-container.grid {
+    grid-template-columns: 1fr !important;
+  }
+
   #actual-resume .bg-gray-100,
   #portfolio-resume .bg-gray-100,
   #actual-resume .bg-gray-700,
@@ -2853,6 +3215,10 @@ body:not(.dark-theme) .skill-badge-active {
     grid-template-columns: 1fr !important;
   }
 
+  #resume-container.grid {
+    grid-template-columns: 1fr !important;
+  }
+
   #actual-resume .bg-gray-100,
   #portfolio-resume .bg-gray-100,
   #actual-resume .bg-gray-700,
@@ -2880,7 +3246,7 @@ html {
   border-color: #374151 !important;
 }
 
-/* All text elements - ensure visibility */
+/* All text elements - ensure visibility (map Tailwind grays to tokens in dark mode) */
 .dark-theme .text-gray-800,
 .dark-theme .text-gray-900,
 .dark-theme h1,
@@ -2889,18 +3255,18 @@ html {
 .dark-theme h4,
 .dark-theme h5,
 .dark-theme h6 {
-  color: #f9fafb !important;
+  color: var(--text-primary-dark) !important;
 }
 
 .dark-theme .text-gray-600,
 .dark-theme .text-gray-700,
 .dark-theme p {
-  color: #e5e7eb !important;
+  color: var(--text-secondary-dark) !important;
 }
 
 .dark-theme .text-gray-400,
 .dark-theme .text-gray-500 {
-  color: #9ca3af !important;
+  color: var(--text-secondary-dark) !important;
 }
 
 /* Links - ensure visibility */
@@ -2912,17 +3278,17 @@ html {
   color: #c4b5fd !important;
 }
 
-/* Backgrounds - ensure proper contrast */
+/* Backgrounds - ensure proper contrast (map to surface tokens) */
 .dark-theme .bg-white {
-  background-color: #1e293b !important;
+  background-color: var(--surface-dark) !important;
 }
 
 .dark-theme .bg-gray-50 {
-  background-color: #0f172a !important;
+  background-color: var(--bg-dark) !important;
 }
 
 .dark-theme .bg-gray-100 {
-  background-color: #1e293b !important;
+  background-color: var(--surface-dark) !important;
 }
 
 .dark-theme .bg-gray-200 {
@@ -3055,10 +3421,19 @@ html {
   color: #667eea !important;
 }
 
-/* Project navigation sidebar */
+/* Project navigation sidebar - reduced visual weight */
+#project-side {
+  background-color: transparent;
+}
+
+#project-side .artifact-container {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
 .dark-theme #project-nav,
 .dark-theme #project-side {
-  background-color: #1e293b !important;
+  background-color: transparent !important;
 }
 
 /* Resume page - PDF containers */

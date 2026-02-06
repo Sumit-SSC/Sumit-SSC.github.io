@@ -35,10 +35,10 @@
 	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
 		<div class="container mx-auto px-4 sm:px-6">
 			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
-				<a href="../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<a href="homepage.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
 				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
 					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-						<li><a href="../index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
+						<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
 						<li><a href="resume.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Resume</a></li>
 						<li><a href="skills.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Skills</a></li>
 						<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">About</a></li>
@@ -78,21 +78,29 @@
 
 			<!-- Resume Toggle Section -->
 			<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-				<div class="flex gap-4 justify-center mb-6">
-					<button id="toggle-resume" class="btn-primary px-6 py-3 rounded-lg font-bold">
-						Toggle View
+				<!-- Control Buttons (shown in portfolio view) -->
+				<div id="portfolio-controls" class="hidden mb-6 flex items-center justify-between">
+					<button id="back-to-resume" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+						</svg>
+						Back to Resume
+					</button>
+					<button id="show-both" class="px-6 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold">
+						Show Both
 					</button>
 				</div>
 
 				<!-- Resume Container -->
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="resume-container">
-					<!-- Actual Resume -->
-					<div id="actual-resume" class="resume-panel">
+				<div id="resume-container" class="relative">
+					<!-- Actual Resume (default visible) -->
+					<div id="actual-resume" class="resume-view-panel">
 						<div class="flex justify-between items-center mb-4">
 							<h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">My Resume</h3>
-							<button class="minimize-btn text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" data-panel="actual-resume">
+							<button id="show-portfolio" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold">
+								View Portfolio
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
 								</svg>
 							</button>
 						</div>
@@ -101,15 +109,10 @@
 						</div>
 					</div>
 
-					<!-- Portfolio PDF -->
-					<div id="portfolio-resume" class="resume-panel">
+					<!-- Portfolio PDF (hidden by default) -->
+					<div id="portfolio-resume" class="resume-view-panel hidden">
 						<div class="flex justify-between items-center mb-4">
 							<h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">Portfolio Report</h3>
-							<button class="minimize-btn text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" data-panel="portfolio-resume">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-								</svg>
-							</button>
 						</div>
 						<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4" style="height: 800px;">
 							<embed src="https://sumit-sc.github.io/assets/files/Portfolio%20Report%20DA.pdf" type="application/pdf" width="100%" height="100%" class="rounded">
@@ -199,34 +202,67 @@
 			}
 		}
 
-		// Resume toggle functionality
-		let resumeMinimized = null;
+		// Resume view state management
+		// States: 'resume-only', 'portfolio-only', 'both'
+		let currentView = 'resume-only';
 		
-		document.getElementById('toggle-resume')?.addEventListener('click', () => {
-			if (resumeMinimized === 'actual-resume') {
-				// Restore actual resume, minimize portfolio
-				document.getElementById('actual-resume').classList.remove('minimized');
-				document.getElementById('portfolio-resume').classList.add('minimized');
-				resumeMinimized = 'portfolio-resume';
-			} else {
-				// Restore portfolio, minimize actual resume
-				document.getElementById('portfolio-resume').classList.remove('minimized');
-				document.getElementById('actual-resume').classList.add('minimized');
-				resumeMinimized = 'actual-resume';
+		const resumePanel = document.getElementById('actual-resume');
+		const portfolioPanel = document.getElementById('portfolio-resume');
+		const portfolioControls = document.getElementById('portfolio-controls');
+		const showPortfolioBtn = document.getElementById('show-portfolio');
+		const backToResumeBtn = document.getElementById('back-to-resume');
+		const showBothBtn = document.getElementById('show-both');
+		const resumeContainer = document.getElementById('resume-container');
+
+		function updateView(newView) {
+			currentView = newView;
+			
+			// Reset classes
+			resumePanel.classList.remove('hidden', 'w-full', 'w-1/2');
+			portfolioPanel.classList.remove('hidden', 'w-full', 'w-1/2');
+			resumeContainer.classList.remove('grid');
+			portfolioControls.classList.add('hidden');
+			
+			if (newView === 'resume-only') {
+				// Show only resume (default)
+				resumePanel.classList.remove('hidden');
+				resumePanel.classList.add('w-full');
+				portfolioPanel.classList.add('hidden');
+				showPortfolioBtn.classList.remove('hidden');
+			} else if (newView === 'portfolio-only') {
+				// Show only portfolio
+				resumePanel.classList.add('hidden');
+				portfolioPanel.classList.remove('hidden');
+				portfolioPanel.classList.add('w-full');
+				portfolioControls.classList.remove('hidden');
+				showPortfolioBtn.classList.add('hidden');
+			} else if (newView === 'both') {
+				// Show both side-by-side (50/50)
+				resumePanel.classList.remove('hidden');
+				portfolioPanel.classList.remove('hidden');
+				resumeContainer.classList.add('grid');
+				resumePanel.classList.add('w-full');
+				portfolioPanel.classList.add('w-full');
+				portfolioControls.classList.remove('hidden');
+				showPortfolioBtn.classList.add('hidden');
 			}
+		}
+
+		// Button event handlers
+		showPortfolioBtn?.addEventListener('click', () => {
+			updateView('portfolio-only');
 		});
 
-		document.querySelectorAll('.minimize-btn').forEach(btn => {
-			btn.addEventListener('click', (e) => {
-				const panel = e.target.closest('.resume-panel');
-				const panelId = panel.id;
-				const otherPanel = panelId === 'actual-resume' ? 'portfolio-resume' : 'actual-resume';
-				
-				panel.classList.add('minimized');
-				document.getElementById(otherPanel).classList.remove('minimized');
-				resumeMinimized = panelId;
-			});
+		backToResumeBtn?.addEventListener('click', () => {
+			updateView('resume-only');
 		});
+
+		showBothBtn?.addEventListener('click', () => {
+			updateView('both');
+		});
+
+		// Initialize default view
+		updateView('resume-only');
 
 		// Scroll progress bar
 		window.addEventListener('scroll', () => {
