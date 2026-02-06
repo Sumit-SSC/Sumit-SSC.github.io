@@ -5,6 +5,18 @@
    - Form handling
    =================================================== */
 
+// Base path: root has only index.html; other pages live in pages/
+function getBasePath() {
+  return window.location.pathname.includes('/pages/') ? '' : 'pages/';
+}
+function getHomeUrl() {
+  return getBasePath() === 'pages/' ? 'index.html' : '../index.html';
+}
+// Data path: same for fetch so it works from root and from pages/
+function getDataBase() {
+  return window.location.pathname.includes('/pages/') ? '../data/' : 'data/';
+}
+
 const FEATURED_ORDER = [
   "fraud-intelligence-and-risk-analytics",
   "e-commerce-product-analytics",
@@ -57,7 +69,7 @@ function init() {
   
   // Force theme color application after DOM is ready
   setTimeout(() => {
-    const currentTheme = localStorage.getItem('colorTheme') || 'theme-purple';
+    const currentTheme = localStorage.getItem('colorTheme') || 'theme-indigo';
     applyColorTheme(currentTheme);
   }, 50);
 }
@@ -70,7 +82,7 @@ function initTheme() {
 
   applyTheme(initial);
   // Apply color theme immediately with saved value
-  const savedColorTheme = localStorage.getItem('colorTheme') || 'theme-purple';
+  const savedColorTheme = localStorage.getItem('colorTheme') || 'theme-indigo';
   applyColorTheme(savedColorTheme);
 
   // Expose globally
@@ -81,17 +93,21 @@ function initTheme() {
     localStorage.setItem('theme', next);
     applyTheme(next);
     // Re-apply color theme to update text colors for new mode
-    const currentColorTheme = localStorage.getItem('colorTheme') || 'theme-purple';
+    const currentColorTheme = localStorage.getItem('colorTheme') || 'theme-indigo';
     applyColorTheme(currentColorTheme);
   };
 
   // Theme + color controls - Add to navigation if it exists, otherwise create floating controls
   const nav = document.getElementById('nav');
-  const themes = ['theme-purple', 'theme-blue', 'theme-emerald', 'theme-rose', 'theme-orange', 'theme-indigo', 'theme-teal', 'theme-amber'];
-  const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || 'theme-purple';
+  // Minimal, professional palette (reduced set)
+  const themes = ['theme-indigo', 'theme-slate', 'theme-teal'];
+  const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || 'theme-indigo';
   let colorIndex = themes.indexOf(storedTheme);
   if (colorIndex < 0) colorIndex = 0;
-  applyColorTheme(themes[colorIndex]);
+  const resolvedTheme = themes[colorIndex];
+  applyColorTheme(resolvedTheme);
+  // Migrate any legacy stored theme names to the new set
+  if (storedTheme !== resolvedTheme) localStorage.setItem('colorTheme', resolvedTheme);
 
   // Avoid duplicating controls if initTheme() runs more than once
   const existingControls = document.getElementById('theme-controls');
@@ -221,21 +237,16 @@ function applyTheme(theme) {
 function applyColorTheme(name) {
   const root = document.documentElement;
   const stored = localStorage.getItem('colorTheme');
-  const theme = name || stored || 'theme-purple';
+  const theme = name || stored || 'theme-indigo';
   root.dataset.colorTheme = theme;
 
   const colorMap = {
-    'theme-purple': { primary: '#667eea' },
-    'theme-blue': { primary: '#3b82f6' },
-    'theme-emerald': { primary: '#10b981' },
-    'theme-rose': { primary: '#f43f5e' },
-    'theme-orange': { primary: '#f97316' },
-    'theme-indigo': { primary: '#6366f1' },
-    'theme-teal': { primary: '#14b8a6' },
-    'theme-amber': { primary: '#f59e0b' }
+    'theme-indigo': { primary: '#4f46e5' }, // indigo-600
+    'theme-slate': { primary: '#0f172a' },  // slate-900 (ink)
+    'theme-teal': { primary: '#0d9488' }    // teal-600
   };
 
-  const colors = colorMap[theme] || colorMap['theme-purple'];
+  const colors = colorMap[theme] || colorMap['theme-indigo'];
 
   // Palette controls accent only (theme-agnostic)
   root.style.setProperty('--accent-primary', colors.primary);
@@ -254,16 +265,11 @@ function applyColorTheme(name) {
 
 function updateColorSwatch(el, theme) {
   const colorMap = {
-    'theme-purple': '#667eea',
-    'theme-blue': '#3b82f6',
-    'theme-emerald': '#10b981',
-    'theme-rose': '#f43f5e',
-    'theme-orange': '#f97316',
-    'theme-indigo': '#6366f1',
-    'theme-teal': '#14b8a6',
-    'theme-amber': '#f59e0b'
+    'theme-indigo': '#4f46e5',
+    'theme-slate': '#0f172a',
+    'theme-teal': '#0d9488'
   };
-  el.style.background = colorMap[theme] || colorMap['theme-purple'];
+  el.style.background = colorMap[theme] || colorMap['theme-indigo'];
 }
 
 /* ---------- VIEW MODE TOGGLE (CARD/LIST) ---------- */
@@ -495,7 +501,7 @@ function initViewSwitcher() {
 /* ---------- CASE STUDIES SECTION (Medium / TDS style) ---------- */
 async function loadCaseStudies() {
   try {
-    const response = await fetch('data/case_studies.json');
+    const response = await fetch(getDataBase() + 'case_studies.json');
     if (!response.ok) throw new Error('Failed to load case studies');
     return await response.json();
   } catch (error) {
@@ -533,12 +539,12 @@ function createCaseStudyCard(caseStudy) {
   const category = caseStudy.category || 'Analytics';
   const readMins = caseStudy.case_study_read_mins != null ? caseStudy.case_study_read_mins : 5;
   const tags = (caseStudy.tools || []).slice(0, 3).map(t =>
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="case-study-tag">${t}</a>`
+    `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="case-study-tag">${t}</a>`
   ).join('');
 
   return `
     <article class="case-study-card">
-      <a href="case-study.html?id=${encodeURIComponent(caseStudy.id)}" class="case-study-card-link">
+      <a href="${getBasePath()}case-study.html?id=${encodeURIComponent(caseStudy.id)}" class="case-study-card-link">
         <div class="case-study-card-image">
           <img src="${thumbnailUrl}" alt="${caseStudy.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
           <span class="case-study-card-read-time">${readMins} min read</span>
@@ -574,7 +580,7 @@ function initStoryTimeline() {
 /* ---------- LOAD PROJECTS FROM JSON ---------- */
 async function loadProjects() {
   try {
-    const response = await fetch('data/projects.json');
+    const response = await fetch(getDataBase() + 'projects.json');
     if (!response.ok) throw new Error('Failed to load projects');
     return await response.json();
   } catch (error) {
@@ -613,7 +619,7 @@ function createFeaturedHeroCard(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
   const tags = (project.tools || []).slice(0, 4).map(t =>
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
+    `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
@@ -622,7 +628,7 @@ function createFeaturedHeroCard(project) {
     link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
   const actionButtons = [
-    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `${getBasePath()}project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -637,13 +643,13 @@ function createFeaturedHeroCard(project) {
   }).join('');
 
   const overlayButtons = `
-    <a href="project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
+    <a href="${getBasePath()}project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
       View Project →
     </a>
   `;
   return `
     <article class="featured-card featured-hero group">
-      <a href="project.html?id=${project.id}" class="featured-media">
+      <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
         <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
@@ -658,7 +664,7 @@ function createFeaturedHeroCard(project) {
       </a>
       <div class="featured-body">
         <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
-        <h3 class="featured-title"><a href="project.html?id=${project.id}">${project.title}</a></h3>
+        <h3 class="featured-title"><a href="${getBasePath()}project.html?id=${project.id}">${project.title}</a></h3>
         <p class="featured-summary">${project.short_description || ''}</p>
         <div class="list-tags">
           ${tags || ''}
@@ -675,7 +681,7 @@ function createFeaturedHalfCard(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
   const tags = (project.tools || []).slice(0, 3).map(t =>
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
+    `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
@@ -684,7 +690,7 @@ function createFeaturedHalfCard(project) {
     link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
   const actionButtons = [
-    { label: 'View Project', url: `project.html?id=${project.id}`, primary: true },
+    { label: 'View Project', url: `${getBasePath()}project.html?id=${project.id}`, primary: true },
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
     { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
@@ -699,13 +705,13 @@ function createFeaturedHalfCard(project) {
   }).join('');
 
   const overlayButtons = `
-    <a href="project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
+    <a href="${getBasePath()}project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
       View Project →
     </a>
   `;
   return `
     <article class="featured-card featured-half group">
-      <a href="project.html?id=${project.id}" class="featured-media">
+      <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
         <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
@@ -720,7 +726,7 @@ function createFeaturedHalfCard(project) {
       </a>
       <div class="featured-body">
         <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
-        <h4 class="featured-title"><a href="project.html?id=${project.id}">${project.title}</a></h4>
+        <h4 class="featured-title"><a href="${getBasePath()}project.html?id=${project.id}">${project.title}</a></h4>
         <p class="featured-summary">${project.short_description || ''}</p>
         <div class="list-tags">
           ${tags || ''}
@@ -821,7 +827,7 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
       filterInfo.innerHTML = `
         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
           Tagged: <strong>${activeFilter}</strong>
-          <a href="homepage.html" class="ml-2 text-xs text-gray-600 hover:text-primary underline">Clear</a>
+          <a href="${getHomeUrl()}" class="ml-2 text-xs text-gray-600 hover:text-primary underline">Clear</a>
         </span>
       `;
     } else {
@@ -875,11 +881,11 @@ function getPaginationSlice(total, page, firstPageCount, restPageCount) {
 
 function createDashboardProjectCard(project, layoutClass = '') {
   const isCaseStudy = project.isCaseStudy === true;
-  const detailUrl = isCaseStudy ? `case-study.html?id=${project.id}` : `project.html?id=${project.id}`;
+  const detailUrl = isCaseStudy ? `${getBasePath()}case-study.html?id=${project.id}` : `${getBasePath()}project.html?id=${project.id}`;
   const viewLabel = isCaseStudy ? 'View Case Study' : 'View Project';
   
   const tags = (project.tools || []).slice(0, 4).map(t => 
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
+    `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
   ).join('');
 
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
@@ -891,7 +897,9 @@ function createDashboardProjectCard(project, layoutClass = '') {
     streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
     powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
     slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
-    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`,
+    notebook: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 4h10M9 4v16"/></svg>`,
+    link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
 
   const genericLink =
@@ -901,20 +909,25 @@ function createDashboardProjectCard(project, layoutClass = '') {
     project.medium_url ||
     project.kaggle_url;
 
-  const actionButtons = isCaseStudy ? [
-    { label: viewLabel, url: detailUrl, primary: true }
-  ] : [
-    { label: viewLabel, url: detailUrl, primary: true },
+  const iconButtons = [
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Streamlit App', url: project.streamlit_url, icon: actionIcons.streamlit },
     { label: 'Notebook', url: project.notebook_url, icon: actionIcons.notebook },
     { label: 'More', url: genericLink, icon: actionIcons.link }
-  ].filter(btn => btn.url).map(btn => {
-    if (btn.primary) {
-      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`;
+  ];
+  const renderIconBtn = (btn) => {
+    if (btn.url) {
+      return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
     }
-    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
-  }).join('');
+    return `<span class="project-link-icon disabled" aria-label="${btn.label} (not available)" title="${btn.label} (not available)">${btn.icon}</span>`;
+  };
+
+  const actionButtons = isCaseStudy ? [
+    `<a href="${detailUrl}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`
+  ] : [
+    `<a href="${detailUrl}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`,
+    ...iconButtons.map(renderIconBtn)
+  ].join('');
 
   const overlayButtons = `
     <a href="${detailUrl}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">
@@ -966,11 +979,11 @@ function createDashboardProjectCard(project, layoutClass = '') {
 
 function createDashboardProjectList(project, index = 0) {
   const isCaseStudy = project.isCaseStudy === true;
-  const detailUrl = isCaseStudy ? `case-study.html?id=${project.id}` : `project.html?id=${project.id}`;
+  const detailUrl = isCaseStudy ? `${getBasePath()}case-study.html?id=${project.id}` : `${getBasePath()}project.html?id=${project.id}`;
   const viewLabel = isCaseStudy ? 'View Case Study' : 'View Project';
   
   const tags = (project.tools || []).slice(0, 4).map(t => 
-    `<a href="homepage.html?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
+    `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
   
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
@@ -982,7 +995,9 @@ function createDashboardProjectList(project, index = 0) {
     streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4z"/></svg>`,
     powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
     slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
-    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`,
+    notebook: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 4h10M9 4v16"/></svg>`,
+    link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
 
   const genericLink =
@@ -992,20 +1007,25 @@ function createDashboardProjectList(project, index = 0) {
     project.medium_url ||
     project.kaggle_url;
 
-  const actionButtons = isCaseStudy ? [
-    { label: viewLabel, url: detailUrl, primary: true }
-  ] : [
-    { label: viewLabel, url: detailUrl, primary: true },
+  const iconButtons = [
     { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
     { label: 'Streamlit App', url: project.streamlit_url, icon: actionIcons.streamlit },
     { label: 'Notebook', url: project.notebook_url, icon: actionIcons.notebook },
     { label: 'More', url: genericLink, icon: actionIcons.link }
-  ].filter(btn => btn.url).map(btn => {
-    if (btn.primary) {
-      return `<a href="${btn.url}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">View Project</a>`;
+  ];
+  const renderIconBtn = (btn) => {
+    if (btn.url) {
+      return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
     }
-    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
-  }).join('');
+    return `<span class="project-link-icon disabled" aria-label="${btn.label} (not available)" title="${btn.label} (not available)">${btn.icon}</span>`;
+  };
+
+  const actionButtons = isCaseStudy ? [
+    `<a href="${detailUrl}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`
+  ] : [
+    `<a href="${detailUrl}" class="px-3 py-1.5 text-xs font-semibold rounded transition-colors bg-primary text-white hover:bg-accent">${viewLabel}</a>`,
+    ...iconButtons.map(renderIconBtn)
+  ].join('');
 
   const overlayButtons = isCaseStudy ? [
     { label: viewLabel, url: detailUrl, primary: true }
@@ -1084,7 +1104,8 @@ function renderPagination(total, currentPage, firstPageCount, restPageCount) {
     if (pageNum > 1) params.set('page', pageNum);
     if (activeFilter) params.set('filter', activeFilter);
     if (viewMode === 'list') params.set('view', 'list');
-    return params.toString() ? `homepage.html?${params.toString()}` : 'homepage.html';
+    const homeUrl = getHomeUrl();
+    return params.toString() ? `${homeUrl}?${params.toString()}` : homeUrl;
   };
 
   let html = '';
@@ -1130,14 +1151,14 @@ async function loadCaseStudyPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const caseStudyId = urlParams.get('id');
   if (!caseStudyId) {
-    document.getElementById('case-study-content').innerHTML = '<p class="text-gray-500">No case study selected. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
+    document.getElementById('case-study-content').innerHTML = '<p class="text-gray-500">No case study selected. <a href="' + getHomeUrl() + '" class="text-primary hover:underline">Back to dashboard</a>.</p>';
     return;
   }
 
   const caseStudies = await loadCaseStudies();
   const caseStudy = caseStudies.find(cs => cs.id === caseStudyId);
   if (!caseStudy) {
-    document.getElementById('case-study-content').innerHTML = '<p class="text-gray-500">Case study not found. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
+    document.getElementById('case-study-content').innerHTML = '<p class="text-gray-500">Case study not found. <a href="' + getHomeUrl() + '" class="text-primary hover:underline">Back to dashboard</a>.</p>';
     return;
   }
 
@@ -1162,7 +1183,7 @@ async function loadCaseStudyPage() {
   const viewProjectEl = document.getElementById('case-study-view-project');
   if (viewProjectEl && caseStudy.project_id) {
     viewProjectEl.innerHTML = `
-      <a href="project.html?id=${encodeURIComponent(caseStudy.project_id)}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold text-sm">
+      <a href="${getBasePath()}project.html?id=${encodeURIComponent(caseStudy.project_id)}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-colors font-semibold text-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         View full project
       </a>
@@ -1174,13 +1195,14 @@ async function loadCaseStudyPage() {
   const container = document.getElementById('case-study-content');
   if (!container) return;
   try {
-    const res = await fetch(caseStudy.case_study_path);
+    const casePath = caseStudy.case_study_path.startsWith('data/') ? getDataBase() + caseStudy.case_study_path.slice(5) : caseStudy.case_study_path;
+    const res = await fetch(casePath);
     if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
     const html = await res.text();
     container.innerHTML = html;
     renderRelatedCaseStudiesCallout(caseStudy, caseStudies);
   } catch (e) {
-    container.innerHTML = '<p class="text-gray-500">Case study content could not be loaded. <a href="homepage.html" class="text-primary hover:underline">Back to dashboard</a>.</p>';
+    container.innerHTML = '<p class="text-gray-500">Case study content could not be loaded. <a href="' + getHomeUrl() + '" class="text-primary hover:underline">Back to dashboard</a>.</p>';
   }
 }
 
@@ -1197,7 +1219,7 @@ function renderRelatedCaseStudiesCallout(caseStudy, allCaseStudies) {
   if (!container) return;
 
   const items = related.map(cs => `
-    <a href="case-study.html?id=${encodeURIComponent(cs.id)}" class="block p-3 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 hover:border-primary/60 hover:bg-white dark:hover:bg-gray-800 transition-colors">
+    <a href="${getBasePath()}case-study.html?id=${encodeURIComponent(cs.id)}" class="block p-3 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 hover:border-primary/60 hover:bg-white dark:hover:bg-gray-800 transition-colors">
       <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">${cs.category || 'Further study'}</div>
       <div class="font-semibold text-gray-800 dark:text-gray-100">${cs.title}</div>
       <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">${(cs.short_description || '').replace(/<[^>]*>/g, '').substring(0, 140)}${(cs.short_description || '').length > 140 ? '…' : ''}</div>
@@ -1211,7 +1233,7 @@ function renderRelatedCaseStudiesCallout(caseStudy, allCaseStudies) {
     <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Cross-links from Featured → Archive (same depth; organized for focus).</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${items}</div>
     <div class="mt-4">
-      <a href="case-studies-archive.html" class="text-sm font-semibold text-primary hover:underline">Browse the Archive →</a>
+      <a href="${getBasePath()}case-studies-archive.html" class="text-sm font-semibold text-primary hover:underline">Browse the Archive →</a>
     </div>
   `;
   container.appendChild(callout);
@@ -1238,7 +1260,8 @@ async function loadProjectDetail() {
 /** Fetch project content from HTML file; returns { overview, problem, approach, insights, media } or null. */
 async function fetchProjectContent(path) {
   try {
-    const res = await fetch(path);
+    const resolvedPath = path.startsWith('data/') ? getDataBase() + path.slice(5) : path;
+    const res = await fetch(resolvedPath);
     if (!res.ok) return null;
     const html = await res.text();
     const parser = new DOMParser();
@@ -1363,7 +1386,8 @@ async function loadCaseStudyIntoProject(project, caseStudy) {
   if (!container) return;
 
   try {
-    const res = await fetch(caseStudy.case_study_path);
+    const casePath = caseStudy.case_study_path.startsWith('data/') ? getDataBase() + caseStudy.case_study_path.slice(5) : caseStudy.case_study_path;
+    const res = await fetch(casePath);
     if (!res.ok) throw new Error(`Failed to load case study: ${res.status}`);
     const html = await res.text();
     container.innerHTML = html;
@@ -1490,13 +1514,15 @@ function resolveAssetUrl(project, assetPath) {
     return `https://raw.githubusercontent.com/${repo}/${branch}/${cleanPath}`;
   }
   
-  // Local paths – we now assume everything is in the new structure.
-  // Do not rewrite; just return as-is unless it's clearly a root path.
-  // Don't modify paths that already start with ./, /, or are in assets/
-  if (!assetPath.startsWith('./') && !assetPath.startsWith('/') && !assetPath.startsWith('assets/')) {
-    return assetPath; // Use as-is
+  // Local paths – normalize so they work from both root and /pages/*
+  // If the path points into the bundled assets folder, always treat it as root-relative.
+  if (assetPath.startsWith('assets/')) {
+    return '/' + assetPath;
   }
-  
+  if (assetPath.startsWith('./assets/')) {
+    return '/' + assetPath.replace(/^\.\//, '');
+  }
+  // Already root-relative or explicitly relative – return as-is
   return assetPath;
 }
 
@@ -1843,7 +1869,7 @@ function initClickableTools() {
     badge.addEventListener('click', async () => {
       const tool = badge.dataset.tool;
       // Redirect to homepage with filter parameter
-      window.location.href = `homepage.html?filter=${encodeURIComponent(tool)}`;
+      window.location.href = `${getHomeUrl()}?filter=${encodeURIComponent(tool)}`;
     });
   });
 }

@@ -25,6 +25,15 @@ This guide explains how to fill **`projects.json`** and **`case_studies.json`** 
 
 See **“Project content as HTML (optional)”** below for the file layout and convention.
 
+### Non-featured projects: JSON is enough (no HTML required)
+
+For projects with **`featured: false`**, the same project detail page and **same section structure** (Overview, Problem Statement, Approach, Insights & Outcomes, Media) are used. Content can come entirely from JSON:
+
+- **No HTML files needed** — Use `full_description`, `problem_statement`, `approach`, `insights`, and `media_notes` in `projects.json`. The page renders these as the same sections as featured projects.
+- **Target length:** ~**1–1.5k words total** across those five fields. Same business-first style as featured, but shorter (featured use 3–5k in HTML).
+- **HTML in JSON:** You can use simple HTML in those fields (`<p>`, `<ul>`, `<li>`, `<strong>`) for structure. Keep JSON valid (escape quotes inside strings).
+- **Optional later:** If you want richer formatting or longer content for a non-featured project, add a `content_path` and an HTML file; the site will use it instead of the JSON fields.
+
 ---
 
 ## Quick rules

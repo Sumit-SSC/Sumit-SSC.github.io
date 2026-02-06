@@ -1,0 +1,176 @@
+<div class="space-y-10">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="space-y-6">
+    <div class="bg-gradient-to-r from-primary/10 via-accent/10 to-rose-100 dark:from-primary/20 dark:via-accent/20 dark:to-rose-900/20 rounded-xl p-6 border border-primary/20">
+      <p class="text-sm font-semibold text-primary mb-2">Project Overview</p>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
+        <strong>Customer Churn Analysis &amp; Retention</strong> is a full lifecycle project that scores churn risk, explains drivers,
+        and surfaces actionable segments in a <strong>Power BI dashboard</strong> so marketing and success teams can target retention offers
+        where they matter most.
+      </p>
+    </div>
+
+    <div class="space-y-3 text-gray-700 dark:text-gray-300">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Executive Summary</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          <strong>Business goal:</strong> reduce churn by identifying high-risk, high-value customers and designing focused interventions
+          instead of blanket discounts.
+        </li>
+        <li>
+          <strong>What was built:</strong> SQL-based cohort and feature tables, an <strong>XGBoost churn model</strong> with SHAP explanations,
+          and a Power BI dashboard that segments customers by risk and value.
+        </li>
+        <li>
+          <strong>Why it matters:</strong> without structured churn analytics, teams either overspend on retention or lose high-value
+          customers silently.
+        </li>
+        <li>
+          <strong>Indicative impact:</strong> targeting the top risk decile with appropriate offers improves retention lift vs. baseline
+          while keeping spend focused.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Problem: Who Will Churn, and Is It Worth Saving Them?</h2>
+
+    <div class="space-y-4 text-gray-700 dark:text-gray-300">
+      <p>
+        Subscription and recurring-revenue businesses live or die on retention. Leadership repeatedly asks:
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><strong>Who is at risk of churning in the next cycle?</strong></li>
+        <li><strong>Which customers are worth saving?</strong> (high value, high risk vs low value, low risk)</li>
+        <li><strong>Which levers work?</strong> discounts, support outreach, feature upgrades, or letting churn happen naturally.</li>
+      </ul>
+      <p>
+        Ad-hoc analyses and one-off notebooks rarely make it into day-to-day decision-making. The project aims to turn churn analytics
+        into a repeatable decision system: clean tables, a robust model, and a dashboard that non-technical teams can navigate.
+      </p>
+    </div>
+  </section>
+
+  <!-- APPROACH -->
+  <section id="approach" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Solution Design &amp; Modeling</h2>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. Cohorts &amp; Feature Engineering</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The data layer is built to answer lifecycle questions, not just a single model run:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>Cohorts</strong> by signup month and lifecycle stage (onboarding, active, at-risk, churned).</li>
+        <li><strong>Tenure</strong> in days/months since signup.</li>
+        <li><strong>Usage trends</strong> – rolling activity and decline flags.</li>
+        <li><strong>Support volume</strong> – count and recency of tickets.</li>
+        <li><strong>Payment health</strong> – failed payments, dunning, and outstanding balance flags.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        These features feed both the churn model and the downstream segmentation in BI.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Churn Modeling</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        XGBoost is used as the primary model, with class weights and cross-validation to handle imbalance.
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Train/validation split and k-fold cross-validation to avoid overfitting.</li>
+        <li>Hyperparameter tuning for depth, learning rate, trees, and regularization.</li>
+        <li>Evaluation via ROC AUC, precision@top-k, and calibration checks.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        SHAP values explain global importance (support tickets, payment failures, usage decline) and give per-customer breakdowns
+        for stakeholder conversations.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Segmentation &amp; Decision Framework</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Churn scores are combined with revenue/value to create a simple 2×2 grid:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>High value – high risk</strong> → top priority for human outreach and premium offers.</li>
+        <li><strong>High value – low risk</strong> → nurture and upsell, not heavy incentives.</li>
+        <li><strong>Low value – high risk</strong> → scalable/automated touchpoints; accept some churn.</li>
+        <li><strong>Low value – low risk</strong> → monitor, minimal spend.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        This segmentation is implemented directly in SQL and surfaced as a visual in Power BI, so retention planning meetings can
+        start from clear quadrants.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Power BI Dashboard</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The dashboard turns model outputs into decision surfaces:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Churn risk distribution across cohorts and segments.</li>
+        <li>Views by lifecycle stage, plan tier, and region.</li>
+        <li>Drill-through from high-risk segments into individual accounts.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        Stakeholders can filter to a target region or segment and immediately see which customers to prioritize.
+      </p>
+    </section>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section id="insights" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Insights &amp; Retention Impact</h2>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Key Drivers of Churn</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Support ticket volume &amp; recency</strong> – heavy, recent support interactions correlate strongly with churn,
+          especially when tickets are about billing or reliability.
+        </li>
+        <li>
+          <strong>Payment failures &amp; dunning status</strong> – repeated failed payments are both a signal of financial risk and a
+          source of frustration, making them a top driver in SHAP analyses.
+        </li>
+        <li>
+          <strong>Usage decline</strong> – customers whose engagement drops sharply over a few weeks form a high-risk cluster,
+          even if they are still paying on time.
+        </li>
+      </ul>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Business Outcomes</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        In the simulated setting, focusing on the top risk decile—especially in high-value segments—delivers improved retention
+        lift versus random targeting while holding intervention spend roughly constant. The model and dashboard combination
+        gives teams a <strong>repeatable playbook</strong> for each renewal cycle.
+      </p>
+    </section>
+  </section>
+
+  <!-- MEDIA -->
+  <section id="media" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Assets &amp; How to Explore</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      The live portfolio connects this narrative to concrete artifacts:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li><strong>Power BI dashboard:</strong> embedded or linked via <code>powerbi_embed_url</code>.</li>
+      <li><strong>PBIX &amp; slides:</strong> downloadable from the paths in <code>pbix_download_path</code> and <code>slide_pdf_path</code>.</li>
+      <li><strong>Code &amp; notebooks:</strong> GitHub/Notebook URLs in <code>projects.json</code> when available.</li>
+    </ul>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Exact links are maintained centrally in <code>data/projects.json</code> so you can update deployments without touching this HTML.
+    </p>
+  </section>
+
+</div>
+

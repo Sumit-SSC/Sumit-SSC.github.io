@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Skills | Sumit S. Chaure</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>
@@ -10,8 +10,8 @@
 			theme: {
 				extend: {
 					colors: {
-						primary: '#667eea',
-						accent: '#764ba2',
+						primary: '#4f46e5',
+						accent: '#0ea5e9',
 					}
 				}
 			}
@@ -20,9 +20,9 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="assets/css/custom.css" />
-	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
-	<link rel="icon" type="image/png" href="assets/images/placeholder.png" />
+	<link rel="stylesheet" href="../assets/css/custom.css" />
+	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
+	<link rel="icon" type="image/png" href="../assets/images/placeholder.png" />
 	<style>
 		body { font-family: 'Inter', sans-serif; }
 	</style>
@@ -35,10 +35,10 @@
 	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
 		<div class="container mx-auto px-4 sm:px-6">
 			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
-				<a href="index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<a href="../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
 				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
 					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-						<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
+						<li><a href="../index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
 						<li><a href="resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Resume</a></li>
 						<li><a href="skills.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Skills</a></li>
 						<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">About</a></li>
@@ -80,13 +80,13 @@
 			<!-- Tech stack: one box (whole stub) – white bg so icons visible in dark mode -->
 			<div class="mb-10">
 				<div class="skills-icons-box bg-white dark:bg-white rounded-xl p-6 border border-gray-200 dark:border-gray-400 shadow-sm">
-					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Programming / tech</h2>
+					<h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Programming / tech</h2>
 					<div id="tech-stack-programming" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 					<hr class="my-6 border-gray-300 dark:border-gray-500" />
-					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">AI Tools</h2>
+					<h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">AI Tools</h2>
 					<div id="tech-stack-ai-tools" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 					<hr class="my-6 border-gray-300 dark:border-gray-500" />
-					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Non-tech / Tools</h2>
+					<h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Non-tech / Tools</h2>
 					<div id="tech-stack-nontech" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 				</div>
 			</div>
@@ -137,7 +137,7 @@
 		</div>
 	</footer>
 
-	<script src="assets/js/main.js"></script>
+	<script src="../assets/js/main.js"></script>
 	<script>
 		// CDN URLs (backup if local icon missing). Local copies in assets/images/icons/ for speed and reliability.
 		const iconUrlMapCdn = {
@@ -250,12 +250,12 @@
 			"Data Analytics": [
 				{ name: "pandas", level: 90, iconUrl: iconUrlMap.pandas, color: "#150458" },
 				{ name: "NumPy", level: 85, iconUrl: iconUrlMap.NumPy, color: "#4DABCF" },
-				{ name: "Statistical Analysis", level: 85, icon: "fas fa-chart-line", color: "#764ba2" },
+				{ name: "Statistical Analysis", level: 85, icon: "fas fa-chart-line", color: "#0ea5e9" },
 				{ name: "Power BI", level: 85, iconUrl: iconUrlMap["Power BI"], color: "#F2C811" },
 				{ name: "Excel", level: 90, iconUrl: iconUrlMap.Excel, color: "#217346" },
 				{ name: "DAX", level: 80, iconUrl: iconUrlMap.DAX, color: "#F2C811" },
-				{ name: "A/B Testing", level: 80, icon: "fas fa-flask", color: "#667eea" },
-				{ name: "Hypothesis Testing", level: 80, icon: "fas fa-check-circle", color: "#667eea" },
+				{ name: "A/B Testing", level: 80, icon: "fas fa-flask", color: "#4f46e5" },
+				{ name: "Hypothesis Testing", level: 80, icon: "fas fa-check-circle", color: "#4f46e5" },
 				{ name: "Google Analytics", level: 80, iconUrl: iconUrlMap["Google Analytics"], color: "#E37400" },
 				{ name: "SQL Server", level: 75, iconUrl: iconUrlMap["SQL Server"], color: "#CC2927" },
 				{ name: "Tableau", level: 75, iconUrl: iconUrlMap.Tableau, color: "#E97627" },
@@ -436,12 +436,12 @@
 			{ key: 'SQL', label: 'SQL & DBs', iconUrl: iconUrlMap.SQL, color: '#336791' },
 			{ key: 'Data viz', label: 'Data viz', iconUrl: iconUrlMap.Matplotlib, color: '#11557C' },
 			{ key: 'Data cleaning', label: 'Data cleaning', iconUrl: iconUrlMap.pandas, color: '#150458' },
-			{ key: 'A/B Testing', label: 'A/B Testing', iconUrl: null, color: '#667eea', icon: 'fas fa-flask' },
-			{ key: 'Statistical Analysis', label: 'Statistical Analysis', iconUrl: null, color: '#764ba2', icon: 'fas fa-chart-line' },
+			{ key: 'A/B Testing', label: 'A/B Testing', iconUrl: null, color: '#4f46e5', icon: 'fas fa-flask' },
+			{ key: 'Statistical Analysis', label: 'Statistical Analysis', iconUrl: null, color: '#0ea5e9', icon: 'fas fa-chart-line' },
 			{ key: 'BI tools', label: 'BI tools', iconUrl: iconUrlMap['Power BI'], color: '#F2C811' },
 			{ key: 'Excel', label: 'Excel', iconUrl: iconUrlMap.Excel, color: '#217346' },
 			{ key: 'Git', label: 'Git', iconUrl: iconUrlMap.Git, color: '#F05032' },
-			{ key: 'Web scraping', label: 'Web scraping', iconUrl: null, color: '#667eea', icon: 'fas fa-spider' },
+			{ key: 'Web scraping', label: 'Web scraping', iconUrl: null, color: '#4f46e5', icon: 'fas fa-spider' },
 			{ key: 'Web-dev', label: 'Web-dev', iconUrl: iconUrlMap.HTML, color: '#E34F26' },
 			{ key: 'Notebook', label: 'Notebook', iconUrl: iconUrlMap.Jupyter, color: '#F37626' },
 		];

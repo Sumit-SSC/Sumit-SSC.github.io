@@ -1,5 +1,15 @@
 # Scripts
 
+Run scripts from the **project root** (e.g. `powershell -ExecutionPolicy Bypass -File scripts/verify_portfolio.ps1`).
+
+## verify_portfolio.ps1
+
+Checks pages and assets for common issues: social buttons in header/footer, project page layout, tools clickability, Resume in nav, about-page transitions, Formspree on contact form. Paths are updated for the current layout (root `index.html`, other pages under `pages/`).
+
+```powershell
+./scripts/verify_portfolio.ps1
+```
+
 ## download-skill-icons.ps1
 
 Downloads all skill icons from CDN to `assets/images/icons/` so the site can load them **locally**. This gives you:

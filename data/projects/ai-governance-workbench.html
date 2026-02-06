@@ -98,39 +98,96 @@
       </ul>
     </section>
 
-    <!-- 2. Data & System Design -->
+    <!-- 2. Data Landscape & Event Model -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Data &amp; System Design</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Data Landscape &amp; Event Model</h3>
       <p class="text-gray-700 dark:text-gray-300">
-        Governance information is modeled as a set of tidy tables:
+        Governance information is modeled as a set of tidy tables that reflect how AI systems, policies, controls, and evidence
+        flow through a typical governance function. The event model is simple but extensible: each entity has a clear owner,
+        lifecycle state, and linkage to related entities (e.g., a control links to a policy section and to one or more evidence artifacts).
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        Core entities and their roles:
       </p>
       <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
-        <li><strong>Systems:</strong> AI/ML systems in scope (id, owner, domain, risk tier).</li>
-        <li><strong>Policies &amp; Controls:</strong> documents, sections, mapped control requirements.</li>
-        <li><strong>Evidence:</strong> links to model cards, assessments, tests, and sign‑offs.</li>
-        <li><strong>Incidents &amp; exceptions:</strong> timestamps, severity, status, owning team.</li>
-        <li><strong>Usage logs:</strong> how the workbench itself is used (summaries, audits, questions).</li>
+        <li><strong>Systems:</strong> AI/ML systems in scope (id, owner, domain, risk tier). Each system can be linked to multiple policies and controls.</li>
+        <li><strong>Policies &amp; Controls:</strong> documents, sections, and mapped control requirements (e.g., EU AI Act Article 9, NIST AI RMF subcategories). Controls are the atomic units of compliance that evidence must satisfy.</li>
+        <li><strong>Evidence:</strong> links to model cards, assessments, test reports, and sign‑offs. Each evidence record points to one or more controls and optionally to a system.</li>
+        <li><strong>Incidents &amp; exceptions:</strong> timestamps, severity, status, owning team. These feed into KPIs such as incident aging and open count by domain.</li>
+        <li><strong>Usage logs:</strong> how the workbench itself is used (summaries generated, audits run, Q&amp;A questions). Useful for adoption and improvement.</li>
       </ul>
       <p class="text-gray-700 dark:text-gray-300">
         In this portfolio version, these tables are populated from CSV and synthetic data, but the structure mirrors what a real
-        governance function would expect from a model registry and incident system.
+        governance function would expect from a model registry and incident system. The schema is designed so that new frameworks
+        (e.g., sector‑specific guidelines) can be added without changing the core pipeline.
       </p>
 
-```md
-<!-- PLACEHOLDER: System Architecture Diagram
-Data → SQL Layers → Feature Store → Power BI / Streamlit
--->
-```
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Placeholder: System architecture diagram (Data → SQL layers → Streamlit / RAG)</p>
 
       <p class="text-gray-700 dark:text-gray-300">
         This architecture keeps the LLM layer clearly separated from system of record data: the assistant reads from curated tables
-        and documents, rather than directly querying production systems.
+        and documents, rather than directly querying production systems. That separation is critical for auditability and for
+        preventing the model from “hallucinating” governance state.
       </p>
     </section>
 
-    <!-- 3. Applications & Dashboards (Streamlit Modules) -->
+    <!-- 3. Metrics, KPIs & North Star -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Metrics, KPIs &amp; North Star</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The workbench is built around a small set of governance KPIs that answer “how healthy is our AI program?” rather than
+        “how accurate is model X?”. The north star is <strong>evidence coverage</strong>: the share of in‑scope controls that
+        have at least one concrete, up‑to‑date evidence artifact. Secondary KPIs include:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>Incident aging:</strong> distribution of open incidents by days open; goal is to surface stale or forgotten items.</li>
+        <li><strong>Overdue reviews:</strong> count of systems or controls past their scheduled review date.</li>
+        <li><strong>Systems in scope:</strong> total and by risk tier (e.g., high‑risk vs limited‑risk under EU AI Act).</li>
+        <li><strong>Review velocity:</strong> time from “review requested” to “review completed” for sampled items.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        These metrics are exposed on the Governance Dashboard so that leadership can see trends over time and drill down by
+        domain, owner, or framework. The design choice to treat governance KPIs as first‑class (rather than burying them in
+        spreadsheets) is what makes the workbench feel like a control room instead of a document store.
+      </p>
+    </section>
+
+    <!-- 4. Analytical / Experimental Approach (pipeline) -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Analytical &amp; Experimental Approach</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The workbench is not a single monolithic app but a set of modules that can be run independently or in sequence.
+        Data flows from raw CSVs (or, in production, from a model registry and incident system) into staging and feature
+        tables; Streamlit pages then query these tables and, where needed, call the Gemini API for summarization and Q&amp;A.
+        The experimental approach for the RAG assistant was iterative: start with naive chunking, add metadata (system, control type),
+        tune chunk size and overlap, and evaluate on a small set of “golden” questions before rolling out to users.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        No formal A/B tests were run in this portfolio version, but the design supports them: e.g., comparing audit engine
+        rule sets or RAG prompts across different policy documents to see which yields more actionable reports.
+      </p>
+    </section>
+
+    <!-- 5. AI & Automation Layer -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. AI &amp; Automation Layer</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The workbench uses AI in three places, each scoped to reduce risk and keep humans in the loop:
+      </p>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>Policy summarization:</strong> Gemini is used to generate short summaries and bullet points from uploaded policy PDFs/DOCX. Output is reviewed before being stored or turned into flashcards.</li>
+        <li><strong>Compliance audit prototype:</strong> a rule‑based (plus optional LLM‑assisted) scanner looks for phrases and concepts (e.g., “data lineage”, “human oversight”) and produces a gap report. The final “pass/fail” or “needs review” decision remains with the user.</li>
+        <li><strong>RAG Q&amp;A assistant:</strong> users ask questions in natural language; the system retrieves relevant chunks from uploaded documents and optional metadata, then Gemini generates an answer grounded in those chunks. Citations are shown so users can verify.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        Automation is limited to repetitive, high‑volume tasks (summarization, scanning). Approval workflows, sign‑offs, and
+        policy decisions are not automated; the workbench surfaces information to speed up human judgement, not replace it.
+      </p>
+    </section>
+
+    <!-- 6. Applications & Workbench Modules -->
     <section class="space-y-4">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Applications &amp; Workbench Modules</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Applications &amp; Workbench Modules</h3>
 
       <div class="space-y-2">
         <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Governance Dashboard</h4>
@@ -178,9 +235,9 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
   <section id="insights" class="space-y-8">
     <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Analysis, Insights &amp; Business Impact</h2>
 
-    <!-- 4. Analysis & Insights -->
+    <!-- 7. Observations & Key Findings -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Analysis &amp; Key Insights</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Observations &amp; Key Findings</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
         <li>
           <strong>Governance can be productized.</strong><br />
@@ -206,23 +263,50 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
       </ul>
     </section>
 
-    <!-- 5. Results & Business Impact -->
+    <!-- 8. Trade-offs, Risks & Failure Modes -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Results &amp; Business Impact (Indicative)</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">8. Trade-offs, Risks &amp; Failure Modes</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The workbench makes deliberate trade-offs and has known failure modes that governance teams should be aware of:
+      </p>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>RAG hallucination:</strong> if retrieval returns weak or irrelevant chunks, the LLM may still produce a plausible-sounding answer. Mitigation: show citations, require human verification for high-stakes questions, and tune chunking and metadata.</li>
+        <li><strong>Audit engine oversimplification:</strong> the prototype uses keyword and concept matching; it can miss nuance or misclassify a control as “covered” when evidence is weak. Mitigation: treat audit output as a draft; final assessment stays with reviewers.</li>
+        <li><strong>Scale and latency:</strong> with many documents and large chunks, RAG latency can grow. Mitigation: limit document set per session, use smaller models or distilled embeddings where appropriate, and cache frequent queries.</li>
+        <li><strong>Bias and fairness:</strong> summarization and Q&amp;A inherit model biases. Mitigation: use models with documented safety profiles, review sample outputs, and avoid automating final policy or fairness decisions.</li>
+      </ul>
+    </section>
+
+    <!-- 9. Business Impact & Decision Outcomes -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">9. Results &amp; Business Impact (Indicative)</h3>
       <p class="text-gray-700 dark:text-gray-300">
         Even with synthetic and demo data, the workbench mirrors impact levers that real AI governance leaders care about:
       </p>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-        <li><strong>Faster reviews:</strong> centralizing KPIs, documents, and audits reduces time-to-review for AI systems.</li>
-        <li><strong>Better evidence coverage:</strong> mapping controls to concrete artifacts clarifies where obligations are under-served.</li>
-        <li><strong>Shared understanding:</strong> dashboards, summaries, and Q&amp;A give legal, risk, and engineering a common view of AI risk.</li>
-        <li><strong>Auditability:</strong> explicit tables and logs make it easier to show what was reviewed and when.</li>
+        <li><strong>Faster reviews:</strong> centralizing KPIs, documents, and audits reduces time-to-review for AI systems. Instead of
+        spending days gathering documents, reading policies, and checking evidence, reviewers can use the workbench to get a complete
+        picture in hours. The Governance Dashboard shows at a glance which systems are overdue, which controls have gaps, and which
+        incidents need attention, eliminating the need to query multiple systems or email threads.</li>
+        <li><strong>Better evidence coverage:</strong> mapping controls to concrete artifacts clarifies where obligations are under-served.
+        The workbench shows evidence coverage as a percentage (e.g., "45% of controls have evidence attached"), making it easy to see
+        which systems or frameworks need more documentation. This helps governance teams prioritize evidence collection and reduces the
+        risk of compliance gaps going unnoticed until audits.</li>
+        <li><strong>Shared understanding:</strong> dashboards, summaries, and Q&amp;A give legal, risk, and engineering a common view of
+        AI risk. Instead of each team working from different documents or spreadsheets, everyone sees the same KPIs, summaries, and
+        audit results. This reduces misalignment and speeds up decision-making (e.g., "should we approve this AI system for production?").</li>
+        <li><strong>Auditability:</strong> explicit tables and logs make it easier to show what was reviewed and when. When regulators or
+        auditors ask "how do you govern AI systems?", the workbench provides a clear, documented process with timestamps, evidence links,
+        and review outcomes. This is critical for compliance with regulations like the EU AI Act, which require documented governance processes.</li>
+        <li><strong>Scalability:</strong> the workbench can handle many AI systems (hundreds or thousands) without requiring proportional
+        increases in governance headcount. By automating repetitive tasks (summarization, scanning) and surfacing high-priority items
+        (overdue reviews, evidence gaps), the workbench enables small governance teams to oversee large AI portfolios.</li>
       </ul>
     </section>
 
-    <!-- 6. Recommendations -->
+    <!-- 10. Recommendations for Governance Teams -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Recommendations for Governance Teams</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">10. Recommendations for Governance Teams</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
         <li>Start with a clear <strong>system inventory and control map</strong> before introducing complex tooling.</li>
         <li>Define and track a small set of <strong>governance KPIs</strong> (incident aging, overdue reviews, evidence coverage).</li>
@@ -231,14 +315,29 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
       </ul>
     </section>
 
-    <!-- 7. Future Work -->
+    <!-- 11. Limitations & What We'd Improve -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Future Work</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">11. Limitations &amp; What We'd Improve</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        This workbench is a portfolio prototype. Known limitations and improvements we would make in a production setting:
+      </p>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>Data:</strong> tables are CSV/synthetic; production would connect to a real model registry, incident system, and document store.</li>
+        <li><strong>RAG:</strong> chunking and retrieval could be tuned per document type; multi‑hop and follow‑up questions are not fully supported.</li>
+        <li><strong>Audit engine:</strong> rule sets are hardcoded; a configurable, framework‑specific rule engine would improve reuse.</li>
+        <li><strong>Access control:</strong> no authentication or role‑based views; multi‑tenant and compliance‑sensitive deployments would require both.</li>
+      </ul>
+    </section>
+
+    <!-- 12. Future Scope (12–24 Months) -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">12. Future Scope (12–24 Months)</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
         <li>Integrate with a real model registry and incident system instead of CSV‑backed tables.</li>
         <li>Add multi‑user workflows with authentication, roles, and review assignments.</li>
         <li>Extend the audit engine with configurable rule sets per framework (EU AI Act, NIST AI RMF, internal standards).</li>
         <li>Introduce trend analysis and alerting for governance KPIs (e.g., spikes in incidents or overdue reviews).</li>
+        <li>Support versioned policy documents and diff views so “what changed” is visible between review cycles.</li>
       </ul>
     </section>
   </section>
@@ -251,15 +350,31 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
       The portfolio project page connects this narrative to the working assets so reviewers can see the workbench in action.
     </p>
 
-```md
-<!-- PLACEHOLDER: 2–3 min Demo Video (Loom / YouTube) -->
-```
+    <p class="text-sm text-gray-500 dark:text-gray-400">Placeholder: 2–3 min demo video (Loom / YouTube)</p>
 
     <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
       <li><strong>Live app:</strong> Streamlit deployment URL via <code>streamlit_url</code> in <code>data/projects.json</code>.</li>
       <li><strong>Screenshots:</strong> governance dashboard, data visualizer, summarizer + flashcards, audit report, and RAG assistant.</li>
       <li><strong>Architecture diagrams:</strong> showing how data, SQL, and the Gemini/RAG layer connect.</li>
     </ul>
+
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-8">Related Work &amp; Further Reading</h3>
+    <p class="text-gray-700 dark:text-gray-300">
+      For readers who want to go deeper: the EU AI Act and NIST AI Risk Management Framework define many of the control concepts
+      used in this workbench. Industry reports from Gartner and Forrester on AI governance tooling describe similar KPIs (evidence coverage,
+      review velocity). RAG design and evaluation are covered in practitioner blogs (e.g., LlamaIndex, LangChain) and in academic
+      work on retrieval‑augmented generation. Links to specific papers and posts can be added in the repository <code>docs/</code> or
+      in a “Further reading” section of the project README.
+    </p>
+
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6">Conclusion</h3>
+    <p class="text-gray-700 dark:text-gray-300">
+      The AI Governance Workbench demonstrates that governance can be productized: static policies and scattered evidence can be
+      turned into a repeatable workflow with clear KPIs, dashboards, and assistive AI. By keeping the LLM in the “last mile”
+      (summaries, Q&amp;A, draft audits) and leaving decisions to humans, the design reduces risk while improving speed and clarity.
+      For organizations scaling AI/LLM deployments, a workbench like this can materially reduce time‑to‑review and improve evidence
+      coverage, giving leaders a clearer, auditable view of AI risk without hiring a large new team.
+    </p>
 
     <p class="text-gray-700 dark:text-gray-300">
       GitHub, documentation, and deployment links are maintained in <code>data/projects.json</code>, so they stay in sync with the

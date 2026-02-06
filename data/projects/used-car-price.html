@@ -1,0 +1,183 @@
+<div class="space-y-10">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="space-y-6">
+    <div class="bg-gradient-to-r from-primary/10 via-accent/10 to-emerald-100 dark:from-primary/20 dark:via-accent/20 dark:to-emerald-900/20 rounded-xl p-6 border border-primary/20">
+      <p class="text-sm font-semibold text-primary mb-2">Project Overview</p>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
+        <strong>Used Car Price Prediction</strong> is an end-to-end regression pipeline for fair, explainable pricing of used cars.
+        It combines <strong>data profiling</strong>, <strong>feature engineering</strong>, and <strong>tree-based models</strong> with SHAP
+        explainability, a <strong>Streamlit app</strong> for real-time estimates, and <strong>Power BI outputs</strong> for business reviews.
+      </p>
+    </div>
+
+    <div class="space-y-3 text-gray-700 dark:text-gray-300">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Executive Summary</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          <strong>Business goal:</strong> give dealers and marketplaces a fast, consistent way to estimate fair market value for used cars
+          so listings are priced competitively without leaving money on the table.
+        </li>
+        <li>
+          <strong>What was built:</strong> a Python + scikit-learn pipeline that ingests listing data, engineers vehicle features,
+          trains and compares multiple regression models, and exposes predictions through a Streamlit app and BI-ready exports.
+        </li>
+        <li>
+          <strong>Why it matters:</strong> manual pricing is slow and inconsistent; simple rules miss important drivers like brand segment
+          and fuel type. A documented pricing model reduces mispricing risk and speeds up listing workflows.
+        </li>
+        <li>
+          <strong>Indicative impact:</strong> a model with RMSE &lt; $3,000 and strong explainability can materially improve gross margin
+          and reduce inventory holding costs by improving initial listing prices.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Problem: Fair, Explainable Used Car Pricing</h2>
+
+    <div class="space-y-4 text-gray-700 dark:text-gray-300">
+      <p>
+        Used car pricing is a classic <strong>multi-factor decision problem</strong>. Final prices depend on age, mileage, brand reputation,
+        drivetrain, fuel type, condition, and local demand. Many dealers still rely on spreadsheets, gut feel, or rule-of-thumb
+        tables that fail to capture this complexity.
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><strong>Overpricing</strong> → slow sales, higher inventory carrying costs, and frustrated sales teams.</li>
+        <li><strong>Underpricing</strong> → lost margin, misaligned incentives, and pressure to “make it up on volume”.</li>
+        <li><strong>Lack of transparency</strong> → buyers cannot see why two similar cars are priced differently.</li>
+      </ul>
+      <p>
+        The project reframes pricing as an analytics problem: use historical data to estimate fair market value for each listing
+        and provide <strong>explanations</strong> that sales teams and buyers can understand.
+      </p>
+    </div>
+  </section>
+
+  <!-- APPROACH -->
+  <section id="approach" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Solution Architecture &amp; Modeling Approach</h2>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">1. Data &amp; Profiling</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The pipeline starts from a realistic used-car dataset with thousands of listings across brands, segments, and model years.
+        Data profiling focuses on:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Missing values in fuel type, drivetrain, and optional equipment.</li>
+        <li>Outliers in mileage and price (e.g., obvious data entry errors).</li>
+        <li>Category cardinality (number of unique brands, models, trims).</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        Cleaning steps include standardizing fuel/drivetrain labels, capping extreme mileage (&gt; 200k miles) and
+        removing implausible prices. This ensures the model is trained on realistic, decision-grade data.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Feature Engineering</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Raw attributes are transformed into features that better capture pricing patterns:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li><strong>Vehicle age</strong> – current year minus model year.</li>
+        <li><strong>Mileage bins</strong> – 0–30k, 30–60k, 60–100k, 100k+ miles for non-linear mileage effects.</li>
+        <li><strong>Brand segment</strong> – premium vs mass-market brands (e.g., BMW vs Toyota).</li>
+        <li><strong>Fuel type &amp; drivetrain</strong> – encoded as categorical dummies for tree models.</li>
+        <li><strong>Interaction terms</strong> – age × mileage, brand segment × fuel type for nuanced patterns.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        These engineered features make it easier for models to separate “normal” depreciation from value that comes from brand,
+        condition, or configuration.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Model Benchmarking &amp; Selection</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Several models are benchmarked using cross-validation:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Regularized linear regression (baseline).</li>
+        <li>Random Forest and Gradient Boosted Trees (XGBoost, LightGBM).</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        XGBoost emerges as the best-performing model, with test <strong>RMSE ≈ $2,847</strong> and MAE around $2,100
+        on holdout data. Temporal splits ensure the model generalizes to newer listings, not just the training period.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Explainability &amp; Deployment</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        SHAP is used to generate global and per-car explanations:
+      </p>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+        <li>Global importance – which features drive price most (mileage, age, brand segment).</li>
+        <li>Per-car breakdown – how much each feature pushes a given car’s price up or down.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        A <strong>Streamlit app</strong> wraps the model in a simple UI where users enter listing attributes and see
+        predicted price with a confidence band and SHAP-based explanation. Power BI-ready exports feed dashboards for
+        portfolio-level analysis.
+      </p>
+    </section>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section id="insights" class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Insights &amp; Business Impact</h2>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Key Findings</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>
+          <strong>Mileage and age dominate price dynamics.</strong>
+          Higher mileage and older model years predictably lower prices, but the relationship is not linear; depreciation
+          slows after certain mileage bands, which the tree models capture better than linear baselines.
+        </li>
+        <li>
+          <strong>Brand segment matters even at higher mileage.</strong>
+          Premium brands maintain higher residual values at comparable mileage, consistent with market intuition.
+        </li>
+        <li>
+          <strong>Explainability builds trust.</strong>
+          SHAP explanations help sales teams justify why one car is priced above another and give buyers more confidence
+          in the fairness of listed prices.
+        </li>
+      </ul>
+    </section>
+
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Business Impact &amp; Use Cases</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li><strong>Pricing new inventory.</strong> Quickly generate suggested list prices when new cars are acquired.</li>
+        <li><strong>Margin analysis.</strong> Compare model-suggested prices with actual transaction prices to identify
+          underpriced deals and margin opportunities.</li>
+        <li><strong>Buyer guidance.</strong> Use model outputs and explanations to educate buyers on how features drive value.</li>
+      </ul>
+    </section>
+  </section>
+
+  <!-- MEDIA -->
+  <section id="media" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Media, Assets &amp; How to Explore</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      This portfolio site exposes the most important assets so reviewers can see the project in action.
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
+      <li><strong>GitHub repository:</strong> end-to-end code for data prep, modeling, and evaluation.</li>
+      <li><strong>Notebook:</strong> full walkthrough of feature engineering, model comparison, and SHAP analysis.</li>
+      <li><strong>Streamlit app:</strong> interactive UI for single-car price prediction.</li>
+      <li><strong>Power BI / slides:</strong> optional PBIX and PDF assets for stakeholder presentations.</li>
+    </ul>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Exact URLs are managed in <code>data/projects.json</code> so links stay in sync with deployments.
+    </p>
+  </section>
+
+</div>
+

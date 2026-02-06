@@ -4,21 +4,26 @@ Minimal, fast portfolio aimed at Senior Data Analyst / Decision Scientist / Prod
 
 ## Site Structure
 
+Root keeps only the main entry and README; all other pages live under `pages/` for a clean repo.
+
 ```
 /
-├── index.html        # Landing page (intro screen)
-├── homepage.html     # Dashboard with projects listing
-├── about.html        # About page with full-screen sections, skills, resume, journey timeline
-├── contact.html      # Contact form page
-├── project.html      # Single project detail (driven by ?id=)
-├── assets/
-│   ├── css/style.css
-│   ├── js/main.js
-│   ├── images/
-│   ├── videos/
-│   ├── slides/
-│   └── pbix/
-└── data/projects.json
+├── index.html        # Main dashboard (projects + case studies)
+├── README.md         # This file
+├── assets/           # CSS, JS, images
+├── data/             # projects.json, case_studies.json, project/case-study HTML content
+├── pages/            # All other HTML pages
+│   ├── about.html
+│   ├── case-study.html
+│   ├── case-studies-archive.html
+│   ├── contact.html
+│   ├── homepage.html # Alias for dashboard (old bookmarks)
+│   ├── project.html  # Single project detail (?id=)
+│   ├── projects.html
+│   ├── resume.html
+│   ├── skills.html
+│   └── socialhandles.html
+└── docs/             # Extra documentation (checklists, plans)
 ```
 
 ## Documentation Index
@@ -26,24 +31,18 @@ Minimal, fast portfolio aimed at Senior Data Analyst / Decision Scientist / Prod
 - **Site data:** `data/README.md`
 - **Static assets:** `assets/README.md`
 - **Docs and plans:** `docs/README.md`
+- **Deploy (step-by-step):** `docs/DEPLOYMENT.md`
 - **Legacy pages:** `legacy/README.md`
 - **Archived site:** `_backup_old_portfolio/README.md`
 
 ## Pages Overview
 
-### 1. Landing Page (`index.html`)
-- Full-screen intro section with gradient background
-- "Learn More" button that links to dashboard
-- Minimal navigation that appears on scroll
+### 1. Dashboard / Home (`index.html`)
+- Main entry: featured projects, all projects grid, case studies toggle
+- Pagination and search
+- Nav: Home, Resume, Skills, About, Contact (under `pages/`)
 
-### 2. Dashboard (`homepage.html`)
-- Full-screen intro section that hides on scroll
-- Featured project at the top
-- Grid of all projects below
-- Pagination support
-- HTML5 UP Massively-inspired layout
-
-### 3. About Page (`about.html`)
+### 2. About Page (`pages/about.html`)
 - Full-screen sections with smooth scroll navigation:
   - **Intro**: Welcome message
   - **What I Do**: Description of work
@@ -54,12 +53,12 @@ Minimal, fast portfolio aimed at Senior Data Analyst / Decision Scientist / Prod
     - Right: Horizontal journey timeline (left-to-right)
 - HTML5 UP Big Picture-inspired transitions
 
-### 4. Contact Page (`contact.html`)
+### 3. Contact Page (`pages/contact.html`)
 - Contact form (uses Formspree for email delivery)
 - Contact information sidebar
 - Social media links
 
-### 5. Project Detail (`project.html`)
+### 5. Project Detail (`pages/project.html`)
 - Dynamic content loaded from `projects.json`
 - Supports embeds: Streamlit, Power BI, YouTube videos, PDFs
 - Image galleries
@@ -119,6 +118,10 @@ The contact form uses [Formspree](https://formspree.io/) for email delivery:
    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
    ```
 
+## Scripts
+
+- **Verify portfolio**: From repo root, run `./scripts/verify_portfolio.ps1` (PowerShell) to check pages for social links, nav, Formspree, etc. See `scripts/README.md` for other utilities.
+
 ## Running Locally
 
 For fetch of `projects.json` to work, use a simple server:
@@ -132,9 +135,18 @@ Or use any other local server (Live Server extension, etc.).
 
 ## Deploy to GitHub Pages
 
-1. Commit and push to `main`.
-2. In repo settings → Pages, choose source: `GitHub Actions` or `main / root`.
-3. Wait for publish; site will be at `https://<user>.github.io/<repo>/`.
+1. **Commit and push** all changes to `main` (or your default branch).
+2. **Enable Pages:** Repo → **Settings** → **Pages** → Source: **Deploy from a branch** → Branch: **main** (or **master**) → Folder: **/ (root)** → Save.
+3. **Wait** for the first build (1–2 min). Site will be at `https://<user>.github.io/<repo>/` (or your custom domain if CNAME is set).
+4. **Custom domain:** The repo includes a **CNAME** file (e.g. `www.sumit.indevs.in`). In Settings → Pages, set the custom domain and save; DNS must point to GitHub Pages.
+
+**Before you deploy (quick checks):**
+- [ ] Open `index.html` in a browser (or run a local server) and click through: Home, Resume, Skills, About, Contact.
+- [ ] Open a featured project: `pages/project.html?id=ai-governance-workbench`.
+- [ ] Toggle Projects / Case Studies on the dashboard.
+- [ ] Ensure `data/projects.json` and `data/case_studies.json` have no JSON syntax errors (e.g. no trailing commas).
+
+Full checklist: **`docs/TODO.md`** (Deployment checklist) and **`docs/DEPLOYMENT.md`** (step-by-step).
 
 ## Design Principles
 

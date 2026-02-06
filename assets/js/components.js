@@ -10,10 +10,11 @@ const NAV_CONFIG = {
     link: "index.html"
   },
   links: [
-    { text: "Projects", href: "homepage.html", key: "projects" },
-    { text: "About", href: "about.html", key: "about" },
-    { text: "Resume", href: "resume.html", key: "resume" },
-    { text: "Contact", href: "contact.html", key: "contact" }
+    { text: "Projects", href: "index.html", key: "projects" },
+    { text: "About", href: "pages/about.html", key: "about" },
+    { text: "Resume", href: "pages/resume.html", key: "resume" },
+    { text: "Skills", href: "pages/skills.html", key: "skills" },
+    { text: "Contact", href: "pages/contact.html", key: "contact" }
   ],
   social: [
     { 
@@ -57,7 +58,8 @@ function getCurrentPageKey() {
     'resume.html': 'resume',
     'contact.html': 'contact',
     'project.html': 'projects',
-    'socialhandles.html': 'contact'
+    'socialhandles.html': 'contact',
+    'skills.html': 'skills'
   };
   
   return pageMap[page] || 'home';

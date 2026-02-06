@@ -74,22 +74,52 @@
       </p>
       <p class="text-gray-700 dark:text-gray-300">
         DuckDB acts as a <strong>local analytics engine</strong>, with Python handling generation and loading, while SQL defines the core
-        metrics that BI and notebooks consume. This keeps the system lightweight but production‑shaped.
+        metrics that BI and notebooks consume. This keeps the system lightweight but production‑shaped. DuckDB was chosen for its
+        SQL compatibility (works with standard SQL queries), performance on analytical workloads, and ease of setup (no server required).
+        In production, teams might use BigQuery, Snowflake, or Redshift, but the SQL patterns remain the same.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Code‑first philosophy:</strong> Every metric (funnel conversion, cohort retention, A/B lift) is defined in SQL or Python,
+        not in a BI tool’s UI. This makes metrics auditable, version‑controlled, and reproducible. When stakeholders ask “how did you
+        compute retention?”, the answer is “run this SQL script” rather than “I clicked these buttons in Power BI”.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Separation of concerns:</strong> Data generation and loading live in Python; SQL handles transformations and metrics;
+        notebooks validate results with statistics; BI consumes pre‑computed tables. This separation makes it easy to swap components
+        (e.g., replace DuckDB with BigQuery) without rewriting everything.
       </p>
     </section>
 
-    <!-- 2. Data & System Design -->
+    <!-- 2. Data Landscape & Event Model -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Data &amp; System Design</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">2. Data Landscape &amp; Event Model</h3>
       <p class="text-gray-700 dark:text-gray-300">
-        The dataset simulates a mid‑sized e‑commerce site:
+        The dataset simulates a mid‑sized e‑commerce site with a clear event model: each user generates events (page view,
+        product view, add‑to‑cart, checkout, purchase) with timestamps and optional properties (product id, session id).
+        Orders are linked to users and events so that funnels and cohorts can be computed consistently.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Event taxonomy:</strong> Events follow a standard e‑commerce taxonomy: <em>page_view</em> (any page load),
+        <em>product_view</em> (viewing a product detail page), <em>add_to_cart</em> (adding a product to cart), <em>checkout_start</em>
+        (initiating checkout), and <em>purchase</em> (completing an order). Each event includes a user ID, timestamp, session ID
+        (derived from sessionization), and optional properties (product ID, category, price, device type, channel). This structure
+        mirrors how real analytics platforms (e.g., Google Analytics, Amplitude) model e‑commerce events.
       </p>
       <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
-        <li>~120,000 users.</li>
-        <li>~1,000,000 events (page views, product views, add‑to‑cart, checkout, purchase).</li>
-        <li>~45,000 orders.</li>
-        <li>~400,000 sessions (after 30‑minute timeout sessionization).</li>
+        <li>~120,000 users with realistic signup dates, device types, and acquisition channels (organic, paid, referral).</li>
+        <li>~1,000,000 events (page views, product views, add‑to‑cart, checkout, purchase) spanning a 12‑month period with
+        seasonality (holiday spikes, weekend patterns).</li>
+        <li>~45,000 orders with product details, quantities, prices, and order totals. Orders are linked to users and events
+        so that purchase funnels and revenue metrics can be computed.</li>
+        <li>~400,000 sessions (after 30‑minute timeout sessionization). Sessions group events into logical user journeys,
+        enabling funnel analysis and session‑level metrics (bounce rate, pages per session, session duration).</li>
       </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Data generation strategy:</strong> The synthetic data is generated to match realistic e‑commerce patterns:
+        conversion rates (visit → purchase ~2–3%), retention curves (week‑1 retention ~40%, week‑4 retention ~20%), and
+        seasonality (holiday spikes, weekend patterns). This ensures that funnels, cohorts, and A/B tests behave plausibly,
+        making the pipeline credible for real‑world use cases.
+      </p>
       <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>E-commerce-Product-Analytics/
 ├── data/
 │   ├── raw/          # users.csv, events.csv, orders.csv
@@ -101,11 +131,7 @@
 ├── notebooks/        # cohort + A/B test analysis
 └── bi/               # Power BI dashboards (pbix)</code></pre>
 
-```md
-<!-- PLACEHOLDER: System Architecture Diagram
-Data → SQL Layers → Feature Store → Power BI / Streamlit
--->
-```
+      <p class="text-sm text-gray-500 dark:text-gray-400">Placeholder: System architecture diagram (Data → SQL layers → Power BI / Notebooks)</p>
 
       <p class="text-gray-700 dark:text-gray-300">
         This layout mirrors how production teams manage analytics: raw → staging → analytics views → BI, with clear ownership of
@@ -113,22 +139,73 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
       </p>
     </section>
 
-    <!-- 3. Funnel & Cohort Logic -->
+    <!-- 3. Metrics, KPIs & North Star -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Funnel &amp; Cohort Logic</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">3. Metrics, KPIs &amp; North Star</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The stack is built around a small set of product analytics KPIs. The north star is <strong>funnel conversion</strong>:
+        the share of sessions that reach each step (visit → product view → add‑to‑cart → checkout → purchase). Secondary
+        KPIs include cohort retention (e.g., week‑1 retention by signup week), A/B test lift and statistical significance,
+        and session‑level metrics (bounce rate, pages per session). These are exposed in Power BI and in notebooks so that
+        product and growth teams can answer “where do we drop off?” and “did this experiment work?” in one place.
+      </p>
+    </section>
+
+    <!-- 4. Funnel & Cohort Logic (Analytical Approach) -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Funnel &amp; Cohort Logic</h3>
       <p class="text-gray-700 dark:text-gray-300">
         Funnels and cohorts are implemented as a sequence of SQL scripts in <code>sql/analytics/</code>. Sessionization (30‑minute timeout)
         groups events into sessions, and derived tables flag funnel steps and cohort membership for retention analysis.
       </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Sessionization logic:</strong> Events are grouped into sessions using a 30‑minute inactivity window. If a user has no events
+        for 30 minutes, the next event starts a new session. This mirrors how many analytics platforms (e.g., Google Analytics, Amplitude)
+        define sessions, balancing granularity with business relevance.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Funnel steps:</strong> Each session is flagged for funnel progression: visit (any page view), product_view, add_to_cart,
+        checkout_start, purchase. A session can have multiple product views or add‑to‑cart events, but the funnel logic captures the
+        first occurrence of each step so conversion rates are consistent.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Cohort assignment:</strong> Users are assigned to cohorts based on their first signup or first purchase date. Retention
+        is then measured as the share of users in a cohort who return (e.g., make a purchase) in subsequent periods. This allows
+        product teams to compare how different cohorts (e.g., signup week, acquisition channel) retain over time.
+      </p>
       <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>Raw Generator → DuckDB Load → SQL Transformations → Analytics Outputs → Power BI / Notebooks</code></pre>
+      <p class="text-gray-700 dark:text-gray-300">
+        The SQL layer is designed to be reproducible: running the same scripts on the same data produces the same funnel and cohort
+        tables, which is critical for debugging and for ensuring BI dashboards and notebooks tell the same story.
+      </p>
     </section>
 
-    <!-- 4. Experiments & Readouts -->
+    <!-- 5. A/B Test Evaluation & Readouts -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. A/B Test Evaluation &amp; Readouts</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. A/B Test Evaluation &amp; Readouts</h3>
       <p class="text-gray-700 dark:text-gray-300">
         A/B tests are evaluated using both SQL and Python notebooks, including power checks, randomization checks, and
         difference‑in‑proportions tests. Results are exported as tidy CSVs so Power BI can tell a clean, exec‑friendly story.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Pre‑test power analysis:</strong> Before launching an experiment, the pipeline computes required sample size for a
+        minimum detectable effect (MDE). This ensures the test has enough power to detect meaningful lifts without running longer
+        than necessary.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Randomization validation:</strong> After assignment, the pipeline checks balance on demographics and pre‑experiment
+        behavior (e.g., signup date, device type, past purchase count). If balance is off, it flags the issue so teams can investigate
+        assignment logic.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Primary analysis:</strong> Difference‑in‑proportions for conversion metrics (e.g., signup rate, purchase rate) with
+        confidence intervals (delta method or bootstrap). The pipeline also checks for segment heterogeneity (e.g., does the variant
+        work better on mobile vs desktop?) to inform targeting decisions.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Guardrail metrics:</strong> Retention and revenue per user are evaluated in the same experiment window to ensure the
+        variant does not harm downstream metrics. If guardrails show degradation, the recommendation may be “hold” or “run longer”
+        rather than “ship”.
       </p>
     </section>
   </section>
@@ -137,45 +214,108 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
   <section id="insights" class="space-y-8">
     <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Analysis, Insights &amp; Business Impact</h2>
 
-    <!-- 4. Analysis & Insights -->
+    <!-- 7. Observations & Key Findings -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">4. Analysis &amp; Key Insights</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Observations &amp; Key Findings</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
         <li>
           <strong>Funnel bottlenecks are visible and explainable.</strong><br />
-          Observation: the largest synthetic drop‑off occurs between <em>product_view</em> and <em>add_to_cart</em>.<br />
-          Why it matters: this mirrors common real‑world issues (merchandising, pricing, UX) and shows where experimentation should focus.
+          Observation: the largest synthetic drop‑off occurs between <em>product_view</em> and <em>add_to_cart</em>, with roughly
+          60% of sessions that view a product failing to add anything to cart. This pattern mirrors real e‑commerce sites where
+          pricing, product availability, and checkout friction drive abandonment.<br />
+          Why it matters: identifying the bottleneck (product view → add‑to‑cart) directs experimentation and UX improvements
+          to the highest‑impact area. Teams can A/B test pricing displays, add‑to‑cart buttons, or product recommendations without
+          guessing where to focus.
         </li>
         <li>
           <strong>Retention cohorts behave realistically.</strong><br />
-          Observation: earlier cohorts retain better and curves flatten over time, similar to many e‑commerce products.<br />
+          Observation: earlier cohorts (e.g., users who signed up in week 1) retain better than later cohorts, and retention curves
+          flatten over time (week‑1 retention is higher than week‑4 retention, but the gap narrows). This matches typical e‑commerce
+          behavior where early adopters are more engaged and retention stabilizes after the initial period.<br />
           Why it matters: confirms that the synthetic environment is realistic enough to exercise cohort and retention logic credibly.
+          Teams can use this pipeline to test retention strategies (e.g., email campaigns, loyalty programs) with confidence that the
+          baseline behavior is plausible.
         </li>
         <li>
           <strong>A/B tests become reproducible, not ad‑hoc.</strong><br />
-          Observation: having generation, load, SQL flags, and stats in code means experiments can be re‑run and audited.<br />
-          Why it matters: this is closer to how mature teams treat experiments than one‑off analyses.
+          Observation: having generation, load, SQL flags, and stats in code means experiments can be re‑run and audited. When
+          stakeholders ask “how did you compute the 4.2pp lift?”, the answer is “run this notebook” rather than “I used this tool
+          and clicked these buttons”.<br />
+          Why it matters: reproducibility builds trust and enables debugging. If results look wrong, teams can trace back through the
+          code to find the issue. This is closer to how mature product analytics teams treat experiments than one‑off analyses in
+          spreadsheets or BI tools.
+        </li>
+        <li>
+          <strong>Device and channel segmentation reveal different behaviors.</strong><br />
+          Observation: desktop users show higher checkout completion rates than mobile, and users from different acquisition channels
+          (e.g., organic vs paid) have different retention profiles. These patterns are consistent with real e‑commerce data where
+          device and channel correlate with intent and engagement.<br />
+          Why it matters: segmentation helps teams target improvements (e.g., optimize mobile checkout flow) and allocate marketing
+          spend (e.g., invest more in channels with better retention).
         </li>
       </ul>
     </section>
 
-    <!-- 5. Results & Business Impact -->
+    <!-- 8. Trade-offs, Risks & Failure Modes -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">5. Results &amp; Business Impact (Indicative)</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">8. Trade-offs, Risks &amp; Failure Modes</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        The stack makes deliberate trade-offs: synthetic data may not reflect real user behavior; A/B tests in this version
+        use simple difference‑in‑proportions and power checks, not sequential testing or multi‑armed bandits. Funnel
+        definitions (e.g., 30‑minute session timeout) can bias metrics if they do not match how users actually behave.
+        Mitigation: validate funnel and cohort logic on a sample of real data; extend experiment evaluation with more
+        advanced methods when needed.
+      </p>
+    </section>
+
+    <!-- 9. Business Impact & Decision Outcomes -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">9. Results &amp; Business Impact (Indicative)</h3>
       <p class="text-gray-700 dark:text-gray-300">
         For hiring managers and interviewers, the project demonstrates:
       </p>
-      <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
-        <li>Ability to design an <strong>analytics data model</strong> for e‑commerce funnels and retention.</li>
-        <li>Confidence with <strong>SQL transformations</strong> and reproducible pipelines.</li>
-        <li>Understanding of <strong>funnel and retention metrics</strong> beyond “just a chart”.</li>
-        <li>Familiarity with <strong>experiment evaluation</strong> and statistical tooling.</li>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>Ability to design an <strong>analytics data model</strong> for e‑commerce funnels and retention. The pipeline shows understanding
+        of how events, sessions, and orders relate, and how to structure data so that common questions (funnel conversion, cohort retention)
+        can be answered efficiently.</li>
+        <li>Confidence with <strong>SQL transformations</strong> and reproducible pipelines. The SQL scripts are clean, documented, and
+        designed for reuse. This is the kind of work that scales across many metrics and experiments.</li>
+        <li>Understanding of <strong>funnel and retention metrics</strong> beyond “just a chart”. The project shows awareness of sessionization
+        trade‑offs, cohort assignment logic, and how to interpret retention curves in business terms.</li>
+        <li>Familiarity with <strong>experiment evaluation</strong> and statistical tooling. Power analysis, randomization checks, and
+        confidence intervals are implemented correctly, showing that the candidate can run rigorous experiments, not just descriptive analyses.</li>
+      </ul>
+      <p class="text-gray-700 dark:text-gray-300">
+        <strong>Operational impact:</strong> A stack like this shortens the path from raw events to “ship or hold” decisions. Instead of
+        waiting days for ad‑hoc SQL or notebook analyses, product and growth teams can run experiments, get readouts, and make decisions
+        in hours. The reproducible pipeline also reduces the risk of mis‑interpreting funnel lifts or retention changes, which can lead
+        to wrong product decisions and wasted engineering effort.
+      </p>
+    </section>
+
+    <!-- 10. Recommendations -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">10. Recommendations</h3>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>Anchor funnels and cohorts in a single, documented data model so BI and notebooks tell the same story.</li>
+        <li>Run power and randomization checks before reading A/B results; avoid peeking at significance mid‑experiment without sequential methods.</li>
+        <li>Expose core metrics in a lightweight dashboard (e.g., Streamlit) so product managers can self‑serve without opening BI.</li>
       </ul>
     </section>
 
-    <!-- 6. Recommendations & Future Work -->
+    <!-- 11. Limitations & What We'd Improve -->
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">6. Recommendations &amp; Future Work</h3>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">11. Limitations &amp; What We'd Improve</h3>
+      <p class="text-gray-700 dark:text-gray-300">
+        Data is synthetic; production would connect to real event and order streams. Sessionization and funnel definitions
+        are fixed (30‑minute timeout); we would make them configurable and validate against real user behavior. A/B
+        analysis uses basic stats; we would add sequential testing or bandits for more advanced experimentation.
+      </p>
+    </section>
+
+    <!-- 12. Future Scope (12–24 Months) -->
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">12. Future Scope (12–24 Months)</h3>
       <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
         <li>Connect to a real e‑commerce dataset or public benchmark for external validation.</li>
         <li>Add near‑real‑time views (hourly refresh) to simulate live funnel monitoring.</li>
@@ -192,15 +332,30 @@ Data → SQL Layers → Feature Store → Power BI / Streamlit
       The portfolio project page combines this write‑up with concrete assets so reviewers can see the stack in motion.
     </p>
 
-```md
-<!-- PLACEHOLDER: 2–3 min Demo Video (Loom / YouTube) -->
-```
+    <p class="text-sm text-gray-500 dark:text-gray-400">Placeholder: 2–3 min demo video (Loom / YouTube)</p>
 
     <ul class="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300">
       <li>Power BI dashboard screenshots or embeds based on <code>data/powerbi/*.csv</code>.</li>
       <li>Snippets from notebooks (<code>01_cohort_retention_analysis.ipynb</code>, <code>02_ab_test_analysis.ipynb</code>).</li>
       <li>A short Loom/YouTube demo walking through the funnel and retention views.</li>
     </ul>
+
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-8">Related Work &amp; Further Reading</h3>
+    <p class="text-gray-700 dark:text-gray-300">
+      Funnel and cohort analytics are well covered in product analytics literature (e.g., Amplitude, Mixpanel docs) and
+      in books on growth and experimentation. A/B testing and statistical power are standard in causal inference and
+      experiment design; links to specific papers and posts can be added in the repository <code>docs/</code> or project README.
+    </p>
+
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-6">Conclusion</h3>
+    <p class="text-gray-700 dark:text-gray-300">
+      E‑commerce Product Analytics demonstrates that a DuckDB + SQL‑first stack can turn clickstream and order data into
+      decision‑ready funnels, cohorts, and A/B readouts. By keeping the pipeline code‑first and BI‑ready, the design
+      shortens the path from raw events to “ship or hold” decisions and reduces the risk of mis‑interpreting funnel lifts
+      or retention changes. For product and growth teams, a stack like this is the foundation for repeatable, auditable
+      product analytics.
+    </p>
+
     <p class="text-gray-700 dark:text-gray-300">
       Together, they show not just that the metrics exist, but that they are grounded in a <strong>clean, code‑first analytics pipeline</strong>
       that a real product analytics team could extend.
