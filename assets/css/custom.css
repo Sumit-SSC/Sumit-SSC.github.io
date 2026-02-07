@@ -351,6 +351,70 @@ body.dark-theme .skills-page #skills-tools > .rounded-xl > .p-6 {
 	border-color: #e5e7eb !important;
 }
 
+/* Skills page dark mode: text on white must be dark for readability */
+html.dark .skills-page .skills-icons-box h1,
+html.dark .skills-page .skills-icons-box h2,
+html.dark .skills-page .skills-icons-box h3,
+html.dark .skills-page .skills-icons-box p,
+html.dark .skills-page .skills-icons-box span,
+html.dark .skills-page .skills-icons-box label,
+body.dark-theme .skills-page .skills-icons-box h1,
+body.dark-theme .skills-page .skills-icons-box h2,
+body.dark-theme .skills-page .skills-icons-box h3,
+body.dark-theme .skills-page .skills-icons-box p,
+body.dark-theme .skills-page .skills-icons-box span,
+body.dark-theme .skills-page .skills-icons-box label,
+html.dark .skills-page .skill-card h1,
+html.dark .skills-page .skill-card h2,
+html.dark .skills-page .skill-card h3,
+html.dark .skills-page .skill-card p,
+html.dark .skills-page .skill-card span,
+html.dark .skills-page .skill-card a,
+body.dark-theme .skills-page .skill-card h1,
+body.dark-theme .skills-page .skill-card h2,
+body.dark-theme .skills-page .skill-card h3,
+body.dark-theme .skills-page .skill-card p,
+body.dark-theme .skills-page .skill-card span,
+body.dark-theme .skills-page .skill-card a,
+html.dark .skills-page .skill-category > div.rounded-xl h1,
+html.dark .skills-page .skill-category > div.rounded-xl h2,
+html.dark .skills-page .skill-category > div.rounded-xl h3,
+html.dark .skills-page .skill-category > div.rounded-xl p,
+html.dark .skills-page .skill-category > div.rounded-xl span,
+html.dark .skills-page .skill-category > div.rounded-xl a,
+body.dark-theme .skills-page .skill-category > div.rounded-xl h1,
+body.dark-theme .skills-page .skill-category > div.rounded-xl h2,
+body.dark-theme .skills-page .skill-category > div.rounded-xl h3,
+body.dark-theme .skills-page .skill-category > div.rounded-xl p,
+body.dark-theme .skills-page .skill-category > div.rounded-xl span,
+body.dark-theme .skills-page .skill-category > div.rounded-xl a,
+html.dark .skills-page #skills-tools > .rounded-xl h1,
+html.dark .skills-page #skills-tools > .rounded-xl h2,
+html.dark .skills-page #skills-tools > .rounded-xl h3,
+html.dark .skills-page #skills-tools > .rounded-xl p,
+html.dark .skills-page #skills-tools > .rounded-xl span,
+body.dark-theme .skills-page #skills-tools > .rounded-xl h1,
+body.dark-theme .skills-page #skills-tools > .rounded-xl h2,
+body.dark-theme .skills-page #skills-tools > .rounded-xl h3,
+body.dark-theme .skills-page #skills-tools > .rounded-xl p,
+body.dark-theme .skills-page #skills-tools > .rounded-xl span {
+	color: #1f2937 !important;
+}
+html.dark-theme .skills-page .skills-icons-box h1,
+html.dark-theme .skills-page .skills-icons-box h2,
+html.dark-theme .skills-page .skills-icons-box h3,
+html.dark-theme .skills-page .skills-icons-box p,
+html.dark-theme .skills-page .skill-card h1,
+html.dark-theme .skills-page .skill-card h2,
+html.dark-theme .skills-page .skill-card h3,
+html.dark-theme .skills-page .skill-card p,
+html.dark-theme .skills-page .skill-category > div.rounded-xl h1,
+html.dark-theme .skills-page .skill-category > div.rounded-xl h2,
+html.dark-theme .skills-page .skill-category > div.rounded-xl h3,
+html.dark-theme .skills-page .skill-category > div.rounded-xl p {
+	color: #1f2937 !important;
+}
+
 /* Clickable tool tags in project cards */
 .project-card a[href*="filter"],
 .project-card-modern a[href*="filter"] {
@@ -1108,6 +1172,32 @@ html.dark-theme select {
 
 /* Contact page form labels - ensure visibility */
 .dark-theme label {
+  color: #e5e7eb !important;
+}
+
+/* Form status message (contact + any form) - readable in both modes */
+#form-status {
+  color: inherit;
+}
+.dark-theme #form-status,
+html.dark-theme #form-status {
+  color: #e5e7eb !important;
+}
+body:not(.dark-theme) #form-status {
+  color: #374151 !important;
+}
+
+/* Resume page: filtered projects list card - ensure dark-mode background and light text */
+.dark-theme #filtered-projects .bg-white,
+html.dark-theme #filtered-projects .bg-white {
+  background-color: #1e293b !important;
+}
+.dark-theme #filtered-projects .bg-white h4,
+.dark-theme #filtered-projects .bg-white p,
+.dark-theme #filtered-projects .bg-white a,
+html.dark-theme #filtered-projects .bg-white h4,
+html.dark-theme #filtered-projects .bg-white p,
+html.dark-theme #filtered-projects .bg-white a {
   color: #e5e7eb !important;
 }
 
