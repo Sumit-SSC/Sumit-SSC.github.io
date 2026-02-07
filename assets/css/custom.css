@@ -2150,11 +2150,21 @@ body:not(.dark-theme) .gallery-caption {
   width: 100%;
 }
 
-/* Responsive card grid – auto-fit avoids overlap on tablet/mobile */
+/* Projects card grid – max 3 per row (compact), 2 on tablet, 1 on mobile */
 #projects-grid[data-view="card"] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  #projects-grid[data-view="card"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  #projects-grid[data-view="card"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 #projects-grid[data-view="list"] {
