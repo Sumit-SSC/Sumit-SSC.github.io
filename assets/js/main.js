@@ -353,6 +353,65 @@ function updateViewButtons(activeMode) {
   }
 }
 
+/* ---------- FILTER MODE CONTROLS (projects / case studies / both + sort) ---------- */
+function initFilterModeControls() {
+  const container = document.getElementById('filter-mode-controls');
+  if (!container) return;
+
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  const activeFilter = params.get('filter');
+
+  // Only show when a filter is active (e.g. clicked from Skills page or tags)
+  if (!activeFilter) {
+    container.classList.add('hidden');
+    return;
+  }
+
+  const activeType = params.get('type') || 'both';
+  const sortMode = params.get('sort') || 'default';
+
+  // Type buttons (projects / case-studies / both)
+  document.querySelectorAll('[data-filter-type]').forEach(btn => {
+    const type = btn.dataset.filterType;
+    if (type === activeType) {
+      btn.classList.add('bg-primary', 'text-white');
+    } else {
+      btn.classList.remove('bg-primary', 'text-white');
+    }
+
+    btn.addEventListener('click', () => {
+      if (type === 'both') {
+        params.delete('type');
+      } else {
+        params.set('type', type);
+      }
+      url.search = params.toString();
+      window.location.href = url.toString();
+    });
+  });
+
+  // Sort buttons (default / newest)
+  document.querySelectorAll('[data-filter-sort]').forEach(btn => {
+    const mode = btn.dataset.filterSort;
+    if (mode === sortMode || (!sortMode && mode === 'default')) {
+      btn.classList.add('bg-primary', 'text-white');
+    } else {
+      btn.classList.remove('bg-primary', 'text-white');
+    }
+
+    btn.addEventListener('click', () => {
+      if (mode === 'default') {
+        params.delete('sort');
+      } else {
+        params.set('sort', mode);
+      }
+      url.search = params.toString();
+      window.location.href = url.toString();
+    });
+  });
+}
+
 /* ---------- ROUTING PER PAGE ---------- */
 function routePage() {
   // Load projects for dashboard
@@ -369,6 +428,7 @@ function routePage() {
     renderFeaturedSection(); // Featured layout (hero + halves)
     initViewModeToggle(); // Initialize view mode toggle
     initViewSwitcher(); // Toggle between Projects content and Case Studies content (same page)
+    initFilterModeControls(); // Type (projects / case studies / both) + sort controls when filter is active
   }
 
   // Case studies grid (homepage + archive page)
@@ -786,6 +846,8 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
   // Optional filter from URL (?filter=Python)
   const urlParams = new URLSearchParams(window.location.search);
   const activeFilter = urlParams.get('filter');
+  const activeType = urlParams.get('type') || 'both';      // 'projects' | 'case-studies' | 'both'
+  const sortMode = urlParams.get('sort') || 'default';     // 'default' | 'date-desc'
 
   const featured = getOrderedFeaturedProjects(projects).slice(0, 4);
   const nonFeatured = projects.filter(p => !p.featured);
@@ -795,6 +857,8 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
   if (activeFilter) {
     const groupTools = FILTER_GROUPS[activeFilter];
     let filterTools = [];
+
+    // Filter PROJECTS by tools / filter groups
     if (groupTools && groupTools.length) {
       filterTools = groupTools;
       list = projects.filter(p => (p.tools || []).some(t => groupTools.includes(t)));
@@ -802,29 +866,50 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
       filterTools = [activeFilter];
       list = projects.filter(p => (p.tools || []).includes(activeFilter));
     }
-    
-    // Also include case studies that match the filter
+
+    let filteredProjects = list;
+
+    // Also include CASE STUDIES that match the filter
     const caseStudies = await loadCaseStudies();
     const filteredCaseStudies = caseStudies.filter(cs => {
       const csTools = cs.tools || [];
       return csTools.some(t => filterTools.includes(t) || t === activeFilter);
     });
-    
+
     // Convert case studies to project-like format for rendering
-    const caseStudyProjects = filteredCaseStudies.map(cs => ({
+    let caseStudyProjects = filteredCaseStudies.map(cs => ({
       id: cs.id,
       title: cs.title,
       short_description: cs.short_description,
       thumbnail: cs.thumbnail,
       tools: cs.tools || [],
       category: cs.category,
+      date: cs.date || '',
       featured: false,
       isCaseStudy: true,
       case_study_path: cs.case_study_path
     }));
-    
-    // Combine projects and case studies, then sort (projects first, then case studies)
-    list = [...list, ...caseStudyProjects];
+
+    // Optional sort by date (newest first), keeping projects and case studies grouped
+    if (sortMode === 'date-desc') {
+      const parseDate = (value) => {
+        if (!value) return 0;
+        const d = new Date(value);
+        return isNaN(d.getTime()) ? 0 : d.getTime();
+      };
+      filteredProjects = [...filteredProjects].sort((a, b) => (parseDate(b.date) - parseDate(a.date)));
+      caseStudyProjects = [...caseStudyProjects].sort((a, b) => (parseDate(b.date) - parseDate(a.date)));
+    }
+
+    // Apply type filter: projects only, case studies only, or both (projects first)
+    if (activeType === 'projects') {
+      list = filteredProjects;
+    } else if (activeType === 'case-studies') {
+      list = caseStudyProjects;
+    } else {
+      list = [...filteredProjects, ...caseStudyProjects];
+    }
+
     totalCount = list.length;
     const { start, end } = getPaginationSlice(totalCount, page, firstPageCount, restPageCount);
     list = list.slice(start, end);
@@ -861,7 +946,7 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
   }
 
   if (!slice.length) {
-    el.innerHTML = '<p class="text-gray-500 text-center py-8">No projects found for this filter.</p>';
+    el.innerHTML = '<p class="text-gray-500 text-center py-8">No projects or case studies found for this filter.</p>';
     renderPagination(totalCount, page, firstPageCount, restPageCount);
     return;
   }
