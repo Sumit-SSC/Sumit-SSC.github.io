@@ -562,7 +562,10 @@ function createCaseStudyCard(caseStudy) {
     <article class="case-study-card">
       <a href="${getBasePath()}case-study.html?id=${encodeURIComponent(caseStudy.id)}" class="case-study-card-link">
         <div class="case-study-card-image">
-          <img src="${thumbnailUrl}" alt="${caseStudy.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+          <picture>
+            <source srcset="${getOptimizedImagePath(caseStudy.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
+            <img src="${thumbnailUrl}" alt="${caseStudy.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+          </picture>
           <span class="case-study-card-read-time">${readMins} min read</span>
         </div>
         <div class="case-study-card-body">
@@ -666,7 +669,10 @@ function createFeaturedHeroCard(project) {
   return `
     <article class="featured-card featured-hero group">
       <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
-        <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+        <picture>
+          <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
+          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+        </picture>
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
             ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
@@ -728,7 +734,10 @@ function createFeaturedHalfCard(project) {
   return `
     <article class="featured-card featured-half group">
       <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
-        <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+        <picture>
+          <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
+          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+        </picture>
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
             ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
@@ -957,7 +966,10 @@ function createDashboardProjectCard(project, layoutClass = '') {
     <article class="project-card-modern bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group relative ${layoutClass}">
       <div class="relative overflow-hidden bg-gray-100">
         <a href="${detailUrl}" class="block">
-          <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+          <picture>
+            <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
+            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+          </picture>
         </a>
         <div class="card-hover-overlay absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <div class="text-center text-white px-4">
@@ -1067,7 +1079,10 @@ function createDashboardProjectList(project, index = 0) {
       <div class="list-row-inner">
         <div class="list-media">
           <a href="${detailUrl}" class="block">
-            <img src="${thumbnailUrl}" alt="${project.title}" class="list-image" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+            <picture>
+              <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
+              <img src="${thumbnailUrl}" alt="${project.title}" class="list-image" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+            </picture>
           </a>
           <div class="list-hover-overlay">
             <div class="list-hover-inner">
@@ -1553,6 +1568,29 @@ function resolveAssetUrl(project, assetPath) {
   return assetPath;
 }
 
+/**
+ * Given an image path used in data (usually PNG/JPG under assets/images),
+ * return the corresponding optimized WebP path under assets/images/optimized.
+ *
+ * Example:
+ *   assets/images/projects/foo/01.jpg
+ * → /assets/images/optimized/projects/foo/01.webp
+ *
+ * If the path is external or not under assets/images, we just return it as-is.
+ */
+function getOptimizedImagePath(assetPath) {
+  if (!assetPath) return '';
+  // Only handle our local images; external URLs stay as-is
+  if (!assetPath.startsWith('assets/images/')) return assetPath;
+
+  // Strip leading "assets/images/" and any query/hash
+  const withoutPrefix = assetPath.replace(/^assets\/images\//, '');
+  const baseNoQuery = withoutPrefix.split(/[?#]/)[0];
+  const webpPath = baseNoQuery.replace(/\.(png|jpe?g)$/i, '.webp');
+
+  return `/assets/images/optimized/${webpPath}`;
+}
+
 function streamlitEmbed(url) {
   return `
     <div class="embed-container">
@@ -1684,12 +1722,16 @@ function galleryBlock(images, project = null) {
     const img = resolvedImages[0];
     const caption = inferImageCaption(images[0] || img, project, 1);
     const alt = caption || (project ? `${project.title} – key dashboard view` : 'Project image');
+    const optimized = getOptimizedImagePath(images[0] || img);
     return `
       <div class="media-container">
         <div class="gallery-single">
         <figure class="gallery-slide is-active">
           <div class="gallery-slide-inner">
-            <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
+            <picture>
+              <source srcset="${optimized}" type="image/webp">
+              <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
+            </picture>
             <figcaption class="gallery-caption">
               <span class="gallery-caption-index">1/1</span>
               <span class="gallery-caption-text">${caption}</span>
@@ -1714,10 +1756,14 @@ function galleryBlock(images, project = null) {
             const originalPath = images[index] || img;
             const caption = inferImageCaption(originalPath, project, position);
             const alt = caption || (project ? `${project.title} – view ${position}` : `Project image ${position}`);
+            const optimized = getOptimizedImagePath(originalPath);
             return `
               <figure class="gallery-slide ${index === 0 ? 'is-center' : index === 1 ? 'is-right' : 'is-hidden'}" data-index="${index}">
                 <div class="gallery-slide-inner">
-                  <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="lazy">
+                  <picture>
+                    <source srcset="${optimized}" type="image/webp">
+                    <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="lazy">
+                  </picture>
                   <figcaption class="gallery-caption">
                     <span class="gallery-caption-index">${position}/${total}</span>
                     <span class="gallery-caption-text">${caption}</span>
