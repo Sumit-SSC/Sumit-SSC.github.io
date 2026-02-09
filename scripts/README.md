@@ -25,3 +25,26 @@ powershell -ExecutionPolicy Bypass -File scripts/download-skill-icons.ps1
 ```
 
 Icon URLs are read from `data/skill_icon_urls.json`. After running, the skills page will load icons from `assets/images/icons/` first and fall back to the CDN URL if a local file is missing.
+
+## optimize_images.py (image → WebP optimizer)
+
+Converts all PNG/JPG images under `assets/images/` into optimized **WebP** copies under `assets/images/optimized/…`.  
+The frontend is already wired to prefer these WebP versions (via `<picture>` + `getOptimizedImagePath()`), falling back to the original PNG/JPG if needed.
+
+- **What it does**
+  - Scans `assets/images` (skips `assets/images/optimized` and some unreadable placeholder/icon copies).
+  - For each `.png/.jpg/.jpeg`:
+    - Creates `/assets/images/optimized/<same-relative-path>.webp`
+    - Thumbnails (paths containing `thumb`/`thumbnail`): smaller size, stronger compression.
+    - Larger project/gallery images: higher quality, resized only if extremely wide.
+
+- **Recommended way to run (using uv – no manual venv):**
+
+```powershell
+cd W:\CodeBase\Resume-Projects\Sumit-SC.github.io
+uv run --with pillow python scripts/optimize_images.py
+```
+
+- **Notes**
+  - Always keep linking to the **original** paths in JSON/HTML (e.g. `assets/images/thumbs/01.jpg`); the JS helper automatically derives the optimized WebP path.
+  - You can re-run this script any time after adding new images; existing WebPs are skipped.
