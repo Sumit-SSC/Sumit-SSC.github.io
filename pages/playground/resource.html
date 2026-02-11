@@ -253,27 +253,36 @@
 			var youtube = t.youtube || [];
 
 			var html = '<div class="mb-6"><a href="../playground.html" class="text-primary hover:underline text-sm">← Back to Playground</a></div>';
-			html += '<h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Learn ' + t.title + '</h1>';
+			html += '<h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3">Learn ' + t.title + '</h1>';
+			html += '<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose what you want to focus on, then explore.</p>';
 
-			// Three cards: YouTube | Book/Read | Course
-			html += '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
+			// Tab buttons
+			html += '<div class="mb-5 flex flex-wrap gap-2 text-xs sm:text-sm">';
+			html += '<button type="button" data-tab="youtube" class="res-tab px-3 py-1.5 rounded-full border border-primary bg-primary text-white font-semibold">YouTube</button>';
+			html += '<button type="button" data-tab="read" class="res-tab px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">Read</button>';
+			html += '<button type="button" data-tab="course" class="res-tab px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">Course</button>';
+			html += '</div>';
 
-			// Card 1: YouTube
+			// Panel: YouTube
+			html += '<section id="res-youtube" class="res-panel mb-8">';
 			html += '<div class="rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 overflow-hidden">';
 			html += '<div class="p-4 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"><h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2"><span aria-hidden="true">▶</span> YouTube</h2></div>';
 			html += '<div class="p-4">';
 			if (youtube.length) {
 				var first = youtube.find(function(y) { return y.embed; }) || youtube[0];
-				html += '<div class="rounded-lg overflow-hidden bg-black mb-3" style="aspect-ratio:16/9;"><iframe class="w-full h-full" src="https://www.youtube.com/embed/' + first.id + '?rel=0" title="' + (first.title || '') + '" allowfullscreen></iframe></div>';
-				html += '<p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Top videos & playlists</p><ul class="space-y-1">';
-				youtube.slice(0, 10).forEach(function(y) {
-					html += '<li><a href="https://www.youtube.com/watch?v=' + y.id + '" target="_blank" rel="noopener" class="text-sm text-primary hover:underline block truncate">' + (y.title || 'Video') + '</a></li>';
+				html += '<div class="rounded-lg overflow-hidden bg-black mb-3" style="aspect-ratio:16/9;"><iframe id="yt-embed" class="w-full h-full" src="https://www.youtube.com/embed/' + first.id + '?rel=0" title="' + (first.title || '') + '" allowfullscreen></iframe></div>';
+				html += '<p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Tap a title to play it here</p><ul class="space-y-1">';
+				youtube.slice(0, 10).forEach(function(y, idx) {
+					html += '<li><button type="button" data-video-id="' + y.id + '" class="yt-select text-left w-full text-sm text-primary hover:underline block truncate' + (idx === 0 ? ' font-semibold' : '') + '">' + (y.title || 'Video') + '</button></li>';
 				});
 				html += '</ul>';
-			} else { html += '<p class="text-sm text-gray-500 dark:text-gray-400">No videos listed.</p>'; }
-			html += '</div></div>';
+			} else {
+				html += '<p class="text-sm text-gray-500 dark:text-gray-400">No videos listed.</p>';
+			}
+			html += '</div></div></section>';
 
-			// Card 2: Book / Read
+			// Panel: Read
+			html += '<section id="res-read" class="res-panel mb-8 hidden">';
 			html += '<div class="rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 overflow-hidden">';
 			html += '<div class="p-4 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"><h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2"><span aria-hidden="true">📖</span> Book / Read</h2></div>';
 			html += '<div class="p-4">';
@@ -283,10 +292,13 @@
 					html += '<li><a href="' + r.url + '" target="_blank" rel="noopener" class="text-sm text-primary hover:underline block">' + r.name + ' →</a></li>';
 				});
 				html += '</ul>';
-			} else { html += '<p class="text-sm text-gray-500 dark:text-gray-400">No readings listed.</p>'; }
-			html += '</div></div>';
+			} else {
+				html += '<p class="text-sm text-gray-500 dark:text-gray-400">No readings listed.</p>';
+			}
+			html += '</div></div></section>';
 
-			// Card 3: Course
+			// Panel: Course
+			html += '<section id="res-course" class="res-panel mb-8 hidden">';
 			html += '<div class="rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 overflow-hidden">';
 			html += '<div class="p-4 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"><h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2"><span aria-hidden="true">🎓</span> Course</h2></div>';
 			html += '<div class="p-4">';
@@ -296,11 +308,59 @@
 					html += '<li><a href="' + c.url + '" target="_blank" rel="noopener" class="text-sm text-primary hover:underline block">' + c.name + ' →</a></li>';
 				});
 				html += '</ul>';
-			} else { html += '<p class="text-sm text-gray-500 dark:text-gray-400">No courses listed.</p>'; }
-			html += '</div></div>';
+			} else {
+				html += '<p class="text-sm text-gray-500 dark:text-gray-400">No courses listed.</p>';
+			}
+			html += '</div></div></section>';
 
-			html += '</div>';
 			root.innerHTML = html;
+
+			// Tabs: show/hide panels
+			var panels = {
+				youtube: document.getElementById('res-youtube'),
+				read: document.getElementById('res-read'),
+				course: document.getElementById('res-course')
+			};
+			var tabs = Array.prototype.slice.call(document.querySelectorAll('.res-tab'));
+			function activateTab(name) {
+				tabs.forEach(function(btn) {
+					var tab = btn.getAttribute('data-tab');
+					var active = tab === name;
+					btn.classList.toggle('border-primary', active);
+					btn.classList.toggle('bg-primary', active);
+					btn.classList.toggle('text-white', active);
+					if (!active) {
+						btn.classList.remove('border-primary', 'bg-primary', 'text-white');
+					}
+				});
+				for (var key in panels) {
+					if (!panels[key]) continue;
+					if (key === name) panels[key].classList.remove('hidden');
+					else panels[key].classList.add('hidden');
+				}
+			}
+			activateTab('youtube');
+			tabs.forEach(function(btn) {
+				btn.addEventListener('click', function() {
+					var tab = btn.getAttribute('data-tab') || 'youtube';
+					activateTab(tab);
+				});
+			});
+
+			// Wire up YouTube selectors to swap the embedded video in-place
+			var ytFrame = document.getElementById('yt-embed');
+			if (ytFrame) {
+				var buttons = document.querySelectorAll('.yt-select');
+				buttons.forEach(function(btn) {
+					btn.addEventListener('click', function() {
+						var vid = btn.getAttribute('data-video-id');
+						if (!vid) return;
+						ytFrame.src = 'https://www.youtube.com/embed/' + vid + '?rel=0';
+						buttons.forEach(function(b) { b.classList.remove('font-semibold'); });
+						btn.classList.add('font-semibold');
+					});
+				});
+			}
 		})();
 	</script>
 </body>

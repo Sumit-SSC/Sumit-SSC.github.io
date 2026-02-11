@@ -116,10 +116,10 @@
 			html += '<div class="p-4">';
 			if (t.youtube && t.youtube.length) {
 				var first = t.youtube.find(function(y){return y.embed;}) || t.youtube[0];
-				html += '<div class="rounded-lg overflow-hidden bg-black mb-3" style="aspect-ratio:16/9;"><iframe class="w-full h-full" src="https://www.youtube.com/embed/' + first.id + '?rel=0" allowfullscreen></iframe></div>';
-				html += '<ul class="space-y-1">';
-				t.youtube.slice(0,10).forEach(function(y){
-					html += '<li><a class="text-sm text-primary hover:underline block truncate" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=' + y.id + '">' + (y.title || 'Video') + '</a></li>';
+				html += '<div class="rounded-lg overflow-hidden bg-black mb-3" style="aspect-ratio:16/9;"><iframe id="yt-embed" class="w-full h-full" src="https://www.youtube.com/embed/' + first.id + '?rel=0" allowfullscreen></iframe></div>';
+				html += '<p class="text-xs text-gray-500 mb-2">Tap a title to play it here</p><ul class="space-y-1">';
+				t.youtube.slice(0,10).forEach(function(y, idx){
+					html += '<li><button type="button" data-video-id="' + y.id + '" class="yt-select text-left w-full text-sm text-primary hover:underline block truncate' + (idx === 0 ? ' font-semibold' : '') + '">' + (y.title || 'Video') + '</button></li>';
 				});
 				html += '</ul>';
 			} else {
@@ -178,6 +178,21 @@
 
 			html += '</div>';
 			root.innerHTML = html;
+
+			// Wire up YouTube selectors to swap the embedded video in-place
+			var ytFrame = document.getElementById('yt-embed');
+			if (ytFrame) {
+				var buttons = document.querySelectorAll('.yt-select');
+				buttons.forEach(function(btn) {
+					btn.addEventListener('click', function() {
+						var vid = btn.getAttribute('data-video-id');
+						if (!vid) return;
+						ytFrame.src = 'https://www.youtube.com/embed/' + vid + '?rel=0';
+						buttons.forEach(function(b) { b.classList.remove('font-semibold'); });
+						btn.classList.add('font-semibold');
+					});
+				});
+			}
 		})();
 	</script>
 </body>
