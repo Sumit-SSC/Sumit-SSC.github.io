@@ -3502,12 +3502,14 @@ html {
   background-color: #334155 !important;
 }
 
-/* Override for skills tech stack box: keep headings dark on white card in dark mode */
+/* Override for skills tech stack box: keep headings pure black on white card in dark mode */
 .dark-theme .skills-icons-box {
   background-color: #ffffff !important;
 }
-.dark-theme .skills-icons-box h2 {
-  color: #111827 !important; /* near-black for strong contrast */
+.dark-theme .skills-icons-box h1,
+.dark-theme .skills-icons-box h2,
+.dark-theme .skills-icons-box h3 {
+  color: #000000 !important; /* pure black for maximum contrast on white */
 }
 
 /* Borders - ensure visibility */

@@ -101,8 +101,8 @@ function initTheme() {
 
   // Theme + color controls - Add to navigation if it exists, otherwise create floating controls
   const nav = document.getElementById('nav');
-  // Minimal, professional palette (reduced set)
-  const themes = ['theme-indigo', 'theme-slate', 'theme-teal'];
+  // Palette used by the color picker (distinct looks)
+  const themes = ['theme-indigo', 'theme-orange', 'theme-emerald', 'theme-purple'];
   const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || 'theme-indigo';
   let colorIndex = themes.indexOf(storedTheme);
   if (colorIndex < 0) colorIndex = 0;
@@ -253,10 +253,17 @@ function applyColorTheme(name) {
   const colorMap = {
     // neutral-professional (default) – analytics / decision-science
     'theme-indigo': { primary: '#3B4CCA', accent: '#2CB1A6' },
-    // cool-tech – more blue/teal emphasis
+    // warm product-analytics
+    'theme-orange': { primary: '#F97316', accent: '#EA580C' },
+    // cool green analytics
+    'theme-emerald': { primary: '#10B981', accent: '#059669' },
+    // purple / conference look
+    'theme-purple': { primary: '#667EEA', accent: '#764BA2' },
+    // legacy / fallback keys (still supported if stored in localStorage)
     'theme-slate': { primary: '#2563EB', accent: '#0EA5E9' },
-    // warm-product-analytics – warmer primary
-    'theme-teal': { primary: '#F97316', accent: '#F97316' }
+    'theme-teal': { primary: '#14B8A6', accent: '#0D9488' },
+    'theme-rose': { primary: '#F43F5E', accent: '#E11D48' },
+    'theme-amber': { primary: '#F59E0B', accent: '#D97706' }
   };
 
   const colors = colorMap[theme] || colorMap['theme-indigo'];
@@ -282,8 +289,14 @@ function applyColorTheme(name) {
 function updateColorSwatch(el, theme) {
   const colorMap = {
     'theme-indigo': '#3B4CCA',
+    'theme-orange': '#F97316',
+    'theme-emerald': '#10B981',
+    'theme-purple': '#667EEA',
+    // legacy/fallback
     'theme-slate': '#2563EB',
-    'theme-teal': '#F97316'
+    'theme-teal': '#14B8A6',
+    'theme-rose': '#F43F5E',
+    'theme-amber': '#F59E0B'
   };
   el.style.background = colorMap[theme] || colorMap['theme-indigo'];
 }

@@ -35,7 +35,7 @@
 	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
 		<div class="container mx-auto px-4 sm:px-6">
 			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
-				<a href="homepage.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<a href="../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
 				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
 					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
 						<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
@@ -43,6 +43,7 @@
 						<li><a href="skills.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Skills</a></li>
 						<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">About</a></li>
 						<li><a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Contact</a></li>
+						<li><a href="playground.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Playground</a></li>
 					</ul>
 					<ul class="flex items-center gap-4">
 						<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
@@ -187,6 +188,7 @@
 			"Hugging Face": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/huggingface-color.png",
 			"Hadoop": "https://cdn.worldvectorlogo.com/logos/hadoop.svg",
 			"Apache Spark": "https://icon.icepanel.io/Technology/svg/Apache-Spark.svg",
+			FastAPI: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/fastapi.png",
 			Oracle: "https://icon.icepanel.io/Technology/svg/Oracle.svg",
 			Notion: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/notion.png",
 			PostgreSQL: "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PostgreSQL-Dark.svg",
@@ -238,92 +240,95 @@
 
 		const skillsData = {
 			"Programming": [
-				{ name: "Python", level: 90, iconUrl: iconUrlMap.Python, color: "#3776ab" },
-				{ name: "SQL", level: 85, iconUrl: iconUrlMap.SQL, color: "#336791" },
-				{ name: "MySQL", level: 85, iconUrl: iconUrlMap.MySQL, color: "#4479A1" },
+				{ name: "Python", level: 75, iconUrl: iconUrlMap.Python, color: "#3776ab" },
+				{ name: "SQL", level: 70, iconUrl: iconUrlMap.SQL, color: "#336791" },
+				{ name: "MySQL", level: 80, iconUrl: iconUrlMap.MySQL, color: "#4479A1" },
 				{ name: "PostgreSQL", level: 80, iconUrl: iconUrlMap.PostgreSQL, color: "#336791" },
-				{ name: "HTML", level: 60, iconUrl: iconUrlMap.HTML, color: "#E34F26" },
+				{ name: "HTML", level: 65, iconUrl: iconUrlMap.HTML, color: "#E34F26" },
 				{ name: "CSS", level: 60, iconUrl: iconUrlMap.CSS, color: "#1572B6" },
 				{ name: "JavaScript", level: 60, iconUrl: iconUrlMap.JavaScript, color: "#F7DF1E" },
 				{ name: "R (learning)", level: 40, iconUrl: iconUrlMap["R (learning)"], color: "#276DC3" },
 			],
 			"Data Analytics": [
-				{ name: "pandas", level: 90, iconUrl: iconUrlMap.pandas, color: "#150458" },
-				{ name: "NumPy", level: 85, iconUrl: iconUrlMap.NumPy, color: "#4DABCF" },
-				{ name: "Statistical Analysis", level: 85, icon: "fas fa-chart-line", color: "#0ea5e9" },
+				{ name: "pandas", level: 85, iconUrl: iconUrlMap.pandas, color: "#150458" },
+				{ name: "NumPy", level: 75, iconUrl: iconUrlMap.NumPy, color: "#4DABCF" },
+				{ name: "Statistical Analysis", level: 70, icon: "fas fa-chart-line", color: "#0ea5e9" },
 				{ name: "Power BI", level: 85, iconUrl: iconUrlMap["Power BI"], color: "#F2C811" },
 				{ name: "Excel", level: 90, iconUrl: iconUrlMap.Excel, color: "#217346" },
-				{ name: "DAX", level: 80, iconUrl: iconUrlMap.DAX, color: "#F2C811" },
-				{ name: "A/B Testing", level: 80, icon: "fas fa-flask", color: "#4f46e5" },
-				{ name: "Hypothesis Testing", level: 80, icon: "fas fa-check-circle", color: "#4f46e5" },
-				{ name: "Google Analytics", level: 80, iconUrl: iconUrlMap["Google Analytics"], color: "#E37400" },
-				{ name: "SQL Server", level: 75, iconUrl: iconUrlMap["SQL Server"], color: "#CC2927" },
+				{ name: "DAX", level: 70, iconUrl: iconUrlMap.DAX, color: "#F2C811" },
+				{ name: "A/B Testing", level: 70, icon: "fas fa-flask", color: "#4f46e5" },
+				{ name: "Hypothesis Testing", level: 75, icon: "fas fa-check-circle", color: "#4f46e5" },
+				{ name: "Google Analytics", level: 40, iconUrl: iconUrlMap["Google Analytics"], color: "#E37400" },
+				{ name: "SQL Server", level: 60, iconUrl: iconUrlMap["SQL Server"], color: "#CC2927" },
 				{ name: "Tableau", level: 75, iconUrl: iconUrlMap.Tableau, color: "#E97627" },
-				{ name: "MongoDB", level: 70, iconUrl: iconUrlMap.MongoDB, color: "#47A248" },
+				{ name: "MongoDB", level: 60, iconUrl: iconUrlMap.MongoDB, color: "#47A248" },
 				{ name: "Apache Superset", level: 70, iconUrl: iconUrlMap["Apache Superset"], color: "#181D1F" },
-				{ name: "DuckDB", level: 65, iconUrl: iconUrlMap["DuckDB"], color: "#F8C41C" },
-				{ name: "Oracle", level: 65, iconUrl: iconUrlMap.Oracle, color: "#F80000" },
-				{ name: "Hadoop", level: 60, iconUrl: iconUrlMap.Hadoop, color: "#66CCFF" },
+				{ name: "DuckDB", level: 60, iconUrl: iconUrlMap["DuckDB"], color: "#F8C41C" },
+				{ name: "Oracle", level: 60, iconUrl: iconUrlMap.Oracle, color: "#F80000" },
+				{ name: "Hadoop", level: 35, iconUrl: iconUrlMap.Hadoop, color: "#66CCFF" },
 			],
 			"Data Science & ML": [
-				{ name: "scikit-learn", level: 85, iconUrl: iconUrlMap["scikit-learn"], color: "#F7931E" },
-				{ name: "XGBoost", level: 80, iconUrl: iconUrlMap.XGBoost, color: "#FF6B6B" },
+				{ name: "scikit-learn", level: 75, iconUrl: iconUrlMap["scikit-learn"], color: "#F7931E" },
+				{ name: "XGBoost", level: 65, iconUrl: iconUrlMap.XGBoost, color: "#FF6B6B" },
 				{ name: "Matplotlib", level: 80, iconUrl: iconUrlMap.Matplotlib, color: "#11557C" },
 				{ name: "Seaborn", level: 75, iconUrl: iconUrlMap.Seaborn, color: "#3776ab" },
-				{ name: "Plotly", level: 75, iconUrl: iconUrlMap.Plotly, color: "#3F4F75" },
-				{ name: "statsmodels", level: 75, icon: "fas fa-chart-bar", color: "#3776ab" },
+				{ name: "Plotly", level: 65, iconUrl: iconUrlMap.Plotly, color: "#3F4F75" },
+				{ name: "statsmodels", level: 70, icon: "fas fa-chart-bar", color: "#3776ab" },
 			],
 			"Advanced DS - DL": [
-				{ name: "PyTorch", level: 70, iconUrl: iconUrlMap.PyTorch, color: "#EE4C2C" },
-				{ name: "TensorFlow", level: 65, iconUrl: iconUrlMap.TensorFlow, color: "#FF6F00" },
-				{ name: "OpenCV", level: 70, iconUrl: iconUrlMap.OpenCV, color: "#5C3EE8" },
+				{ name: "PyTorch", level: 60, iconUrl: iconUrlMap.PyTorch, color: "#EE4C2C" },
+				{ name: "TensorFlow", level: 55, iconUrl: iconUrlMap.TensorFlow, color: "#FF6F00" },
+				{ name: "OpenCV", level: 75, iconUrl: iconUrlMap.OpenCV, color: "#5C3EE8" },
+				{ name: "PySpark", level: 45, iconUrl: iconUrlMap["Apache Spark"], color: "#E25A1C" },
+				{ name: "FastAPI", level: 60, iconUrl: iconUrlMap.FastAPI, color: "#05998B" },
 			],
 			"AI-LLM": [
 				{ name: "LangChain", level: 60, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
-				{ name: "Hugging Face", level: 65, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
+				{ name: "Hugging Face", level: 55, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
+				{ name: "Ollama", level: 60, iconUrl: iconUrlMap.Ollama, color: "#0F766E" },
 			],
 			"AI Tools": [
 				{ name: "OpenAI ChatGPT", level: 85, iconUrl: iconUrlMap["OpenAI ChatGPT"], color: "#10A37F" },
 				{ name: "Google Gemini", level: 80, iconUrl: iconUrlMap["Google Gemini"], color: "#4285F4" },
 				{ name: "Claude", level: 80, iconUrl: iconUrlMap.Claude, color: "#FFB300" },
 				{ name: "Cursor", level: 75, iconUrl: iconUrlMap.Cursor, color: "#0EA5E9" },
-				{ name: "Hugging Face", level: 70, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
-				{ name: "Ollama", level: 75, iconUrl: iconUrlMap.Ollama, color: "#111827" },
+				{ name: "Hugging Face", level: 55, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
+				{ name: "Ollama", level: 60, iconUrl: iconUrlMap.Ollama, color: "#0F766E" },
 				{ name: "DeepSeek", level: 75, iconUrl: iconUrlMap.DeepSeek, color: "#6366F1" },
 				{ name: "Perplexity", level: 80, iconUrl: iconUrlMap.Perplexity, color: "#2563EB" },
 				{ name: "Meta AI", level: 70, iconUrl: iconUrlMap["Meta AI"], color: "#2563EB" },
-				{ name: "Anthropic", level: 75, iconUrl: iconUrlMap.Anthropic, color: "#111827" },
+				{ name: "Anthropic", level: 75, iconUrl: iconUrlMap.Anthropic, color: "#F97316" },
 				{ name: "Qwen", level: 70, iconUrl: iconUrlMap.Qwen, color: "#22C55E" },
 				{ name: "Moonshot", level: 70, iconUrl: iconUrlMap.Moonshot, color: "#F97316" },
 				{ name: "Amazon Bedrock", level: 70, iconUrl: iconUrlMap["Amazon Bedrock"], color: "#FF9900" },
 				{ name: "GitHub Copilot", level: 80, iconUrl: iconUrlMap["GitHub Copilot"], color: "#22C55E" },
-				{ name: "LangChain", level: 70, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
+				{ name: "LangChain", level: 60, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
 				{ name: "Lovable", level: 65, iconUrl: iconUrlMap.Lovable, color: "#EC4899" },
 				{ name: "Make", level: 70, iconUrl: iconUrlMap.Make, color: "#8B5CF6" },
 			],
 			"Deployment": [
-				{ name: "Docker", level: 80, iconUrl: iconUrlMap.Docker, color: "#2496ED" },
+				{ name: "Streamlit", level: 80, iconUrl: iconUrlMap.Streamlit, color: "#FF4B4B" },
+				{ name: "Docker", level: 60, iconUrl: iconUrlMap.Docker, color: "#2496ED" },
 				{ name: "Kubernetes", level: 65, iconUrl: iconUrlMap.Kubernetes, color: "#326CE5" },
-				{ name: "GitHub Actions", level: 70, iconUrl: iconUrlMap["GitHub Actions"], color: "#2088FF" },
-				{ name: "Google Cloud", level: 70, iconUrl: iconUrlMap["Google Cloud"], color: "#4285F4" },
-				{ name: "AWS", level: 70, iconUrl: iconUrlMap.AWS, color: "#232F3E" },
-				{ name: "Apache Airflow", level: 65, iconUrl: iconUrlMap["Apache Airflow"], color: "#017CEE" },
-				{ name: "Azure DevOps", level: 65, iconUrl: iconUrlMap["Azure DevOps"], color: "#0078D7" },
-				{ name: "Azure Data Factory", level: 65, iconUrl: iconUrlMap["Azure Data Factory"], color: "#0078D4" },
-				{ name: "Streamlit", level: 85, iconUrl: iconUrlMap.Streamlit, color: "#FF4B4B" },
+				{ name: "GitHub Actions", level: 60, iconUrl: iconUrlMap["GitHub Actions"], color: "#2088FF" },
+				{ name: "AWS", level: 60, iconUrl: iconUrlMap.AWS, color: "#232F3E" },
+				{ name: "Google Cloud", level: 50, iconUrl: iconUrlMap["Google Cloud"], color: "#4285F4" },
+				{ name: "Apache Airflow", level: 60, iconUrl: iconUrlMap["Apache Airflow"], color: "#017CEE" },
+				{ name: "Azure", level: 50, iconUrl: iconUrlMap["Azure DevOps"], color: "#0078D7" },
+				{ name: "MLflow", level: 50, icon: "fas fa-cubes", color: "#F97316" },
 			],
 			"Tools & Development": [
-				{ name: "Jupyter", level: 90, iconUrl: iconUrlMap.Jupyter, color: "#F37626" },
+				{ name: "Jupyter", level: 80, iconUrl: iconUrlMap.Jupyter, color: "#F37626" },
 				{ name: "Google Colab", level: 85, iconUrl: iconUrlMap["Google Colab"], color: "#F9AB00" },
 				{ name: "Anaconda", level: 75, iconUrl: iconUrlMap.Anaconda, color: "#43B049" },
 				{ name: "VS Code", level: 90, iconUrl: iconUrlMap["VS Code"], color: "#007ACC" },
-				{ name: "Git", level: 80, iconUrl: iconUrlMap.Git, color: "#F05032" },
-				{ name: "GitHub", level: 85, iconUrl: iconUrlMap.GitHub, color: "#181717" },
+				{ name: "Git", level: 70, iconUrl: iconUrlMap.Git, color: "#F05032" },
+				{ name: "GitHub", level: 75, iconUrl: iconUrlMap.GitHub, color: "#181717" },
 				{ name: "Figma", level: 60, iconUrl: iconUrlMap.Figma, color: "#F24E1E" },
 				{ name: "Canva", level: 75, iconUrl: iconUrlMap.Canva, color: "#00C4CC" },
 				{ name: "Jira", level: 75, iconUrl: iconUrlMap.Jira, color: "#0052CC" },
-				{ name: "Markdown", level: 80, iconUrl: iconUrlMap.Markdown, color: "#111827" },
-				{ name: "Linux", level: 70, iconUrl: iconUrlMap.Linux, color: "#FCC624" },
+				{ name: "Markdown", level: 70, iconUrl: iconUrlMap.Markdown, color: "#4B5563" },
+				{ name: "Linux", level: 60, iconUrl: iconUrlMap.Linux, color: "#FCC624" },
 				{ name: "Ubuntu", level: 70, iconUrl: iconUrlMap.Ubuntu, color: "#E95420" },
 			],
 			"Productivity & Collaboration": [
@@ -335,17 +340,16 @@
 				{ name: "Google Workspace", level: 85, iconUrl: iconUrlMap["Google Workspace"], color: "#4285F4" },
 				{ name: "Outlook", level: 85, iconUrl: iconUrlMap.Outlook, color: "#0078D4" },
 				{ name: "Google Calendar", level: 85, iconUrl: iconUrlMap["Google Calendar"], color: "#4285F4" },
-				{ name: "Trello", level: 80, iconUrl: iconUrlMap.Trello, color: "#0052CC" },
-				{ name: "Confluence", level: 75, iconUrl: iconUrlMap.Confluence, color: "#172B4D" },
+				{ name: "Trello", level: 60, iconUrl: iconUrlMap.Trello, color: "#0052CC" },
+				{ name: "Confluence", level: 55, iconUrl: iconUrlMap.Confluence, color: "#172B4D" },
 				{ name: "Atlassian", level: 70, iconUrl: iconUrlMap.Atlassian, color: "#0052CC" },
 				{ name: "Asana", level: 75, iconUrl: iconUrlMap.Asana, color: "#F06A6A" },
 				{ name: "Monday", level: 70, iconUrl: iconUrlMap.Monday, color: "#FF3D57" },
 				{ name: "Google Docs", level: 85, iconUrl: iconUrlMap["Google Docs"], color: "#4285F4" },
 				{ name: "OneNote", level: 75, iconUrl: iconUrlMap.OneNote, color: "#7719AA" },
-				{ name: "Notion", level: 75, iconUrl: iconUrlMap.Notion, color: "#111827" },
+				{ name: "Notion", level: 65, iconUrl: iconUrlMap.Notion, color: "#4B5563" },
 				{ name: "Miro", level: 70, iconUrl: iconUrlMap.Miro, color: "#050038" },
-				{ name: "Lucidchart", level: 70, iconUrl: iconUrlMap.Lucidchart, color: "#F8D43B" },
-				{ name: "Linux Mint", level: 65, iconUrl: iconUrlMap["Linux Mint"], color: "#87CF3E" },
+				{ name: "Lucidchart", level: 40, iconUrl: iconUrlMap.Lucidchart, color: "#F8D43B" },
 				{ name: "SharePoint", level: 70, iconUrl: iconUrlMap.SharePoint, color: "#0078D4" },
 				{ name: "PowerApps", level: 65, iconUrl: iconUrlMap.PowerApps, color: "#742B1F" },
 				{ name: "Fabric", level: 65, iconUrl: iconUrlMap.Fabric, color: "#0078D4" },
@@ -399,7 +403,7 @@
 				const cdn = (iconUrlMapCdn && iconUrlMapCdn[skill.name]) || '';
 				return `
 					<div class="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex-shrink-0" title="${skill.name.replace(/"/g, '&quot;')}">
-						<img src="${skill.iconUrl}" alt="${skill.name}" class="w-7 h-7 sm:w-8 sm:h-8 object-contain tech-stack-img" data-cdn="${cdn.replace(/"/g, '&quot;')}" onerror="if(this.dataset.cdn){this.onerror=null;this.src=this.dataset.cdn}" />
+						<img src="${skill.iconUrl}" alt="${skill.name}" class="w-7 h-7 sm:w-8 sm:h-8 object-contain tech-stack-img" data-cdn="${cdn.replace(/"/g, '&quot;')}" onerror="if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn;}else{this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='inline-block';}" />
 						<i class="${skill.icon || 'fas fa-tag'} text-2xl sm:text-3xl hidden" style="color: ${skill.color}; display: none;" title="${skill.name.replace(/"/g, '&quot;')}"></i>
 					</div>
 				`;
@@ -461,13 +465,18 @@
 		// Render one skill card (shared) – icon, name, % only; no filter link (filter is in section above)
 		function skillCardHtml(skill) {
 			const cdn = (skill.iconUrl && iconUrlMapCdn && iconUrlMapCdn[skill.name]) ? iconUrlMapCdn[skill.name].replace(/"/g, '&quot;') : '';
-			const imgHtml = skill.iconUrl
-				? `<img src="${skill.iconUrl}" alt="${skill.name}" class="h-7 w-7 object-contain flex-shrink-0" data-cdn="${cdn}" onerror="if(this.dataset.cdn){this.onerror=null;this.src=this.dataset.cdn}" />`
-				: '';
+			const iconHtml = skill.iconUrl
+				? `
+					<div class="flex items-center justify-center h-7 w-7 flex-shrink-0">
+						<img src="${skill.iconUrl}" alt="${skill.name}" class="h-7 w-7 object-contain flex-shrink-0" data-cdn="${cdn}" onerror="if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn;}else{this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='inline-block';}" />
+						<i class="${skill.icon || 'fas fa-tag'} text-2xl flex-shrink-0 hidden" style="color: ${skill.color}; display: none;"></i>
+					</div>
+				`
+				: `<i class="${skill.icon || 'fas fa-tag'} text-2xl flex-shrink-0" style="color: ${skill.color}"></i>`;
 			return `
 				<div class="skill-card bg-white dark:bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-300 p-5">
 					<div class="flex items-center gap-3 mb-3">
-						${skill.iconUrl ? imgHtml : `<i class="${skill.icon} text-2xl flex-shrink-0" style="color: ${skill.color}"></i>`}
+						${iconHtml}
 						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-900">${skill.name}</h3>
 					</div>
 					<div class="flex justify-between items-center text-sm text-gray-600 dark:text-gray-600">

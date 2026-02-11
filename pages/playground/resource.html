@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Resource | Sumit S. Chaure</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: { primary: '#4f46e5', accent: '#0ea5e9' }
+				}
+			}
+		}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../../assets/css/custom.css" />
+	<link rel="stylesheet" href="../../assets/css/fontawesome-all.min.css" />
+	<link rel="icon" type="image/png" href="../../assets/images/placeholder.png" />
+	<style>
+		body { font-family: 'Inter', sans-serif; }
+	</style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased">
+	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
+
+	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
+		<div class="container mx-auto px-4 sm:px-6">
+			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
+				<a href="../../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
+					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+						<li><a href="../homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
+						<li><a href="../resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Resume</a></li>
+						<li><a href="../skills.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Skills</a></li>
+						<li><a href="../about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">About</a></li>
+						<li><a href="../contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Contact</a></li>
+						<li><a href="../playground.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Playground</a></li>
+					</ul>
+					<ul class="flex items-center gap-4">
+						<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></li>
+						<li><a href="https://github.com/Sumit-SC" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="GitHub"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a></li>
+						<li><a href="https://www.kaggle.com/mitsu00" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Kaggle"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg></a></li>
+						<li><a href="mailto:sumitsc.work@gmail.com" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Email"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<main class="container mx-auto px-4 sm:px-6 py-8 max-w-5xl">
+		<div id="resource-root"></div>
+		<div id="resource-not-found" class="hidden text-center py-12">
+			<p class="text-gray-600 dark:text-gray-400 mb-4">Topic not found.</p>
+			<a href="../playground.html" class="text-primary hover:underline">Back to Playground</a>
+		</div>
+	</main>
+
+	<footer class="border-t border-gray-200 dark:border-gray-700 mt-12 py-6">
+		<div class="container mx-auto px-6 text-center text-sm text-gray-500 dark:text-gray-400">
+			<p>&copy; 2026 Sumit S. Chaure · Data & Analytics Portfolio</p>
+		</div>
+	</footer>
+
+	<script src="../../assets/js/main.js"></script>
+	<script>
+		(function() {
+			var params = new URLSearchParams(window.location.search);
+			var topic = (params.get('topic') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+			var topics = {
+				python: {
+					title: 'Python',
+					kaggle: [{ name: 'Kaggle Learn Python', url: 'https://www.kaggle.com/learn/python' }, { name: 'Kaggle Code', url: 'https://www.kaggle.com/code' }],
+					books: [{ name: 'Automate the Boring Stuff (free)', url: 'https://automatetheboringstuff.com' }, { name: 'Python for Data Science', url: 'https://medium.com/tag/python' }],
+					medium: [{ name: 'Python for Data Science', url: 'https://medium.com/tag/python' }, { name: 'Python tips', url: 'https://medium.com/tag/python-programming' }],
+					youtube: [
+						{ id: 'rfscVS0vtbw', title: 'Learn Python - Full Course (freeCodeCamp)', embed: true },
+						{ id: '_uQrJ0TkZlc', title: 'Python for Beginners (Programming with Mosh)' },
+						{ id: 'kqtD5dpn9C8', title: 'Python Tutorial (Corey Schafer)' },
+						{ id: 'jFCNu1-Xdsw', title: 'Python Full Course (Edureka)' },
+						{ id: 'WGJJIrtnfpk', title: 'Python for Data Science (Krish Naik)' },
+						{ id: 't8pPdYpowQw', title: 'Python in 1 Hour (Programming with Mosh)' },
+						{ id: 'JJmcL1N2KQs', title: 'Python for Everybody (Py4E)' },
+						{ id: 'Yf3K2YCvTwQ', title: 'Python Crash Course' },
+						{ id: 'H1elm1ny0Gw', title: 'Python Basics (Tech With Tim)' },
+						{ id: 'QXeEoD0pB1E', title: 'Python Data Structures' }
+					]
+				},
+				sql: {
+					title: 'SQL',
+					kaggle: [{ name: 'Intro to SQL', url: 'https://www.kaggle.com/learn/intro-to-sql' }, { name: 'Advanced SQL', url: 'https://www.kaggle.com/learn/advanced-sql' }],
+					medium: [{ name: 'SQL for Data Analysis', url: 'https://medium.com/tag/sql' }, { name: 'SQL tutorials', url: 'https://medium.com/tag/sql-server' }],
+					youtube: [
+						{ id: 'p3qvj9hO_Bo', title: 'SQL Tutorial (freeCodeCamp)', embed: true },
+						{ id: 'HXV3zeQKqGY', title: 'SQL for Beginners (freeCodeCamp)' },
+						{ id: '2-1XQHAg-SM', title: 'SQL Full Course (Edureka)' },
+						{ id: '7S_tz1z_5bA', title: 'SQL Tutorial (Telusko)' },
+						{ id: 'BPAGAn1R7RY', title: 'SQL for Data Science (Alex The Analyst)' },
+						{ id: 'W5ju-D1u2_Y', title: 'SQL Basics (TechTFQ)' },
+						{ id: '5OdclJYD6vM', title: 'SQL Interview Questions' },
+						{ id: 'HlHzz2UzMqo', title: 'MySQL Tutorial' },
+						{ id: 'qw--VYLpxG4', title: 'PostgreSQL Tutorial' },
+						{ id: '5OdclJYD6vM', title: 'SQL Zero to Hero' }
+					]
+				},
+				git: {
+					title: 'Git',
+					kaggle: [],
+					medium: [{ name: 'Git & GitHub', url: 'https://medium.com/tag/git' }, { name: 'Version control', url: 'https://medium.com/tag/github' }],
+					youtube: [
+						{ id: 'RGOj5yH7evk', title: 'Git and GitHub for Beginners (freeCodeCamp)', embed: true },
+						{ id: '8Dd7KRpKeaE', title: 'Git Tutorial (Corey Schafer)' },
+						{ id: 'HVs3SzO0cQg', title: 'Git Tutorial (Tech With Tim)' },
+						{ id: 'USjZcfj8zxE', title: 'Git in 1 Hour (Programming with Mosh)' },
+						{ id: 'hwP7WQkmECE', title: 'GitHub Tutorial' }
+					]
+				},
+				programming: {
+					title: 'Programming',
+					kaggle: [{ name: 'Programming courses', url: 'https://www.kaggle.com/learn' }],
+					medium: [{ name: 'Programming', url: 'https://medium.com/tag/programming' }],
+					youtube: [
+						{ id: 'zOjov-2OZ0E', title: 'Introduction to Programming', embed: true },
+						{ id: 'k9WqpQp8VSU', title: 'Programming fundamentals' }
+					]
+				},
+				pandas: {
+					title: 'Pandas',
+					kaggle: [{ name: 'Pandas', url: 'https://www.kaggle.com/learn/pandas' }, { name: 'Data cleaning', url: 'https://www.kaggle.com/learn/data-cleaning' }],
+					medium: [{ name: 'Pandas tutorials', url: 'https://medium.com/tag/pandas' }],
+					youtube: [
+						{ id: 'vmEHCJofslg', title: 'Pandas Tutorial (Corey Schafer)', embed: true },
+						{ id: 'ZyTO4SwwJOU', title: 'Pandas Full Course (freeCodeCamp)' },
+						{ id: 'dD8IgkRt-HY', title: 'Pandas for Data Analysis' }
+					]
+				},
+				numpy: {
+					title: 'NumPy',
+					kaggle: [{ name: 'NumPy', url: 'https://www.kaggle.com/code' }],
+					medium: [{ name: 'NumPy', url: 'https://medium.com/tag/numpy' }],
+					youtube: [
+						{ id: 'QUT1VHIxAN4', title: 'NumPy Tutorial (Corey Schafer)', embed: true },
+						{ id: '8QntRYJuCyo', title: 'NumPy Full Course' }
+					]
+				},
+				matplotlib: {
+					title: 'Matplotlib & Visualization',
+					kaggle: [{ name: 'Data visualization', url: 'https://www.kaggle.com/learn/data-visualization' }],
+					medium: [{ name: 'Matplotlib', url: 'https://medium.com/tag/matplotlib' }],
+					youtube: [
+						{ id: 'UO98lJQedQc', title: 'Matplotlib Tutorial (Corey Schafer)', embed: true },
+						{ id: 'DAQNHzOcH5A', title: 'Python Data Visualization' }
+					]
+				},
+				'data-science': {
+					title: 'Data Science',
+					kaggle: [
+						{ name: 'Kaggle Learn', url: 'https://www.kaggle.com/learn' },
+						{ name: 'Kaggle Datasets', url: 'https://www.kaggle.com/datasets' },
+						{ name: 'Machine Learning Mastery', url: 'https://machinelearningmastery.com' }
+					],
+					books: [
+						{ name: 'Data Science (open book)', url: 'https://www.openintro.org/book/os' },
+						{ name: 'Data Science', url: 'https://medium.com/tag/data-science' }
+					],
+					youtube: [
+						{ id: 'ua-CiDNNj30', title: 'Data Science Full Course (freeCodeCamp)', embed: true },
+						{ id: 'X3paOmcrTjQ', title: 'Data Science Roadmap' }
+					]
+				},
+				'data-engineering': {
+					title: 'Data Engineering',
+					kaggle: [],
+					medium: [{ name: 'Data Engineering', url: 'https://medium.com/tag/data-engineering' }],
+					youtube: [
+						{ id: 'nK4gN6s0GlE', title: 'Data Engineering Roadmap', embed: true },
+						{ id: 'VgfdRlZ2qKE', title: 'Data Engineering Tutorial' }
+					]
+				},
+				'business-analytics': {
+					title: 'Business Analytics',
+					kaggle: [{ name: 'Business Analytics', url: 'https://www.kaggle.com/datasets?topic=business' }],
+					medium: [{ name: 'Business Analytics', url: 'https://medium.com/tag/business-analytics' }],
+					youtube: [
+						{ id: 'Vnsjp0rofIs', title: 'Business Analytics (Google)', embed: true },
+						{ id: '5O0a5nM2hQk', title: 'Business Analytics Full Course' }
+					]
+				},
+				'product-analytics': {
+					title: 'Product Analytics',
+					kaggle: [],
+					medium: [{ name: 'Product Analytics', url: 'https://medium.com/tag/product-analytics' }],
+					youtube: [
+						{ id: 'lOze4dFhV2g', title: 'Product Analytics (Amplitude)', embed: true },
+						{ id: 'P7H7R0yJ1QU', title: 'Product Analytics Tutorial' }
+					]
+				},
+				excel: {
+					title: 'Excel',
+					kaggle: [{ name: 'Excel for Data Analysis', url: 'https://www.kaggle.com/learn/intro-to-machine-learning' }, { name: 'Data cleaning in spreadsheets', url: 'https://www.kaggle.com/learn/data-cleaning' }],
+					books: [{ name: 'Excel Easy', url: 'https://www.excel-easy.com' }, { name: 'Chandoo.org (Excel)', url: 'https://chandoo.org' }],
+					youtube: [
+						{ id: 'Vl0H-qTclOg', title: 'Excel for Beginners (freeCodeCamp)', embed: true },
+						{ id: 'K74_FNnlIF8', title: 'Excel Full Course (Simplilearn)' },
+						{ id: 'ZhdMdKZ5AQc', title: 'Excel for Data Analysis (Alex The Analyst)' }
+					]
+				},
+				'power-bi': {
+					title: 'Power BI',
+					kaggle: [{ name: 'Microsoft Learn Power BI', url: 'https://learn.microsoft.com/en-us/training/powerplatform/power-bi' }],
+					books: [{ name: 'Power BI docs', url: 'https://learn.microsoft.com/en-us/power-bi' }, { name: 'Guy in a Cube (blog)', url: 'https://guyinacube.com' }],
+					youtube: [
+						{ id: '1c01f6T1_2E', title: 'Power BI Full Course (freeCodeCamp)', embed: true },
+						{ id: 'AG2QqmG1oGU', title: 'Power BI Tutorial (Guy in a Cube)' },
+						{ id: '5KkRWe_8aSo', title: 'Power BI for Beginners' }
+					]
+				},
+				tableau: {
+					title: 'Tableau',
+					kaggle: [],
+					books: [{ name: 'Tableau Help', url: 'https://help.tableau.com' }, { name: 'Tableau Public', url: 'https://public.tableau.com' }],
+					youtube: [
+						{ id: '6xv6Y0rRES0', title: 'Tableau Full Course (freeCodeCamp)', embed: true },
+						{ id: '6xv6Y0rRES0', title: 'Tableau for Beginners' }
+					]
+				},
+				'business-intelligence': {
+					title: 'Business Intelligence',
+					kaggle: [{ name: 'Data visualization', url: 'https://www.kaggle.com/learn/data-visualization' }],
+					books: [{ name: 'BI best practices', url: 'https://learn.microsoft.com/en-us/power-bi' }],
+					youtube: [
+						{ id: 'Vnsjp0rofIs', title: 'Business Analytics (Google)', embed: true },
+						{ id: '5O0a5nM2hQk', title: 'BI Full Course' }
+					]
+				}
+			};
+
+			var t = topics[topic];
+			var root = document.getElementById('resource-root');
+			var notFound = document.getElementById('resource-not-found');
+			if (!t) {
+				root.classList.add('hidden');
+				notFound.classList.remove('hidden');
+				return;
+			}
+			document.title = t.title + ' | Resources | Sumit S. Chaure';
+
+			var courses = t.courses || t.kaggle || [];
+			var read = t.books || t.medium || [];
+			var youtube = t.youtube || [];
+
+			var html = '<div class="mb-6"><a href="../playground.html" class="text-primary hover:underline text-sm">← Back to Playground</a></div>';
+			html += '<h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Learn ' + t.title + '</h1>';
+
+			// Three cards: YouTube | Book/Read | Course
+			html += '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
+
+			// Card 1: YouTube
+			html += '<div class="rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 overflow-hidden">';
+			html += '<div class="p-4 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"><h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2"><span aria-hidden="true">▶</span> YouTube</h2></div>';
+			html += '<div class="p-4">';
+			if (youtube.length) {
+				var first = youtube.find(function(y) { return y.embed; }) || youtube[0];
+				html += '<div class="rounded-lg overflow-hidden bg-black mb-3" style="aspect-ratio:16/9;"><iframe class="w-full h-full" src="https://www.youtube.com/embed/' + first.id + '?rel=0" title="' + (first.title || '') + '" allowfullscreen></iframe></div>';
+				html += '<p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Top videos & playlists</p><ul class="space-y-1">';
+				youtube.slice(0, 10).forEach(function(y) {
+					html += '<li><a href="https://www.youtube.com/watch?v=' + y.id + '" target="_blank" rel="noopener" class="text-sm text-primary hover:underline block truncate">' + (y.title || 'Video') + '</a></li>';
+				});
+				html += '</ul>';
+			} else { html += '<p class="text-sm text-gray-500 dark:text-gray-400">No videos listed.</p>'; }
+			html += '</div></div>';
+
+			// Card 2: Book / Read
+			html += '<div class="rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 overflow-hidden">';
+			html += '<div class="p-4 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"><h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2"><span aria-hidden="true">📖</span> Book / Read</h2></div>';
+			html += '<div class="p-4">';
+			if (read.length) {
+				html += '<ul class="space-y-2">';
+				read.forEach(function(r) {
+					html += '<li><a href="' + r.url + '" target="_blank" rel="noopener" class="text-sm text-primary hover:underline block">' + r.name + ' →</a></li>';
+				});
+				html += '</ul>';
+			} else { html += '<p class="text-sm text-gray-500 dark:text-gray-400">No readings listed.</p>'; }
+			html += '</div></div>';
+
+			// Card 3: Course
+			html += '<div class="rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 overflow-hidden">';
+			html += '<div class="p-4 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"><h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2"><span aria-hidden="true">🎓</span> Course</h2></div>';
+			html += '<div class="p-4">';
+			if (courses.length) {
+				html += '<ul class="space-y-2">';
+				courses.forEach(function(c) {
+					html += '<li><a href="' + c.url + '" target="_blank" rel="noopener" class="text-sm text-primary hover:underline block">' + c.name + ' →</a></li>';
+				});
+				html += '</ul>';
+			} else { html += '<p class="text-sm text-gray-500 dark:text-gray-400">No courses listed.</p>'; }
+			html += '</div></div>';
+
+			html += '</div>';
+			root.innerHTML = html;
+		})();
+	</script>
+</body>
+</html>

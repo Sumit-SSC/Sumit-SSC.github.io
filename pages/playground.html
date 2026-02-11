@@ -1,0 +1,851 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Playground | Sumit S. Chaure</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#4f46e5',
+						accent: '#0ea5e9',
+					}
+				}
+			}
+		}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../assets/css/custom.css" />
+	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
+	<link rel="icon" type="image/png" href="../assets/images/placeholder.png" />
+	<style>
+		body { font-family: 'Inter', sans-serif; }
+		#playground-sidebar { transition: width 0.2s ease; }
+		#playground-sidebar.collapsed { width: 48px; min-width: 48px; }
+		#playground-sidebar.collapsed .sidebar-content { display: none; }
+		#playground-sidebar .sidebar-toggle-vertical { writing-mode: vertical-rl; text-orientation: mixed; letter-spacing: 0.05em; }
+		#playground-sidebar:not(.collapsed) .sidebar-toggle-vertical { display: none; }
+		#playground-sidebar.collapsed .sidebar-toggle-horizontal { display: none; }
+		.resource-group .resource-sublist { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.25s ease, opacity 0.2s ease; }
+		.resource-group:hover .resource-sublist { max-height: 280px; opacity: 1; }
+		.code-editor-wrap { display: flex; border: 1px solid rgb(209 213 219); border-radius: 0.5rem; overflow: hidden; background: rgb(249 250 251); }
+		.dark .code-editor-wrap { border-color: rgb(75 85 99); background: rgb(17 24 39); }
+		.code-line-nums { width: 2.75rem; min-width: 2.75rem; padding: 0.5rem 0.25rem 0.5rem 0.5rem; font-family: ui-monospace, monospace; font-size: 0.875rem; line-height: 1.5; color: rgb(107 114 128); user-select: none; text-align: right; overflow-y: auto; flex-shrink: 0; border-right: 1px solid rgb(229 231 235); align-self: stretch; }
+		.dark .code-line-nums { color: rgb(156 163 175); border-right-color: rgb(75 85 99); }
+		.code-editor-wrap textarea { flex: 1; min-height: 8rem; padding: 0.5rem 0.75rem; margin: 0; border: none; border-radius: 0; resize: vertical; font-family: ui-monospace, monospace; font-size: 0.875rem; line-height: 1.5; background: transparent; }
+		.code-editor-wrap textarea:focus { outline: none; box-shadow: none; }
+		#assistant-panel { transform: translateX(100%); transition: transform 0.25s ease; }
+		#assistant-panel.open { transform: translateX(0); }
+		#assistant-overlay { opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+		#assistant-overlay.show { opacity: 1; pointer-events: auto; }
+	</style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased">
+	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
+
+	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
+		<div class="container mx-auto px-4 sm:px-6">
+			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
+				<a href="../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
+					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+						<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
+						<li><a href="resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Resume</a></li>
+						<li><a href="skills.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Skills</a></li>
+						<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">About</a></li>
+						<li><a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Contact</a></li>
+						<li><a href="playground.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Playground</a></li>
+					</ul>
+					<ul class="flex items-center gap-4">
+						<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></li>
+						<li><a href="https://github.com/Sumit-SC" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="GitHub"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a></li>
+						<li><a href="https://www.kaggle.com/mitsu00" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Kaggle"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg></a></li>
+						<li><a href="mailto:sumitsc.work@gmail.com" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Email"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<div class="flex">
+		<aside id="playground-sidebar" class="flex-shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 sticky top-[57px] self-start max-h-[calc(100vh-57px)] overflow-y-auto hidden lg:block w-[280px] shadow-sm">
+			<button type="button" id="sidebar-toggle-btn" class="w-full py-3 px-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-gray-200 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 flex items-center justify-center min-h-[3rem]" aria-label="Toggle Resources">
+				<span class="sidebar-toggle-horizontal">&#9664; Close</span>
+				<span class="sidebar-toggle-vertical">Resources</span>
+			</button>
+			<div class="sidebar-content p-3">
+				<h3 class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-3 px-1 border-b border-gray-300 dark:border-gray-600 pb-2">Learn by topic</h3>
+				<nav class="space-y-1 text-sm">
+					<div class="resource-group rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+						<p class="font-semibold text-gray-800 dark:text-gray-100 py-2 px-2 cursor-default">Programming</p>
+						<ul class="resource-sublist pl-3 pb-2 space-y-0.5">
+							<li><a href="playground/resource.html?topic=python" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Python</a></li>
+							<li><a href="playground/resource.html?topic=sql" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">SQL</a></li>
+							<li><a href="playground/resource.html?topic=git" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Git</a></li>
+							<li><a href="playground/resource.html?topic=programming" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Programming</a></li>
+						</ul>
+					</div>
+					<div class="resource-group rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+						<p class="font-semibold text-gray-800 dark:text-gray-100 py-2 px-2 cursor-default">Data Analytics</p>
+						<ul class="resource-sublist pl-3 pb-2 space-y-0.5">
+							<li><a href="playground/resource.html?topic=python" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Python</a></li>
+							<li><a href="playground/resource.html?topic=pandas" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Pandas</a></li>
+							<li><a href="playground/resource.html?topic=numpy" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">NumPy</a></li>
+							<li><a href="playground/resource.html?topic=matplotlib" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Matplotlib</a></li>
+						</ul>
+					</div>
+					<div class="resource-group rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+						<p class="font-semibold text-gray-800 dark:text-gray-100 py-2 px-2 cursor-default">Business Intelligence</p>
+						<ul class="resource-sublist pl-3 pb-2 space-y-0.5">
+							<li><a href="playground/resource.html?topic=excel" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Excel</a></li>
+							<li><a href="playground/resource.html?topic=power-bi" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Power BI</a></li>
+							<li><a href="playground/resource.html?topic=tableau" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Tableau</a></li>
+							<li><a href="playground/resource.html?topic=business-intelligence" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">BI overview</a></li>
+						</ul>
+					</div>
+					<div class="resource-group rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+						<p class="font-semibold text-gray-800 dark:text-gray-100 py-2 px-2 cursor-default">Data Science</p>
+						<ul class="resource-sublist pl-3 pb-2 space-y-0.5">
+							<li><a href="playground/resource.html?topic=data-science" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Data Science</a></li>
+						</ul>
+					</div>
+					<div class="resource-group rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+						<p class="font-semibold text-gray-800 dark:text-gray-100 py-2 px-2 cursor-default">Data Engineering</p>
+						<ul class="resource-sublist pl-3 pb-2 space-y-0.5">
+							<li><a href="playground/resource.html?topic=data-engineering" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Data Engineering</a></li>
+						</ul>
+					</div>
+					<div class="resource-group rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+						<p class="font-semibold text-gray-800 dark:text-gray-100 py-2 px-2 cursor-default">Business / Product</p>
+						<ul class="resource-sublist pl-3 pb-2 space-y-0.5">
+							<li><a href="playground/resource.html?topic=business-analytics" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Business Analytics</a></li>
+							<li><a href="playground/resource.html?topic=product-analytics" class="text-gray-600 dark:text-gray-400 hover:text-primary block py-0.5">Product Analytics</a></li>
+						</ul>
+					</div>
+				</nav>
+			</div>
+		</aside>
+		<main class="flex-1 min-w-0 container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
+		<div class="text-center mb-8">
+			<h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3">Playground</h1>
+			<p class="text-gray-600 dark:text-gray-300">
+				Run Python and data code in your browser or open full environments in a new tab. No setup.
+			</p>
+			<p class="text-sm text-gray-500 dark:text-gray-400 mt-2 lg:hidden">
+				Resources: <a href="playground/resource.html?topic=python" class="text-primary hover:underline">Python</a> · <a href="playground/resource.html?topic=sql" class="text-primary hover:underline">SQL</a> · <a href="playground/resource.html?topic=pandas" class="text-primary hover:underline">Pandas</a> · <a href="playground/resource.html?topic=data-science" class="text-primary hover:underline">Data Science</a> · <a href="playground/resource.html?topic=product-analytics" class="text-primary hover:underline">Product Analytics</a>
+			</p>
+		</div>
+
+		<!-- Run code in the browser: Python (Pyodide) + JavaScript - no form so Run does not submit -->
+		<section class="mb-10 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 p-4 sm:p-6" id="playground-code-section">
+			<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Run code in the browser</h2>
+			<p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+				Python via <a href="https://pyodide.org" target="_blank" rel="noopener" class="underline hover:text-primary">Pyodide</a> (first run ~30s) or JavaScript (instant). Simple snippets only.
+			</p>
+			<div class="flex flex-wrap items-center gap-3 mb-2">
+				<label class="text-sm font-medium text-gray-700 dark:text-gray-300">Language:</label>
+				<select id="playground-lang" class="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 px-3 py-1.5 text-sm font-medium">
+					<option value="python">Python</option>
+					<option value="javascript">JavaScript</option>
+					<option value="sql">SQL (SQLite)</option>
+				</select>
+			</div>
+			<div class="code-editor-wrap">
+				<div id="code-line-nums" class="code-line-nums" aria-hidden="true">1</div>
+				<textarea id="playground-code" class="text-gray-800 dark:text-gray-200" placeholder="print('Hello')" spellcheck="false"></textarea>
+			</div>
+			<div class="flex items-center gap-2 mt-2">
+				<button type="button" id="playground-run" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90">Run</button>
+				<span id="playground-status" class="text-xs text-gray-500 dark:text-gray-400"></span>
+			</div>
+			<div id="sql-actions" class="hidden mt-3 flex flex-wrap items-center gap-2">
+				<button type="button" id="sql-reset" class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700">Reset DB</button>
+				<button type="button" id="sql-sample" class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700">Load sample data</button>
+				<span class="text-xs text-gray-500 dark:text-gray-400">Runs in-memory SQLite (no server).</span>
+			</div>
+			<pre id="playground-output" class="mt-2 p-3 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm font-mono overflow-x-auto min-h-[2rem] hidden"></pre>
+		</section>
+
+		<!-- Cards: open in new tab -->
+		<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+			<a href="https://colab.new" target="_blank" rel="noopener" class="block p-6 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-primary hover:shadow-lg transition-all text-left group">
+				<div class="flex items-center gap-3 mb-2">
+					<span class="text-2xl" aria-hidden="true">&#128211;</span>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">Google Colab</h2>
+				</div>
+				<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+					New blank notebook in the browser. Great for Python, pandas, and full projects.
+				</p>
+				<span class="text-sm font-medium text-primary">Open in new tab &#8594;</span>
+			</a>
+			<a href="https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/main?urlpath=lab" target="_blank" rel="noopener" class="block p-6 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-primary hover:shadow-lg transition-all text-left group">
+				<div class="flex items-center gap-3 mb-2">
+					<span class="text-2xl" aria-hidden="true">&#128187;</span>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">Jupyter (Binder)</h2>
+				</div>
+				<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+					Temp JupyterLab session. May take 1&#8211;2 min to start. No login.
+				</p>
+				<span class="text-sm font-medium text-primary">Open in new tab &#8594;</span>
+			</a>
+			<a href="https://jupyterlite.github.io/demo/lab/" target="_blank" rel="noopener" class="block p-6 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-primary hover:shadow-lg transition-all text-left group">
+				<div class="flex items-center gap-3 mb-2">
+					<span class="text-2xl" aria-hidden="true">&#128218;</span>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">JupyterLite (in-browser)</h2>
+				</div>
+				<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+					A real notebook UI that runs fully in the browser. Great for quick experiments.
+				</p>
+				<span class="text-sm font-medium text-primary">Open in new tab &#8594;</span>
+			</a>
+		</div>
+
+		<p class="text-xs text-gray-500 dark:text-gray-400 text-center mb-4">
+			Colab and Binder run on their servers; sessions are temporary. For your own repo on Binder’s and Google’s servers. To launch your own repo on Binder, use <a href="https://mybinder.org" target="_blank" rel="noopener" class="underline hover:text-primary">mybinder.org</a> with a GitHub repo URL.
+		</p>
+
+		<!-- Embedded JupyterLite (on-demand) -->
+		<section class="mb-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 sm:p-6">
+			<div class="flex items-center justify-between mb-2">
+				<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Embedded notebook (JupyterLite)</h2>
+				<button type="button" id="jlite-toggle" class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-xs font-semibold text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Show notebook</button>
+			</div>
+			<p class="text-xs text-gray-500 dark:text-gray-400">Loads the JupyterLite demo (<code>jupyterlite.github.io</code>) inside this page. First load may take a bit.</p>
+			<div id="jlite-wrap" class="mt-3 hidden">
+				<iframe id="jlite-frame" class="w-full h-[600px] rounded-lg border border-gray-200 dark:border-gray-700 bg-white" title="JupyterLite notebook"></iframe>
+			</div>
+		</section>
+		</main>
+	</div>
+
+	<!-- Learning assistant: popup chat (Playground page only) -->
+	<button type="button" id="assistant-btn" class="fixed bottom-6 right-6 z-30 w-12 h-12 rounded-full bg-primary text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center" aria-label="Open learning assistant">
+		<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+	</button>
+	<div id="assistant-overlay" class="fixed inset-0 bg-black/30 z-40" aria-hidden="true"></div>
+	<div id="assistant-panel" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-800 shadow-xl z-50 flex flex-col" role="dialog" aria-label="Learning assistant">
+		<div class="p-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+			<div>
+				<h3 class="font-semibold text-gray-800 dark:text-gray-100">Learning assistant</h3>
+				<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">FAQ + Wikipedia for concepts. No match? Tap to search on Google.</p>
+			</div>
+			<button type="button" id="assistant-close" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Close">&#10005;</button>
+		</div>
+		<div id="assistant-messages" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-0"></div>
+		<div class="p-4 border-t border-gray-200 dark:border-gray-600">
+			<div class="flex gap-2">
+				<input type="text" id="assistant-input" class="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-500" placeholder="Ask anything (e.g. explain a concept, grammar…)">
+				<button type="button" id="assistant-send" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90">Send</button>
+			</div>
+			<p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Default: FAQ + Wikipedia. Optional: enable a fuller chatbot (one-time ~80MB download) for more conversational replies. Always includes Google search.</p>
+			<div class="flex flex-wrap items-center gap-2 mt-3">
+				<button type="button" id="assistant-enable-model" class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700">Enable full chatbot (~80MB)</button>
+				<button type="button" id="assistant-clear" class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Clear chat</button>
+				<span id="assistant-mode-status" class="text-xs text-gray-500 dark:text-gray-400"></span>
+			</div>
+		</div>
+	</div>
+
+	<footer class="border-t border-gray-200 dark:border-gray-700 mt-12 py-6">
+		<div class="container mx-auto px-6 text-center text-sm text-gray-700 dark:text-gray-200 space-y-1">
+			<p>&copy; 2026 Sumit S. Chaure · Data & Analytics Playground</p>
+			<p class="text-xs">
+				Code runner: <a href="https://pyodide.org" target="_blank" rel="noopener" class="underline hover:text-primary">Pyodide</a> (Python),
+				<a href="https://sql.js.org" target="_blank" rel="noopener" class="underline hover:text-primary">sql.js</a> (SQLite),
+				<a href="https://jupyterlite.github.io/demo/lab/" target="_blank" rel="noopener" class="underline hover:text-primary">JupyterLite</a>,
+				<a href="https://mybinder.org" target="_blank" rel="noopener" class="underline hover:text-primary">Binder/Jupyter</a>,
+				<a href="https://colab.research.google.com" target="_blank" rel="noopener" class="underline hover:text-primary">Google Colab</a>.
+			</p>
+			<p class="text-xs">
+				Resources & assistant: <a href="https://www.kaggle.com/learn" target="_blank" rel="noopener" class="underline hover:text-primary">Kaggle Learn</a>,
+				<a href="https://medium.com" target="_blank" rel="noopener" class="underline hover:text-primary">Medium</a>,
+				<a href="https://www.youtube.com" target="_blank" rel="noopener" class="underline hover:text-primary">YouTube</a>,
+				<a href="https://wikipedia.org" target="_blank" rel="noopener" class="underline hover:text-primary">Wikipedia</a>,
+				optional chatbot via <a href="https://github.com/xenova/transformers.js" target="_blank" rel="noopener" class="underline hover:text-primary">Transformers.js</a> (Flan‑T5 small). Not affiliated with these services.
+			</p>
+		</div>
+	</footer>
+
+	<script src="../assets/js/main.js"></script>
+	<script>
+		(function() {
+			var sidebar = document.getElementById('playground-sidebar');
+			var btn = document.getElementById('sidebar-toggle-btn');
+			if (sidebar && btn) {
+				btn.addEventListener('click', function() {
+					sidebar.classList.toggle('collapsed');
+				});
+			}
+		})();
+	</script>
+	<script>
+		(function() {
+			var runBtn = document.getElementById('playground-run');
+			var codeEl = document.getElementById('playground-code');
+			var statusEl = document.getElementById('playground-status');
+			var outputEl = document.getElementById('playground-output');
+			var langSelect = document.getElementById('playground-lang');
+			var lineNumsEl = document.getElementById('code-line-nums');
+			var sqlActionsEl = document.getElementById('sql-actions');
+			var sqlResetBtn = document.getElementById('sql-reset');
+			var sqlSampleBtn = document.getElementById('sql-sample');
+			if (!runBtn || !codeEl || !outputEl || !lineNumsEl) return;
+
+			var pyodideReady = null;
+			var sqlReady = null; // initSqlJs instance
+			var sqlDb = null; // persistent in-memory DB (until refresh)
+			var PLACEHOLDERS = {
+				python: "print('Hello')\nfor i in range(3):\n    print(i * i)",
+				javascript: "console.log('Hello');\nfor (let i = 0; i < 3; i++) console.log(i * i);",
+				sql: "-- SQL (SQLite in-browser)\n-- Try:\n-- SELECT 1 as one;\n\n-- Create sample table:\n-- CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT, age INT);\n-- INSERT INTO users(name, age) VALUES ('Ava', 25), ('Ben', 31);\n-- SELECT * FROM users WHERE age > 26;\n"
+			};
+
+			function setStatus(t) { if (statusEl) statusEl.textContent = t; }
+			function showOut(t) {
+				var text = (t == null) ? '' : String(t);
+				outputEl.textContent = text;
+				outputEl.classList.toggle('hidden', text.length === 0);
+			}
+			function updateLineNumbers() {
+				var text = codeEl.value || '';
+				var n = (text.match(/\n/g) || []).length + 1;
+				var nums = [];
+				for (var i = 1; i <= Math.max(n, 1); i++) nums.push(i);
+				lineNumsEl.textContent = nums.join('\n');
+			}
+			function syncScroll() {
+				lineNumsEl.scrollTop = codeEl.scrollTop;
+			}
+			codeEl.addEventListener('input', updateLineNumbers);
+			codeEl.addEventListener('scroll', syncScroll);
+			codeEl.addEventListener('focus', syncScroll);
+			updateLineNumbers();
+
+			langSelect.addEventListener('change', function() {
+				codeEl.placeholder = PLACEHOLDERS[langSelect.value] || PLACEHOLDERS.python;
+				updateLineNumbers();
+				if (sqlActionsEl) sqlActionsEl.classList.toggle('hidden', langSelect.value !== 'sql');
+			});
+			codeEl.placeholder = PLACEHOLDERS.python;
+			if (sqlActionsEl) sqlActionsEl.classList.add('hidden');
+
+			function loadSqlJs() {
+				if (sqlReady) return Promise.resolve(sqlReady);
+				return new Promise(function(resolve, reject) {
+					// Load sql.js runtime
+					var s = document.createElement('script');
+					s.src = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js';
+					s.onload = function() {
+						if (typeof initSqlJs !== 'function') { reject(new Error('sql.js init not found')); return; }
+						initSqlJs({
+							locateFile: function(file) {
+								return 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/' + file;
+							}
+						}).then(function(SQL) {
+							sqlReady = SQL;
+							resolve(SQL);
+						}).catch(reject);
+					};
+					s.onerror = function() { reject(new Error('Failed to load sql.js')); };
+					document.head.appendChild(s);
+				});
+			}
+
+			function formatSqlResults(results) {
+				// sql.js returns: [{columns: [...], values: [[...], ...]}, ...]
+				if (!results || !results.length) return '(ok)';
+				var out = [];
+				results.forEach(function(r, idx) {
+					out.push('Result ' + (idx + 1) + ':');
+					out.push(r.columns.join(' | '));
+					out.push(r.columns.map(function() { return '---'; }).join(' | '));
+					(r.values || []).forEach(function(row) {
+						out.push(row.map(function(v) { return (v === null || v === undefined) ? 'NULL' : String(v); }).join(' | '));
+					});
+					out.push('');
+				});
+				return out.join('\n').trim();
+			}
+
+			function ensureSqlDb() {
+				return loadSqlJs().then(function(SQL) {
+					if (!sqlDb) sqlDb = new SQL.Database();
+					return sqlDb;
+				});
+			}
+
+			if (sqlResetBtn) {
+				sqlResetBtn.addEventListener('click', function() {
+					showOut('');
+					setStatus('Resetting DB…');
+					loadSqlJs().then(function(SQL) {
+						sqlDb = new SQL.Database();
+						showOut('Database reset. Try: SELECT 1;');
+						setStatus('Ready.');
+					}).catch(function(err) {
+						showOut('SQL engine load failed: ' + (err && err.message ? err.message : String(err)));
+						setStatus('Error.');
+					});
+				});
+			}
+
+			if (sqlSampleBtn) {
+				sqlSampleBtn.addEventListener('click', function() {
+					showOut('');
+					setStatus('Loading sample data…');
+					ensureSqlDb().then(function(db) {
+						try {
+							db.exec(
+								"DROP TABLE IF EXISTS users; " +
+								"DROP TABLE IF EXISTS orders; " +
+								"CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT, age INT); " +
+								"CREATE TABLE orders(id INTEGER PRIMARY KEY, user_id INT, amount REAL); " +
+								"INSERT INTO users(name, age) VALUES ('Ava', 25), ('Ben', 31), ('Chloe', 28); " +
+								"INSERT INTO orders(user_id, amount) VALUES (1, 19.99), (2, 49.50), (2, 15.00), (3, 99.00);"
+							);
+							var res = db.exec("SELECT u.name, u.age, COUNT(o.id) AS orders, ROUND(SUM(o.amount), 2) AS total_amount " +
+								"FROM users u LEFT JOIN orders o ON u.id = o.user_id " +
+								"GROUP BY u.id, u.name, u.age " +
+								"ORDER BY total_amount DESC;");
+							showOut('Sample data loaded.\n\n' + formatSqlResults(res));
+							setStatus('Ready.');
+						} catch (err) {
+							showOut(err && err.message ? err.message : String(err));
+							setStatus('Error.');
+						}
+					}).catch(function(err) {
+						showOut('SQL engine load failed: ' + (err && err.message ? err.message : String(err)));
+						setStatus('Error.');
+					});
+				});
+			}
+
+			runBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				var code = (codeEl && codeEl.value) || '';
+				var lang = (langSelect && langSelect.value) || 'python';
+				if (!code.trim()) { showOut(''); setStatus(''); return; }
+
+				if (lang === 'javascript') {
+					showOut('');
+					setStatus('Running…');
+					var out = [];
+					var customConsole = {
+						log: function() { out.push(Array.prototype.slice.call(arguments).join(' ')); },
+						warn: function() { out.push('warn: ' + Array.prototype.slice.call(arguments).join(' ')); },
+						error: function() { out.push('error: ' + Array.prototype.slice.call(arguments).join(' ')); },
+						info: function() { out.push(Array.prototype.slice.call(arguments).join(' ')); }
+					};
+					try {
+						var fn = new Function('console', code);
+						fn(customConsole);
+						showOut(out.length ? out.join('\n') : '(no output)');
+						setStatus('Done.');
+					} catch (err) {
+						showOut(err.message || String(err));
+						setStatus('Error.');
+					}
+					return;
+				}
+
+				if (lang === 'sql') {
+					showOut('');
+					setStatus('Loading SQL engine…');
+					loadSqlJs().then(function(SQL) {
+						if (!sqlDb) {
+							sqlDb = new SQL.Database();
+						}
+						setStatus('Running…');
+						try {
+							// Execute statements; syntax errors will throw.
+							var results = sqlDb.exec(code);
+							showOut(formatSqlResults(results));
+							setStatus('Done.');
+						} catch (err) {
+							showOut(err && err.message ? err.message : String(err));
+							setStatus('Error.');
+						}
+					}).catch(function(err) {
+						showOut('SQL engine load failed: ' + (err && err.message ? err.message : String(err)));
+						setStatus('Error.');
+					});
+					return;
+				}
+
+				function runWithPyodide() {
+					showOut('');
+					setStatus('Running…');
+					try {
+						// Encode user code so we can safely pass it into a Python string (avoids setStdout/setStderr which can cause Errno 29 I/O in browser)
+						var encoded = btoa(unescape(encodeURIComponent(code)));
+						var wrapper = 'import sys\nimport base64\nfrom io import StringIO\n_out = StringIO()\n_err = StringIO()\nsys.stdout = _out\nsys.stderr = _err\ntry:\n    exec(base64.b64decode("' + encoded + '").decode("utf-8"))\nexcept Exception:\n    import traceback\n    traceback.print_exc(file=sys.stderr)\nfinally:\n    sys.stdout = sys.__stdout__\n    sys.stderr = sys.__stderr__\n_out.getvalue() + _err.getvalue()';
+						var result = pyodideReady.runPython(wrapper);
+						var text = (typeof result === 'string') ? result : (result && result.toString ? result.toString() : String(result != null ? result : ''));
+						if (!text) text = '(no output)';
+						showOut(text);
+						setStatus('Done.');
+					} catch (err) {
+						outputEl.textContent = (outputEl.textContent ? outputEl.textContent + '\n' : '') + (err.message || String(err));
+						outputEl.classList.remove('hidden');
+						setStatus('Error.');
+					}
+				}
+				if (pyodideReady) {
+					runWithPyodide();
+					return;
+				}
+				setStatus('Loading Pyodide (~30s first time)…');
+				var s = document.createElement('script');
+				s.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+				s.onload = function() {
+					loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/' }).then(function(pyodide) {
+						pyodideReady = pyodide;
+						setStatus('Ready. Running…');
+						runWithPyodide();
+					}).catch(function(e) {
+						setStatus('Load failed.');
+						showOut('Failed to load Pyodide: ' + (e.message || e));
+					});
+				};
+				s.onerror = function() { setStatus('Script load failed.'); showOut('Could not load Pyodide.'); };
+				document.head.appendChild(s);
+			});
+		})();
+	</script>
+	<script>
+		(function() {
+			var btn = document.getElementById('assistant-btn');
+			var closeBtn = document.getElementById('assistant-close');
+			var overlay = document.getElementById('assistant-overlay');
+			var panel = document.getElementById('assistant-panel');
+			var messagesEl = document.getElementById('assistant-messages');
+			var inputEl = document.getElementById('assistant-input');
+			var sendBtn = document.getElementById('assistant-send');
+			var enableBtn = document.getElementById('assistant-enable-model');
+			var clearBtn = document.getElementById('assistant-clear');
+			var modeStatus = document.getElementById('assistant-mode-status');
+			if (!btn || !panel || !messagesEl || !inputEl || !sendBtn) return;
+
+			var STORAGE_KEY = 'playground_assistant_history_v1';
+			var MODE_KEY = 'playground_assistant_mode_v1';
+			var history = [];
+			var isRestoring = false;
+			var mode = (function() {
+				try { return localStorage.getItem(MODE_KEY) || 'light'; } catch (e) { return 'light'; }
+			})();
+			var modelPipeline = null;
+			var modelLoading = null;
+
+			function setModeStatus(text) {
+				if (!modeStatus) return;
+				if (text) { modeStatus.textContent = text; return; }
+				modeStatus.textContent = (mode === 'model') ? 'Full chatbot: enabled (loads on first use).' : 'Light mode: FAQ + Wikipedia.';
+			}
+			setModeStatus();
+
+			function persistHistory() {
+				try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-80))); } catch (e) {}
+			}
+			function pushHistory(item) {
+				history.push(item);
+				persistHistory();
+			}
+			function clearHistory() {
+				history = [];
+				try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+			}
+
+			function openPanel() {
+				panel.classList.add('open');
+				if (overlay) overlay.classList.add('show');
+				if (messagesEl.children.length === 0) {
+					addMessage('assistant', 'Hi! I use a short FAQ and Wikipedia for concepts. Optional: enable the full chatbot for more conversational replies. If I can’t answer, use the Google search button.');
+					pushHistory({ role: 'assistant', text: 'Hi! I use a short FAQ and Wikipedia for concepts. Optional: enable the full chatbot for more conversational replies. If I can’t answer, use the Google search button.' });
+				}
+			}
+			function closePanel() {
+				panel.classList.remove('open');
+				if (overlay) overlay.classList.remove('show');
+			}
+			btn.addEventListener('click', openPanel);
+			closeBtn.addEventListener('click', closePanel);
+			overlay.addEventListener('click', closePanel);
+
+			function makeGoogleLink(query, label) {
+				var a = document.createElement('a');
+				a.href = 'https://www.google.com/search?q=' + encodeURIComponent(query || '');
+				a.target = '_blank';
+				a.rel = 'noopener noreferrer';
+				a.className = 'inline-flex items-center gap-1 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-primary text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 w-fit';
+				a.textContent = label || 'Search on Google \u2192';
+				return a;
+			}
+			function addMessage(role, text, opts) {
+				var isUser = role === 'user';
+				var outer = document.createElement('div');
+				outer.className = isUser ? 'flex justify-end' : 'flex justify-start';
+
+				var container = document.createElement('div');
+				container.className = 'flex flex-col gap-1 max-w-[85%]';
+
+				var bubble = document.createElement('div');
+				bubble.className = isUser
+					? 'rounded-lg px-3 py-2 bg-primary text-white text-sm'
+					: 'rounded-lg px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm';
+				bubble.textContent = text;
+
+				container.appendChild(bubble);
+				if (!isUser && opts && opts.searchQuery) {
+					container.appendChild(makeGoogleLink(opts.searchQuery));
+				}
+
+				outer.appendChild(container);
+				messagesEl.appendChild(outer);
+				messagesEl.scrollTop = messagesEl.scrollHeight;
+				return outer;
+			}
+			function addAssistant(text, searchQuery, searchLabel) {
+				var isUserQuery = (searchQuery || '').trim().length > 0;
+				var outer = document.createElement('div');
+				outer.className = 'flex justify-start';
+				var container = document.createElement('div');
+				container.className = 'flex flex-col gap-1 max-w-[85%]';
+				var bubble = document.createElement('div');
+				bubble.className = 'rounded-lg px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm';
+				bubble.textContent = text;
+				container.appendChild(bubble);
+				if (isUserQuery) container.appendChild(makeGoogleLink(searchQuery, searchLabel));
+				outer.appendChild(container);
+				messagesEl.appendChild(outer);
+				messagesEl.scrollTop = messagesEl.scrollHeight;
+				return outer;
+			}
+
+			function restoreFromStorage() {
+				var raw = null;
+				try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+				if (!raw) return;
+				try {
+					var parsed = JSON.parse(raw);
+					if (!Array.isArray(parsed)) return;
+					isRestoring = true;
+					history = parsed.slice(-80);
+					for (var i = 0; i < history.length; i++) {
+						var it = history[i];
+						if (!it || !it.role) continue;
+						if (it.role === 'user') addMessage('user', it.text || '');
+						else addMessage('assistant', it.text || '', it.searchQuery ? { searchQuery: it.searchQuery } : null);
+					}
+				} catch (e) {
+					// ignore
+				} finally {
+					isRestoring = false;
+				}
+			}
+			restoreFromStorage();
+
+			if (clearBtn) {
+				clearBtn.addEventListener('click', function() {
+					clearHistory();
+					messagesEl.innerHTML = '';
+					addMessage('assistant', 'Chat cleared. Ask a question any time.');
+					pushHistory({ role: 'assistant', text: 'Chat cleared. Ask a question any time.' });
+				});
+			}
+
+			async function ensureModelLoaded() {
+				if (modelPipeline) return modelPipeline;
+				if (modelLoading) return modelLoading;
+				modelLoading = (async function() {
+					setModeStatus('Downloading model (~80MB)…');
+					var mod = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+					// Flan-T5 Small: better for Q&A/instructions (similar size class to t5-small)
+					modelPipeline = await mod.pipeline('text2text-generation', 'Xenova/flan-t5-small');
+					setModeStatus('Full chatbot: ready.');
+					return modelPipeline;
+				})();
+				return modelLoading;
+			}
+
+			if (enableBtn) {
+				// If user previously enabled it, reflect in UI (but still lazy-load model on first use)
+				if (mode === 'model') {
+					enableBtn.textContent = 'Full chatbot enabled';
+					enableBtn.disabled = true;
+				}
+				enableBtn.addEventListener('click', function() {
+					mode = 'model';
+					try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+					setModeStatus();
+					enableBtn.disabled = true;
+					enableBtn.textContent = 'Downloading…';
+					addAssistant('Downloading optional chatbot model (~80MB). This is one-time and cached by your browser.', 'chatbot model download size ~80MB flan t5 small');
+					ensureModelLoaded().then(function() {
+						enableBtn.textContent = 'Full chatbot enabled';
+						addAssistant('Model ready. Your next questions will use chat history for more context.', 'how to prompt flan t5 for conversation');
+					}).catch(function(err) {
+						mode = 'light';
+						try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+						setModeStatus('Light mode: FAQ + Wikipedia.');
+						enableBtn.disabled = false;
+						enableBtn.textContent = 'Enable full chatbot (~80MB)';
+						addAssistant('Model failed to load: ' + (err && err.message ? err.message : String(err)) + '. Staying in light mode.', 'transformers.js flan t5 small browser error');
+					});
+				});
+			}
+
+			// Curated Q&A: keywords (lowercase) -> answer. Keeps assistant under ~20KB, no model download.
+			var faq = [
+				{ keys: ['loop', 'for', 'while', 'iterate', 'iteration'], answer: 'A loop repeats code. In Python: "for x in items:" or "while condition:". In JavaScript: "for (let i=0; i<n; i++)" or "while (cond)". Use for/while when you need to repeat steps.' },
+				{ keys: ['sql join', 'join', 'inner join', 'left join'], answer: 'JOIN combines rows from two tables. INNER JOIN: only matching rows. LEFT JOIN: all from left table + matches from right (nulls if no match). Use ON to specify the column(s) that link them, e.g. ON a.id = b.user_id.' },
+				{ keys: ['python list', 'list', 'tuple', 'list vs tuple'], answer: 'List is mutable (you can append, change items); tuple is immutable. Use a list for a collection that changes; use a tuple for fixed data (e.g. coordinates) or as dict keys. Syntax: list = [1,2,3], tuple = (1,2,3).' },
+				{ keys: ['pandas', 'dataframe', 'series'], answer: 'Pandas: library for tabular data. DataFrame = table (rows and columns). Series = single column. Use pd.read_csv() to load data, df.head(), df.columns, df.groupby(), df.merge() for analysis. See Resources for Kaggle Learn Pandas.' },
+				{ keys: ['variable', 'declare', 'assign'], answer: 'A variable stores a value. Python: x = 5 (no keyword). JavaScript: let x = 5 or const x = 5. Use "let" for values that change, "const" for constants. Always give variables clear names.' },
+				{ keys: ['function', 'def', 'return'], answer: 'A function is reusable code. Python: "def name(args):" then "return value". JavaScript: "function name(args) { return value; }" or "const name = (args) => value;". Call with name(arg1, arg2).' },
+				{ keys: ['grammar', 'sentence', 'comma', 'apostrophe'], answer: 'Basics: Start sentences with a capital letter. Use a comma before "and"/"but" in a list. Use an apostrophe for possession (e.g. the dog\'s tail). For code, naming and comments help readability more than natural-language grammar.' },
+				{ keys: ['what is python', 'python'], answer: 'Python is a programming language great for data, automation, and scripting. It uses indentation for blocks (no braces). Try the code editor above or see Resources → Python for courses and videos.' },
+				{ keys: ['what is sql', 'sql'], answer: 'SQL (Structured Query Language) is for querying and managing databases. You SELECT columns FROM tables WHERE conditions, use JOIN to combine tables, GROUP BY for aggregation. See Resources → SQL for free courses.' },
+				{ keys: ['git', 'commit', 'push', 'version control'], answer: 'Git tracks changes in your code. "git add ." stages files; "git commit -m \'message\'" saves a snapshot; "git push" sends to a remote (e.g. GitHub). Use branches for new features. See Resources → Git for tutorials.' },
+				{ keys: ['error', 'bug', 'debug'], answer: 'Read the error message: it usually says the line and what went wrong. Use print() or console.log() to inspect values. Check spelling, brackets, and types (string vs number). Try running a smaller part of the code to isolate the bug.' },
+				{ keys: ['data science', 'data analytics', 'ml', 'machine learning'], answer: 'Data science combines stats, coding, and domain knowledge. Data analytics focuses on insights from data; ML builds models that learn from data. Start with Python, pandas, SQL, then add stats and ML. See Resources for learning paths.' }
+			];
+
+			function getReply(query) {
+				var q = (query || '').toLowerCase().replace(/\s+/g, ' ').trim();
+				if (!q) return { answer: null, matched: false };
+				var best = { score: 0, answer: null };
+				for (var i = 0; i < faq.length; i++) {
+					var score = 0;
+					for (var j = 0; j < faq[i].keys.length; j++) {
+						if (q.indexOf(faq[i].keys[j]) !== -1) score += 1;
+					}
+					if (score > best.score) { best.score = score; best.answer = faq[i].answer; }
+				}
+				if (best.answer) return { answer: best.answer, matched: true };
+				return { answer: null, matched: false };
+			}
+			function fetchWikipedia(query) {
+				var q = (query || '').trim();
+				if (!q) return Promise.resolve(null);
+				var searchUrl = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(q) + '&format=json&origin=*';
+				return fetch(searchUrl).then(function(r) { return r.json(); }).then(function(data) {
+					var hits = data && data.query && data.query.search;
+					if (!hits || hits.length === 0) return null;
+					var pageId = hits[0].pageid;
+					var extractUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&explaintext&exsentences=5&pageids=' + pageId + '&format=json&origin=*';
+					return fetch(extractUrl).then(function(r2) { return r2.json(); }).then(function(data2) {
+						var pages = data2 && data2.query && data2.query.pages && data2.query.pages[pageId];
+						var extract = pages && pages.extract;
+						return (extract && extract.trim()) ? extract.trim() : null;
+					});
+				}).catch(function() { return null; });
+			}
+
+			sendBtn.addEventListener('click', function() {
+				var text = (inputEl.value || '').trim();
+				if (!text) return;
+				inputEl.value = '';
+
+				addMessage('user', text);
+				if (!isRestoring) pushHistory({ role: 'user', text: text });
+
+				// Full chatbot (optional): uses chat history for context
+				if (mode === 'model') {
+					var thinking = addAssistant('Thinking…', text);
+					(function() {
+						runModel(text).then(function(reply) {
+							if (thinking && thinking.parentNode) thinking.remove();
+							addMessage('assistant', reply, { searchQuery: text });
+							if (!isRestoring) pushHistory({ role: 'assistant', text: reply, searchQuery: text });
+						}).catch(function(err) {
+							if (thinking && thinking.parentNode) thinking.remove();
+							var msg = 'Model error: ' + (err && err.message ? err.message : String(err)) + '. Falling back to Wikipedia/Google.';
+							addAssistant(msg, text, 'Search on Google \u2192');
+							if (!isRestoring) pushHistory({ role: 'assistant', text: msg, searchQuery: text });
+							// fallback to light lookup
+							runLight(text);
+						});
+					})();
+					return;
+				}
+
+				runLight(text);
+			});
+
+			function runLight(text) {
+				var faqResult = getReply(text);
+				if (faqResult.matched) {
+					addMessage('assistant', faqResult.answer, { searchQuery: text });
+					if (!isRestoring) pushHistory({ role: 'assistant', text: faqResult.answer, searchQuery: text });
+					return;
+				}
+				var placeholder = addAssistant('Looking up…', text);
+				fetchWikipedia(text).then(function(wikiText) {
+					if (placeholder && placeholder.parentNode) placeholder.remove();
+					if (wikiText) {
+						addMessage('assistant', wikiText, { searchQuery: text });
+						if (!isRestoring) pushHistory({ role: 'assistant', text: wikiText, searchQuery: text });
+					} else {
+						var fallback = "I couldn't find a direct answer. Use the button below to search on Google.";
+						var node = addAssistant(fallback, text, 'Tap here to search on Google \u2192');
+						if (!isRestoring) pushHistory({ role: 'assistant', text: fallback, searchQuery: text });
+						// make the button a bit more prominent
+						try {
+							var link = node && node.querySelector && node.querySelector('a');
+							if (link) link.classList.add('font-bold');
+						} catch (e) {}
+					}
+				});
+			}
+
+			async function runModel(latestUserText) {
+				var pipe = await ensureModelLoaded();
+				// Build a compact prompt from the last few turns (keeps it fast)
+				var turns = history.slice(-12).filter(function(it) { return it && it.role && typeof it.text === 'string'; });
+				var convo = turns.map(function(it) {
+					return (it.role === 'user' ? 'User: ' : 'Assistant: ') + it.text;
+				}).join('\\n');
+				// Note: latestUserText is already in history (we store user msg before calling runModel)
+				var prompt = 'You are a helpful learning assistant. Answer clearly and briefly.\\n\\nConversation:\\n' + convo + '\\nAssistant:';
+				var out = await pipe(prompt, { max_new_tokens: 160, do_sample: false });
+				var generated = (out && out[0] && out[0].generated_text) ? String(out[0].generated_text).trim() : '';
+				if (!generated) return 'Sorry—no response from the model. Try the Google button below.';
+				return generated;
+			}
+			inputEl.addEventListener('keydown', function(e) {
+				if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBtn.click(); }
+			});
+		})();
+	</script>
+	<script>
+		// Embedded JupyterLite toggle (main playground)
+		(function() {
+			var btn = document.getElementById('jlite-toggle');
+			var wrap = document.getElementById('jlite-wrap');
+			var frame = document.getElementById('jlite-frame');
+			if (!btn || !wrap || !frame) return;
+			var loaded = false;
+			btn.addEventListener('click', function() {
+				var isHidden = wrap.classList.contains('hidden');
+				if (isHidden) {
+					wrap.classList.remove('hidden');
+					btn.textContent = 'Hide notebook';
+					if (!loaded) {
+						frame.src = 'https://jupyterlite.github.io/demo/lab/';
+						loaded = true;
+					}
+				} else {
+					wrap.classList.add('hidden');
+					btn.textContent = 'Show notebook';
+				}
+			});
+		})();
+	</script>
+</body>
+</html>

@@ -50,16 +50,17 @@
 	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
 		<div class="container mx-auto px-4 sm:px-6">
 			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
-				<!-- Name / brand: far left -->
-				<a href="homepage.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<!-- Name / brand: far left (always back to landing) -->
+				<a href="../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
 				<!-- Nav, search, theme, social: far right -->
 				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
 					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-						<li><a href="homepage.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Home</a></li>
+						<li><a href="homepage.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">Projects</a></li>
 						<li><a href="resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Resume</a></li>
 						<li><a href="skills.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Skills</a></li>
 						<li><a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">About</a></li>
 						<li><a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Contact</a></li>
+						<li><a href="playground.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Playground</a></li>
 					</ul>
 					<div class="hidden md:block w-36 lg:w-44 flex-shrink-0">
 						<input
@@ -126,7 +127,10 @@
 			</section>
 
 			<section id="all-projects-section" class="mb-12">
-			<h2 class="text-3xl font-bold text-primary mb-8 text-center">All Projects</h2>
+			<h2 class="text-3xl font-bold text-primary mb-2 text-center">All Projects</h2>
+			<p class="text-xs text-gray-500 dark:text-gray-400 text-center mb-6">
+				Prefer the older layout? <a href="../legacy/projects.html" class="underline hover:text-primary transition-colors">Legacy projects view</a>
+			</p>
 			<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
 				<div class="w-full md:w-auto space-y-2">
 					<div id="active-filter"></div>
