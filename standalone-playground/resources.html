@@ -157,6 +157,25 @@
 			}
 			html += '</div></div>';
 
+			// Global recommended repos & lists (same for all topics)
+			html += '<section class="mt-10 pt-6 border-t border-gray-200">';
+			html += '<h2 class="text-lg font-semibold text-gray-800 mb-2">Recommended repos & lists</h2>';
+			html += '<p class="text-xs text-gray-500 mb-3">High‑quality GitHub repos and curated lists for deeper learning. These are not owned or maintained by this site.</p>';
+			html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">';
+			html += '<div><h3 class="font-semibold mb-1">Awesome & lists</h3><ul class="space-y-1">';
+			html += '<li><a href="https://github.com/vinta/awesome-python" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-python</a> · Python ecosystem</li>';
+			html += '<li><a href="https://github.com/academic/awesome-datascience" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-datascience</a> · data science resources</li>';
+			html += '<li><a href="https://github.com/josephmisiti/awesome-machine-learning" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-machine-learning</a> · ML libraries & papers</li>';
+			html += '<li><a href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-public-datasets</a> · datasets to practice on</li>';
+			html += '</ul></div>';
+			html += '<div><h3 class="font-semibold mb-1">Books & code repos</h3><ul class="space-y-1">';
+			html += '<li><a href="https://github.com/EbookFoundation/free-programming-books" target="_blank" rel="noopener" class="underline hover:text-primary">free-programming-books</a> · big list of free books</li>';
+			html += '<li><a href="https://github.com/ageron/handson-ml3" target="_blank" rel="noopener" class="underline hover:text-primary">Hands‑On ML (code)</a> · practical ML notebook repo</li>';
+			html += '<li><a href="https://github.com/rasbt/python-machine-learning-book-3rd-edition" target="_blank" rel="noopener" class="underline hover:text-primary">Python ML book (code)</a> · Python ML examples</li>';
+			html += '<li><a href="https://github.com/fastai/fastbook" target="_blank" rel="noopener" class="underline hover:text-primary">fastbook</a> · Deep Learning for Coders (fast.ai)</li>';
+			html += '</ul></div>';
+			html += '</div></section>';
+
 			html += '</div>';
 			root.innerHTML = html;
 		})();

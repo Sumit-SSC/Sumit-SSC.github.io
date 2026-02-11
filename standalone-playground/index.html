@@ -154,6 +154,38 @@
 					<iframe id="jlite-frame" class="w-full h-[600px] rounded-lg border border-gray-200 bg-white" title="JupyterLite notebook"></iframe>
 				</div>
 			</section>
+
+			<section class="mt-6 rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+				<h2 class="text-lg font-semibold text-gray-800 mb-2">Docs & repos</h2>
+				<p class="text-xs text-gray-500 mb-3">Quick links to docs and high‑quality open source learning repos. Nothing runs until you click a button.</p>
+				<div class="flex flex-col sm:flex-row gap-3 mb-4">
+					<input id="docs-query" type="text" class="flex-1 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-800 placeholder-gray-500" placeholder="Search docs (e.g. pandas groupby, SQL join)…">
+					<div class="flex gap-2">
+						<button type="button" id="docs-devdocs" class="px-3 py-2 rounded-lg border border-gray-300 bg-white text-xs font-semibold text-gray-800 hover:bg-gray-50">DevDocs</button>
+						<button type="button" id="docs-github" class="px-3 py-2 rounded-lg border border-gray-300 bg-white text-xs font-semibold text-gray-800 hover:bg-gray-50">GitHub repos</button>
+					</div>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+					<div>
+						<h3 class="font-semibold text-gray-800 mb-1">Awesome & curated lists</h3>
+						<ul class="space-y-1 text-gray-700">
+							<li><a href="https://github.com/vinta/awesome-python" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-python</a> · curated Python libs</li>
+							<li><a href="https://github.com/josephmisiti/awesome-machine-learning" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-machine-learning</a> · ML resources</li>
+							<li><a href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-public-datasets</a> · datasets to practice</li>
+							<li><a href="https://github.com/academic/awesome-datascience" target="_blank" rel="noopener" class="underline hover:text-primary">awesome-datascience</a> · data science tools & courses</li>
+						</ul>
+					</div>
+					<div>
+						<h3 class="font-semibold text-gray-800 mb-1">Free books & learning repos</h3>
+						<ul class="space-y-1 text-gray-700">
+							<li><a href="https://github.com/EbookFoundation/free-programming-books" target="_blank" rel="noopener" class="underline hover:text-primary">free-programming-books</a> · huge list of free books</li>
+							<li><a href="https://github.com/ageron/handson-ml3" target="_blank" rel="noopener" class="underline hover:text-primary">Hands‑On ML (code)</a> · end‑to‑end ML examples</li>
+							<li><a href="https://github.com/rasbt/python-machine-learning-book-3rd-edition" target="_blank" rel="noopener" class="underline hover:text-primary">Python ML book (code)</a> · practical ML in Python</li>
+							<li><a href="https://github.com/fastai/fastbook" target="_blank" rel="noopener" class="underline hover:text-primary">fastbook</a> · Deep Learning for Coders (fast.ai)</li>
+						</ul>
+					</div>
+				</div>
+			</section>
 		</main>
 	</div>
 
@@ -410,6 +442,30 @@
 					wrap.classList.add('hidden');
 					btn.textContent = 'Show notebook';
 				}
+			});
+		})();
+
+		// Docs search buttons (DevDocs / GitHub) — only open new tabs when clicked
+		(function() {
+			var qEl = document.getElementById('docs-query');
+			var devdocsBtn = document.getElementById('docs-devdocs');
+			var ghBtn = document.getElementById('docs-github');
+			if (!qEl || !devdocsBtn || !ghBtn) return;
+			function trimmed() { return (qEl.value || '').trim(); }
+			devdocsBtn.addEventListener('click', function() {
+				var q = trimmed();
+				if (!q) return;
+				var url = 'https://devdocs.io/#q=' + encodeURIComponent(q);
+				window.open(url, '_blank', 'noopener');
+			});
+			ghBtn.addEventListener('click', function() {
+				var q = trimmed();
+				if (!q) return;
+				var url = 'https://github.com/search?q=' + encodeURIComponent(q) + '&type=repositories';
+				window.open(url, '_blank', 'noopener');
+			});
+			qEl.addEventListener('keydown', function(e) {
+				if (e.key === 'Enter') { e.preventDefault(); devdocsBtn.click(); }
 			});
 		})();
 

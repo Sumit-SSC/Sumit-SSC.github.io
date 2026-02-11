@@ -224,20 +224,21 @@
 	</div>
 
 	<!-- Learning assistant: popup chat (Playground page only) -->
-	<button type="button" id="assistant-btn" class="fixed bottom-6 right-6 z-30 w-12 h-12 rounded-full bg-primary text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center" aria-label="Open learning assistant">
-		<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+	<button type="button" id="assistant-btn" class="fixed bottom-6 right-6 z-30 h-12 rounded-full bg-gradient-to-tr from-primary to-accent text-white shadow-lg hover:shadow-2xl hover:scale-105 transition-all flex items-center px-4 gap-2" aria-label="Open learning assistant">
+		<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+		<span class="hidden sm:inline text-xs font-semibold tracking-wide">Ask</span>
 	</button>
 	<div id="assistant-overlay" class="fixed inset-0 bg-black/30 z-40" aria-hidden="true"></div>
 	<div id="assistant-panel" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-800 shadow-xl z-50 flex flex-col" role="dialog" aria-label="Learning assistant">
-		<div class="p-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+		<div class="p-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between bg-gray-50 dark:bg-gray-900/80">
 			<div>
 				<h3 class="font-semibold text-gray-800 dark:text-gray-100">Learning assistant</h3>
-				<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">FAQ + Wikipedia for concepts. No match? Tap to search on Google.</p>
+				<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Light mode: FAQ + Wikipedia + Google. Optional: full chatbot (~80MB).</p>
 			</div>
-			<button type="button" id="assistant-close" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Close">&#10005;</button>
+			<button type="button" id="assistant-close" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Close">&#10005;</button>
 		</div>
-		<div id="assistant-messages" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-0"></div>
-		<div class="p-4 border-t border-gray-200 dark:border-gray-600">
+		<div id="assistant-messages" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-gray-50 dark:bg-gray-900/60"></div>
+		<div class="p-4 border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900/80">
 			<div class="flex gap-2">
 				<input type="text" id="assistant-input" class="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-500" placeholder="Ask anything (e.g. explain a concept, grammar…)">
 				<button type="button" id="assistant-send" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90">Send</button>
@@ -568,6 +569,9 @@
 					addMessage('assistant', 'Hi! I use a short FAQ and Wikipedia for concepts. Optional: enable the full chatbot for more conversational replies. If I can’t answer, use the Google search button.');
 					pushHistory({ role: 'assistant', text: 'Hi! I use a short FAQ and Wikipedia for concepts. Optional: enable the full chatbot for more conversational replies. If I can’t answer, use the Google search button.' });
 				}
+				if (inputEl) {
+					setTimeout(function() { try { inputEl.focus(); } catch (e) {} }, 80);
+				}
 			}
 			function closePanel() {
 				panel.classList.remove('open');
@@ -576,6 +580,9 @@
 			btn.addEventListener('click', openPanel);
 			closeBtn.addEventListener('click', closePanel);
 			overlay.addEventListener('click', closePanel);
+			document.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape') closePanel();
+			});
 
 			function makeGoogleLink(query, label) {
 				var a = document.createElement('a');
