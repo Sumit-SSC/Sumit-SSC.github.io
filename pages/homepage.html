@@ -223,6 +223,14 @@
 	<script src="../assets/js/jquery.min.js"></script>
 	<script src="../assets/js/jquery.scrolly.min.js"></script>
 	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/analytics.js"></script>
+	<script>
+		initAnalyticsTracking({
+			site: "portfolio",
+			baseEvent: "portfolio",
+			endpoint: "https://stats.colab.indevs.in/collect"
+		});
+	</script>
 	<script>
 		// Hide intro on scroll (smooth fade)
 		const intro = document.getElementById('intro');

@@ -200,6 +200,18 @@
 										</p>
 									</div>
 								</details>
+
+								<!-- GitHub stats card -->
+								<div class="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20 mt-6">
+									<a href="https://github.com/Sumit-SC" target="_blank" rel="noopener">
+										<img
+											src="https://github-stats-alpha.vercel.app/api?username=Sumit-sc"
+											alt="GitHub contribution statistics for Sumit S. Chaure"
+											loading="lazy"
+											class="w-full h-auto rounded-md border border-white/20"
+										/>
+									</a>
+								</div>
 							</div>
 						</div>
 
@@ -279,6 +291,14 @@
 	</footer>
 
 	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/analytics.js"></script>
+	<script>
+		initAnalyticsTracking({
+			site: "portfolio",
+			baseEvent: "portfolio",
+			endpoint: "https://stats.colab.indevs.in/collect"
+		});
+	</script>
 	<script>
 		// Scroll progress bar
 		window.addEventListener('scroll', () => {

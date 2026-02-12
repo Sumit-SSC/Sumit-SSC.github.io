@@ -88,6 +88,14 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/indexMain.js"></script>
+			<script src="assets/js/analytics.js"></script>
+			<script>
+				initAnalyticsTracking({
+					site: "portfolio",
+					baseEvent: "portfolio",
+					endpoint: "https://stats.colab.indevs.in/collect"
+				});
+			</script>
 			<script>
 				// Timing: match indexMain.js and index.css so 3s starts AFTER the arrow appears
 				// 1. indexMain.js removes body.is-preload 100ms after load → banner content (and arrow) start animating

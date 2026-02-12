@@ -139,6 +139,14 @@
 	</footer>
 
 	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/analytics.js"></script>
+	<script>
+		initAnalyticsTracking({
+			site: "portfolio",
+			baseEvent: "portfolio",
+			endpoint: "https://stats.colab.indevs.in/collect"
+		});
+	</script>
 	<script>
 		// CDN URLs (backup if local icon missing). Local copies in assets/images/icons/ for speed and reliability.
 		const iconUrlMapCdn = {
