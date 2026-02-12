@@ -5,12 +5,12 @@
 //     initAnalyticsTracking({
 //       site: 'portfolio',
 //       baseEvent: 'portfolio',
-//       endpoint: 'https://stats.colab.indevs.in/collect'
+//       endpoint: 'https://stats.colab.indevs.in/signals'
 //     });
 //   </script>
 
 (function () {
-  var DEFAULT_ENDPOINT = "https://stats.colab.indevs.in/collect";
+  var DEFAULT_ENDPOINT = "https://stats.colab.indevs.in/signals";
   var DEFAULT_SECRET = null; // unused, kept for API compatibility
   var SESSION_KEY = "analytics_lab_session_id";
 
