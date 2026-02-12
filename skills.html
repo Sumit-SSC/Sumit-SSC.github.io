@@ -91,6 +91,14 @@
 	</footer>
 
 	<script src="assets/js/main.js"></script>
+	<script src="assets/js/analytics.js"></script>
+	<script>
+		initAnalyticsTracking({
+			site: "portfolio",
+			baseEvent: "portfolio",
+			endpoint: "https://stats.colab.indevs.in/collect"
+		});
+	</script>
 	<script>
 		// Skills data organized by categories
 		const skillsData = {

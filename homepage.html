@@ -171,6 +171,14 @@
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/jquery.scrolly.min.js"></script>
 	<script src="assets/js/main.js"></script>
+	<script src="assets/js/analytics.js"></script>
+	<script>
+		initAnalyticsTracking({
+			site: "portfolio",
+			baseEvent: "portfolio",
+			endpoint: "https://stats.colab.indevs.in/collect"
+		});
+	</script>
 	<script>
 		// Smooth scroll to main section
 		document.querySelector('a[href="#main"]')?.addEventListener('click', (e) => {
