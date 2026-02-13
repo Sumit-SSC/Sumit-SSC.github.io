@@ -5,12 +5,12 @@
 //     initAnalyticsTracking({
 //       site: 'portfolio',
 //       baseEvent: 'portfolio',
-//       endpoint: 'https://stats.colab.indevs.in/signals'
+//       endpoint: 'https://stats.colab.indevs.in/api/events'
 //     });
 //   </script>
 
 (function () {
-  var DEFAULT_ENDPOINT = "https://stats.colab.indevs.in/signals";
+  var DEFAULT_ENDPOINT = "https://stats.colab.indevs.in/api/events";
   var DEFAULT_SECRET = null; // unused, kept for API compatibility
   var SESSION_KEY = "analytics_lab_session_id";
 
@@ -103,23 +103,85 @@
 
     var body = JSON.stringify(payload);
 
+    // Extract base URL for fallback paths
+    var baseUrl = config.endpoint;
     try {
-      // Prefer sendBeacon so the request is sent even on page unload
-      if (navigator.sendBeacon) {
-        var blob = new Blob([body], { type: "application/json" });
-        navigator.sendBeacon(config.endpoint, blob);
-      } else {
-        // Standard CORS-aware POST; Worker will send proper CORS headers.
-        // We intentionally avoid credentials so the endpoint can use "*" CORS.
-        fetch(config.endpoint, {
+      var urlObj = new URL(config.endpoint);
+      baseUrl = urlObj.origin;
+    } catch (e) {
+      // If URL parsing fails, use as-is
+    }
+
+    // Fallback paths to try (less likely to be blocked)
+    var fallbackPaths = ["/api/events", "/api/track", "/events", "/track", "/ping", "/log"];
+    var endpointsToTry = [config.endpoint];
+    
+    // Add fallbacks if we can extract base URL
+    if (baseUrl !== config.endpoint) {
+      for (var i = 0; i < fallbackPaths.length; i++) {
+        endpointsToTry.push(baseUrl + fallbackPaths[i]);
+      }
+    }
+
+    // Strategy 1: Try sendBeacon first (often less blocked than fetch)
+    var beaconSent = false;
+    if (navigator.sendBeacon) {
+      try {
+        for (var b = 0; b < endpointsToTry.length; b++) {
+          var blob = new Blob([body], { type: "application/json" });
+          if (navigator.sendBeacon(endpointsToTry[b], blob)) {
+            beaconSent = true;
+            break; // Success
+          }
+        }
+      } catch (e) {
+        // sendBeacon failed, continue to fetch fallback
+      }
+    }
+
+    // Strategy 2: If sendBeacon didn't work, try fetch with multiple endpoints
+    if (!beaconSent) {
+      function tryEndpoint(index) {
+        if (index >= endpointsToTry.length) {
+          // All endpoints failed - silently fail
+          return;
+        }
+        
+        var endpoint = endpointsToTry[index];
+        var timeoutId = setTimeout(function() {
+          // Timeout after 2 seconds, try next endpoint
+          tryEndpoint(index + 1);
+        }, 2000);
+
+        fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          body: body,
           keepalive: true,
           credentials: "omit"
-        }).catch(function () {});
+        })
+          .then(function (response) {
+            clearTimeout(timeoutId);
+            if (response.ok) {
+              // Success - stop trying other endpoints
+              return;
+            } else {
+              // Try next endpoint on error
+              tryEndpoint(index + 1);
+            }
+          })
+          .catch(function (err) {
+            clearTimeout(timeoutId);
+            // Try next endpoint on failure
+            tryEndpoint(index + 1);
+          });
       }
-    } catch (e) {
-      // Never break the page
+
+      try {
+        tryEndpoint(0);
+      } catch (e) {
+        // Never break the page
+      }
     }
   }
 
