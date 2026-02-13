@@ -5,12 +5,12 @@
 //     initAnalyticsTracking({
 //       site: 'portfolio',
 //       baseEvent: 'portfolio',
-//       endpoint: 'https://events.sumit.indevs.in/api/events'
+//       endpoint: 'https://events.colab.indevs.in/api/events'
 //     });
 //   </script>
 
 (function () {
-  var DEFAULT_ENDPOINT = "https://events.sumit.indevs.in/api/events";
+  var DEFAULT_ENDPOINT = "https://events.colab.indevs.in/api/events";
   var DEFAULT_SECRET = null; // unused, kept for API compatibility
   var SESSION_KEY = "analytics_lab_session_id";
 
