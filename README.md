@@ -1,5 +1,9 @@
 # Data & Analytics Portfolio
 
+**What this project is:** Static portfolio site (HTML/CSS/JS) for **Senior Data Analyst / Decision Scientist / Product Analyst** roles. Content from JSON + HTML under `data/`. Designed for GitHub Pages.
+
+---
+
 Minimal, fast portfolio aimed at **Senior Data Analyst / Decision Scientist / Product Analyst** roles.
 
 - **Stack:** Pure HTML, CSS, vanilla JavaScript (no frameworks / build tools)
