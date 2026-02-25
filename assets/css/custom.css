@@ -4176,6 +4176,28 @@ body:not(.dark-theme) footer .text-white\/60 {
   }
 }
 
+/* Year header badge (hourglass + year label above the first event of each year) */
+.lightdash-journey__year-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+.lightdash-journey__year-header-icon {
+  width: 32px;
+  height: 32px;
+  background-image: url('../images/hourglass.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.lightdash-journey__year-header-label {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
 /* Left/right content cells – force placement on desktop */
 .lightdash-journey__cell {
   min-width: 0;
