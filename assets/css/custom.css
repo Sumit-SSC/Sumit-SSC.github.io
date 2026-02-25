@@ -4048,6 +4048,343 @@ body:not(.dark-theme) footer .text-white\/60 {
   transform: translate(-50%, -50%);
 }
 
+/* ============================================
+   Lightdash "Our story so far" journey (central dashed line + year nodes + alternating content)
+   ============================================ */
+.lightdash-journey {
+  position: relative;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  min-height: 400px;
+}
+@media (min-width: 768px) {
+  .lightdash-journey {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Central dashed vertical axis – always visible on tablet+ */
+.lightdash-journey__axis {
+  display: none;
+}
+@media (min-width: 640px) {
+  .lightdash-journey__axis {
+    display: block !important;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    min-height: 400px;
+    margin-left: -1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #4f46e5 0,
+      #4f46e5 6px,
+      transparent 6px,
+      transparent 10px
+    );
+    z-index: 1;
+    pointer-events: none;
+  }
+  .dark-theme .lightdash-journey__axis,
+  html.dark-theme .lightdash-journey__axis {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(129, 140, 248, 0.95) 0,
+      rgba(129, 140, 248, 0.95) 6px,
+      transparent 6px,
+      transparent 10px
+    );
+  }
+  .dark .lightdash-journey__axis {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(129, 140, 248, 0.9) 0,
+      rgba(129, 140, 248, 0.9) 6px,
+      transparent 6px,
+      transparent 10px
+    );
+  }
+}
+
+/* One row per year – force 3-column side-by-side from 640px */
+.lightdash-journey__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  z-index: 2;
+}
+.lightdash-journey__row:last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 640px) {
+  .lightdash-journey__row {
+    grid-template-columns: 1fr 56px 1fr !important;
+    gap: 0 0.5rem !important;
+    margin-bottom: 3.5rem;
+    min-height: 280px;
+  }
+}
+
+/* Year node on the axis (circle with year) */
+.lightdash-journey__node {
+  order: -1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  background: #e5e7eb;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 auto 0.25rem;
+  border: 2px solid #9ca3af;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+@media (min-width: 640px) {
+  .lightdash-journey__node {
+    order: unset;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    margin: 0 auto;
+    align-self: center;
+    justify-self: center;
+  }
+  .dark-theme .lightdash-journey__node,
+  html.dark-theme .lightdash-journey__node {
+    color: #e5e7eb;
+    background: #374151;
+    border-color: #6366f1;
+  }
+  .dark .lightdash-journey__node {
+    color: #e5e7eb;
+    background: #374151;
+    border-color: #6366f1;
+  }
+}
+
+/* Left/right content cells – force placement on desktop */
+.lightdash-journey__cell {
+  min-width: 0;
+}
+@media (min-width: 640px) {
+  .lightdash-journey__left {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    padding-right: 1rem;
+    display: flex !important;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .lightdash-journey__right {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    padding-left: 1rem;
+    display: flex !important;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+/* Card (text block – Lightdash style) */
+.lightdash-journey__card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  max-width: 100%;
+}
+@media (min-width: 640px) {
+  .lightdash-journey__card {
+    max-width: 380px;
+  }
+  .lightdash-journey__media {
+    max-width: 380px;
+  }
+}
+.dark-theme .lightdash-journey__card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+.lightdash-journey__label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4f46e5;
+  margin-bottom: 0.35rem;
+}
+.dark-theme .lightdash-journey__label {
+  color: #818cf8;
+}
+.lightdash-journey__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+.dark-theme .lightdash-journey__title {
+  color: var(--text-primary);
+}
+.lightdash-journey__desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.dark-theme .lightdash-journey__desc {
+  color: var(--text-secondary);
+}
+
+/* Event list inside each card (2–3 points like Lightdash timeline) */
+.lightdash-journey__events {
+  margin-top: 0.75rem;
+  display: grid;
+  row-gap: 0.45rem;
+}
+.lightdash-journey__event {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.75rem;
+  align-items: flex-start;
+}
+.lightdash-journey__event-month {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.lightdash-journey__event-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #4b5563;
+  margin: 0;
+}
+.dark-theme .lightdash-journey__event-month {
+  color: #9ca3af;
+}
+.dark-theme .lightdash-journey__event-text {
+  color: var(--text-secondary);
+}
+
+/* Media (image) */
+.lightdash-journey__media {
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+.lightdash-journey__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Optional carousel state – when there are multiple images */
+.lightdash-journey__media--carousel img {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+.lightdash-journey__media--carousel img.is-active {
+  display: block;
+  opacity: 1;
+}
+.lightdash-journey__media--carousel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.18));
+}
+.lightdash-journey__media--carousel::after {
+  /* Subtle play icon to give a “video” feel */
+  content: "";
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+.lightdash-journey__media--carousel-play {
+  position: absolute;
+  left: 24px;
+  bottom: 20px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid #e5e7eb;
+  pointer-events: none;
+  z-index: 1;
+}
+.lightdash-journey__media-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.lightdash-journey__media-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(209, 213, 219, 0.8);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.lightdash-journey__media-dot.is-active {
+  background: #4f46e5;
+}
+
+/* Always-on timeline layout: keep central axis + 3-column grid at all widths */
+.lightdash-journey__axis {
+  display: block !important;
+}
+.lightdash-journey__row {
+  grid-template-columns: 1fr 56px 1fr !important;
+}
+
+/* Scroll-in animation (Lightdash-style: content slides in from side) */
+.lightdash-journey__animate-left,
+.lightdash-journey__animate-right {
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.lightdash-journey__animate-left {
+  opacity: 0;
+  transform: translateX(-36px);
+}
+.lightdash-journey__animate-right {
+  opacity: 0;
+  transform: translateX(36px);
+}
+.lightdash-journey__row.in-view .lightdash-journey__animate-left {
+  opacity: 1;
+  transform: translateX(0);
+}
+.lightdash-journey__row.in-view .lightdash-journey__animate-right {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* Skills icon grid layout */
 .skills-icon-grid {
   display: grid;
