@@ -67,6 +67,7 @@ function init() {
   routePage();
   initScrollAnimations();
   initScrollProgress();
+  initTapRipple();
   initHomepageSectionTabs();
   
   // Force theme color application after DOM is ready
@@ -499,6 +500,37 @@ function initScrollProgress() {
     const scrolled = (winScroll / height) * 100;
     progressBar.style.width = scrolled + '%';
   });
+}
+
+/* ---------- TAP / CLICK RIPPLE ANIMATION ---------- */
+function initTapRipple() {
+  document.addEventListener('click', function (e) {
+    var target = e.target;
+    while (target && target !== document.body) {
+      if (target.tagName === 'BUTTON' || target.tagName === 'A' || target.getAttribute('role') === 'button' || target.classList.contains('tap-ripple-target')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+    if (!target || target === document.body) return;
+
+    var x = e.clientX;
+    var y = e.clientY;
+    var ripple = document.createElement('span');
+    ripple.className = 'tap-ripple';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    document.body.appendChild(ripple);
+
+    requestAnimationFrame(function () {
+      ripple.classList.add('tap-ripple--active');
+    });
+
+    var duration = 600;
+    setTimeout(function () {
+      ripple.remove();
+    }, duration);
+  }, true);
 }
 
 /* ---------- HOMEPAGE SECTION TABS (SCROLL SPY) ---------- */

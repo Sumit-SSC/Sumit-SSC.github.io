@@ -1506,6 +1506,31 @@ body.homepage-body #section-tabs {
   top: 56px;
 }
 
+/* ============================================
+   Tap / click ripple animation
+   ============================================ */
+.tap-ripple {
+  position: fixed;
+  pointer-events: none;
+  width: 24px;
+  height: 24px;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  background: rgba(79, 70, 229, 0.45);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 1;
+  z-index: 99999;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+.tap-ripple.tap-ripple--active {
+  transform: translate(-50%, -50%) scale(8);
+  opacity: 0;
+}
+.dark-theme .tap-ripple {
+  background: rgba(99, 102, 241, 0.5);
+}
+
 /* Dashboard intro fade */
 .dashboard-intro {
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -4024,145 +4049,156 @@ body:not(.dark-theme) footer .text-white\/60 {
 }
 
 /* ============================================
-   Lightdash-style Journey Timeline (Our story so far)
+   Journey Timeline: central dashed line, alternating image+text, scroll-in animation
+   (Lightdash "Our story so far" style)
    ============================================ */
-.journey-section {
-  background: var(--bg-primary, #f3f4f6);
+.journey-timeline-central {
+  position: relative;
 }
 
-.dark-theme .journey-section {
-  background: var(--bg-primary);
-}
-
-.journey-section-title {
-  letter-spacing: -0.02em;
-}
-
-.journey-timeline-wrap {
-  padding-left: 0;
-}
-
-@media (min-width: 768px) {
-  .journey-timeline-wrap {
-    padding-left: 5rem;
-  }
-}
-
-/* Vertical line */
-.journey-vertical-line {
+/* Central dashed vertical line */
+.journey-center-line {
   display: none;
 }
-
 @media (min-width: 768px) {
-  .journey-vertical-line {
+  .journey-center-line {
     display: block;
     position: absolute;
-    left: 1.25rem;
-    top: 0.5rem;
-    bottom: 0.5rem;
-    width: 2px;
-    background: linear-gradient(180deg,
-      var(--color-accent, #4f46e5) 0%,
-      var(--color-accent, #0ea5e9) 50%,
-      rgba(148, 163, 184, 0.5) 100%);
-    border-radius: 2px;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    border-left: 2px dashed rgba(79, 70, 229, 0.5);
+    transform: translateX(-1px);
     z-index: 0;
   }
-}
-
-/* Year block */
-.journey-year-block {
-  position: relative;
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  z-index: 1;
-}
-
-.journey-year-block.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.journey-year-block:last-child {
-  margin-bottom: 0;
-}
-
-/* Year badge (Lightdash-style pill) */
-.journey-year-badge {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-accent, #4f46e5);
-  letter-spacing: -0.02em;
-  margin-bottom: 0.75rem;
-}
-
-@media (min-width: 768px) {
-  .journey-year-badge {
-    position: absolute;
-    left: -5rem;
-    top: 0;
-    width: 4rem;
-    text-align: right;
-    font-size: 1.25rem;
-    margin-bottom: 0;
+  .dark-theme .journey-center-line {
+    border-left-color: rgba(99, 102, 241, 0.5);
   }
 }
 
-.dark-theme .journey-year-badge {
-  color: var(--accent-primary);
-}
-
-/* Events list */
-.journey-events {
-  display: flex;
-  flex-direction: column;
+/* Each row: year marker on center, left content | center | right content */
+.story-item.journey-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 1rem;
+  align-items: center;
+  margin-bottom: 3rem;
+  z-index: 1;
+  /* Override generic .story-item so only left/right children animate */
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.story-item.journey-row:last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 768px) {
+  .story-item.journey-row {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    margin-bottom: 4rem;
+    min-height: 320px;
+  }
 }
 
-/* Single event row: month + description */
-.journey-event {
-  background: var(--bg-secondary, #ffffff);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--border-color, #e5e7eb);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+/* Year marker on the center line */
+.journey-year-marker {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #374151;
+  background: #e5e7eb;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 auto 0.5rem;
+}
+@media (min-width: 768px) {
+  .journey-year-marker {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    align-self: center;
+    justify-self: center;
+    color: #1f2937;
+    background: #d1d5db;
+    border: 2px solid #9ca3af;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  .dark-theme .journey-year-marker {
+    color: #e5e7eb;
+    background: #374151;
+    border-color: #4b5563;
+  }
 }
 
-.journey-event:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border-color: var(--color-accent, #4f46e5);
+.journey-left {
+  grid-column: 1;
+}
+@media (min-width: 768px) {
+  .journey-left {
+    grid-column: 1;
+    grid-row: 1;
+    padding-right: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }
 
-.dark-theme .journey-event {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
+.journey-right {
+  grid-column: 1;
+}
+@media (min-width: 768px) {
+  .journey-right {
+    grid-column: 3;
+    grid-row: 1;
+    padding-left: 1rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
 }
 
-.journey-event-month {
-  display: inline-block;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-accent, #4f46e5);
-  margin-bottom: 0.35rem;
+/* Scroll-in animation: left content from left, right from right */
+.journey-animate-left,
+.journey-animate-right {
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.journey-animate-left {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+.journey-animate-right {
+  opacity: 0;
+  transform: translateX(50px);
+}
+.story-item.journey-row.visible .journey-animate-left {
+  opacity: 1;
+  transform: translateX(0);
+}
+.story-item.journey-row.visible .journey-animate-right {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-.dark-theme .journey-event-month {
-  color: var(--accent-primary);
+/* Card and image styling inside journey */
+.story-item.journey-row .rounded-xl.shadow-lg {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-
-.journey-event-desc {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--text-secondary, #4b5563);
+.story-item.journey-row:hover .rounded-xl.shadow-lg {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
-
-.dark-theme .journey-event-desc {
-  color: var(--text-secondary);
+.story-item.journey-row img {
+  transition: transform 0.3s ease;
+}
+.story-item.journey-row:hover img {
+  transform: scale(1.02);
 }
 
 /* Skills icon grid layout */

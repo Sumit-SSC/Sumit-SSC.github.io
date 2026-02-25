@@ -225,69 +225,85 @@
 		</div>
 	</section>
 
-	<!-- Journey Timeline (Lightdash-style: Our story so far) -->
-	<section id="journey" class="journey-section bg-gray-100 min-h-screen py-20">
+	<!-- Journey Timeline (Lightdash-style: central dashed line, alternating image+text, scroll animations) -->
+	<section id="journey" class="min-h-screen bg-gray-100 py-20">
 		<div class="container mx-auto px-6">
 			<div class="text-center mb-16">
-				<h2 class="journey-section-title text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My journey so far</h2>
-				<p class="text-lg text-gray-600 dark:text-gray-300">A timeline of my professional and educational path</p>
+				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My journey so far</h2>
+				<p class="text-lg text-gray-600 dark:text-gray-300">A timeline of my professional and educational journey</p>
 			</div>
 
-			<div class="journey-timeline-wrap max-w-4xl mx-auto relative">
-				<!-- Vertical timeline line -->
-				<div class="journey-vertical-line" aria-hidden="true"></div>
+			<div class="journey-timeline-central max-w-6xl mx-auto relative">
+				<!-- Central dashed vertical line -->
+				<div class="journey-center-line" aria-hidden="true"></div>
 
-				<!-- 2024 -->
-				<div class="journey-year-block" data-year="2024">
-					<div class="journey-year-badge">2024</div>
-					<div class="journey-events">
-						<div class="journey-event">
-							<span class="journey-event-month">Present</span>
-							<p class="journey-event-desc">Data Analyst & ML Practitioner — building end-to-end analytics solutions with SQL, Python, and BI tools. Focused on product analytics and decision science.</p>
-						</div>
-						<div class="journey-event">
-							<span class="journey-event-month">Ongoing</span>
-							<p class="journey-event-desc">Actively seeking roles in Data Analytics, Product Analytics, Analytics Engineering, BI Development, and Decision Science.</p>
+				<!-- Row 1: 2024 — Image LEFT, Text RIGHT -->
+				<article class="story-item journey-row" data-year="2024">
+					<div class="journey-year-marker">2024</div>
+					<div class="journey-left journey-animate-left">
+						<div class="pr-4 md:pr-8">
+							<img src="../assets/images/journey.jpg" alt="Analytics Professional" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
 						</div>
 					</div>
-				</div>
-
-				<!-- 2022 -->
-				<div class="journey-year-block" data-year="2022">
-					<div class="journey-year-badge">2022</div>
-					<div class="journey-events">
-						<div class="journey-event">
-							<span class="journey-event-month">– 2024</span>
-							<p class="journey-event-desc">Software Engineer (IT-CS) — worked with programming languages, databases, and cloud. Exposure to data sparked my shift toward analytics.</p>
-						</div>
-						<div class="journey-event">
-							<span class="journey-event-month">Discovery</span>
-							<p class="journey-event-desc">Started applying data in day-to-day work; grew interest in analytics and data-driven decision making.</p>
+					<div class="journey-right journey-animate-right">
+						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pl-8">
+							<div class="text-primary font-bold text-sm uppercase tracking-wide mb-2">Present</div>
+							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Analytics Professional</h3>
+							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Building end-to-end analytics solutions spanning SQL, Python, and BI tools. Focused on data analysis, product analytics, and decision science to translate data into actionable business insights.</p>
 						</div>
 					</div>
-				</div>
+				</article>
 
-				<!-- 2021 -->
-				<div class="journey-year-block" data-year="2021">
-					<div class="journey-year-badge">2021</div>
-					<div class="journey-events">
-						<div class="journey-event">
-							<span class="journey-event-month">– 2022</span>
-							<p class="journey-event-desc">PG Diploma in Computer Science — transitioned from Mechanical to IT-CS and built strong programming and software foundations.</p>
+				<!-- Row 2: 2022 — Text LEFT, Image RIGHT -->
+				<article class="story-item journey-row" data-year="2022">
+					<div class="journey-year-marker">2022</div>
+					<div class="journey-left journey-animate-left">
+						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pr-8">
+							<div class="text-accent font-bold text-sm uppercase tracking-wide mb-2">2022 – 2024</div>
+							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Software Engineer (IT-CS)</h3>
+							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Worked with various programming languages, databases, and cloud technologies. Exposure to data sparked interest in analytics and data-driven decision making.</p>
 						</div>
 					</div>
-				</div>
-
-				<!-- 2017 -->
-				<div class="journey-year-block" data-year="2017">
-					<div class="journey-year-badge">2017</div>
-					<div class="journey-events">
-						<div class="journey-event">
-							<span class="journey-event-month">– 2021</span>
-							<p class="journey-event-desc">Mechanical Engineering — B.E. degree. Developed problem-solving and analytical thinking that later carried into data and analytics.</p>
+					<div class="journey-right journey-animate-right">
+						<div class="pl-4 md:pl-8">
+							<img src="../assets/images/work.jpg" alt="Software Engineer" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
 						</div>
 					</div>
-				</div>
+				</article>
+
+				<!-- Row 3: 2021 — Image LEFT, Text RIGHT -->
+				<article class="story-item journey-row" data-year="2021">
+					<div class="journey-year-marker">2021</div>
+					<div class="journey-left journey-animate-left">
+						<div class="pr-4 md:pr-8">
+							<img src="../assets/images/whoami.jpg" alt="PG Diploma" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
+						</div>
+					</div>
+					<div class="journey-right journey-animate-right">
+						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pl-8">
+							<div class="text-primary font-bold text-sm uppercase tracking-wide mb-2">2021 – 2022</div>
+							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">PG Diploma in Computer Science</h3>
+							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Transitioned from Mechanical Engineering to IT-CS, mastering programming fundamentals and software development.</p>
+						</div>
+					</div>
+				</article>
+
+				<!-- Row 4: 2017 — Text LEFT, Image RIGHT -->
+				<article class="story-item journey-row" data-year="2017">
+					<div class="journey-year-marker">2017</div>
+					<div class="journey-left journey-animate-left">
+						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pr-8">
+							<div class="text-accent font-bold text-sm uppercase tracking-wide mb-2">2017 – 2021</div>
+							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Mechanical Engineering</h3>
+							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Bachelor's degree in Mechanical Engineering. Developed problem-solving mindset and analytical thinking.</p>
+						</div>
+					</div>
+					<div class="journey-right journey-animate-right">
+						<div class="pl-4 md:pl-8">
+							<img src="../assets/images/intro.jpg" alt="Mechanical Engineering" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
+						</div>
+					</div>
+				</article>
 			</div>
 		</div>
 	</section>
@@ -385,17 +401,17 @@
 			document.getElementById('scroll-progress').style.width = scrolled + '%';
 		});
 
-		// Journey timeline: Lightdash-style scroll reveal
-		const journeyBlocks = document.querySelectorAll('.journey-year-block');
+		// Journey timeline: scroll-in animation (left content from left, right from right)
+		const journeyRows = document.querySelectorAll('.story-item.journey-row');
 		const journeyObserver = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) {
 					entry.target.classList.add('visible');
 				}
 			});
-		}, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+		}, { rootMargin: '0px 0px -12% 0px', threshold: 0.2 });
 
-		journeyBlocks.forEach(block => journeyObserver.observe(block));
+		journeyRows.forEach(row => journeyObserver.observe(row));
 
 		// Big Picture transitions - parallax and fade-in
 		const aboutSections = document.querySelectorAll('.about-section');
