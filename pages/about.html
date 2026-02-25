@@ -225,96 +225,68 @@
 		</div>
 	</section>
 
-	<!-- Journey Timeline (3-Column Layout with Horizontal Line) -->
-	<section id="journey" class="min-h-screen bg-gray-100 py-20">
+	<!-- Journey Timeline (Lightdash-style: Our story so far) -->
+	<section id="journey" class="journey-section bg-gray-100 min-h-screen py-20">
 		<div class="container mx-auto px-6">
 			<div class="text-center mb-16">
-				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My Journey</h2>
-				<p class="text-lg text-gray-600 dark:text-gray-300">A timeline of my professional and educational journey</p>
+				<h2 class="journey-section-title text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My journey so far</h2>
+				<p class="text-lg text-gray-600 dark:text-gray-300">A timeline of my professional and educational path</p>
 			</div>
 
-			<div class="max-w-7xl mx-auto relative">
-				<!-- Curved journey path connecting timeline dots -->
-				<svg id="journey-path" class="journey-line hidden md:block" aria-hidden="true">
-					<path id="journey-path-line"></path>
-				</svg>
-				<div id="journey-dots" class="journey-dots hidden md:block" aria-hidden="true"></div>
-				<div class="space-y-12 md:space-y-20">
-					<!-- Timeline Item 1: Image spans col1 + half col2, Text in rest col2 + col3 -->
-					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-						<!-- Column 1 + half Column 2: Image (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 relative">
-							<div class="pr-4 md:pr-8">
-								<img src="../assets/images/journey.jpg" alt="Analytics Professional" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
-							</div>
-							<!-- Timeline Dot moved to article center -->
-						</div>
-						<!-- Rest half Column 2 + Column 3: Text (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 md:pl-8">
-							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-								<div class="text-primary font-bold text-lg mb-2">2024 - Present</div>
-								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Analytics Professional</h3>
-								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Building end-to-end analytics solutions spanning SQL, Python, and BI tools. Focused on data analysis, product analytics, and decision science to translate data into actionable business insights.</p>
-							</div>
-						</div>
-					</article>
+			<div class="journey-timeline-wrap max-w-4xl mx-auto relative">
+				<!-- Vertical timeline line -->
+				<div class="journey-vertical-line" aria-hidden="true"></div>
 
-					<!-- Timeline Item 2: Text in col1 + part col2, Image in rest col2 + col3 -->
-					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-						<!-- Column 1 + part Column 2: Text (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 md:pr-8">
-							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-								<div class="text-accent font-bold text-lg mb-2">2022 - 2024</div>
-								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Software Engineer (IT-CS)</h3>
-								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Worked with various programming languages, databases, and cloud technologies. Exposure to data sparked interest in analytics and data-driven decision making.</p>
-							</div>
-							<!-- Timeline Dot moved to article center -->
+				<!-- 2024 -->
+				<div class="journey-year-block" data-year="2024">
+					<div class="journey-year-badge">2024</div>
+					<div class="journey-events">
+						<div class="journey-event">
+							<span class="journey-event-month">Present</span>
+							<p class="journey-event-desc">Data Analyst & ML Practitioner — building end-to-end analytics solutions with SQL, Python, and BI tools. Focused on product analytics and decision science.</p>
 						</div>
-						<!-- Rest half Column 2 + Column 3: Image (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 relative">
-							<div class="pl-4 md:pl-8">
-								<img src="../assets/images/work.jpg" alt="Software Engineer" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
-							</div>
+						<div class="journey-event">
+							<span class="journey-event-month">Ongoing</span>
+							<p class="journey-event-desc">Actively seeking roles in Data Analytics, Product Analytics, Analytics Engineering, BI Development, and Decision Science.</p>
 						</div>
-					</article>
+					</div>
+				</div>
 
-					<!-- Timeline Item 3: Image spans col1 + half col2, Text in rest col2 + col3 -->
-					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-						<!-- Column 1 + half Column 2: Image (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 relative">
-							<div class="pr-4 md:pr-8">
-								<img src="../assets/images/whoami.jpg" alt="PG Diploma" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
-							</div>
-							<!-- Timeline Dot moved to article center -->
+				<!-- 2022 -->
+				<div class="journey-year-block" data-year="2022">
+					<div class="journey-year-badge">2022</div>
+					<div class="journey-events">
+						<div class="journey-event">
+							<span class="journey-event-month">– 2024</span>
+							<p class="journey-event-desc">Software Engineer (IT-CS) — worked with programming languages, databases, and cloud. Exposure to data sparked my shift toward analytics.</p>
 						</div>
-						<!-- Rest half Column 2 + Column 3: Text (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 md:pl-8">
-							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-								<div class="text-primary font-bold text-lg mb-2">2021 - 2022</div>
-								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">PG Diploma in Computer Science</h3>
-								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Transitioned from Mechanical Engineering to IT-CS, mastering programming fundamentals and software development.</p>
-							</div>
+						<div class="journey-event">
+							<span class="journey-event-month">Discovery</span>
+							<p class="journey-event-desc">Started applying data in day-to-day work; grew interest in analytics and data-driven decision making.</p>
 						</div>
-					</article>
+					</div>
+				</div>
 
-					<!-- Timeline Item 4: Text in col1 + part col2, Image in rest col2 + col3 -->
-					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-						<!-- Column 1 + part Column 2: Text (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 md:pr-8">
-							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-								<div class="text-accent font-bold text-lg mb-2">2017 - 2021</div>
-								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Mechanical Engineering</h3>
-								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Bachelor's degree in Mechanical Engineering. Developed problem-solving mindset and analytical thinking.</p>
-							</div>
-							<!-- Timeline Dot moved to article center -->
+				<!-- 2021 -->
+				<div class="journey-year-block" data-year="2021">
+					<div class="journey-year-badge">2021</div>
+					<div class="journey-events">
+						<div class="journey-event">
+							<span class="journey-event-month">– 2022</span>
+							<p class="journey-event-desc">PG Diploma in Computer Science — transitioned from Mechanical to IT-CS and built strong programming and software foundations.</p>
 						</div>
-						<!-- Rest half Column 2 + Column 3: Image (spans 3 columns out of 6) -->
-						<div class="md:col-span-3 relative">
-							<div class="pl-4 md:pl-8">
-								<img src="../assets/images/intro.jpg" alt="Mechanical Engineering" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
-							</div>
+					</div>
+				</div>
+
+				<!-- 2017 -->
+				<div class="journey-year-block" data-year="2017">
+					<div class="journey-year-badge">2017</div>
+					<div class="journey-events">
+						<div class="journey-event">
+							<span class="journey-event-month">– 2021</span>
+							<p class="journey-event-desc">Mechanical Engineering — B.E. degree. Developed problem-solving and analytical thinking that later carried into data and analytics.</p>
 						</div>
-					</article>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -413,56 +385,17 @@
 			document.getElementById('scroll-progress').style.width = scrolled + '%';
 		});
 
-		// Journey curved path aligned to dots
-		function buildJourneyPath(points, centerX, width) {
-			if (!points.length) return '';
-			const offset = Math.min(140, width * 0.18);
-			let d = `M ${points[0].x} ${points[0].y}`;
-			for (let i = 1; i < points.length; i += 1) {
-				const prev = points[i - 1];
-				const curr = points[i];
-				const midY = (prev.y + curr.y) / 2;
-				const controlX = centerX + (i % 2 === 0 ? -offset : offset);
-				d += ` Q ${controlX} ${midY} ${curr.x} ${curr.y}`;
-			}
-			return d;
-		}
-
-		function renderJourneyPath() {
-			const container = document.querySelector('#journey .max-w-7xl');
-			const svg = document.getElementById('journey-path');
-			const path = document.getElementById('journey-path-line');
-			const dotsWrap = document.getElementById('journey-dots');
-			if (!container || !svg || !path || !dotsWrap) return;
-
-			const containerRect = container.getBoundingClientRect();
-			const articles = Array.from(container.querySelectorAll('.story-item'));
-			if (!articles.length) return;
-
-			const centerX = containerRect.width / 2;
-			const points = articles.map(article => {
-				const rect = article.getBoundingClientRect();
-				return {
-					x: centerX,
-					y: rect.top - containerRect.top + rect.height / 2
-				};
+		// Journey timeline: Lightdash-style scroll reveal
+		const journeyBlocks = document.querySelectorAll('.journey-year-block');
+		const journeyObserver = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				}
 			});
+		}, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
 
-			svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`);
-			path.setAttribute('d', buildJourneyPath(points, centerX, containerRect.width));
-
-			dotsWrap.innerHTML = points.map(point => `
-				<span class="journey-dot" style="left:${point.x}px; top:${point.y}px;"></span>
-			`).join('');
-		}
-
-		const journeyContainer = document.querySelector('#journey .max-w-7xl');
-		if (journeyContainer) {
-			const journeyResizeObserver = new ResizeObserver(() => renderJourneyPath());
-			journeyResizeObserver.observe(journeyContainer);
-			window.addEventListener('load', renderJourneyPath);
-			window.addEventListener('resize', renderJourneyPath);
-		}
+		journeyBlocks.forEach(block => journeyObserver.observe(block));
 
 		// Big Picture transitions - parallax and fade-in
 		const aboutSections = document.querySelectorAll('.about-section');
