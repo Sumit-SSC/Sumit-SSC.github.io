@@ -225,85 +225,80 @@
 		</div>
 	</section>
 
-	<!-- Journey Timeline (Lightdash-style: central dashed line, alternating image+text, scroll animations) -->
+	<!-- Journey Timeline (original: 6-col alternating image+text, curved path + dots) -->
 	<section id="journey" class="min-h-screen bg-gray-100 py-20">
 		<div class="container mx-auto px-6">
 			<div class="text-center mb-16">
-				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My journey so far</h2>
+				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My Journey</h2>
 				<p class="text-lg text-gray-600 dark:text-gray-300">A timeline of my professional and educational journey</p>
 			</div>
 
-			<div class="journey-timeline-central max-w-6xl mx-auto relative">
-				<!-- Central dashed vertical line -->
-				<div class="journey-center-line" aria-hidden="true"></div>
+			<div class="max-w-7xl mx-auto relative journey-timeline-wrap">
+				<svg id="journey-path" class="journey-line hidden md:block" aria-hidden="true">
+					<path id="journey-path-line"></path>
+				</svg>
+				<div id="journey-dots" class="journey-dots hidden md:block" aria-hidden="true"></div>
+				<div class="space-y-12 md:space-y-20">
+					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="md:col-span-3 relative">
+							<div class="pr-4 md:pr-8">
+								<img src="../assets/images/journey.jpg" alt="Analytics Professional" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
+							</div>
+						</div>
+						<div class="md:col-span-3 md:pl-8">
+							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+								<div class="text-primary font-bold text-lg mb-2">2024 - Present</div>
+								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Analytics Professional</h3>
+								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Building end-to-end analytics solutions spanning SQL, Python, and BI tools. Focused on data analysis, product analytics, and decision science to translate data into actionable business insights.</p>
+							</div>
+						</div>
+					</article>
 
-				<!-- Row 1: 2024 — Image LEFT, Text RIGHT -->
-				<article class="story-item journey-row" data-year="2024">
-					<div class="journey-year-marker">2024</div>
-					<div class="journey-left journey-animate-left">
-						<div class="pr-4 md:pr-8 tap-ripple-target">
-							<img src="../assets/images/journey.jpg" alt="Analytics Professional" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
+					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="md:col-span-3 md:pr-8">
+							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+								<div class="text-accent font-bold text-lg mb-2">2022 - 2024</div>
+								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Software Engineer (IT-CS)</h3>
+								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Worked with various programming languages, databases, and cloud technologies. Exposure to data sparked interest in analytics and data-driven decision making.</p>
+							</div>
 						</div>
-					</div>
-					<div class="journey-right journey-animate-right">
-						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pl-8 tap-ripple-target">
-							<div class="text-primary font-bold text-sm uppercase tracking-wide mb-2">Present</div>
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Analytics Professional</h3>
-							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Building end-to-end analytics solutions spanning SQL, Python, and BI tools. Focused on data analysis, product analytics, and decision science to translate data into actionable business insights.</p>
+						<div class="md:col-span-3 relative">
+							<div class="pl-4 md:pl-8">
+								<img src="../assets/images/work.jpg" alt="Software Engineer" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
+							</div>
 						</div>
-					</div>
-				</article>
+					</article>
 
-				<!-- Row 2: 2022 — Text LEFT, Image RIGHT -->
-				<article class="story-item journey-row" data-year="2022">
-					<div class="journey-year-marker">2022</div>
-					<div class="journey-left journey-animate-left">
-						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pr-8 tap-ripple-target">
-							<div class="text-accent font-bold text-sm uppercase tracking-wide mb-2">2022 – 2024</div>
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Software Engineer (IT-CS)</h3>
-							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Worked with various programming languages, databases, and cloud technologies. Exposure to data sparked interest in analytics and data-driven decision making.</p>
+					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="md:col-span-3 relative">
+							<div class="pr-4 md:pr-8">
+								<img src="../assets/images/whoami.jpg" alt="PG Diploma" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
+							</div>
 						</div>
-					</div>
-					<div class="journey-right journey-animate-right">
-						<div class="pl-4 md:pl-8 tap-ripple-target">
-							<img src="../assets/images/work.jpg" alt="Software Engineer" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
+						<div class="md:col-span-3 md:pl-8">
+							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+								<div class="text-primary font-bold text-lg mb-2">2021 - 2022</div>
+								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">PG Diploma in Computer Science</h3>
+								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Transitioned from Mechanical Engineering to IT-CS, mastering programming fundamentals and software development.</p>
+							</div>
 						</div>
-					</div>
-				</article>
+					</article>
 
-				<!-- Row 3: 2021 — Image LEFT, Text RIGHT -->
-				<article class="story-item journey-row" data-year="2021">
-					<div class="journey-year-marker">2021</div>
-					<div class="journey-left journey-animate-left">
-						<div class="pr-4 md:pr-8 tap-ripple-target">
-							<img src="../assets/images/whoami.jpg" alt="PG Diploma" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
+					<article class="story-item relative grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+						<div class="md:col-span-3 md:pr-8">
+							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+								<div class="text-accent font-bold text-lg mb-2">2017 - 2021</div>
+								<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Mechanical Engineering</h3>
+								<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Bachelor's degree in Mechanical Engineering. Developed problem-solving mindset and analytical thinking.</p>
+							</div>
 						</div>
-					</div>
-					<div class="journey-right journey-animate-right">
-						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pl-8 tap-ripple-target">
-							<div class="text-primary font-bold text-sm uppercase tracking-wide mb-2">2021 – 2022</div>
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">PG Diploma in Computer Science</h3>
-							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Transitioned from Mechanical Engineering to IT-CS, mastering programming fundamentals and software development.</p>
+						<div class="md:col-span-3 relative">
+							<div class="pl-4 md:pl-8">
+								<img src="../assets/images/intro.jpg" alt="Mechanical Engineering" class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
+							</div>
 						</div>
-					</div>
-				</article>
-
-				<!-- Row 4: 2017 — Text LEFT, Image RIGHT -->
-				<article class="story-item journey-row" data-year="2017">
-					<div class="journey-year-marker">2017</div>
-					<div class="journey-left journey-animate-left">
-						<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:pr-8 tap-ripple-target">
-							<div class="text-accent font-bold text-sm uppercase tracking-wide mb-2">2017 – 2021</div>
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Mechanical Engineering</h3>
-							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">Bachelor's degree in Mechanical Engineering. Developed problem-solving mindset and analytical thinking.</p>
-						</div>
-					</div>
-					<div class="journey-right journey-animate-right">
-						<div class="pl-4 md:pl-8 tap-ripple-target">
-							<img src="../assets/images/intro.jpg" alt="Mechanical Engineering" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg">
-						</div>
-					</div>
-				</article>
+					</article>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -401,17 +396,66 @@
 			document.getElementById('scroll-progress').style.width = scrolled + '%';
 		});
 
-		// Journey timeline: scroll-in animation (left content from left, right from right)
-		const journeyRows = document.querySelectorAll('.story-item.journey-row');
-		const journeyObserver = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					entry.target.classList.add('visible');
-				}
+		// Journey: curved path + dots (timeline line through story items)
+		function buildJourneyPath(points, centerX, width) {
+			if (!points.length) return '';
+			var offset = Math.min(140, width * 0.18);
+			var d = 'M ' + points[0].x + ' ' + points[0].y;
+			for (var i = 1; i < points.length; i++) {
+				var prev = points[i - 1];
+				var curr = points[i];
+				var midY = (prev.y + curr.y) / 2;
+				var controlX = centerX + (i % 2 === 0 ? -offset : offset);
+				d += ' Q ' + controlX + ' ' + midY + ' ' + curr.x + ' ' + curr.y;
+			}
+			return d;
+		}
+		function renderJourneyPath() {
+			var container = document.querySelector('#journey .journey-timeline-wrap');
+			var svg = document.getElementById('journey-path');
+			var path = document.getElementById('journey-path-line');
+			var dotsWrap = document.getElementById('journey-dots');
+			if (!container || !svg || !path || !dotsWrap) return;
+			var containerRect = container.getBoundingClientRect();
+			var articles = container.querySelectorAll('.story-item');
+			if (!articles.length) return;
+			var centerX = containerRect.width / 2;
+			var points = [];
+			for (var i = 0; i < articles.length; i++) {
+				var rect = articles[i].getBoundingClientRect();
+				points.push({
+					x: centerX,
+					y: rect.top - containerRect.top + rect.height / 2
+				});
+			}
+			svg.setAttribute('viewBox', '0 0 ' + containerRect.width + ' ' + containerRect.height);
+			svg.setAttribute('width', containerRect.width);
+			svg.setAttribute('height', containerRect.height);
+			path.setAttribute('d', buildJourneyPath(points, centerX, containerRect.width));
+			dotsWrap.innerHTML = points.map(function(p) {
+				return '<span class="journey-dot" style="left:' + p.x + 'px;top:' + p.y + 'px;"></span>';
+			}).join('');
+		}
+		var journeyWrap = document.querySelector('#journey .journey-timeline-wrap');
+		if (journeyWrap) {
+			var ro = new ResizeObserver(renderJourneyPath);
+			ro.observe(journeyWrap);
+			window.addEventListener('load', function() {
+				renderJourneyPath();
+				setTimeout(renderJourneyPath, 300);
 			});
-		}, { rootMargin: '0px 0px -12% 0px', threshold: 0.2 });
+			window.addEventListener('resize', renderJourneyPath);
+			window.addEventListener('scroll', function() { requestAnimationFrame(renderJourneyPath); }, { passive: true });
+		}
 
-		journeyRows.forEach(row => journeyObserver.observe(row));
+		// Story items: scroll-in animation (add .animated when in view)
+		var storyItems = document.querySelectorAll('#journey .story-item');
+		var storyObserver = new IntersectionObserver(function(entries) {
+			entries.forEach(function(entry) {
+				if (entry.isIntersecting) entry.target.classList.add('animated');
+			});
+		}, { rootMargin: '0px 0px -15% 0px', threshold: 0.2 });
+		storyItems.forEach(function(el) { storyObserver.observe(el); });
 
 		// Big Picture transitions - parallax and fade-in
 		const aboutSections = document.querySelectorAll('.about-section');

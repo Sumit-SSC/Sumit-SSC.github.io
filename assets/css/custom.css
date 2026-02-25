@@ -4024,10 +4024,10 @@ body:not(.dark-theme) footer .text-white\/60 {
 
 .journey-line path {
   fill: none;
-  stroke: var(--accent-primary);
-  stroke-width: 1.4;
+  stroke: var(--accent-primary, #4f46e5);
+  stroke-width: 2;
   stroke-linecap: round;
-  stroke-dasharray: 2 4;
+  stroke-dasharray: 6 4;
 }
 
 .journey-dots {
@@ -4046,165 +4046,6 @@ body:not(.dark-theme) footer .text-white\/60 {
   border: 3px solid var(--bg-primary);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transform: translate(-50%, -50%);
-}
-
-/* ============================================
-   Journey Timeline: central dashed line, alternating image+text, scroll-in animation
-   (Lightdash "Our story so far" style)
-   ============================================ */
-.journey-timeline-central {
-  position: relative;
-  min-height: 400px;
-  overflow: visible;
-}
-
-/* Central dashed vertical line - visible on tablet+ and clearly visible */
-.journey-center-line {
-  display: none;
-}
-@media (min-width: 640px) {
-  .journey-center-line {
-    display: block;
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    border-left: 3px dashed rgba(79, 70, 229, 0.85);
-    transform: translateX(-1.5px);
-    z-index: 1;
-    pointer-events: none;
-  }
-  .dark-theme .journey-center-line {
-    border-left-color: rgba(129, 140, 248, 0.9);
-  }
-}
-
-/* Each row: year marker on center, left content | center | right content */
-.story-item.journey-row {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 3rem;
-  z-index: 1;
-  /* Override generic .story-item so only left/right children animate */
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-.story-item.journey-row:last-child {
-  margin-bottom: 0;
-}
-@media (min-width: 640px) {
-  .story-item.journey-row {
-    grid-template-columns: 1fr 4rem 1fr;
-    gap: 0 0.5rem;
-    margin-bottom: 4rem;
-    min-height: 320px;
-  }
-}
-
-/* Year marker on the center line */
-.journey-year-marker {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #374151;
-  background: #e5e7eb;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin: 0 auto 0.5rem;
-  z-index: 2;
-}
-@media (min-width: 640px) {
-  .journey-year-marker {
-    grid-column: 2;
-    grid-row: 1;
-    margin: 0 auto;
-    align-self: center;
-    justify-self: center;
-    color: #1f2937;
-    background: #d1d5db;
-    border: 2px solid #9ca3af;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-  .dark-theme .journey-year-marker {
-    color: #e5e7eb;
-    background: #374151;
-    border-color: #6366f1;
-  }
-}
-
-.journey-left {
-  grid-column: 1;
-  grid-row: 2;
-}
-@media (min-width: 640px) {
-  .journey-left {
-    grid-column: 1;
-    grid-row: 1;
-    padding-right: 1rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-}
-
-.journey-right {
-  grid-column: 1;
-  grid-row: 3;
-}
-@media (min-width: 640px) {
-  .journey-right {
-    grid-column: 3;
-    grid-row: 1;
-    padding-left: 1rem;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
-}
-
-/* Scroll-in animation: left content from left, right from right */
-.journey-animate-left,
-.journey-animate-right {
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.journey-animate-left {
-  opacity: 0;
-  transform: translateX(-50px);
-}
-.journey-animate-right {
-  opacity: 0;
-  transform: translateX(50px);
-}
-.story-item.journey-row.visible .journey-animate-left {
-  opacity: 1;
-  transform: translateX(0);
-}
-.story-item.journey-row.visible .journey-animate-right {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Card and image styling inside journey */
-.story-item.journey-row .rounded-xl.shadow-lg {
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-.story-item.journey-row:hover .rounded-xl.shadow-lg {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-}
-.story-item.journey-row img {
-  transition: transform 0.3s ease;
-}
-.story-item.journey-row:hover img {
-  transform: scale(1.02);
 }
 
 /* Skills icon grid layout */
