@@ -3757,6 +3757,78 @@ html {
   filter: brightness(1.1) contrast(1.2);
 }
 
+/* ------------------------------------------------------------------
+   Layout & Typography: constrain content width, tidy base text
+   ------------------------------------------------------------------ */
+
+/* Slightly more compact default body text; Tailwind utilities can still override locally */
+body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 1024px) {
+  body {
+    font-size: 1rem;
+  }
+}
+
+/* Constrain main content containers on large screens so pages don't feel "too wide" */
+@media (min-width: 1024px) {
+  /* Project listing, about, resume, contact, etc. */
+  body.homepage-body main > .container,
+  body.about-page main > .container,
+  body:not(.landing) main > .container {
+    max-width: 1120px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Project detail three-column layout */
+  .project-layout-grid {
+    max-width: 1120px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Keep nav visually centered on very wide screens without stretching infinitely */
+@media (min-width: 1280px) {
+  .nav-single-line > .container {
+    max-width: 1200px;
+  }
+}
+
+/* Mobile container padding (ensure consistent breathing room) */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Highlighting & theme-aware utilities
+   ------------------------------------------------------------------ */
+
+/* Map Tailwind-style "primary" utilities onto theme tokens */
+.text-primary {
+  color: var(--accent-primary) !important;
+}
+
+.hover\:text-primary:hover {
+  color: var(--accent-primary) !important;
+}
+
+.border-primary {
+  border-color: var(--accent-primary) !important;
+}
+
+/* Active nav links (those using text-primary) should stand out slightly more */
+.nav-single-line a.text-primary {
+  font-weight: 600;
+}
+
 /* Giscus comments container */
 .dark-theme #giscus-container {
   background-color: #1e293b !important;
