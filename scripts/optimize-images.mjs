@@ -7,7 +7,7 @@
 //
 // This scans assets/images (excluding /optimized and /icons* folders),
 // converts all PNG/JPG/JPEG files to WebP, and writes them under
-// assets/images/optimized/ with the same relative path.
+// assets/optimized-images/ with the same relative path.
 //
 // Thumbnails (paths containing "thumb" or "thumbnail") are compressed a bit
 // more aggressively (smaller file, still OK quality). Larger dashboard/gallery
@@ -19,7 +19,7 @@ import sharp from 'sharp';
 
 const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..', '..');
 const SRC_DIR = path.join(ROOT, 'assets', 'images');
-const DEST_DIR = path.join(SRC_DIR, 'optimized');
+const DEST_DIR = path.join(ROOT, 'assets', 'optimized-images');
 
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg']);
 

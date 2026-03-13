@@ -28,13 +28,13 @@ Icon URLs are read from `data/skill_icon_urls.json`. After running, the skills p
 
 ## optimize_images.py (image → WebP optimizer)
 
-Converts all PNG/JPG images under `assets/images/` into optimized **WebP** copies under `assets/images/optimized/…`.  
+Converts all PNG/JPG images under `assets/images/` into optimized **WebP** copies under `assets/optimized-images/…`.  
 The frontend is already wired to prefer these WebP versions (via `<picture>` + `getOptimizedImagePath()`), falling back to the original PNG/JPG if needed.
 
 - **What it does**
   - Scans `assets/images` (skips `assets/images/optimized` and some unreadable placeholder/icon copies).
   - For each `.png/.jpg/.jpeg`:
-    - Creates `/assets/images/optimized/<same-relative-path>.webp`
+    - Creates `/assets/optimized-images/<same-relative-path>.webp`
     - Thumbnails (paths containing `thumb`/`thumbnail`): smaller size, stronger compression.
     - Larger project/gallery images: higher quality, resized only if extremely wide.
 
@@ -48,3 +48,17 @@ uv run --with pillow python scripts/optimize_images.py
 - **Notes**
   - Always keep linking to the **original** paths in JSON/HTML (e.g. `assets/images/thumbs/01.jpg`); the JS helper automatically derives the optimized WebP path.
   - You can re-run this script any time after adding new images; existing WebPs are skipped.
+
+## audit_images.py (report missing / unused images)
+
+Scans your JSON/HTML/CSS for `assets/images/...` references and reports:
+
+- Missing referenced files (broken paths)
+- Unreferenced originals (cleanup candidates)
+- Top-level “loose” images under `assets/images/` (often used for site-wide backgrounds)
+
+Run:
+
+```powershell
+python scripts/audit_images.py
+```

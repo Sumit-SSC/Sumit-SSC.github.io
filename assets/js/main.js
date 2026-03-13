@@ -1700,11 +1700,11 @@ function resolveAssetUrl(project, assetPath) {
 
 /**
  * Given an image path used in data (usually PNG/JPG under assets/images),
- * return the corresponding optimized WebP path under assets/images/optimized.
+ * return the corresponding optimized WebP path.
  *
  * Example:
  *   assets/images/projects/foo/01.jpg
- * → /assets/images/optimized/projects/foo/01.webp
+ * → /assets/optimized-images/projects/foo/01.webp
  *
  * If the path is external or not under assets/images, we just return it as-is.
  */
@@ -1718,7 +1718,9 @@ function getOptimizedImagePath(assetPath) {
   const baseNoQuery = withoutPrefix.split(/[?#]/)[0];
   const webpPath = baseNoQuery.replace(/\.(png|jpe?g)$/i, '.webp');
 
-  return `/assets/images/optimized/${webpPath}`;
+  // New location (preferred).
+  // If the WebP is missing, the <picture> will fall back to the <img> (original PNG/JPG).
+  return `/assets/optimized-images/${webpPath}`;
 }
 
 function streamlitEmbed(url) {

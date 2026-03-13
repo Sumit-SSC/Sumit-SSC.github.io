@@ -159,7 +159,7 @@
   {
     "id": "funnel-metrics-causal-product-understanding",
     "title": "Funnel Metrics vs Causal Product Understanding",
-    "short_description": "Why funnels hide causality—funnel illusions, causal alternatives, and confounding effects.",
+    "short_description": "Funnels are great for orientation—but they routinely hide causality. This piece explains common funnel illusions (Simpson’s paradox, confounding, seasonality, mix shift) and shows practical causal alternatives (cohort decomposition, holdouts, diff‑in‑diff) so teams stop ‘optimizing the wrong step’ and start learning what actually moves outcomes.",
     "category": "Practice · Causal Analytics",
     "case_study_path": "data/case_studies/funnel-metrics-causal-product-understanding.html",
     "thumbnail": "assets/images/thumbs/03.jpg",
@@ -171,7 +171,7 @@
   {
     "id": "metric-gaming-goodharts-law",
     "title": "Metric Gaming & Goodhart's Law",
-    "short_description": "How metrics distort behavior—Goodhart's Law, gaming patterns, and guardrails.",
+    "short_description": "When a metric becomes a target, it stops being a good metric. This case study breaks down real gaming patterns (proxy inflation, threshold hacking, metric laundering) and gives a practical guardrail toolkit: paired metrics, invariants, audit slices, and incentive-aware dashboards that make gaming visible early.",
     "category": "Practice · Metrics & Strategy",
     "case_study_path": "data/case_studies/metric-gaming-goodharts-law.html",
     "thumbnail": "assets/images/thumbs/03.jpg",
@@ -183,7 +183,7 @@
   {
     "id": "measuring-long-term-value-subscriptions",
     "title": "Measuring Long-Term Value in Subscriptions",
-    "short_description": "Moving beyond short-term retention—LTV realism, cohort decay, and delayed impact.",
+    "short_description": "Short-term retention can look healthy while long-term value quietly collapses. This write-up covers cohort decay curves, payback windows, survival-style views, and delayed impact measurement so you can estimate LTV realistically and avoid shipping changes that ‘win week-1’ but lose month-3.",
     "category": "Industry · Subscriptions",
     "case_study_path": "data/case_studies/measuring-long-term-value-subscriptions.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -195,7 +195,7 @@
   {
     "id": "event-taxonomy-design-product-analytics",
     "title": "Event Taxonomy Design for Product Analytics",
-    "short_description": "Designing analytics-friendly event schemas—event naming, cardinality issues, and schema drift.",
+    "short_description": "A good event taxonomy is the foundation of trustworthy product analytics. This piece proposes a naming and property schema, shows how to prevent cardinality explosions, and outlines drift controls (versioning, contracts, QA checks) so funnels, cohorts, and attribution don’t break every time the product ships.",
     "category": "Practice · Analytics Engineering",
     "case_study_path": "data/case_studies/event-taxonomy-design-product-analytics.html",
     "thumbnail": "assets/images/thumbs/05.jpg",
@@ -207,7 +207,7 @@
   {
     "id": "analytics-engineering-data-contracts",
     "title": "Analytics Engineering with Data Contracts",
-    "short_description": "Preventing silent data failures—data contracts, SLA for analytics, and versioning.",
+    "short_description": "Most analytics failures are silent: a column changes, a join duplicates rows, and dashboards keep ‘working’—with wrong numbers. This case study explains lightweight data contracts (schemas, owners, SLAs, tests) and versioning patterns that prevent breakage and make trust measurable.",
     "category": "Practice · Analytics Engineering",
     "case_study_path": "data/case_studies/analytics-engineering-data-contracts.html",
     "thumbnail": "assets/images/thumbs/05.jpg",
@@ -219,7 +219,7 @@
   {
     "id": "bi-dashboards-decision-interfaces",
     "title": "BI Dashboards as Decision Interfaces",
-    "short_description": "Design dashboards that drive action—KPI layering, narrative dashboards, exec vs ops views.",
+    "short_description": "Dashboards should be decision interfaces, not chart galleries. This article shows how to layer KPIs, design ‘why → what → now what’ narratives, separate exec vs ops views, and attach owners + playbooks so every metric has a clear path to action.",
     "category": "Practice · BI & Visualization",
     "case_study_path": "data/case_studies/bi-dashboards-decision-interfaces.html",
     "thumbnail": "assets/images/thumbs/05.jpg",
@@ -231,7 +231,7 @@
   {
     "id": "observability-analytics-pipelines",
     "title": "Observability for Analytics Pipelines",
-    "short_description": "Monitor data like production systems—data freshness, volume anomalies, trust metrics.",
+    "short_description": "Treat analytics like production: monitor freshness, volume, schema drift, and distribution shifts so you catch bad data before stakeholders do. This write-up outlines a practical observability checklist (SLAs, anomaly alerts, lineage, tests) and how to operationalize trust metrics over time.",
     "category": "Practice · Analytics Engineering",
     "case_study_path": "data/case_studies/observability-analytics-pipelines.html",
     "thumbnail": "assets/images/thumbs/05.jpg",
@@ -243,7 +243,7 @@
   {
     "id": "warehouse-first-analytics-reverse-etl",
     "title": "Warehouse-First Analytics vs Reverse ETL",
-    "short_description": "Study decision latency trade-offs—centralized vs operational analytics, data freshness needs.",
+    "short_description": "Not every decision can wait for the warehouse. This case study compares warehouse-first BI vs reverse ETL/operational analytics, focusing on decision latency, freshness requirements, and governance trade-offs—so you can choose the right pattern per workflow instead of debating tooling religion.",
     "category": "Practice · Data Stack",
     "case_study_path": "data/case_studies/warehouse-first-analytics-reverse-etl.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -255,7 +255,7 @@
   {
     "id": "llms-analyst-copilots",
     "title": "LLMs as Analyst Copilots",
-    "short_description": "Use GenAI to accelerate analytics work—SQL generation, RCA assistance, insight summarization.",
+    "short_description": "A practical playbook for using LLMs to speed up analytics without losing rigor: NL→SQL with validation, root-cause analysis assistance, narrative summaries with citations, and guardrails against hallucinations. Focus is on workflows that make analysts faster while keeping metrics trustworthy.",
     "category": "Practice · AI & Analytics",
     "case_study_path": "data/case_studies/llms-analyst-copilots.html",
     "thumbnail": "assets/images/thumbs/06.jpg",
@@ -267,7 +267,7 @@
   {
     "id": "human-in-the-loop-ai-risk-ops",
     "title": "Human-in-the-Loop AI for Risk & Ops",
-    "short_description": "Design safe AI systems with oversight—decision escalation, explainability, ops throughput.",
+    "short_description": "How to design AI systems that ops teams can actually run: calibrated confidence, decision escalation paths, human review queues, and explainability that supports throughput. Includes practical metrics (queue aging, override rate, precision@review) so safety doesn’t kill productivity.",
     "category": "Practice · AI & Risk",
     "case_study_path": "data/case_studies/human-in-the-loop-ai-risk-ops.html",
     "thumbnail": "assets/images/thumbs/01.jpg",
@@ -279,7 +279,7 @@
   {
     "id": "prompt-driven-analytics-vs-sql-first",
     "title": "Prompt-Driven Analytics vs SQL-First",
-    "short_description": "Compare reliability of LLM queries vs SQL—hallucination risk, validation layers, hybrid workflows.",
+    "short_description": "A reliability-first comparison of prompt-driven analytics vs SQL-first workflows. Covers hallucination and semantic drift risks, validation layers (tests, metric stores, data contracts), and hybrid patterns where LLMs accelerate work but SQL remains the source of truth for decisions.",
     "category": "Practice · AI & Analytics",
     "case_study_path": "data/case_studies/prompt-driven-analytics-vs-sql-first.html",
     "thumbnail": "assets/images/thumbs/06.jpg",
@@ -291,7 +291,7 @@
   {
     "id": "churn-lagging-indicator",
     "title": "Churn as a Lagging Indicator (early signals, interventions)",
-    "short_description": "Detect churn risk earlier—early signals, behavioral markers, and intervention analytics.",
+    "short_description": "Churn is the final symptom, not the early warning. This write-up focuses on leading indicators (usage decay, payment friction, support load, feature adoption), how to validate them, and how to design intervention analytics so retention actions are targeted, measurable, and ROI-aware.",
     "category": "Practice · Retention & Subscriptions",
     "case_study_path": "data/case_studies/churn-lagging-indicator.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -303,7 +303,7 @@
   {
     "id": "retention-vs-growth-tradeoffs",
     "title": "Retention vs Growth Trade-offs (cohort payback, blended CAC/LTV)",
-    "short_description": "Balance acquisition and retention using cohort economics and payback periods.",
+    "short_description": "Growth is not real if cohorts don’t pay back. This case study shows how to reconcile acquisition and retention using cohort economics: payback periods, blended CAC/LTV, contribution margin, and scenarios where ‘more growth’ actually worsens long-term unit economics.",
     "category": "Practice · Growth & Metrics",
     "case_study_path": "data/case_studies/retention-vs-growth-tradeoffs.html",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -315,7 +315,7 @@
   {
     "id": "ai-governance-analytics-teams",
     "title": "AI Governance for Analytics Teams (risk, bias, accountability)",
-    "short_description": "Bias monitoring, model accountability, and regulatory readiness.",
+    "short_description": "A governance checklist tailored for analytics teams adopting ML/GenAI: bias monitoring, documentation, accountability, and audit-ready workflows. Emphasis is on lightweight controls that keep models usable while meeting regulatory and stakeholder expectations.",
     "category": "Practice · AI & Governance",
     "case_study_path": "data/case_studies/ai-governance-analytics-teams.html",
     "thumbnail": "assets/images/thumbs/06.jpg",

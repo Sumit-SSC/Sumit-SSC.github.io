@@ -10,7 +10,7 @@ Usage (from repo root):
 This will:
  - Scan assets/images (excluding /optimized and /icons* folders)
  - Convert .png/.jpg/.jpeg to .webp
- - Write to assets/images/optimized/<same-relative-path>.webp
+ - Write to assets/optimized-images/<same-relative-path>.webp
 
 Matches JS helper getOptimizedImagePath() already used in the site.
 """
@@ -24,7 +24,7 @@ from PIL import Image, UnidentifiedImageError
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT / "assets" / "images"
-DEST_DIR = SRC_DIR / "optimized"
+DEST_DIR = ROOT / "assets" / "optimized-images"
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg"}
 

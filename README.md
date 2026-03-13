@@ -52,6 +52,10 @@ Or use any static server / VS Code “Live Server” equivalent.
 The UI (dashboard + detail pages) is rendered dynamically from these files.  
 For full field definitions and examples, see `data/README.md`.
 
+For the full end-to-end editing flow (where to put images, how to optimize them, and the safest update checklist), see:
+
+- `docs/CONTENT_WORKFLOW.md`
+
 ---
 
 ## Helpful scripts
