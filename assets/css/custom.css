@@ -1378,6 +1378,24 @@ body.homepage-body #nav {
     padding-right: 0.5rem;
   }
 }
+
+/* Mobile / small-screen nav: reduce horizontal crowding a bit */
+@media (max-width: 768px) {
+  #nav.nav-single-line .flex.justify-between {
+    gap: 0.5rem;
+  }
+  #nav.nav-single-line ul.flex {
+    gap: 0.5rem;
+  }
+  #nav.nav-single-line ul.flex li a {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    font-size: 0.8rem;
+  }
+  #nav.nav-single-line .nav-brand {
+    font-size: 1.05rem;
+  }
+}
 /* Theme controls in nav: compact so they don't push wrap */
 #theme-controls {
   flex-shrink: 0;
