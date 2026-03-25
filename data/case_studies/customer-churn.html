@@ -1,0 +1,54 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This project turns churn analytics into a retention operating workflow: define cohorts, engineer interpretable features, produce churn risk scores, and publish the
+    result as a Power BI decision interface for retention teams.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Outcome:</strong> churn propensity model + drivers surfaced as segments that teams can act on (not a “model demo”).</li>
+      <li><strong>Key drivers:</strong> support-ticket volume/recency and payment failures are consistently high-signal churn predictors; usage decline follows.</li>
+      <li><strong>Targeting logic:</strong> combine <strong>risk × value</strong> to prioritize high-value, high-risk accounts where interventions have best ROI.</li>
+      <li><strong>Delivery:</strong> Power BI dashboard provides cohort trends, risk distributions, and driver summaries for playbooks.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Problem</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Blanket discounts are expensive and often mis-targeted. The practical retention question is: <em>Which customers are both likely to churn and valuable enough to
+    justify an intervention?</em> To answer that, we need risk scoring, explainability, and segmentation—then a dashboard that makes the result usable.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Data Model (conceptual)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Customer:</strong> signup date, tenure, plan tier, ARPU proxy.</li>
+    <li><strong>Usage:</strong> activity counts, usage minutes, trend features (recent vs prior window).</li>
+    <li><strong>Support:</strong> ticket volume, severity, recency, unresolved status.</li>
+    <li><strong>Billing:</strong> payment failures, dunning flags, invoice delays.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Methodology</h2>
+  <ol class="list-decimal pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+    <li><strong>Cohorting.</strong> Define cohorts by signup month and lifecycle stage so churn rates are comparable over time.</li>
+    <li><strong>Feature engineering.</strong> Build risk signals that are stable and explainable (trends, recency, counts).</li>
+    <li><strong>Modeling.</strong> Train an XGBoost classifier with imbalance handling; evaluate with AUC + precision at top risk deciles.</li>
+    <li><strong>Explainability.</strong> Use SHAP to rank drivers globally and for individual accounts.</li>
+    <li><strong>Segmentation.</strong> Map customers into value–risk quadrants; define interventions per quadrant (save offers, proactive support, education).</li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">What the dashboard enables</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>“Where is churn rising?”</strong> Cohort trend views and lifecycle breakdown.</li>
+    <li><strong>“Who should we contact this week?”</strong> High-value / high-risk queue.</li>
+    <li><strong>“Why are they risky?”</strong> Driver panels: payment failures, support intensity, usage drop.</li>
+    <li><strong>“What should we do?”</strong> Playbook mapping and monitoring after intervention.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Limitations & Next Steps</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Causal lift:</strong> validate interventions with holdouts (avoid “treat the treated” bias).</li>
+    <li><strong>Monitoring:</strong> drift checks on risk distribution + driver shifts.</li>
+    <li><strong>Feedback loop:</strong> capture intervention outcomes to improve targeting over time.</li>
+  </ul>
+</div>

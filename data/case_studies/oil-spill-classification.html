@@ -1,0 +1,43 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This case study documents an environmental ML pipeline for classifying oil-spill vs non-spill satellite patches. The key goal is a workflow that is reproducible
+    and interpretable enough for screening and human review—not a black-box demo.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Approach:</strong> preprocessing + engineered texture/spectral features + model comparison (RF, SVM, NN baseline).</li>
+      <li><strong>Evaluation:</strong> confusion matrix + ROC + precision/recall to balance false alarms vs missed spills.</li>
+      <li><strong>Deliverable:</strong> a documented notebook so reviewers can reproduce results and understand failure modes.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Problem</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Satellite imagery screening is high volume. Manual review is slow and inconsistent. An ML classifier can triage patches so analysts focus on the highest-probability
+    spill candidates and respond faster.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Methodology</h2>
+  <ol class="list-decimal pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+    <li><strong>Preprocessing.</strong> Normalize inputs; standardize train/validation split; optional augmentation strategy.</li>
+    <li><strong>Feature extraction.</strong> Texture descriptors and other engineered signals that capture spill-like patterns.</li>
+    <li><strong>Modeling.</strong> Compare Random Forest and SVM (interpretability + performance) with a neural baseline.</li>
+    <li><strong>Evaluation.</strong> Report per-class metrics; analyze false positives/false negatives as operational cost trade-offs.</li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Operational framing</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>False positives:</strong> waste analyst time but may be acceptable if downstream review is cheap.</li>
+    <li><strong>False negatives:</strong> missed spills are expensive and reputationally risky—often the metric to protect.</li>
+    <li><strong>Thresholding:</strong> choose decision thresholds based on capacity and risk tolerance (not just accuracy).</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Next Steps</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Calibration:</strong> probability calibration to make scores usable for triage queues.</li>
+    <li><strong>Monitoring:</strong> drift detection as satellite sources and conditions change.</li>
+    <li><strong>Explainability:</strong> feature importance summaries to validate model focus and reduce brittle behavior.</li>
+  </ul>
+</div>

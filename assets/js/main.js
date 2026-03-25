@@ -51,6 +51,15 @@ function stripHtmlToText(html) {
     .trim();
 }
 
+function escapeHtml(text) {
+  return String(text ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function truncateText(text, maxLen = 120) {
   if (!text) return '';
   const t = String(text);
@@ -61,6 +70,20 @@ function extractFirstListItemText(html) {
   const match = (html || '').match(/<li[^>]*>([\s\S]*?)<\/li>/i);
   if (!match) return '';
   return stripHtmlToText(match[1]);
+}
+
+function extractFirstListItemsText(html, maxItems = 3) {
+  const list = [];
+  if (!html) return list;
+  const re = /<li[^>]*>([\s\S]*?)<\/li>/gi;
+  let m = null;
+  while ((m = re.exec(html)) !== null) {
+    if (!m[1]) continue;
+    const item = stripHtmlToText(m[1]);
+    if (item) list.push(item);
+    if (list.length >= maxItems) break;
+  }
+  return list;
 }
 
 function getImpactPreview(project) {
@@ -1506,6 +1529,12 @@ function renderProject(project, caseStudy, contentFromFile) {
   setMetaContent('meta[name="twitter:description"]', ogDesc);
   setMetaContent('meta[name="twitter:image"]', ogImage);
 
+  const insightsHtml = contentFromFile?.insights || project?.insights || '';
+  const outcomeBullets = extractFirstListItemsText(insightsHtml, 3)
+    .map(b => truncateText(b, 95))
+    .filter(Boolean)
+    .map(b => escapeHtml(b));
+
   const hero = document.getElementById("project-hero");
   if (hero) {
     hero.innerHTML = `
@@ -1516,6 +1545,20 @@ function renderProject(project, caseStudy, contentFromFile) {
         </div>
         <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">${project.title}</h1>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">${project.short_description || ""}</p>
+        ${
+          outcomeBullets.length
+            ? `
+          <div class="max-w-3xl mx-auto mb-8 text-left">
+            <div class="text-xs font-semibold tracking-wide uppercase text-gray-600">Metrics & Outcomes</div>
+            <ul class="mt-3 space-y-2">
+              ${outcomeBullets
+                .map(b => `<li class="flex gap-3"><span class="text-primary font-bold">•</span><span class="text-white/90">${b}</span></li>`)
+                .join('')}
+            </ul>
+          </div>
+        `
+            : ''
+        }
         <div class="flex gap-4 justify-center">
           ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">GitHub</a>` : ""}
           ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold">Live Demo</a>` : ""}

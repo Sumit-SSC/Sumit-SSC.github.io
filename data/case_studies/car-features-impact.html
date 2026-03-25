@@ -1,0 +1,50 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This project explains used-car price drivers using exploratory analysis and stakeholder-friendly dashboards. The emphasis is clarity: what matters, how much it
+    matters, and how non-technical teams should use the findings.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Top drivers:</strong> mileage, vehicle age, brand segment (premium vs mass), and fuel type dominate price variation.</li>
+      <li><strong>Deliverable:</strong> Power BI + Excel dashboards that let users slice by brand, fuel, and mileage bins.</li>
+      <li><strong>Outcome:</strong> stakeholders can price listings and negotiate with evidence instead of intuition.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Problem</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Price discussions are often subjective. Teams need a repeatable view of how features correlate with price so they can set realistic expectations and understand
+    trade-offs (e.g., older premium brands vs newer mass-market cars).
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Analysis Approach</h2>
+  <ol class="list-decimal pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+    <li><strong>Cleaning.</strong> handle missing values/outliers; standardize categorical values (brand, fuel).</li>
+    <li><strong>EDA.</strong> distributions + correlations + key bivariate relationships (price vs mileage/age).</li>
+    <li><strong>Segmentation.</strong> premium vs mass-market, mileage bins, and brand/fuel slices to reveal non-linear patterns.</li>
+    <li><strong>Dashboarding.</strong> package insights into interactive views for exploration and decision-making.</li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Insights (examples)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Mileage effect:</strong> strong negative relationship with price; slope differs by brand segment.</li>
+    <li><strong>Age effect:</strong> depreciation is steep early and flattens later for some segments.</li>
+    <li><strong>Fuel type:</strong> consistent price differences after controlling for other attributes.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">How stakeholders use it</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Pricing guidance:</strong> choose realistic ranges by segment and feature profile.</li>
+    <li><strong>Listing strategy:</strong> highlight features that create measurable price lift.</li>
+    <li><strong>Negotiation support:</strong> justify price changes with evidence-backed drivers.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Next Steps</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Partial effects:</strong> add regression/ML to separate correlated drivers.</li>
+    <li><strong>Geo/seasonality:</strong> incorporate region and time for market shifts.</li>
+    <li><strong>Governance:</strong> metric definitions + data freshness checks for production dashboards.</li>
+  </ul>
+</div>

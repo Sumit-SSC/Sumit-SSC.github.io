@@ -1,0 +1,51 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This case study describes a sales performance dashboard built as a decision interface: consistent KPI definitions, a clean dimensional model, and drill-through
+    views that let leaders move from “what happened” to “where and why” without spreadsheet ping-pong.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Single source of truth:</strong> revenue and margin KPIs defined once (DAX), reused everywhere.</li>
+      <li><strong>Time intelligence:</strong> YoY/MoM trends, variance, and contribution analysis for leadership reviews.</li>
+      <li><strong>Drill-through:</strong> from executive KPIs → region/segment/SKU in a few clicks.</li>
+      <li><strong>Actionability:</strong> makes margin erosion and underperforming SKUs visible early.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Problem</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Leaders need fast answers: “Are we growing?”, “Where is margin leaking?”, “Which segments need attention?”. When data lives across spreadsheets and inconsistent
+    definitions, teams argue about numbers instead of decisions.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Model & KPI Design</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Star-ish schema:</strong> sales fact at transaction/day grain + dimensions (date, region, segment, product/SKU).</li>
+    <li><strong>Core measures:</strong> revenue, cost, gross margin, margin %, growth rates, mix contributions.</li>
+    <li><strong>Guardrails:</strong> explicit filters for returns/discounts so margin math stays honest.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard UX</h2>
+  <ol class="list-decimal pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+    <li><strong>Executive header.</strong> KPI cards + trend spark-lines for fast scanning.</li>
+    <li><strong>Where to look.</strong> Region/segment breakdowns surface concentration and weak spots.</li>
+    <li><strong>Why it changed.</strong> Mix/variance visuals show whether growth is volume-driven or price-driven.</li>
+    <li><strong>Drill-through.</strong> Region → SKU/customer so teams can act without exporting data.</li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Findings (example patterns)</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Margin erosion:</strong> two regions showing growing revenue but falling margin %—often discount or product-mix driven.</li>
+    <li><strong>SKU outliers:</strong> a small set of SKUs account for a disproportionate share of margin leakage.</li>
+    <li><strong>Mix shift:</strong> growth coming from lower-margin segments, requiring pricing or bundle adjustments.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Next Steps</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Alerting:</strong> threshold alerts for margin % drops and unusual discount spikes.</li>
+    <li><strong>Ownership:</strong> KPI owners + weekly review cadence; decisions logged against KPI movements.</li>
+    <li><strong>Data contracts:</strong> schema tests for cost/discount columns so calculations don’t silently break.</li>
+  </ul>
+</div>

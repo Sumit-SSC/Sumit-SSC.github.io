@@ -1,0 +1,65 @@
+<div class="space-y-8">
+  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+    This case study documents an end-to-end regression workflow to estimate fair-market used-car prices from listing attributes. The goal is not “build a model”, but
+    deliver a pricing decision tool that is accurate, explainable, and usable by non-technical teams.
+  </p>
+
+  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Outcome:</strong> Tuned gradient-boosted trees achieve <strong>RMSE under $3,000</strong> with stable generalization on a held-out split.</li>
+      <li><strong>Top drivers:</strong> <strong>Mileage</strong>, <strong>vehicle age</strong>, and <strong>brand segment</strong> explain most of the price variance; fuel and drivetrain add smaller lift.</li>
+      <li><strong>Explainability:</strong> SHAP summaries translate model behavior into stakeholder-friendly drivers for pricing conversations.</li>
+      <li><strong>Operationalization:</strong> A Streamlit app provides real-time estimates + uncertainty guidance; PBIX/slides enable leadership reviews.</li>
+    </ul>
+  </section>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Problem</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    Used-car pricing is high leverage: mispricing creates inventory holding cost (overpriced) or margin leakage (underpriced). Manual rules like “mileage-only” miss
+    important interactions (brand × mileage, age × drivetrain) and are inconsistent across sales teams.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Data & Assumptions</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Input:</strong> Listing-level structured attributes (year, mileage, brand, fuel, drivetrain, etc.).</li>
+    <li><strong>Target:</strong> Sale/list price (modeled as a continuous value).</li>
+    <li><strong>Constraints:</strong> Real deployments need geo/seasonality; this version focuses on attribute-driven pricing and explainability.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Methodology</h2>
+  <ol class="list-decimal pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+    <li>
+      <strong>Profiling & cleaning.</strong> Normalize categories (e.g., Petrol/Gasoline), handle missing optional fields, and remove obvious entry errors/outliers.
+    </li>
+    <li>
+      <strong>Feature engineering.</strong> Derive vehicle age, mileage bins, brand segment, and interaction features (age × mileage) that capture non-linear effects.
+    </li>
+    <li>
+      <strong>Modeling.</strong> Benchmark tree-based models (Random Forest / XGBoost / LightGBM) with cross-validation and a time-aware holdout split where possible.
+    </li>
+    <li>
+      <strong>Explainability.</strong> Use SHAP to show global drivers (summary) and per-listing reasoning (why this car is above/below a reference baseline).
+    </li>
+  </ol>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Results</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Performance:</strong> XGBoost baseline + tuning reaches <strong>~$2.8k RMSE</strong> with strong \(R^2\) (reported ~85%).</li>
+    <li><strong>Robustness:</strong> Tuning reduces overfit; holdout performance stays close to train error.</li>
+    <li><strong>Interpretability:</strong> Driver ordering aligns with market intuition while still capturing complex interactions.</li>
+  </ul>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Decision Enablement</h2>
+  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+    The “product” here is a pricing workflow: a quick estimate + rationale. The Streamlit UI supports front-line usage; the PBIX/slides support internal reviews and
+    stakeholder alignment.
+  </p>
+
+  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Limitations & Next Steps</h2>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Geo & seasonality:</strong> Add region features and seasonal trends for better market realism.</li>
+    <li><strong>External signals:</strong> Fuel price, macro conditions, and inventory levels often shift price curves materially.</li>
+    <li><strong>Uncertainty:</strong> Calibrate prediction intervals and add “confidence bands” to guide negotiation risk.</li>
+  </ul>
+</div>
