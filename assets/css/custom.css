@@ -5139,3 +5139,31 @@ html.dark-theme .case-study-tag {
   background-size: 400% 400%;
   animation: contact-gradient-shift 15s ease infinite;
 }
+
+/* Mobile polish: prevent nav clipping on narrow screens */
+@media (max-width: 768px) {
+  #nav.nav-single-line .container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #nav.nav-single-line .container > div {
+    min-width: max-content;
+  }
+
+  #nav.nav-single-line .nav-brand {
+    font-size: 1rem !important;
+  }
+}
+
+/* Case study UX polish */
+#case-study-toc a {
+  line-height: 1.35;
+}
+
+@media (max-width: 768px) {
+  /* Keep article reading first on mobile; TOC can be noisy */
+  #case-study-toc-wrap {
+    display: none !important;
+  }
+}

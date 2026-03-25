@@ -1623,16 +1623,16 @@ function renderProject(project, caseStudy, contentFromFile) {
     hero.innerHTML = `
       <div class="container mx-auto px-6 py-16 text-center">
         <div class="text-sm text-gray-500 mb-4">
-          <span>${project.category || "Analytics"}</span>
-          ${project.date ? ` • <span>${project.date}</span>` : ""}
+          <span class="text-white/90">${project.category || "Analytics"}</span>
+          ${project.date ? ` • <span class="text-white/80">${project.date}</span>` : ""}
         </div>
-        <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">${project.title}</h1>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">${project.short_description || ""}</p>
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">${project.title}</h1>
+        <p class="text-xl text-white/90 max-w-2xl mx-auto mb-8">${project.short_description || ""}</p>
         ${
           outcomeBullets.length
             ? `
           <div class="max-w-3xl mx-auto mb-8 text-left">
-            <div class="text-xs font-semibold tracking-wide uppercase text-gray-600">Metrics & Outcomes</div>
+            <div class="text-xs font-semibold tracking-wide uppercase text-white/80">Metrics & Outcomes</div>
             <ul class="mt-3 space-y-2">
               ${outcomeBullets
                 .map(b => `<li class="flex gap-3"><span class="text-primary font-bold">•</span><span class="text-white/90">${b}</span></li>`)
@@ -1642,7 +1642,7 @@ function renderProject(project, caseStudy, contentFromFile) {
         `
             : ''
         }
-        <div class="flex gap-4 justify-center">
+        <div class="flex flex-wrap gap-3 justify-center">
           ${project.github_url ? `<a href="${project.github_url}" target="_blank" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-bold">GitHub</a>` : ""}
           ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold">Live Demo</a>` : ""}
         </div>
