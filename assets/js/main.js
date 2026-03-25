@@ -86,6 +86,15 @@ function extractFirstListItemsText(html, maxItems = 3) {
   return list;
 }
 
+function slugifyHeading(text) {
+  return String(text || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
 function getImpactPreview(project) {
   const impact = extractFirstListItemText(project?.insights || '');
   return impact ? truncateText(impact, 110) : '';
@@ -95,6 +104,78 @@ function setMetaContent(selector, content) {
   if (!content) return;
   const el = document.querySelector(selector);
   if (el) el.setAttribute('content', content);
+}
+
+function renderCaseStudyQuickSummary(caseStudy, rootEl) {
+  const wrap = document.getElementById('case-study-quick-summary');
+  if (!wrap) return;
+  const bullets = extractFirstListItemsText(rootEl?.innerHTML || '', 3)
+    .map(b => truncateText(b, 110))
+    .filter(Boolean);
+  if (!bullets.length) {
+    wrap.classList.add('hidden');
+    wrap.innerHTML = '';
+    return;
+  }
+
+  wrap.classList.remove('hidden');
+  wrap.innerHTML = `
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border border-gray-200 dark:border-gray-700">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300 mb-3">Key takeaways</h2>
+      <ul class="space-y-2">
+        ${bullets.map(item => `
+          <li class="flex gap-2 text-sm text-gray-700 dark:text-gray-200">
+            <span class="text-primary font-bold">•</span>
+            <span>${escapeHtml(item)}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+function renderCaseStudyTOC(rootEl) {
+  const tocWrap = document.getElementById('case-study-toc-wrap');
+  const toc = document.getElementById('case-study-toc');
+  if (!tocWrap || !toc || !rootEl) return;
+
+  const headings = Array.from(rootEl.querySelectorAll('h2, h3'));
+  if (!headings.length) {
+    tocWrap.classList.add('hidden');
+    toc.innerHTML = '';
+    return;
+  }
+
+  const usedIds = new Set();
+  const items = headings.map((heading) => {
+    const label = heading.textContent?.trim();
+    if (!label) return null;
+    let id = heading.id || slugifyHeading(label);
+    if (!id) return null;
+    let uniqueId = id;
+    let i = 2;
+    while (usedIds.has(uniqueId)) {
+      uniqueId = `${id}-${i}`;
+      i += 1;
+    }
+    usedIds.add(uniqueId);
+    heading.id = uniqueId;
+    const isSub = heading.tagName.toLowerCase() === 'h3';
+    return `
+      <a href="#${uniqueId}" class="text-sm ${isSub ? 'pl-4 text-gray-600 dark:text-gray-300' : 'font-medium text-gray-800 dark:text-gray-100'} hover:text-primary transition-colors">
+        ${escapeHtml(label)}
+      </a>
+    `;
+  }).filter(Boolean);
+
+  if (!items.length) {
+    tocWrap.classList.add('hidden');
+    toc.innerHTML = '';
+    return;
+  }
+
+  tocWrap.classList.remove('hidden');
+  toc.innerHTML = items.join('');
 }
 
 // Initialize on DOM ready
@@ -1432,6 +1513,8 @@ async function loadCaseStudyPage() {
     if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
     const html = await res.text();
     container.innerHTML = html;
+    renderCaseStudyQuickSummary(caseStudy, container);
+    renderCaseStudyTOC(container);
     renderRelatedCaseStudiesCallout(caseStudy, caseStudies);
   } catch (e) {
     container.innerHTML = '<p class="text-gray-500">Case study content could not be loaded. <a href="' + getHomeUrl() + '" class="text-primary hover:underline">Back to dashboard</a>.</p>';
