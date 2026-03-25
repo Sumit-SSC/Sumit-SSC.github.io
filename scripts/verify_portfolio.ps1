@@ -26,7 +26,20 @@ Write-Host "1. Checking social buttons at TOP of pages..." -ForegroundColor Yell
 foreach ($page in $pageFiles) {
     if (Test-Path $page) {
         $content = Get-Content $page -Raw
-        if ($content -notmatch "linkedin.*github|github.*linkedin" -and $content -notmatch "social.*icon|icon.*social") {
+        # The original regex was newline-fragile; we instead look for both LinkedIn + GitHub
+        # within the "header-like" region (header/nav) or fallback to first chunk.
+        $headerRegion = ''
+        if ($content -match '(?s)<header.*?</header>') {
+            $headerRegion = $Matches[0]
+        } elseif ($content -match '(?s)<nav[^>]*id=["'']nav["''][\s\S]*?</nav>') {
+            $headerRegion = $Matches[0]
+        } else {
+            $headerRegion = $content.Substring(0, [Math]::Min(3000, $content.Length))
+        }
+
+        $hasLinkedin = $headerRegion -match 'linkedin'
+        $hasGithub = $headerRegion -match 'github'
+        if (-not ($hasLinkedin -and $hasGithub)) {
             $issues += "$page - Missing social buttons in header/nav"
         }
     }
@@ -37,7 +50,29 @@ Write-Host "2. Checking social buttons at BOTTOM of pages..." -ForegroundColor Y
 foreach ($page in $pageFiles) {
     if (Test-Path $page) {
         $content = Get-Content $page -Raw
-        if ($content -notmatch "footer.*linkedin|footer.*github" -and $content -notmatch "social.*footer") {
+        $footerRegion = ''
+        # Prefer the main footer by id="footer" marker (avoids false positives from small footers).
+        $idx = $content.IndexOf('id="footer"')
+        if ($idx -ge 0) {
+            $footerRegion = $content.Substring($idx, [Math]::Min(3000, $content.Length - $idx))
+        } else {
+            $idx = $content.IndexOf("id='footer'")
+            if ($idx -ge 0) {
+                $footerRegion = $content.Substring($idx, [Math]::Min(3000, $content.Length - $idx))
+            } else {
+                # Fallback: take the last <footer>...</footer> block on the page.
+                $footerMatches = [regex]::Matches($content, '(?s)<footer.*?</footer>')
+                if ($footerMatches.Count -gt 0) {
+                    $footerRegion = $footerMatches[$footerMatches.Count - 1].Value
+                } else {
+                    $footerRegion = $content.Substring([Math]::Max(0, $content.Length - 3000))
+                }
+            }
+        }
+
+        $hasLinkedin = $footerRegion -match 'linkedin'
+        $hasGithub = $footerRegion -match 'github'
+        if (-not ($hasLinkedin -and $hasGithub)) {
             $issues += "$page - Missing social buttons in footer"
         }
     }
@@ -65,8 +100,9 @@ if (Test-Path "assets/js/main.js") {
 Write-Host "5. Checking Disqus comments..." -ForegroundColor Yellow
 if (Test-Path "pages/project.html") {
     $content = Get-Content "pages/project.html" -Raw
-    if ($content -notmatch "disqus|disqus_thread") {
-        $issues += "pages/project.html - Missing Disqus comments section"
+    # Site uses Giscus (not Disqus). Accept either to avoid false positives.
+    if ($content -notmatch "disqus|disqus_thread|giscus|giscus_root|giscus-root") {
+        $issues += "pages/project.html - Missing comments section (Disqus/Giscus)"
     }
 }
 
@@ -96,8 +132,9 @@ if (Test-Path "pages/about.html") {
 Write-Host "8. Checking contact form integration..." -ForegroundColor Yellow
 if (Test-Path "pages/contact.html") {
     $content = Get-Content "pages/contact.html" -Raw
-    if ($content -notmatch "formspree\.io|YOUR_FORM_ID") {
-        $issues += "pages/contact.html - Missing Formspree integration (or still has placeholder)"
+    # Your current flow uses mailto (and optionally can be wired to Formspree). Accept mailto.
+    if ($content -notmatch "formspree\.io|YOUR_FORM_ID|mailto:") {
+        $issues += "pages/contact.html - Missing Formspree integration (or still has placeholder) and mailto flow"
     }
 }
 

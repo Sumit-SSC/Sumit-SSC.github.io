@@ -44,6 +44,36 @@ const FILTER_GROUPS = {
   'Notebook': ['Jupyter', 'VS Code', 'Google Colab', 'Anaconda', 'R (learning)']
 };
 
+function stripHtmlToText(html) {
+  return (html || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function truncateText(text, maxLen = 120) {
+  if (!text) return '';
+  const t = String(text);
+  return t.length > maxLen ? t.substring(0, maxLen - 3) + '...' : t;
+}
+
+function extractFirstListItemText(html) {
+  const match = (html || '').match(/<li[^>]*>([\s\S]*?)<\/li>/i);
+  if (!match) return '';
+  return stripHtmlToText(match[1]);
+}
+
+function getImpactPreview(project) {
+  const impact = extractFirstListItemText(project?.insights || '');
+  return impact ? truncateText(impact, 110) : '';
+}
+
+function setMetaContent(selector, content) {
+  if (!content) return;
+  const el = document.querySelector(selector);
+  if (el) el.setAttribute('content', content);
+}
+
 // Initialize on DOM ready
 (function() {
   if (document.readyState === 'loading') {
@@ -745,10 +775,15 @@ function createFeaturedHeroCard(project) {
   const tags = (project.tools || []).slice(0, 4).map(t =>
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
+  const impactPreview = getImpactPreview(project);
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
     streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4l9 5 9-5-9-4-9 4zm0 4.5v7.25L12 20l9-4.25V8.5L12 13 3 8.5z"/></svg>`,
     notebook: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 4h10M9 4v16"/></svg>`,
+    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
+    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
+    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`,
     link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
   const actionButtons = [
@@ -782,7 +817,8 @@ function createFeaturedHeroCard(project) {
           <div class="featured-hover-inner">
             ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
             <h4 class="text-lg font-bold text-white mb-3">${project.title}</h4>
-            <p class="text-sm text-white/90 leading-relaxed mb-4">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 120) + '...' || 'Explore this project'}</p>
+            <p class="text-sm text-white/90 leading-relaxed mb-2">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 120) + '...' || 'Explore this project'}</p>
+            ${impactPreview ? `<p class="text-xs text-white/80 leading-relaxed mb-4"><strong>Impact:</strong> ${impactPreview}</p>` : ''}
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons}
             </div>
@@ -793,6 +829,7 @@ function createFeaturedHeroCard(project) {
         <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
         <h3 class="featured-title"><a href="${getBasePath()}project.html?id=${project.id}">${project.title}</a></h3>
         <p class="featured-summary">${project.short_description || ''}</p>
+        ${impactPreview ? `<p class="text-xs text-gray-600 dark:text-gray-300 mt-1">${impactPreview}</p>` : ''}
         <div class="list-tags">
           ${tags || ''}
         </div>
@@ -810,10 +847,15 @@ function createFeaturedHalfCard(project) {
   const tags = (project.tools || []).slice(0, 3).map(t =>
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
+  const impactPreview = getImpactPreview(project);
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
     streamlit: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4l9 5 9-5-9-4-9 4zm0 4.5v7.25L12 20l9-4.25V8.5L12 13 3 8.5z"/></svg>`,
     notebook: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 4h10M9 4v16"/></svg>`,
+    demo: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`,
+    powerbi: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h4v18H3V3zm7 5h4v13h-4V8zm7-3h4v16h-4V5z"/></svg>`,
+    slides: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2zm4-9h6v6H6V9z"/></svg>`,
+    video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`,
     link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
   const actionButtons = [
@@ -847,7 +889,8 @@ function createFeaturedHalfCard(project) {
           <div class="featured-hover-inner">
             ${project.category ? `<div class="text-xs font-semibold text-white/80 uppercase tracking-wide mb-2">${project.category}</div>` : ''}
             <h4 class="text-base font-bold text-white mb-2">${project.title}</h4>
-            <p class="text-sm text-white/90 leading-relaxed mb-3">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 100) + '...' || 'Explore this project'}</p>
+            <p class="text-sm text-white/90 leading-relaxed mb-2">${project.short_description || project.full_description?.replace(/<[^>]*>/g, '').substring(0, 100) + '...' || 'Explore this project'}</p>
+            ${impactPreview ? `<p class="text-xs text-white/80 leading-relaxed mb-3"><strong>Impact:</strong> ${impactPreview}</p>` : ''}
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons}
             </div>
@@ -858,6 +901,7 @@ function createFeaturedHalfCard(project) {
         <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
         <h4 class="featured-title"><a href="${getBasePath()}project.html?id=${project.id}">${project.title}</a></h4>
         <p class="featured-summary">${project.short_description || ''}</p>
+        ${impactPreview ? `<p class="text-xs text-gray-600 dark:text-gray-300 mt-1">${impactPreview}</p>` : ''}
         <div class="list-tags">
           ${tags || ''}
         </div>
@@ -1045,6 +1089,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
 
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const impactPreview = getImpactPreview(project);
 
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
@@ -1103,7 +1148,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
         </a>
         <div class="card-hover-overlay absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <div class="text-center text-white px-4">
-            <p class="text-sm mb-4 opacity-90 line-clamp-2 text-white">${project.short_description || ''}</p>
+            <p class="text-sm mb-4 opacity-90 line-clamp-2 text-white">${impactPreview ? `Impact: ${impactPreview}` : (project.short_description || '')}</p>
             <div class="flex flex-wrap gap-2 justify-center">
               ${overlayButtons || ''}
             </div>
@@ -1117,7 +1162,8 @@ function createDashboardProjectCard(project, layoutClass = '') {
             <a href="${detailUrl}" class="block group-hover:text-primary transition-colors">
               <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight">${project.title}</h3>
             </a>
-            <p class="text-sm text-gray-600 leading-relaxed line-clamp-2 mb-4">${project.short_description || ''}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2 mb-2">${project.short_description || ''}</p>
+            ${impactPreview ? `<p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-4"><strong>Impact:</strong> ${impactPreview}</p>` : ''}
           </div>
         </div>
         
@@ -1146,6 +1192,7 @@ function createDashboardProjectList(project, index = 0) {
   
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const impactPreview = getImpactPreview(project);
   
   const actionIcons = {
     github: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
@@ -1216,7 +1263,7 @@ function createDashboardProjectList(project, index = 0) {
           </a>
           <div class="list-hover-overlay">
             <div class="list-hover-inner">
-              <p class="text-sm mb-3 opacity-90 text-white">${project.short_description || ''}</p>
+              <p class="text-sm mb-3 opacity-90 text-white">${impactPreview ? `Impact: ${impactPreview}` : (project.short_description || '')}</p>
               <div class="flex flex-wrap gap-2 justify-center">
                 ${overlayButtons}
               </div>
@@ -1230,6 +1277,7 @@ function createDashboardProjectList(project, index = 0) {
             <a href="${detailUrl}">${project.title}</a>
           </h3>
           <p class="list-summary">${project.short_description || ''}</p>
+          ${impactPreview ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 mb-4"><strong>Impact:</strong> ${impactPreview}</p>` : ''}
           <div class="list-tags">
             ${tags || '<span class="list-tag muted">No tags</span>'}
           </div>
@@ -1443,6 +1491,20 @@ async function fetchProjectContent(path) {
 
 function renderProject(project, caseStudy, contentFromFile) {
   document.title = `${project.title} | Sumit S. Chaure`;
+
+  // Update sharing metadata if meta tags exist on the page head.
+  const descriptionText = truncateText(stripHtmlToText(project.short_description || project.full_description || ''), 160);
+  const impactText = getImpactPreview(project);
+  const ogTitle = `${project.title} | Sumit S. Chaure`;
+  const ogDesc = truncateText(impactText || descriptionText, 170);
+  const ogImage = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
+  setMetaContent('meta[name="description"]', descriptionText || ogDesc);
+  setMetaContent('meta[property="og:title"]', ogTitle);
+  setMetaContent('meta[property="og:description"]', ogDesc);
+  setMetaContent('meta[property="og:image"]', ogImage);
+  setMetaContent('meta[name="twitter:title"]', ogTitle);
+  setMetaContent('meta[name="twitter:description"]', ogDesc);
+  setMetaContent('meta[name="twitter:image"]', ogImage);
 
   const hero = document.getElementById("project-hero");
   if (hero) {
