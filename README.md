@@ -89,6 +89,7 @@ See `scripts/README.md` for full details. The most important ones:
 - **Deployment (GitHub Pages):** `docs/DEPLOYMENT.md`
 - **Current status & remaining work:** `docs/TODO.md`, `docs/PENDING_WORK_SUMMARY.md`
 - **Design / component notes:** `docs/COMPONENT_SYSTEM.md`, `docs/MODERN_REBUILD_PLAN.md`
+- **Editor architecture + TODO:** `docs/EDITOR_CLOUDFLARE_ARCHITECTURE.md`, `docs/EDITOR_TODO.md`
 
 These files collect all the technical detail so this top-level README stays focused on “how to use and run the site”.
 
@@ -102,3 +103,11 @@ These files collect all the technical detail so this top-level README stays focu
 - Rich media support: image galleries, notebooks (via nbviewer), Streamlit, Power BI, PDFs, downloads
 
 Test in any modern browser (Chrome, Edge, Firefox, Safari); everything is plain HTML/CSS/JS, no special tooling required to view the site.
+
+---
+
+## Dev editor scaffold
+
+- Initial editor route is available at `dev/index.html`.
+- This is a foundation scaffold for the Cloudflare Worker-backed secure editor flow.
+- Before production use, finish OAuth/session/content-write implementation from `docs/EDITOR_TODO.md`.

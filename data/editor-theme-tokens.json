@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "text": {
+    "size": {
+      "sm": "text-sm",
+      "base": "text-base",
+      "lg": "text-lg",
+      "xl": "text-xl"
+    },
+    "color": {
+      "default": "text-slate-800",
+      "muted": "text-slate-500",
+      "primary": "text-primary",
+      "accent": "text-accent"
+    },
+    "align": {
+      "left": "text-left",
+      "center": "text-center",
+      "right": "text-right"
+    }
+  },
+  "layout": {
+    "section": ["default", "highlight", "split-2", "split-3"],
+    "imagePreset": {
+      "thumbnail": {
+        "recommended": "480x320",
+        "maxBytes": 180000
+      },
+      "banner": {
+        "recommended": "1600x900",
+        "maxBytes": 380000
+      },
+      "hero": {
+        "recommended": "1920x1080",
+        "maxBytes": 500000
+      },
+      "inline": {
+        "recommended": "1280x720",
+        "maxBytes": 250000
+      }
+    }
+  }
+}

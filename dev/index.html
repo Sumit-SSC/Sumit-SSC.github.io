@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dev Editor | Sumit S. Chaure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#4f46e5",
+            accent: "#0ea5e9"
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: "Inter", sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen">
+  <header class="border-b bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold">Portfolio Dev Editor</h1>
+      <div class="flex items-center gap-2">
+        <button id="btnLogin" class="rounded-md bg-primary px-4 py-2 text-white text-sm font-semibold hover:opacity-90">Login (GitHub)</button>
+        <button id="btnSession" class="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50">Check Session</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-6 grid gap-6 lg:grid-cols-12">
+    <aside class="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-4">
+      <h2 class="font-semibold mb-4">Content Targets</h2>
+      <div class="grid gap-2 text-sm">
+        <button class="content-target rounded-md border px-3 py-2 text-left hover:bg-slate-50" data-target="homepage">Homepage</button>
+        <button class="content-target rounded-md border px-3 py-2 text-left hover:bg-slate-50" data-target="projects">Projects Index</button>
+        <button class="content-target rounded-md border px-3 py-2 text-left hover:bg-slate-50" data-target="caseStudies">Case Studies Index</button>
+      </div>
+      <hr class="my-4">
+      <p class="text-xs text-slate-600">Phase 1 scaffold: paragraph + header + list + code blocks with strict token controls.</p>
+    </aside>
+
+    <section class="lg:col-span-9 rounded-xl bg-white border border-slate-200 p-4">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <label for="slugInput" class="text-sm font-medium">Slug</label>
+        <input id="slugInput" type="text" class="rounded-md border px-3 py-2 text-sm" placeholder="example: used-car-price" />
+        <button id="btnLoad" class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50">Load</button>
+        <button id="btnSave" class="rounded-md bg-emerald-600 px-3 py-2 text-sm text-white font-semibold hover:bg-emerald-700">Save Draft</button>
+      </div>
+      <div id="editorHolder" class="rounded-lg border border-slate-200 bg-slate-50 p-3"></div>
+      <div class="mt-4">
+        <h3 class="font-semibold mb-2">Payload Preview</h3>
+        <pre id="payloadPreview" class="overflow-auto rounded-lg bg-slate-900 text-slate-100 p-3 text-xs"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.__ADMIN_CONFIG__ = {
+      apiBase: "https://portfolio-admin-api.YOUR_SUBDOMAIN.workers.dev"
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+  <script src="../assets/js/admin-editor.js"></script>
+</body>
+</html>
