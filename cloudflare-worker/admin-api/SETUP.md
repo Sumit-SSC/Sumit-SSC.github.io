@@ -39,7 +39,7 @@ Update if needed:
 - `ALLOWED_ORIGINS="https://sumit.indevs.in,https://www.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000"`
 - `GITHUB_REPO_OWNER="Sumit-SC"`
 - `GITHUB_REPO_NAME="Sumit-SC.github.io"`
-- `CONTENT_BASE_BRANCH="main"`
+- `CONTENT_BASE_BRANCH="dev"`
 - `CONTENT_DRAFT_BRANCH="content/drafts"`
 - `ADMIN_SUCCESS_REDIRECT="https://sumit.indevs.in/dev/index.html"`
 

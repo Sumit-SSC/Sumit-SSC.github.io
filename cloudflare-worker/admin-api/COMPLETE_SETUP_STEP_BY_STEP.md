@@ -59,7 +59,7 @@ Add:
 
 - `ALLOWED_GITHUB_USERS` = `Sumit-SC`
 - `ALLOWED_ORIGINS` = `https://sumit.indevs.in,https://www.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000`
-- `CONTENT_BASE_BRANCH` = `main`
+- `CONTENT_BASE_BRANCH` = `dev`
 - `CONTENT_DRAFT_BRANCH` = `content/drafts`
 - `GITHUB_REPO_OWNER` = `Sumit-SC`
 - `GITHUB_REPO_NAME` = `Sumit-SC.github.io`
@@ -189,4 +189,4 @@ Push/deploy this frontend change to your site branch.
 
 - Never expose `GITHUB_CLIENT_SECRET` or write token in frontend code.
 - Keep all secrets only in Cloudflare Worker secrets.
-- Use `content/drafts` branch for editorial workflow before merging to `main`.
+- Use `content/drafts` branch for editorial workflow before merging to `dev`.
