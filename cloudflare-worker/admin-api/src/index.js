@@ -189,7 +189,7 @@ async function githubCallback(request, env) {
     { user: login, exp: Date.now() + SESSION_TTL_SECONDS * 1000 },
     env.SESSION_SIGNING_KEY
   );
-  const successRedirect = env.ADMIN_SUCCESS_REDIRECT || "https://sumit-sc.github.io/dev/index.html";
+  const successRedirect = env.ADMIN_SUCCESS_REDIRECT || getDefaultSuccessRedirect(env);
   const res = Response.redirect(successRedirect, 302);
   res.headers.append("set-cookie", makeCookie(COOKIE_SESSION, sessionToken, SESSION_TTL_SECONDS));
   res.headers.append("set-cookie", clearCookie(COOKIE_STATE));
@@ -218,6 +218,17 @@ async function getSessionStatus(request, env) {
 function isUserAllowed(login, allowListRaw) {
   const allowed = allowListRaw.split(",").map((v) => v.trim().toLowerCase()).filter(Boolean);
   return allowed.includes(String(login || "").toLowerCase());
+}
+
+function getDefaultSuccessRedirect(env) {
+  const firstAllowedOrigin = (env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((v) => v.trim())
+    .find((v) => v.startsWith("https://"));
+  if (firstAllowedOrigin) {
+    return `${firstAllowedOrigin}/dev/index.html`;
+  }
+  return "https://sumit.indevs.in/dev/index.html";
 }
 
 function mapTargetPath(target) {
