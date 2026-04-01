@@ -66,4 +66,18 @@ window.__ADMIN_CONFIG__ = {
 3. Check session
 4. Load target + slug (for projects/caseStudies use an existing `id`)
 5. Save Draft
-6. Confirm updates in `content/drafts` branch on GitHub
+6. Upload image via `Upload Image (WebP)` button
+7. Confirm updates in `content/drafts` branch on GitHub
+
+## Notes on embeds and upload policy
+
+- Embed blocks are validated server-side by allowlisted domains:
+  - `gist.github.com`, `github.com`
+  - `replit.com`
+  - `streamlit.app`
+  - `app.powerbi.com`
+  - `nbviewer.org`
+  - YouTube domains
+- Image uploads are accepted only as `image/webp` Data URLs (client converts before upload).
+- Uploaded path format is enforced:
+  - `assets/images/projects/<slug>/<preset>-<slug>.webp`

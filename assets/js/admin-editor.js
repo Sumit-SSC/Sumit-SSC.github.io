@@ -24,7 +24,7 @@ function getDefaultEditorData() {
 }
 
 function sanitizeEditorPayload(editorData) {
-  const allowedTypes = new Set(["paragraph", "header", "list", "code"]);
+  const allowedTypes = new Set(["paragraph", "header", "list", "code", "embed"]);
   const blocks = (editorData.blocks || [])
     .filter((block) => allowedTypes.has(block.type))
     .map((block) => ({ type: block.type, data: block.data || {} }));
@@ -54,7 +54,8 @@ async function initEditor() {
     tools: {
       header: Header,
       list: EditorjsList,
-      code: CodeTool
+      code: CodeTool,
+      embed: Embed
     },
     onChange: async () => {
       await renderPreview();
@@ -121,12 +122,62 @@ async function saveContent() {
   alert(`Saved on branch: ${data.branch || "content/drafts"}`);
 }
 
+async function fileToWebpDataUrl(file, maxWidth = 1920, quality = 0.82) {
+  const bitmap = await createImageBitmap(file);
+  const ratio = Math.min(1, maxWidth / bitmap.width);
+  const width = Math.round(bitmap.width * ratio);
+  const height = Math.round(bitmap.height * ratio);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  return canvas.toDataURL("image/webp", quality);
+}
+
+function slugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+async function uploadImage() {
+  const slug = slugify(document.getElementById("slugInput").value.trim());
+  const preset = document.getElementById("imagePreset").value;
+  const file = document.getElementById("imageInput").files[0];
+
+  if (!slug) {
+    alert("Enter a slug before image upload.");
+    return;
+  }
+  if (!file) {
+    alert("Select an image file first.");
+    return;
+  }
+
+  const webpDataUrl = await fileToWebpDataUrl(file);
+  const res = await fetch(`${ADMIN_API_BASE}/api/admin/images/upload`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ slug, preset, dataUrl: webpDataUrl })
+  });
+  const data = await res.json();
+  if (!data.ok) {
+    alert(data.error || "Image upload failed.");
+    return;
+  }
+  alert(`Image saved: ${data.relativePath}`);
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   bindTargetButtons();
   document.getElementById("btnLogin").addEventListener("click", startGithubLogin);
   document.getElementById("btnSession").addEventListener("click", checkSession);
   document.getElementById("btnLoad").addEventListener("click", loadContent);
   document.getElementById("btnSave").addEventListener("click", saveContent);
+  document.getElementById("btnUploadImage").addEventListener("click", uploadImage);
 
   await initEditor();
 });

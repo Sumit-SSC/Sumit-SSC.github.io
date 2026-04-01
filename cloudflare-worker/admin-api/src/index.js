@@ -274,11 +274,12 @@ async function getFileFromGithub(env, path, ref) {
   return { sha: file.sha, text: decoded };
 }
 
-async function putFileToGithub(env, path, contentText, branch, message, sha = null) {
+async function putFileToGithub(env, path, contentText, branch, message, sha = null, contentBase64Override = null) {
+  const encodedContent = contentBase64Override || btoa(unescape(encodeURIComponent(contentText)));
   const body = {
     message,
     branch,
-    content: btoa(unescape(encodeURIComponent(contentText)))
+    content: encodedContent
   };
   if (sha) body.sha = sha;
 
@@ -363,9 +364,35 @@ function validateSaveRequest(body) {
   if (!body || typeof body !== "object") throw new Error("Invalid payload");
   if (!body.target) throw new Error("target is required");
   if (!body.content || !Array.isArray(body.content.blocks)) throw new Error("content.blocks is required");
-  const allowed = new Set(["paragraph", "header", "list", "code"]);
+  const allowed = new Set(["paragraph", "header", "list", "code", "embed"]);
   for (const block of body.content.blocks) {
     if (!allowed.has(block.type)) throw new Error(`Unsupported block type: ${block.type}`);
+    if (block.type === "embed") {
+      const source = String(block?.data?.source || "");
+      if (source && !isAllowedEmbedSource(source)) {
+        throw new Error(`Embed source not allowed: ${source}`);
+      }
+    }
+  }
+}
+
+function isAllowedEmbedSource(sourceUrl) {
+  try {
+    const url = new URL(sourceUrl);
+    const host = url.hostname.toLowerCase();
+    const allow = [
+      "gist.github.com",
+      "github.com",
+      "replit.com",
+      "streamlit.app",
+      "app.powerbi.com",
+      "nbviewer.org",
+      "www.youtube.com",
+      "youtube.com"
+    ];
+    return allow.some((item) => host === item || host.endsWith(`.${item}`));
+  } catch {
+    return false;
   }
 }
 
@@ -427,20 +454,60 @@ async function saveContent(request, env) {
   });
 }
 
-async function uploadImage(request) {
-  const formData = await request.formData();
-  const file = formData.get("file");
-  const preset = formData.get("preset");
-  const slug = formData.get("slug");
-  if (!file || typeof file === "string") return json({ ok: false, error: "Missing image file" }, 400);
+function cleanSlug(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
-  const safeSlug = String(slug || "general").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
-  const safePreset = String(preset || "inline").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
-  const finalPath = `assets/images/projects/${safeSlug}/${safePreset}-${safeSlug}.webp`;
+function decodeDataUrl(dataUrl) {
+  const match = /^data:(.+);base64,(.+)$/.exec(String(dataUrl || ""));
+  if (!match) throw new Error("Invalid image data URL");
+  return { mime: match[1], base64: match[2] };
+}
+
+async function uploadImage(request, env) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+
+  const body = await request.json();
+  const slug = cleanSlug(body.slug);
+  const preset = cleanSlug(body.preset || "inline");
+  const dataUrl = body.dataUrl;
+  if (!slug) return json({ ok: false, error: "slug is required" }, 400);
+  if (!["thumbnail", "banner", "hero", "inline"].includes(preset)) {
+    return json({ ok: false, error: "invalid preset" }, 400);
+  }
+
+  const { mime, base64 } = decodeDataUrl(dataUrl);
+  if (mime !== "image/webp") return json({ ok: false, error: "Only image/webp accepted" }, 400);
+
+  const rawSize = Math.floor((base64.length * 3) / 4);
+  if (rawSize > 600000) return json({ ok: false, error: "Image too large after compression" }, 400);
+
+  const finalPath = `assets/images/projects/${slug}/${preset}-${slug}.webp`;
+  const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+  const baseBranch = env.CONTENT_BASE_BRANCH || "main";
+  await ensureBranchExists(env, draftBranch, baseBranch);
+
+  const existing = await getFileFromGithub(env, finalPath, draftBranch) || await getFileFromGithub(env, finalPath, baseBranch);
+  const sha = existing?.sha || null;
+
+  const commit = await putFileToGithub(
+    env,
+    finalPath,
+    "",
+    draftBranch,
+    `chore(media): upload ${preset} image for ${slug} (${user})`,
+    sha,
+    base64
+  );
 
   return json({
     ok: true,
     relativePath: finalPath,
-    note: "Worker path contract enforced. Connect R2/Images conversion in next step."
+    branch: draftBranch,
+    commitSha: commit.commit?.sha || null
   });
 }

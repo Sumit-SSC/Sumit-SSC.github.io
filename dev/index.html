@@ -54,6 +54,16 @@
         <button id="btnLoad" class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50">Load</button>
         <button id="btnSave" class="rounded-md bg-emerald-600 px-3 py-2 text-sm text-white font-semibold hover:bg-emerald-700">Save Draft</button>
       </div>
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <select id="imagePreset" class="rounded-md border px-3 py-2 text-sm">
+          <option value="thumbnail">thumbnail</option>
+          <option value="banner">banner</option>
+          <option value="hero">hero</option>
+          <option value="inline" selected>inline</option>
+        </select>
+        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" class="rounded-md border px-3 py-2 text-sm bg-white" />
+        <button id="btnUploadImage" class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50">Upload Image (WebP)</button>
+      </div>
       <div id="editorHolder" class="rounded-lg border border-slate-200 bg-slate-50 p-3"></div>
       <div class="mt-4">
         <h3 class="font-semibold mb-2">Payload Preview</h3>
@@ -71,6 +81,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
   <script src="../assets/js/admin-editor.js"></script>
 </body>
 </html>
