@@ -22,7 +22,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../assets/css/custom.css" />
 	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
-	<link rel="icon" type="image/png" href="../assets/images/placeholder.png" />
+	<link rel="icon" type="image/svg+xml" href="../assets/images/arrow.svg" />
 	<style>
 		body { font-family: 'Inter', sans-serif; }
 	</style>
@@ -70,7 +70,7 @@
 	</nav>
 
 	<!-- Intro Section (Full Screen) -->
-	<section id="intro" class="about-section slide-from-center" style="background-image: url('../assets/images/intro.jpg');">
+	<section id="intro" class="about-section slide-from-center" style="background-image: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.35), transparent 55%), radial-gradient(circle at 85% 35%, rgba(14, 165, 233, 0.28), transparent 50%), linear-gradient(135deg, rgba(79, 70, 229, 0.28), rgba(14, 165, 233, 0.18));">
 		<div class="content text-center text-white px-6 max-w-3xl">
 			<h2 class="text-5xl md:text-7xl font-bold mb-6">Hi, I'm Sumit.</h2>
 			<h3 class="text-2xl md:text-4xl mb-8 opacity-90">I turn messy data into clear, practical stories.</h3>
@@ -88,7 +88,7 @@
 	</section>
 
 	<!-- What I Do Section (Right Side) -->
-	<section id="one" class="about-section slide-from-right" style="background-image: url('./assets/images/whatdoido.jpg');">
+	<section id="one" class="about-section slide-from-right" style="background-image: radial-gradient(circle at 15% 25%, rgba(44, 177, 166, 0.32), transparent 55%), radial-gradient(circle at 85% 35%, rgba(79, 70, 229, 0.25), transparent 55%), linear-gradient(135deg, rgba(44, 177, 166, 0.20), rgba(79, 70, 229, 0.16));">
 		<div class="content text-right max-w-2xl ml-auto">
 			<h2 class="text-4xl md:text-6xl font-bold mb-6">What I Do</h2>
 			<p class="text-lg md:text-xl leading-relaxed">
@@ -101,7 +101,7 @@
 	</section>
 
 	<!-- Who I Am Section (Left Side) -->
-	<section id="two" class="about-section slide-from-left" style="background-image: url('./assets/images/whoami.jpg');">
+	<section id="two" class="about-section slide-from-left" style="background-image: radial-gradient(circle at 25% 20%, rgba(14, 165, 233, 0.30), transparent 55%), radial-gradient(circle at 80% 35%, rgba(44, 177, 166, 0.24), transparent 55%), linear-gradient(135deg, rgba(14, 165, 233, 0.20), rgba(44, 177, 166, 0.16));">
 		<div class="content text-left max-w-2xl mr-auto">
 			<h2 class="text-4xl md:text-6xl font-bold mb-6">Who I Am</h2>
 			<p class="text-lg md:text-xl leading-relaxed">
@@ -111,6 +111,79 @@
 		<a href="#work" class="section-arrow">
 			<span class="arrow-icon"></span>
 		</a>
+	</section>
+
+	<!-- Professional Snapshot (modern UI cards) -->
+	<section id="highlights" class="bg-gray-50 dark:bg-gray-900 py-16">
+		<div class="container mx-auto px-6">
+			<div class="text-center mb-12">
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+					Professional Snapshot
+				</h2>
+				<p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+					SQL-first end-to-end analytics: metrics you can trust, decisions you can defend, and dashboards that actually drive action.
+				</p>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<div class="tap-ripple-target group rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 backdrop-blur shadow-sm hover:shadow-lg transition-all p-6">
+					<div class="flex items-start gap-4">
+						<div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+							<i class="fas fa-database text-primary text-xl"></i>
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">SQL-first end-to-end</h3>
+							<p class="text-gray-600 dark:text-gray-300 mt-2 text-sm leading-relaxed">
+								From messy tables to consistent, reproducible metrics built for BI and product teams.
+							</p>
+						</div>
+					</div>
+					<div class="mt-5 flex flex-wrap gap-2">
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 bg-primary/10 text-primary">SQL</span>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 bg-primary/10 text-primary">Modeling</span>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 bg-primary/10 text-primary">Data quality</span>
+					</div>
+				</div>
+
+				<div class="tap-ripple-target group rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 backdrop-blur shadow-sm hover:shadow-lg transition-all p-6">
+					<div class="flex items-start gap-4">
+						<div class="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20">
+							<i class="fas fa-flask text-accent text-xl"></i>
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Decision science + experimentation</h3>
+							<p class="text-gray-600 dark:text-gray-300 mt-2 text-sm leading-relaxed">
+								Experiment design, hypothesis testing, and ML workflows that answer “so what?” with measurable impact.
+							</p>
+						</div>
+					</div>
+					<div class="mt-5 flex flex-wrap gap-2">
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-accent/20 bg-accent/10 text-accent">A/B Testing</span>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-accent/20 bg-accent/10 text-accent">ML pipelines</span>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-accent/20 bg-accent/10 text-accent">Attribution</span>
+					</div>
+				</div>
+
+				<div class="tap-ripple-target group rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 backdrop-blur shadow-sm hover:shadow-lg transition-all p-6">
+					<div class="flex items-start gap-4">
+						<div class="w-12 h-12 rounded-2xl bg-[#0ea5e9]/10 flex items-center justify-center border border-[#0ea5e9]/20">
+							<i class="fas fa-shield-alt text-[#0ea5e9] text-xl"></i>
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trust & governance</h3>
+							<p class="text-gray-600 dark:text-gray-300 mt-2 text-sm leading-relaxed">
+								Clear documentation, safe deployments, and governance-friendly analytics so results stay reliable over time.
+							</p>
+						</div>
+					</div>
+					<div class="mt-5 flex flex-wrap gap-2">
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-[#0ea5e9]/20 bg-[#0ea5e9]/10 text-[#0ea5e9]">Reproducibility</span>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-[#0ea5e9]/20 bg-[#0ea5e9]/10 text-[#0ea5e9]">Monitoring</span>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-[#0ea5e9]/20 bg-[#0ea5e9]/10 text-[#0ea5e9]">Governance</span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</section>
 
 	<!-- Resume & Journey Split Section -->
@@ -190,34 +263,52 @@
 			<div class="mt-16">
 				<h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Project Gallery</h3>
 				<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/one.jpg" class="block">
-							<img src="../assets/images/thumbs/01.jpg" alt="Car Price Prediction" class="w-full h-full object-cover">
+					<div class="gallery-item overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-primary/20 via-white/10 to-accent/20">
+						<a href="homepage.html" class="block h-44 sm:h-48">
+							<div class="w-full h-full flex flex-col items-center justify-center px-4 text-center">
+								<img src="../assets/images/icons/sql-server.svg" alt="Car Price Prediction" class="w-12 h-12 sm:w-14 sm:h-14 opacity-90">
+								<div class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">Car Price Prediction</div>
+							</div>
 						</a>
 					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/02.jpg" class="block">
-							<img src="../assets/images/thumbs/02.jpg" alt="Oil Spill Classification" class="w-full h-full object-cover">
+					<div class="gallery-item overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#0ea5e9]/20 via-white/10 to-[#4f46e5]/20">
+						<a href="homepage.html" class="block h-44 sm:h-48">
+							<div class="w-full h-full flex flex-col items-center justify-center px-4 text-center">
+								<img src="../assets/images/icons/meta-ai.svg" alt="Oil Spill Classification" class="w-12 h-12 sm:w-14 sm:h-14 opacity-90">
+								<div class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">Oil Spill Classification</div>
+							</div>
 						</a>
 					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/03.jpg" class="block">
-							<img src="../assets/images/thumbs/03.jpg" alt="Bank Loan Case Study" class="w-full h-full object-cover">
+					<div class="gallery-item overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-accent/20 via-white/10 to-primary/20">
+						<a href="homepage.html" class="block h-44 sm:h-48">
+							<div class="w-full h-full flex flex-col items-center justify-center px-4 text-center">
+								<img src="../assets/images/icons/postgresql.svg" alt="Bank Loan Case Study" class="w-12 h-12 sm:w-14 sm:h-14 opacity-90">
+								<div class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">Bank Loan Case Study</div>
+							</div>
 						</a>
 					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/04.jpg" class="block">
-							<img src="../assets/images/thumbs/04.jpg" alt="Customer Churn Data Analysis" class="w-full h-full object-cover">
+					<div class="gallery-item overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-primary/20 via-white/10 to-[#0ea5e9]/20">
+						<a href="homepage.html" class="block h-44 sm:h-48">
+							<div class="w-full h-full flex flex-col items-center justify-center px-4 text-center">
+								<img src="../assets/images/icons/power-bi.svg" alt="Customer Churn Data Analysis" class="w-12 h-12 sm:w-14 sm:h-14 opacity-90">
+								<div class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">Customer Churn</div>
+							</div>
 						</a>
 					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/05.jpg" class="block">
-							<img src="../assets/images/thumbs/05.jpg" alt="IMDB Movie Analysis" class="w-full h-full object-cover">
+					<div class="gallery-item overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#4f46e5]/20 via-white/10 to-accent/20">
+						<a href="homepage.html" class="block h-44 sm:h-48">
+							<div class="w-full h-full flex flex-col items-center justify-center px-4 text-center">
+								<img src="../assets/images/icons/mongodb.svg" alt="IMDB Movie Analysis" class="w-12 h-12 sm:w-14 sm:h-14 opacity-90">
+								<div class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">IMDB Movie Analysis</div>
+							</div>
 						</a>
 					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/06.jpg" class="block">
-							<img src="../assets/images/thumbs/06.jpg" alt="Impact Of Car Features" class="w-full h-full object-cover">
+					<div class="gallery-item overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#0ea5e9]/20 via-white/10 to-primary/20">
+						<a href="homepage.html" class="block h-44 sm:h-48">
+							<div class="w-full h-full flex flex-col items-center justify-center px-4 text-center">
+								<img src="../assets/images/icons/tableau.svg" alt="Impact Of Car Features" class="w-12 h-12 sm:w-14 sm:h-14 opacity-90">
+								<div class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">Car Features Impact</div>
+							</div>
 						</a>
 					</div>
 				</div>
@@ -236,7 +327,7 @@
 			<div class="lightdash-journey max-w-5xl mx-auto relative">
 				<!-- Single prominent hourglass at top (Lightdash-style: only at the beginning) -->
 				<div class="lightdash-journey__start" aria-hidden="true">
-					<img src="../assets/images/hourglass.png" alt="" class="lightdash-journey__start-icon" width="106" height="105">
+					<img src="../assets/images/icons/scikit-learn.svg" alt="" class="lightdash-journey__start-icon" width="106" height="105">
 				</div>
 				<!-- Central dashed axis (like Lightdash) – starts below the start icon -->
 				<div class="lightdash-journey__axis" aria-hidden="true"></div>
@@ -251,7 +342,7 @@
 				<!-- Event 1: media left, text right -->
 				<div class="lightdash-journey__row" data-year="2018">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/one.jpg, ../assets/images/fulls/02.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/sql-server.svg, ../assets/images/icons/power-bi.svg, ../assets/images/icons/scikit-learn.svg">
 							<!-- Demo carousel: engineering / project images -->
 						</div>
 					</div>
@@ -276,7 +367,7 @@
 					</div>
 					<div class="lightdash-journey__node">2014–2018</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/03.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/meta-ai.svg, ../assets/images/icons/tableau.svg">
 							<!-- Demo static image for event 2 -->
 						</div>
 					</div>
@@ -291,7 +382,7 @@
 				<!-- 2020–2021: PG-DAC (1 event) -->
 				<div class="lightdash-journey__row" data-year="2021">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/04.jpg, ../assets/images/thumbs/02.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/tableau.svg, ../assets/images/icons/power-bi.svg">
 							<!-- Demo PG-DAC carousel -->
 						</div>
 					</div>
@@ -323,7 +414,7 @@
 					</div>
 					<div class="lightdash-journey__node">2021</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/05.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/pytorch.svg, ../assets/images/icons/meta-ai.svg">
 							<!-- Demo first job photo -->
 						</div>
 					</div>
@@ -332,7 +423,7 @@
 				<!-- Event 2 -->
 				<div class="lightdash-journey__row" data-year="2021">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/06.jpg, ../assets/images/thumbs/03.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/mongodb.svg, ../assets/images/icons/sql-server.svg">
 							<!-- Demo carousel for 2021 event 2 -->
 						</div>
 					</div>
@@ -364,7 +455,7 @@
 					</div>
 					<div class="lightdash-journey__node">2023</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/01.jpg, ../assets/images/thumbs/02.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/postgresql.svg, ../assets/images/icons/power-bi.svg">
 							<!-- Demo 2023 carousel event 1 -->
 						</div>
 					</div>
@@ -373,7 +464,7 @@
 				<!-- Event 2 (media left, text right) -->
           <div class="lightdash-journey__row" data-year="2023">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/03.jpg, ../assets/images/thumbs/04.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/meta-ai.svg, ../assets/images/icons/scikit-learn.svg">
 							<!-- Demo 2023 carousel event 2 -->
 						</div>
 					</div>
@@ -398,7 +489,7 @@
 					</div>
 					<div class="lightdash-journey__node">2023</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/05.jpg, ../assets/images/thumbs/06.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/tableau.svg, ../assets/images/icons/mongodb.svg">
 							<!-- Demo 2023 carousel event 3 -->
 						</div>
 					</div>
@@ -413,7 +504,7 @@
 				<!-- 2024: One event -->
 				<div class="lightdash-journey__row" data-year="2024">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/intro.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/sql-server.svg, ../assets/images/icons/meta-ai.svg">
 							<!-- Demo single image for 2024 -->
 						</div>
 					</div>
@@ -445,7 +536,7 @@
 					</div>
 					<div class="lightdash-journey__node">2025</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/02.jpg, ../assets/images/fulls/03.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/scikit-learn.svg, ../assets/images/icons/power-bi.svg">
 							<!-- Demo 2025 carousel event 1 -->
 						</div>
 					</div>
@@ -454,7 +545,7 @@
 				<!-- Event 2 -->
 				<div class="lightdash-journey__row" data-year="2025">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/04.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/tableau.svg">
 							<!-- Demo static image for 2025 event 2 -->
 						</div>
 					</div>
@@ -479,7 +570,7 @@
 					</div>
 					<div class="lightdash-journey__node">2025</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/05.jpg, ../assets/images/fulls/06.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/power-bi.svg, ../assets/images/icons/mongodb.svg">
 							<!-- Demo 2025 carousel event 3 -->
 						</div>
 					</div>
@@ -495,7 +586,7 @@
 				<!-- Event 1: Job search -->
 				<div class="lightdash-journey__row" data-year="2026">
 					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/01.jpg, ../assets/images/thumbs/02.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/postgresql.svg, ../assets/images/icons/power-bi.svg">
 							<!-- Demo job-search carousel -->
 						</div>
 					</div>
@@ -520,7 +611,7 @@
 					</div>
 					<div class="lightdash-journey__node">2026</div>
 					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/03.jpg, ../assets/images/thumbs/04.jpg">
+						<div class="lightdash-journey__media" data-images="../assets/images/icons/meta-ai.svg, ../assets/images/icons/scikit-learn.svg">
 							<!-- Demo upskilling carousel -->
 						</div>
 					</div>
