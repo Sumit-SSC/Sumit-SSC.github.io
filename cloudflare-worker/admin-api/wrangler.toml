@@ -4,13 +4,13 @@ compatibility_date = "2026-04-01"
 
 [vars]
 ALLOWED_GITHUB_USERS = "Sumit-SC"
-ALLOWED_ORIGINS = "https://sumit-sc.github.io,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000"
+ALLOWED_ORIGINS = "https://xyz.indevs.in,https://www.xyz.indevs.in,https://www.xyx.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000"
 CONTENT_BASE_BRANCH = "main"
 CONTENT_DRAFT_BRANCH = "content/drafts"
 GITHUB_REPO_OWNER = "Sumit-SC"
 GITHUB_REPO_NAME = "Sumit-SC.github.io"
 GITHUB_OAUTH_SCOPES = "read:user"
-ADMIN_SUCCESS_REDIRECT = "https://sumit-sc.github.io/dev/index.html"
+ADMIN_SUCCESS_REDIRECT = "https://xyz.indevs.in/dev/index.html"
 
 # Add secrets with:
 # wrangler secret put GITHUB_CLIENT_ID

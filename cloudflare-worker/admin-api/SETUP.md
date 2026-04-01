@@ -11,9 +11,9 @@ Use this folder as your copy-paste/deploy source for Cloudflare Worker admin API
 
 In GitHub -> Settings -> Developer settings -> OAuth Apps:
 
-- Homepage URL: `https://sumit-sc.github.io`
+- Homepage URL: `https://xyz.indevs.in`
 - Authorization callback URL:
-  - `https://<your-worker-subdomain>.workers.dev/api/admin/auth/github/callback`
+  - `https://admin-api.xyz.indevs.in/api/admin/auth/github/callback`
 
 ## 2) Set Worker secrets
 
@@ -35,13 +35,13 @@ Notes:
 
 Update if needed:
 
-- `ALLOWED_GITHUB_USERS`
-- `ALLOWED_ORIGINS`
-- `GITHUB_REPO_OWNER`
-- `GITHUB_REPO_NAME`
-- `CONTENT_BASE_BRANCH`
-- `CONTENT_DRAFT_BRANCH`
-- `ADMIN_SUCCESS_REDIRECT`
+- `ALLOWED_GITHUB_USERS="Sumit-SC"`
+- `ALLOWED_ORIGINS="https://xyz.indevs.in,https://www.xyz.indevs.in,https://www.xyx.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000"`
+- `GITHUB_REPO_OWNER="Sumit-SC"`
+- `GITHUB_REPO_NAME="Sumit-SC.github.io"`
+- `CONTENT_BASE_BRANCH="main"`
+- `CONTENT_DRAFT_BRANCH="content/drafts"`
+- `ADMIN_SUCCESS_REDIRECT="https://xyz.indevs.in/dev/index.html"`
 
 ## 4) Deploy Worker
 
@@ -55,7 +55,7 @@ In `dev/index.html` set:
 
 ```js
 window.__ADMIN_CONFIG__ = {
-  apiBase: "https://<your-worker-subdomain>.workers.dev"
+  apiBase: "https://admin-api.xyz.indevs.in"
 };
 ```
 
