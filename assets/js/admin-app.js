@@ -432,9 +432,10 @@
     return res.json();
   }
 
-  async function loadContentRead(target, slug) {
+  async function loadContentRead(target, slug, source = "auto") {
     const q = new URLSearchParams({ target });
     if (slug) q.set("slug", slug);
+    if (source && source !== "auto") q.set("source", source);
     const res = await fetch(`${API}/api/admin/content/read?${q}`, { credentials: "include" });
     const data = await res.json();
     data._httpStatus = res.status;
@@ -685,10 +686,10 @@
     setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
   }
 
-  async function loadHomepageJsonEditor() {
+  async function loadHomepageJsonEditor(source = "auto") {
     setStatus("Loading homepage JSON…");
     const hint = el("home-auth-hint");
-    const data = await loadContentRead("homepage", "");
+    const data = await loadContentRead("homepage", "", source);
     if (hint) hint.classList.toggle("hidden", data.ok);
     if (!data.ok) {
       setStatus(data.error === "Unauthorized" ? "Sign in — then Reload." : data.error || "Load failed");
@@ -706,12 +707,12 @@
     if (show && message) b.textContent = message;
   }
 
-  async function loadRecordEditor(target, slug) {
+  async function loadRecordEditor(target, slug, source = "auto") {
     const label = el("record-label");
     if (label) label.textContent = `${target === "projects" ? "Project" : "Case study"} · ${slug}`;
     setRecordAuthBanner(false, "");
     setStatus("Loading record…");
-    const data = await loadContentRead(target, slug);
+    const data = await loadContentRead(target, slug, source);
     if (!data.ok) {
       const unauthorized = data.error === "Unauthorized" || data._httpStatus === 401;
       const missing = /No record found for slug/i.test(String(data.error || ""));
@@ -758,6 +759,10 @@
         setStatus(out.error || "Source save failed");
         return;
       }
+      if (out.unchanged) {
+        setStatus("No changes detected. Draft not updated.");
+        return;
+      }
       setStatus(`Saved source · ${out.branch || "draft"}`);
       await ribLoad();
       return;
@@ -775,6 +780,10 @@
       const out = await saveContentWrite("homepage", "", d);
       if (!out.ok) {
         setStatus(out.error || "Save failed");
+        return;
+      }
+      if (out.unchanged) {
+        setStatus("No changes detected. Draft not updated.");
         return;
       }
       setStatus(`Saved · ${out.branch || "draft"}`);
@@ -802,8 +811,26 @@
         setStatus(out.error || "Save failed");
         return;
       }
+      if (out.unchanged) {
+        setStatus("No changes detected. Draft not updated.");
+        return;
+      }
       setStatus(`Saved · ${out.branch || "draft"}`);
     }
+  }
+
+  async function ribPreview() {
+    if (state.sourceMode) {
+      setStatus("Source mode preview: use Live page toggle.");
+      return;
+    }
+    if ((state.kind === "projects-home" && state.homeTab === "json") || state.kind === "project" || state.kind === "caseStudy") {
+      await updateEditorJsonPreviewNow();
+      setCenterPreviewMode("draft");
+      setStatus("Preview updated (not saved).");
+      return;
+    }
+    setStatus("Nothing to preview on this screen.");
   }
 
   async function ribLoad() {
@@ -973,6 +1000,7 @@
       applyWorkspaceLayout();
     });
     el("rib-save")?.addEventListener("click", ribSave);
+    el("rib-preview")?.addEventListener("click", ribPreview);
     el("rib-load")?.addEventListener("click", ribLoad);
     el("btn-mode-visual")?.addEventListener("click", () => {
       closeSourceMode();
@@ -1051,6 +1079,10 @@
     });
     el("btn-center-draft")?.addEventListener("click", () => setCenterPreviewMode("draft"));
     el("btn-center-live")?.addEventListener("click", () => setCenterPreviewMode("live"));
+    el("btn-load-draft-home")?.addEventListener("click", () => loadHomepageJsonEditor("draft"));
+    el("btn-load-live-home")?.addEventListener("click", () => loadHomepageJsonEditor("base"));
+    el("btn-load-draft-record")?.addEventListener("click", () => loadRecordEditor(state.target, state.slug, "draft"));
+    el("btn-load-live-record")?.addEventListener("click", () => loadRecordEditor(state.target, state.slug, "base"));
   }
 
   function cleanSlug(value) {

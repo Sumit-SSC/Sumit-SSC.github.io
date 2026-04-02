@@ -534,10 +534,14 @@
     const slug = url.searchParams.get("slug") || "";
     const branch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
     const base = getContentBaseBranch(env);
+    const source = String(url.searchParams.get("source") || "auto");
     await ensureBranchExists(env, branch, base);
 
     const path = mapTargetPath(target);
-    const file = await getFileFromGithub(env, path, branch) || await getFileFromGithub(env, path, base);
+    let file = null;
+    if (source === "draft") file = await getFileFromGithub(env, path, branch);
+    else if (source === "base") file = await getFileFromGithub(env, path, base);
+    else file = (await getFileFromGithub(env, path, branch)) || (await getFileFromGithub(env, path, base));
     if (!file) {
       if (target === "homepage") {
         return json({
@@ -704,6 +708,16 @@
     }
 
     const nextText = JSON.stringify(contentObj, null, 2);
+    const prevText = existing ? existing.text : "";
+    if (prevText === nextText) {
+      return json({
+        ok: true,
+        branch: draftBranch,
+        path,
+        unchanged: true,
+        commitSha: null
+      });
+    }
     const commit = await putFileToGithub(
       env,
       path,
@@ -793,6 +807,9 @@
         try { JSON.parse(text); } catch { return json({ ok: false, error: "Invalid JSON" }, 400); }
       }
       const draftFile = await getFileFromGithub(env, path, draftBranch);
+      if (draftFile && draftFile.text === text) {
+        return json({ ok: true, branch: draftBranch, path, unchanged: true, commitSha: null });
+      }
       const commit = await putFileToGithub(
         env,
         path,
@@ -824,6 +841,11 @@
       try { next = JSON.parse(text); } catch { return json({ ok: false, error: "Invalid JSON" }, 400); }
       if (!next || typeof next !== "object") return json({ ok: false, error: "record JSON must be an object" }, 400);
       next.id = next.id || slug;
+      const prevRecordText = JSON.stringify(parsed[idx], null, 2);
+      const nextRecordText = JSON.stringify(next, null, 2);
+      if (prevRecordText === nextRecordText) {
+        return json({ ok: true, branch: draftBranch, path, unchanged: true, commitSha: null });
+      }
       parsed[idx] = next;
       const commit = await putFileToGithub(
         env,
@@ -841,6 +863,9 @@
       const htmlPath = key ? String(parsed[idx][key] || "").trim() : "";
       if (!htmlPath) return json({ ok: false, error: "No html path configured on record" }, 400);
       const draftHtml = await getFileFromGithub(env, htmlPath, draftBranch);
+      if (draftHtml && draftHtml.text === text) {
+        return json({ ok: true, branch: draftBranch, path: htmlPath, unchanged: true, commitSha: null });
+      }
       const commit = await putFileToGithub(
         env,
         htmlPath,

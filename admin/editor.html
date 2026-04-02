@@ -23,9 +23,10 @@
     <button id="rib-login" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Login</button>
     <button id="rib-logout" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Logout</button>
     <button id="rib-session" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Session</button>
+    <button id="rib-preview" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Preview changes</button>
     <button id="rib-save" class="px-2 py-1 rounded bg-emerald-700 hover:bg-emerald-600">Save draft</button>
     <button id="rib-publish" class="px-2 py-1 rounded bg-indigo-700 hover:bg-indigo-600">Publish</button>
-    <button id="rib-load" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Reload</button>
+    <button id="rib-load" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Revert unsaved</button>
     <button id="btn-mode-visual" class="px-2 py-1 rounded bg-indigo-700 hover:bg-indigo-600">Visual</button>
     <button id="btn-mode-source" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Source</button>
     <div id="rib-insert-group" class="ml-2 flex items-center gap-1">
@@ -117,6 +118,10 @@
         <p id="msg-home-ui" class="text-xs text-slate-400"></p>
       </div>
       <div id="panel-home-json" class="hidden flex-1 min-h-0 flex flex-col">
+        <div class="px-3 pt-2 flex gap-2 text-xs">
+          <button id="btn-load-draft-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
+          <button id="btn-load-live-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
+        </div>
         <div id="admin-editor-holder-home" class="flex-1 overflow-y-auto p-3"></div>
         <details class="px-3 pb-2"><summary class="text-xs text-slate-400">JSON</summary><pre id="json-preview-home" class="text-xs mt-1 whitespace-pre-wrap"></pre></details>
         <button id="btn-publish-home-json" class="mx-3 mb-3 rounded bg-indigo-700 px-2 py-1.5">Publish homepage JSON</button>
@@ -125,6 +130,10 @@
       <div id="panel-editor-record" class="hidden flex-1 min-h-0 flex flex-col">
         <p id="record-label" class="px-3 pt-3 text-sm font-medium"></p>
         <p id="record-auth-banner" class="hidden px-3 text-xs text-amber-300"></p>
+        <div class="px-3 pt-2 flex gap-2 text-xs">
+          <button id="btn-load-draft-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
+          <button id="btn-load-live-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
+        </div>
         <div id="admin-editor-holder" class="flex-1 overflow-y-auto p-3"></div>
         <details class="px-3 pb-2"><summary class="text-xs text-slate-400">JSON</summary><pre id="json-preview-record" class="text-xs mt-1 whitespace-pre-wrap"></pre></details>
         <div id="draft-preview-record" class="hidden"></div>
@@ -174,6 +183,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260402-9"></script>
+  <script src="../assets/js/admin-app.js?v=20260402-10"></script>
 </body>
 </html>
