@@ -138,16 +138,16 @@
     const tools = {};
 
     const headerTool = W.Header || W.HeaderTool;
+    const paragraphTool = W.Paragraph || W.ParagraphTool;
     const listTool = W.EditorjsList || W.List || W.EditorjsListTool;
     const codeTool = W.CodeTool || W.Code || W.CodeToolPlugin;
     const embedTool = W.Embed || W.EmbedTool;
-    const paragraphTool = W.Paragraph || W.ParagraphTool;
 
     if (headerTool) tools.header = headerTool;
+    if (paragraphTool) tools.paragraph = paragraphTool;
     if (listTool) tools.list = listTool;
     if (codeTool) tools.code = codeTool;
     if (embedTool) tools.embed = embedTool;
-    if (paragraphTool) tools.paragraph = paragraphTool;
 
     return tools;
   }
@@ -186,10 +186,14 @@
       return;
     }
     const normalized = normalizeEditorData(data);
+    const tools = getTools();
+    if (!tools || Object.keys(tools).length === 0) {
+      setStatus("Editor.js tools not loaded (check CDN). Hard refresh and retry.");
+    }
     editorInstance = new Editor({
       holder: holderId,
       data: normalized,
-      tools: getTools(),
+      tools,
       onChange: () => {
         setStatus("Edited — save draft when ready.");
         scheduleEditorJsonPreview();
