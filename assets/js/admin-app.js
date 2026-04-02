@@ -139,9 +139,9 @@
 
     const headerTool = W.Header || W.HeaderTool;
     const paragraphTool = W.Paragraph || W.ParagraphTool;
-    const listTool = W.EditorjsList || W.List || W.EditorjsListTool;
+    const listTool = W.List || W.EditorjsList || W.EditorjsListTool || W.ListRenderer;
     const codeTool = W.CodeTool || W.Code || W.CodeToolPlugin;
-    const embedTool = W.Embed || W.EmbedTool;
+    const embedTool = W.Embed || W.EmbedTool || W.Embedder;
 
     if (headerTool) tools.header = headerTool;
     if (paragraphTool) tools.paragraph = paragraphTool;
