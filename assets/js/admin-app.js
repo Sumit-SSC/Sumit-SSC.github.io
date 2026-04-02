@@ -36,6 +36,14 @@
     if (d) d.textContent = t || "";
   }
 
+  function getSessionLogin(sessionData) {
+    const u = sessionData && sessionData.user;
+    if (!u) return "";
+    if (typeof u === "string") return u;
+    if (u && typeof u.login === "string") return u.login;
+    return "";
+  }
+
   function setCenterView(mode) {
     const dash = el("admin-dashboard-view");
     const frame = el("admin-preview");
@@ -568,7 +576,8 @@
       const ses = el("dash-session");
       const pc = el("dash-project-count");
       const cc = el("dash-case-count");
-      if (ses) ses.textContent = session.ok ? `Signed in (${session.user?.login || "ok"})` : "Not signed in";
+      const login = getSessionLogin(session);
+      if (ses) ses.textContent = session.ok ? `Signed in (${login || "ok"})` : "Not signed in";
       if (pc) pc.textContent = Array.isArray(projects) ? String(projects.length) : "-";
       if (cc) cc.textContent = Array.isArray(cases) ? String(cases.length) : "-";
     } catch (_) {
@@ -636,9 +645,17 @@
     el("rib-login")?.addEventListener("click", () => {
       window.location.href = `${API}/api/admin/auth/github/start`;
     });
+    el("rib-logout")?.addEventListener("click", async () => {
+      try {
+        await fetch(`${API}/api/admin/auth/logout`, { credentials: "include" });
+      } catch (_) {}
+      setStatus("Logged out.");
+      await refreshSessionLabel();
+    });
     el("rib-session")?.addEventListener("click", async () => {
       const d = await apiSession();
-      setStatus(d.ok ? `Session: ${d.user?.login || "ok"}` : "No session");
+      const login = getSessionLogin(d);
+      setStatus(d.ok ? `Session: ${login || "ok"}` : "No session");
     });
     el("rib-refresh")?.addEventListener("click", () => {
       const f = el("admin-preview");
@@ -1010,7 +1027,8 @@
 
   async function refreshSessionLabel() {
     const sess = await apiSession();
-    setStatus(sess.ok ? `Signed in · ${sess.user?.login || ""}` : "Not signed in — use Login to load drafts & save.");
+    const login = getSessionLogin(sess);
+    setStatus(sess.ok ? `Signed in · ${login || "ok"}` : "Not signed in — use Login to load drafts & save.");
     const hint = el("home-auth-hint");
     if (hint && state.kind === "projects-home") {
       hint.classList.toggle("hidden", sess.ok);
