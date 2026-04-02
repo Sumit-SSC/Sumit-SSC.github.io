@@ -6,6 +6,15 @@
 -->
 <html lang="en">
 	<head>
+		<script>
+			(function () {
+				var h = location.hostname || "";
+				var p = location.pathname || "";
+				if (h === "admin.sumit.indevs.in" && (p === "/" || p === "" || p === "/index.html")) {
+					location.replace(location.origin + "/admin/index.html");
+				}
+			})();
+		</script>
 		<title>Sumit Portfolio Landing Page</title>
 		<meta name="description" content="Sumit S. Chaure portfolio: SQL-first end-to-end analytics systems across BI, product analytics, fraud intelligence, and decision science." />
 		<meta property="og:title" content="Sumit S. Chaure | Data & Product Analytics" />

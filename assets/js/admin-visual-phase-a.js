@@ -11,7 +11,8 @@
   }
 
   function isEditMode() {
-    return params().get("admin_edit") === "1";
+    const p = params();
+    return p.get("admin_edit") === "1" || p.get("admin_embed") === "1";
   }
 
   function ensureBar() {
@@ -76,6 +77,8 @@
 
   async function boot() {
     if (!isEditMode()) return;
+    // Full admin UI lives in /admin/ — avoid duplicating the bottom bar inside the preview iframe.
+    if (window.self !== window.top) return;
     ensureBar();
     const msg = document.getElementById("admin-ph-a-msg");
 

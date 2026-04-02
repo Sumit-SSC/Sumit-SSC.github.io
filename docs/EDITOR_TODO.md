@@ -39,8 +39,9 @@
 
 ## Phase A - Visual edit on real pages (in progress)
 
+- [x] **`/admin/index.html` workspace:** sidebar navigation, iframe preview with `admin_embed=1`, ribbon + Editor.js inspector (projects / case studies / homepage tabs).
 - [x] Homepage: `data/homepage-ui.json` + view title overrides (`featuredTitle`, `caseStudiesTitle`).
-- [x] `?admin_edit=1` panel on `pages/homepage.html` + Worker `GET/POST /api/admin/homepage-ui`.
+- [x] `?admin_edit=1` panel on `pages/homepage.html` + Worker `GET/POST /api/admin/homepage-ui` (optional; hidden in iframe when using `/admin/`).
 - [x] `CONTENT_BASE_BRANCH` required via Worker env (no hardcoded branch fallback in code).
 - [ ] About page + project list/detail visual bindings.
 - [ ] Preview URL / publish merge button.

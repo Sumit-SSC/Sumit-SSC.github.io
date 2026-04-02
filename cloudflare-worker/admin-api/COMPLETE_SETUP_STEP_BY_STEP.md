@@ -156,16 +156,21 @@ Push/deploy this frontend change to your site branch.
 
 ---
 
-## 8b) Phase A — edit real homepage titles
+## 8b) Admin workspace (recommended)
 
 After Worker is deployed and secrets/vars are set:
 
-1. Visit `https://sumit.indevs.in/pages/homepage.html?admin_edit=1` (adjust host if needed).
-2. Log in (link in the bar or via `/dev/index.html` first).
-3. Reload from API → edit **Featured** / **Case studies** titles → Save draft.
-4. Confirm commit on branch `content/drafts` for `data/homepage-ui.json`, then merge into your Pages branch.
+1. Add `https://admin.sumit.indevs.in` to **`ALLOWED_ORIGINS`** (see `wrangler.toml`) and redeploy the Worker if needed.
+2. Open **`https://sumit.indevs.in/admin/index.html`** (or **`https://admin.sumit.indevs.in/`** after you add a DNS `admin` record to GitHub Pages).
+3. Use **Login** in the ribbon, then pick pages from the sidebar and edit in the right-hand inspector (titles + Editor.js). The center panel is a live iframe; you do not type `?admin_edit=1` yourself.
 
-See `docs/PHASE_A_VISUAL_EDIT.md` for details.
+See `docs/ADMIN_WORKSPACE.md` and `docs/PHASE_A_VISUAL_EDIT.md`.
+
+### Optional: standalone homepage bar
+
+1. Visit `https://sumit.indevs.in/pages/homepage.html?admin_edit=1` (adjust host if needed).
+2. Log in via `/dev/index.html` first if needed.
+3. Same draft branch and merge flow for `data/homepage-ui.json`.
 
 ## 9) End-to-end test checklist
 
