@@ -62,13 +62,46 @@
           el("home-server-time").textContent = String(e && e.message ? e.message : e);
         }
       }
-      el("btn-login").addEventListener("click", () => { window.location.href = `${API}/api/admin/auth/github/start`; });
+
+      async function ensureGate() {
+        try {
+          const g = await fetch(`${API}/api/admin/gate/status`, { credentials: "include" }).then((r) => r.json());
+          if (!g.ok || !g.required || g.verified) return true;
+          for (let i = 0; i < 3; i += 1) {
+            const pwd = window.prompt("Enter admin password:");
+            if (!pwd) break;
+            const out = await fetch(`${API}/api/admin/gate/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ password: pwd })
+            }).then((r) => r.json());
+            if (out.ok) return true;
+          }
+          el("home-session").textContent = "Admin password required before login/session.";
+          return false;
+        } catch {
+          return false;
+        }
+      }
+
+      el("btn-login").addEventListener("click", async () => {
+        const ok = await ensureGate();
+        if (!ok) return;
+        window.location.href = `${API}/api/admin/auth/github/start`;
+      });
       el("btn-logout").addEventListener("click", async () => {
         await fetch(`${API}/api/admin/auth/logout`, { credentials: "include" }).catch(() => {});
         await refreshSession();
       });
-      el("btn-refresh-session").addEventListener("click", refreshSession);
-      refreshSession();
+      el("btn-refresh-session").addEventListener("click", async () => {
+        const ok = await ensureGate();
+        if (!ok) return;
+        await refreshSession();
+      });
+      ensureGate().then((ok) => {
+        if (ok) refreshSession();
+      });
     })();
   </script>
 </body>
