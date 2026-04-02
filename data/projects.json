@@ -1,5 +1,81 @@
 [
   {
+    "id": "test",
+    "title": "test",
+    "short_description": "Short summary for this project.",
+    "full_description": "<!-- Optional rich HTML section for test -->",
+    "editor_content": {
+      "time": 1775137209807,
+      "version": "2.30.7",
+      "blocks": [
+        {
+          "type": "header",
+          "data": {
+            "text": "test",
+            "level": 2
+          }
+        },
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "Short summary for this project."
+          }
+        },
+        {
+          "type": "header",
+          "data": {
+            "text": "Overview",
+            "level": 3
+          }
+        },
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "Add context, goals, and why this work matters."
+          }
+        },
+        {
+          "type": "header",
+          "data": {
+            "text": "Approach",
+            "level": 3
+          }
+        },
+        {
+          "type": "list",
+          "data": {
+            "style": "unordered",
+            "items": [
+              "Data",
+              "Method",
+              "Validation"
+            ]
+          }
+        },
+        {
+          "type": "header",
+          "data": {
+            "text": "Outcome",
+            "level": 3
+          }
+        },
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "Add measurable impact, results, or learnings."
+          }
+        },
+        {
+          "type": "code",
+          "data": {
+            "code": "<!-- Optional rich HTML section for test -->"
+          }
+        }
+      ]
+    },
+    "updated_at": "2026-04-02T13:40:10.385Z"
+  },
+  {
     "id": "ai-governance-workbench",
     "title": "AI Governance Workbench",
     "short_description": "Streamlit workbench for AI governance teams—dashboards, RAG-backed policy review, and compliance evidence in one place.",
@@ -8,7 +84,14 @@
     "approach": "<p><strong>Modules:</strong></p><ol><li>Governance dashboard with simulated KPI trends.</li><li>Data visualizer with multi‑chart analysis and user‑selected axes.</li><li>Document summarizer with flashcards + RAG context.</li><li>Compliance audit prototype with report export.</li><li>AI chat assistant for governance Q&A.</li></ol><p><strong>Repository layout:</strong></p><pre><code>MBA-AI_Governance_LLM-App/\n├── app.py            # Streamlit entry\n├── .streamlit/       # secrets config\n├── requirements.txt  # dependencies\n└── README.md         # setup + usage\n</code></pre><p><strong>Example workflow:</strong></p><pre><code>Upload policy → Summarize → Run audit → Ask questions → Export report</code></pre>",
     "insights": "<ul><li><strong>Governance workflow:</strong> Links dashboards, policy text, and compliance checks into one app.</li><li><strong>RAG support:</strong> Enables context‑aware Q&A over uploaded documents.</li><li><strong>Operational goal:</strong> Reduce time‑to‑insight for AI governance reviews.</li><li><strong>Extensibility:</strong> Designed to plug in additional frameworks and rulesets.</li></ul>",
     "media_notes": "<ul><li><strong>Demo video:</strong> Add a Loom/YouTube link in <code>video_url</code>.</li><li><strong>Screenshots:</strong> Add image paths to <code>images[]</code>.</li><li><strong>Notebook:</strong> Add a GitHub <code>.ipynb</code> link in <code>notebook_url</code>.</li></ul>",
-    "tools": ["Python", "Streamlit", "Google Gemini", "RAG", "Pandas", "Plotly"],
+    "tools": [
+      "Python",
+      "Streamlit",
+      "Google Gemini",
+      "RAG",
+      "Pandas",
+      "Plotly"
+    ],
     "category": "AI Governance",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/03.jpg",
@@ -40,7 +123,13 @@
     "approach": "<p><strong>Pipeline stages:</strong></p><ol><li>Generate synthetic but representative payment data.</li><li>Load raw tables into MySQL.</li><li>SQL raw → staging → features for velocity, merchant risk, device patterns, and behavioral deltas.</li><li>Risk scoring and explanations.</li><li>BI exports and monitoring dashboards.</li><li>Streamlit investigation console for drill‑down.</li></ol><p><strong>Repository layout:</strong></p><pre><code>fraud-intelligence-and-risk-analytics/\n├── sql/              # DDL, staging, features\n├── src/              # pipeline orchestration\n├── app/              # advanced Streamlit investigation\n├── app-vizulation/   # lightweight analytics view\n├── powerbi/          # dashboards\n├── data/             # raw + BI exports\n└── models/           # persisted models\n</code></pre><p><strong>Run sequence (local):</strong></p><pre><code>uv sync\nuv run python src/generate_raw_data.py\nuv run python src/load_raw_data.py\n# Run SQL stages in sql/README.md\nuv run python src/export_bi_data.py\nuv run streamlit run streamlit_app.py\n</code></pre><p><strong>Why it stands out:</strong> The project mirrors real fraud operations with staging layers, feature tables, and analyst‑ready views, not just a model demo.</p>",
     "insights": "<ul><li><strong>Velocity risk:</strong> Short‑window spikes reliably surface risky cards and merchants.</li><li><strong>Merchant concentration:</strong> A small subset of merchants and MCCs drive outsized risk exposure.</li><li><strong>Behavioral anomalies:</strong> Deviations from historical spend patterns correlate with elevated risk.</li><li><strong>Operational impact:</strong> Targets a 25‑35% improvement in investigation efficiency by focusing analysts on the highest‑value cases.</li></ul>",
     "media_notes": "<ul><li><strong>Power BI:</strong> Add embed URL in <code>powerbi_embed_url</code> or PBIX in <code>pbix_download_path</code>.</li><li><strong>Streamlit:</strong> Add link in <code>streamlit_url</code>.</li><li><strong>Notebook:</strong> Add GitHub <code>.ipynb</code> link in <code>notebook_url</code>.</li><li><strong>Screenshots:</strong> Add image paths to <code>images[]</code>.</li></ul>",
-    "tools": ["Python", "SQL", "MySQL", "Power BI", "Streamlit"],
+    "tools": [
+      "Python",
+      "SQL",
+      "MySQL",
+      "Power BI",
+      "Streamlit"
+    ],
     "category": "Risk Analytics",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/01.jpg",
@@ -72,7 +161,13 @@
     "approach": "<p><strong>Pipeline flow:</strong></p><ol><li>Generate synthetic users, events, and orders.</li><li>Load data into DuckDB with typed tables.</li><li>Run SQL for sessionization, funnel flags, and cohort tables.</li><li>Compute retention rates and export BI‑ready views.</li><li>Validate results in notebooks (retention + A/B tests).</li></ol><p><strong>Repository layout:</strong></p><pre><code>E-commerce-Product-Analytics/\n├── src/        # data generation + load\n├── sql/        # sessionization + funnel + cohorts\n├── scripts/    # materialize + export\n├── notebooks/  # cohort + A/B analysis\n└── data/       # raw + powerbi exports\n</code></pre><p><strong>Run sequence (local):</strong></p><pre><code>uv sync\nuv run python src/data_generator.py\nuv run python src/load_to_db.py\nuv run python scripts/materialize_tables.py\nuv run python scripts/export_powerbi_data.py\n</code></pre><p><strong>Why it stands out:</strong> Includes statistical validation (z‑tests + bootstrap CIs) alongside production‑style SQL transformations.</p>",
     "insights": "<ul><li><strong>Funnel bottleneck:</strong> Largest drop‑off occurs between product view and add‑to‑cart.</li><li><strong>Device behavior:</strong> Desktop shows higher checkout completion vs mobile.</li><li><strong>Cohorts:</strong> Early cohorts retain better, suggesting stronger onboarding effects.</li><li><strong>Experiment rigor:</strong> Z‑tests and bootstrap CIs support confident ship/hold decisions.</li></ul>",
     "media_notes": "<ul><li><strong>Power BI:</strong> Add embed URL in <code>powerbi_embed_url</code> or PBIX in <code>pbix_download_path</code>.</li><li><strong>Notebook:</strong> Add GitHub <code>.ipynb</code> link in <code>notebook_url</code>.</li><li><strong>Screenshots:</strong> Add image paths to <code>images[]</code>.</li><li><strong>Video:</strong> Add demo link in <code>video_url</code>.</li></ul>",
-    "tools": ["Python", "SQL", "DuckDB", "Power BI", "Statistics"],
+    "tools": [
+      "Python",
+      "SQL",
+      "DuckDB",
+      "Power BI",
+      "Statistics"
+    ],
     "category": "Product Analytics",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/04.jpg",
@@ -104,7 +199,13 @@
     "approach": "<p><strong>Pipeline stages:</strong></p><ol><li>Synthetic data generation with retention probability curves.</li><li>SQL staging, data quality checks, and feature engineering.</li><li>EDA and lifecycle segmentation.</li><li>Model training and explainability (LR + Random Forest).</li><li>Retention strategy simulator for ROI planning.</li></ol><p><strong>Repository layout:</strong></p><pre><code>churn-retention-analytics/\n├── pipeline/   # data generation + SQL + training\n├── sql/        # staging + features\n├── src/        # EDA + helpers\n├── app/        # retention simulator\n├── docs/       # stage write-ups\n└── models/     # trained artifacts\n</code></pre><p><strong>Feature engineering (example):</strong></p><pre><code>WITH usage_trends AS (\n  SELECT customer_id,\n         AVG(usage_minutes) AS avg_usage_minutes,\n         (AVG(CASE WHEN date >= CURRENT_DATE - 30 THEN usage_minutes END) -\n          AVG(CASE WHEN date < CURRENT_DATE - 30 THEN usage_minutes END))\n         / NULLIF(AVG(CASE WHEN date < CURRENT_DATE - 30 THEN usage_minutes END), 0)\n         AS usage_trend_30d\n  FROM staging.usage_daily\n  GROUP BY customer_id\n)\n</code></pre><p><strong>Model training (example):</strong></p><pre><code>rf_model = RandomForestClassifier(\n  n_estimators=200,\n  max_depth=8,\n  min_samples_leaf=100,\n  class_weight='balanced',\n  random_state=42,\n)\n</code></pre><p><strong>Why it stands out:</strong> Includes a retention simulator that turns model outputs into ROI‑based intervention decisions.</p>",
     "insights": "<ul><li><strong>Performance:</strong> Random Forest ROC AUC 0.96; Precision@Top 10% = 51%.</li><li><strong>Drivers:</strong> Usage decline, payment issues, and support load are the strongest churn signals.</li><li><strong>Segment risk:</strong> Free and Basic tiers show significantly higher churn than Enterprise.</li><li><strong>Business impact:</strong> Targeted interventions deliver ~2.3x ROI for high‑risk segments in the 31‑45 day window.</li></ul>",
     "media_notes": "<ul><li><strong>Streamlit:</strong> Add simulator link in <code>streamlit_url</code>.</li><li><strong>Notebook:</strong> Add GitHub <code>.ipynb</code> link in <code>notebook_url</code>.</li><li><strong>Screenshots:</strong> Add image paths to <code>images[]</code>.</li><li><strong>Video:</strong> Add demo link in <code>video_url</code>.</li></ul>",
-    "tools": ["Python", "SQL", "DuckDB", "scikit-learn", "Streamlit"],
+    "tools": [
+      "Python",
+      "SQL",
+      "DuckDB",
+      "scikit-learn",
+      "Streamlit"
+    ],
     "category": "Decision Science",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/06.jpg",
@@ -136,7 +237,13 @@
     "problem_statement": "<p>Dealers and marketplaces need accurate, explainable price estimates for used cars to reduce mispricing risk, speed up listings, and align with buyer expectations. Manual pricing is inconsistent and slow; simple rules (e.g., mileage-only) miss important drivers like brand, fuel type, and regional demand. Without a systematic pricing model, dealers risk overpricing (leading to slow sales and inventory holding costs) or underpricing (leaving money on the table).</p><p><strong>Business context:</strong> The used car market is highly dynamic, with prices influenced by many factors: vehicle age, mileage, brand reputation, fuel efficiency, regional demand, and market conditions. Dealers need a tool that can quickly estimate fair market value from listing attributes, while buyers need transparency into how prices are determined.</p><p><strong>Goal:</strong> Estimate fair market value from listing attributes so that resale pricing improves and inventory holding costs are better controlled. The model should be explainable (stakeholders need to understand why a car is priced a certain way), accurate (within $3,000 of actual sale prices), and fast (real-time predictions for new listings).</p>",
     "approach": "<p><strong>1. Data and profiling.</strong> Raw listing data was profiled for missing values, outliers, and distributions. Cleaning steps included standardizing fuel and drivetrain categories (e.g., \"Petrol\" vs \"Gasoline\"), capping extreme mileage values (beyond 200,000 miles treated as outliers), and deriving vehicle age from model year. Data quality checks revealed ~5% missing values in optional fields (e.g., drivetrain) and ~2% outliers in price (likely data entry errors). These were handled with imputation and outlier removal.</p><p><strong>2. Feature engineering.</strong> Created age (years since model year), brand segment (premium vs mass market based on brand reputation), mileage bins (0-30k, 30k-60k, 60k-100k, 100k+), and interaction terms (age × mileage, brand × fuel type). Encoded categoricals (fuel type, drivetrain, brand) using one-hot encoding for tree-based models. Feature importance analysis showed that age, mileage, and brand segment were the strongest predictors.</p><p><strong>3. Model benchmarking.</strong> Compared Random Forest, XGBoost, and LightGBM with cross-validation (5-fold). Tuned hyperparameters (max depth, learning rate, n_estimators) for RMSE and MAE. XGBoost achieved the best performance (RMSE $2,847, MAE $2,134) with good generalization on holdout data. The model was validated on a temporal split (train on older listings, test on newer) to ensure it generalizes to future data.</p><p><strong>4. Explainability.</strong> SHAP summary and dependence plots show how mileage, age, and brand drive predictions. Global feature importance shows mileage (30%), age (25%), and brand segment (20%) are the top drivers. Per-car SHAP values help dealers understand why a specific car is priced higher or lower than similar listings (e.g., \"This car is $2,000 above average because it's a premium brand with low mileage\").</p><p><strong>5. Deployment.</strong> Streamlit app for single-car prediction with input fields for all features. The app shows predicted price, confidence interval, and SHAP values for explainability. Optional PBIX and slides for stakeholder readouts include model performance metrics, feature importance charts, and business recommendations (e.g., \"Focus on premium brands and low-mileage inventory for higher margins\").</p>",
     "insights": "<p><strong>Feature importance:</strong> Mileage, vehicle age, and brand segment emerged as the top drivers of price, consistent with market intuition. Fuel type and drivetrain added smaller but significant lift (~5-8% each). The model learned that premium brands (e.g., BMW, Mercedes) command higher prices even at higher mileage, while mass-market brands (e.g., Toyota, Honda) have more linear price depreciation. This aligns with real-world market behavior where brand reputation and perceived quality influence resale value.</p><p><strong>Model choice:</strong> Tree-based models (XGBoost, LightGBM) outperformed linear baselines (RMSE $4,200 vs $2,847) because they capture non-linear interactions (e.g., age × mileage, brand × fuel type). Tuning reduced overfitting (train RMSE $2,650 vs test RMSE $2,847) and improved generalization. The final XGBoost model achieves 85% R² on test data, meaning it explains 85% of price variation.</p><p><strong>Business impact:</strong> A consistent, explainable price estimate reduces mispricing risk and improves pricing consistency across listings. Dealers can use the model to quickly price new inventory, identify underpriced listings (opportunities for margin improvement), and set competitive prices that attract buyers without leaving money on the table. The Streamlit app and BI assets make the model accessible to non-technical users (sales teams, inventory managers) who need pricing guidance without understanding ML details.</p><p><strong>Limitations and future work:</strong> The model does not account for regional demand variations (prices may differ by geography), seasonal trends (prices fluctuate by time of year), or market conditions (supply/demand dynamics). Future improvements could include geographic features, time-based features (month, season), and external data (fuel prices, economic indicators) to capture these factors.</p>",
-    "tools": ["Python", "pandas", "scikit-learn", "XGBoost", "Streamlit"],
+    "tools": [
+      "Python",
+      "pandas",
+      "scikit-learn",
+      "XGBoost",
+      "Streamlit"
+    ],
     "category": "Machine Learning",
     "date": "2024",
     "thumbnail": "assets/images/projects/used-car-price.png",
@@ -165,7 +272,13 @@
     "problem_statement": "<p>Subscription and recurring-revenue businesses need to reduce churn and protect revenue by targeting the right customers with the right offers. Blanket discounts are costly; missing high-value at-risk customers is worse. The challenge is to combine data (tenure, usage, support, payments) into a clear risk signal and surface it for action.</p><p><strong>Goal:</strong> Identify high-risk cohorts early and prioritize retention efforts by value and likelihood to churn.</p>",
     "approach": "<p><strong>1. Cohort and feature design.</strong> Defined cohorts by signup period and lifecycle stage. Engineered features: tenure, usage trends, support ticket volume and recency, payment failures and dunning status.</p><p><strong>2. Modeling.</strong> Trained XGBoost for churn propensity; used class weights and cross-validation to handle imbalance. SHAP values explain which factors drive risk.</p><p><strong>3. Segmentation.</strong> Combined risk score with revenue/value to create quadrants (high value–high risk, etc.) for targeting.</p><p><strong>4. Dashboard.</strong> Power BI report with cohort trends, risk distribution, and top drivers so stakeholders can design and track retention campaigns.</p>",
     "insights": "<p><strong>Top drivers:</strong> Support ticket volume and payment failures were the strongest churn signals, followed by usage decline and tenure. Segment-level analysis showed which cohorts had the highest lift from targeted outreach.</p><p><strong>Business impact:</strong> Targeting the top decile of risk (and especially high-value, high-risk customers) improved retention lift vs. baseline. The dashboard made model outputs actionable for marketing and success teams.</p>",
-    "tools": ["SQL", "Python", "pandas", "XGBoost", "Power BI"],
+    "tools": [
+      "SQL",
+      "Python",
+      "pandas",
+      "XGBoost",
+      "Power BI"
+    ],
     "category": "Decision Science",
     "date": "2024",
     "thumbnail": "assets/images/projects/customer-churn.png",
@@ -193,7 +306,12 @@
     "problem_statement": "<p>Leadership needs a single source of truth for sales performance and margin health. When revenue and margin live in different tools or spreadsheets, decisions are slow and inconsistent. The goal is one dashboard that answers: How are we performing by region and segment? Where is margin eroding? Which SKUs or customers need attention?</p><p><strong>Goal:</strong> Provide a single, trusted view of sales and margin so that strategy and tactics can be aligned quickly.</p>",
     "approach": "<p><strong>1. Data model.</strong> Modeled fact tables (sales, returns, costs) and dimensions (date, region, segment, product/SKU). Ensured grain and relationships support the required aggregations.</p><p><strong>2. DAX and KPIs.</strong> Built measures for revenue, margin %, YoY growth, MoM change, and mix contribution. Used CALCULATE and time intelligence for period comparisons.</p><p><strong>3. Visual design.</strong> Summary cards, trend lines, and bar charts; drill-through from summary to region and segment. Consistent formatting and filters.</p><p><strong>4. Deployment.</strong> Published to Power BI Service; optional PBIX for local use and PDF for leadership packs.</p>",
     "insights": "<p><strong>Findings:</strong> Analysis identified margin erosion in two regions and surfaced top underperforming SKUs. YoY and mix analysis showed where growth was coming from and where margin was under pressure.</p><p><strong>Business impact:</strong> Leadership could see performance and drill into root causes in one place, enabling faster targeting of regions and products for corrective action.</p>",
-    "tools": ["Power BI", "DAX", "SQL", "Excel"],
+    "tools": [
+      "Power BI",
+      "DAX",
+      "SQL",
+      "Excel"
+    ],
     "category": "Analytics Engineering",
     "date": "2024",
     "thumbnail": "assets/images/thumbs/05.jpg",
@@ -221,7 +339,12 @@
     "problem_statement": "<p>Product teams need to know whether a variant (e.g., new signup flow) actually improves conversion and whether it harms retention or revenue. One-off analyses and gut feel lead to wrong ship/hold decisions. The goal is a clear, statistically sound readout that supports go/no-go and ongoing monitoring.</p><p><strong>Goal:</strong> Determine whether the variant improves the primary metric (e.g., signup conversion) without degrading retention or revenue per user, and communicate the result in a way stakeholders can act on.</p>",
     "approach": "<p><strong>1. Pre-test.</strong> Defined primary (e.g., signup conversion) and guardrail (retention, ARPU) metrics. Computed power and required sample size for a minimum detectable effect.</p><p><strong>2. Randomization.</strong> Checked balance on demographics and pre-experiment behavior to confirm assignment was random.</p><p><strong>3. Primary analysis.</strong> Difference-in-proportions for conversion; delta method or bootstrap for 95% CI. Checked for segment heterogeneity.</p><p><strong>4. Guardrails.</strong> Evaluated retention and revenue in the same experiment window; flagged if variant showed material harm.</p><p><strong>5. Readout.</strong> Slides with methodology, results, CI, and recommendation (ship, hold, or run longer).</p>",
     "insights": "<p><strong>Result:</strong> The variant lifted signup conversion by ~4.2 percentage points with 95% CI [1.1pp, 7.3pp]. Guardrail metrics did not show material degradation. Recommendation: ship, with monitoring on retention and revenue post-launch.</p><p><strong>Takeaway:</strong> A structured, reproducible analysis (power, randomization, primary + guardrails) makes experiment decisions defensible and easy to explain.</p>",
-    "tools": ["SQL", "Python", "statsmodels", "A/B Testing"],
+    "tools": [
+      "SQL",
+      "Python",
+      "statsmodels",
+      "A/B Testing"
+    ],
     "category": "Product Analytics",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/02.jpg",
@@ -249,7 +372,13 @@
     "problem_statement": "<p>Environmental agencies and operators need to detect and classify oil spills in satellite imagery quickly so that response can be coordinated and impact minimized. Manual review of large image volumes is slow and inconsistent. The goal is to automate initial screening with a model that flags likely spills for human review.</p><p><strong>Goal:</strong> Build a classifier that achieves high accuracy and interpretability so that deployment is trustworthy and maintainable.</p>",
     "approach": "<p><strong>1. Data and preprocessing.</strong> Satellite image patches (oil spill vs no-spill) were loaded and preprocessed: normalization, optional augmentation, and train/validation split.</p><p><strong>2. Feature extraction.</strong> Engineered features from texture, shape, and spectral bands to capture spill-like patterns. Used OpenCV and custom functions where needed.</p><p><strong>3. Model comparison.</strong> Trained Random Forest, SVM, and a neural network; compared accuracy, precision, recall, and F1. Tuned hyperparameters via cross-validation.</p><p><strong>4. Evaluation.</strong> Confusion matrix, ROC curve, and per-class metrics. Documented limitations and failure modes.</p>",
     "insights": "<p><strong>Performance:</strong> Achieved high classification accuracy on the dataset; tree-based and SVM models offered a good balance of accuracy and interpretability. Feature importance highlighted which image characteristics drove predictions.</p><p><strong>Business impact:</strong> A documented, reproducible pipeline enables faster screening of satellite imagery and supports environmental monitoring and response workflows.</p>",
-    "tools": ["Python", "scikit-learn", "OpenCV", "pandas", "numpy"],
+    "tools": [
+      "Python",
+      "scikit-learn",
+      "OpenCV",
+      "pandas",
+      "numpy"
+    ],
     "category": "Machine Learning",
     "date": "2024",
     "thumbnail": "assets/images/thumbs/02.jpg",
@@ -277,7 +406,13 @@
     "problem_statement": "<p>Dealers, buyers, and marketplaces need to understand which car features drive pricing so that listings are priced fairly and negotiations are informed. Ad-hoc views and single charts are not enough for consistent decision-making. The goal is a clear, visual story of how mileage, age, brand, fuel type, and other attributes relate to price.</p><p><strong>Goal:</strong> Identify the main drivers of used car prices and make those insights accessible via dashboards.</p>",
     "approach": "<p><strong>1. Data cleaning.</strong> Handled missing values, outliers, and inconsistent units (e.g., mileage). Standardized fuel type and brand for analysis.</p><p><strong>2. EDA in Python.</strong> Distributions, correlation matrices, and scatter plots to see relationships between features and price. Identified multicollinearity and key predictors.</p><p><strong>3. Dashboards.</strong> Built Power BI and Excel dashboards with filters for brand, fuel type, and mileage bins. Visuals included price by segment, correlation highlights, and top drivers.</p><p><strong>4. Documentation.</strong> Summary of findings and how to use the dashboards for pricing and strategy.</p>",
     "insights": "<p><strong>Key drivers:</strong> Mileage, vehicle age, brand (premium vs mass market), and fuel type emerged as the strongest price drivers. Correlation and partial dependence confirmed direction and relative importance.</p><p><strong>Business impact:</strong> Stakeholders could explore price drivers interactively and use the insights for listing strategy and buyer guidance.</p>",
-    "tools": ["Python", "Power BI", "Excel", "pandas", "matplotlib"],
+    "tools": [
+      "Python",
+      "Power BI",
+      "Excel",
+      "pandas",
+      "matplotlib"
+    ],
     "category": "Data Analysis",
     "date": "2024",
     "thumbnail": "assets/images/thumbs/06.jpg",
@@ -305,11 +440,19 @@
     "problem_statement": "<p>Analysts and business users need faster answers from data without writing SQL or building every report manually. Backlogs grow and self-serve tools often fall short. LLMs can bridge the gap between natural language and structured analytics—but only if accuracy, explainability, and governance are designed in from the start.</p><p><strong>Goal:</strong> Summarize how LLM-augmented analytics can be deployed responsibly and where semantic layers and data contracts fit.</p>",
     "approach": "<p>Survey of NL-to-SQL, report generation, and RAG patterns; architecture considerations (semantic layer, metric store, citations); governance and accuracy guardrails. Discussion of when to use LLMs vs traditional BI and how to combine both. No single codebase; the case study is a synthesis of public patterns and best practices.</p>",
     "insights": "<p>LLM-augmented analytics will augment—not replace—analysts; semantic layers and data contracts become critical for consistent metrics and safe NL queries; explainability and citations are non-negotiable for enterprise adoption. Organizations that invest in a clear data model and governance will get the most value from LLM tooling.</p>",
-    "tools": ["Python", "LLMs", "RAG", "SQL", "Semantic Layer"],
+    "tools": [
+      "Python",
+      "LLMs",
+      "RAG",
+      "SQL",
+      "Semantic Layer"
+    ],
     "category": "AI-ML & Analytics",
     "date": "2026",
     "thumbnail": "assets/images/thumbs/03.jpg",
-    "images": ["assets/images/thumbs/03.jpg"],
+    "images": [
+      "assets/images/thumbs/03.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -333,11 +476,19 @@
     "problem_statement": "<p>Inconsistent metric definitions and unreproducible pipelines lead to conflicting dashboards and lost trust. When revenue or conversion is defined differently across tools, decisions stall. Analytics engineering and data contracts provide a path to a single source of truth and repeatable builds.</p><p><strong>Goal:</strong> Explain how data contracts, semantic layers, and testing help scale reliable analytics.</p>",
     "approach": "<p>Data contract design (schema, SLAs, ownership); semantic layer and metric store (consistent definitions, reuse); testing and documentation (unit tests, lineage); collaboration with BI and product. Discussion of tooling (e.g., dbt, Cube) and how to roll out contracts incrementally.</p>",
     "insights": "<p>Data contracts reduce drift and rework; semantic layers enable self-serve with guardrails; analytics engineers sit at the intersection of data engineering and product analytics. Teams that adopt contracts and metric ownership see fewer conflicting numbers and faster iteration.</p>",
-    "tools": ["SQL", "dbt", "Data Contracts", "Power BI", "Documentation"],
+    "tools": [
+      "SQL",
+      "dbt",
+      "Data Contracts",
+      "Power BI",
+      "Documentation"
+    ],
     "category": "Analytics Engineering",
     "date": "2026",
     "thumbnail": "assets/images/thumbs/05.jpg",
-    "images": ["assets/images/thumbs/05.jpg"],
+    "images": [
+      "assets/images/thumbs/05.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -361,11 +512,19 @@
     "problem_statement": "<p>Streaming services need to surface the right title at the right time to keep engagement and reduce churn. The challenge is turning billions of play and completion events into clear metrics and decisions: what to promote, how to rank, and how to balance familiarity with discovery.</p><p><strong>Goal:</strong> Summarize how event data, completion and diversity metrics, and experimentation support recommendation and discovery product decisions.</p>",
     "approach": "<p>Event data and sessionization; completion rate and satisfaction metrics; cohort and trend analysis; A/B testing and ranking logic; content performance dashboards. Discussion of how metrics roll up from raw events to executive-facing KPIs and how experiments inform ranking and layout.</p>",
     "insights": "<p>Completion rate and time-of-day patterns drive discovery; catalog coverage and diversity metrics matter for long-term engagement; experimentation is central to ranking and layout decisions. Analytics teams that own clear metrics and run rigorous experiments improve both relevance and business outcomes.</p>",
-    "tools": ["SQL", "Event Data", "A/B Testing", "Power BI", "Cohort Analysis"],
+    "tools": [
+      "SQL",
+      "Event Data",
+      "A/B Testing",
+      "Power BI",
+      "Cohort Analysis"
+    ],
     "category": "Industry · Media & Streaming",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/04.jpg",
-    "images": ["assets/images/thumbs/04.jpg"],
+    "images": [
+      "assets/images/thumbs/04.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -389,11 +548,18 @@
     "problem_statement": "<p>Music apps need to keep users in the app and surface the next track or playlist without friction. Data on what users play, skip, and repeat drives those decisions. The challenge is defining the right metrics and building pipelines and dashboards so product and curation teams can act on them.</p><p><strong>Goal:</strong> Summarize how play/skip and session data support playlist performance and discovery decisions.</p>",
     "approach": "<p>Play/skip event pipelines; session and retention metrics; genre and mood tagging; playlist performance and diversity; \"similar artist\" and discovery funnels. Discussion of how skip rate and listen-through feed into ranking and how context (time, device) improves relevance.</p>",
     "insights": "<p>Skip rate and listen-through are core signals; context (time, device, activity) improves relevance; playlist freshness and diversity balance familiarity and discovery. Teams that instrument and monitor these metrics can iterate quickly on playlist and recommendation experiences.</p>",
-    "tools": ["SQL", "Event Analytics", "Power BI", "Segment Analysis"],
+    "tools": [
+      "SQL",
+      "Event Analytics",
+      "Power BI",
+      "Segment Analysis"
+    ],
     "category": "Industry · Music & Audio",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/02.jpg",
-    "images": ["assets/images/thumbs/02.jpg"],
+    "images": [
+      "assets/images/thumbs/02.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -417,11 +583,18 @@
     "problem_statement": "<p>Airlines need to fill planes without leaving money on the table. Pricing must respond to demand, competition, and external factors in near real time. The challenge is turning booking data, events, and external signals into clear metrics and rules that revenue and pricing teams can use.</p><p><strong>Goal:</strong> Summarize how booking curves, events, and segment-level data support dynamic pricing and revenue management.</p>",
     "approach": "<p>Booking and cancellation data; demand forecasting inputs; event calendars and weather; fare elasticity and competitive benchmarking; dashboards for revenue and load. Discussion of how days-before-departure and segment (leisure vs business, route) drive price sensitivity and how analytics teams support revenue decisions.</p>",
     "insights": "<p>Booking curve and days-before-departure are key; events and holidays shift demand; segment and route matter for price sensitivity. Analytics that combine internal booking data with external events enable more responsive and profitable pricing.</p>",
-    "tools": ["SQL", "Time Series", "Power BI", "Revenue Analytics"],
+    "tools": [
+      "SQL",
+      "Time Series",
+      "Power BI",
+      "Revenue Analytics"
+    ],
     "category": "Industry · Travel & Aviation",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/05.jpg",
-    "images": ["assets/images/thumbs/05.jpg"],
+    "images": [
+      "assets/images/thumbs/05.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -445,11 +618,18 @@
     "problem_statement": "<p>Banks must catch fraud early without over-flagging good customers. The work is as much about clear rules and operational metrics as it is about models. The challenge is designing rules and queues that surface high-risk cases while keeping false positives and analyst burnout under control.</p><p><strong>Goal:</strong> Summarize how transaction and velocity analytics, rule design, and queue metrics support fraud operations.</p>",
     "approach": "<p>Transaction and velocity analytics; merchant and device patterns; rule design and threshold tuning; investigation queue and false-positive metrics; stakeholder reporting. Discussion of how rules and dashboards are iterated and how feedback from investigators improves detection over time.</p>",
     "insights": "<p>Velocity and geographic anomalies are foundational; merchant and MCC patterns matter; balancing catch rate and false positives drives rule design. Teams that combine clear metrics with investigator feedback improve both detection and operational efficiency.</p>",
-    "tools": ["SQL", "Power BI", "Rule Design", "Operational Metrics"],
+    "tools": [
+      "SQL",
+      "Power BI",
+      "Rule Design",
+      "Operational Metrics"
+    ],
     "category": "Industry · BFSI",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/01.jpg",
-    "images": ["assets/images/thumbs/01.jpg"],
+    "images": [
+      "assets/images/thumbs/01.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -473,11 +653,18 @@
     "problem_statement": "<p>Lenders need to approve the right customers at the right risk-based terms. Data on income, tenure, and past behavior supports both policy and pricing. The challenge is turning application and bureau data into consistent risk segments and dashboards so that approval and limit decisions are transparent and auditable.</p><p><strong>Goal:</strong> Summarize how application and bureau data, scorecards, and portfolio monitoring support credit and default risk decisions.</p>",
     "approach": "<p>Application and bureau data; delinquency and default definitions; segment-level risk and approval rates; scorecard and policy rules; portfolio monitoring dashboards. Discussion of how key parameters (e.g., tenure, income stability, past delinquency) feed into risk tiers and how early warning metrics support collections and loss mitigation.</p>",
     "insights": "<p>Tenure, income stability, and past delinquency are strong signals; segment-level approval and default rates guide policy; monitoring and early warning are critical for portfolio health. Analytics that connect application data to outcomes improve both approval quality and loss performance.</p>",
-    "tools": ["SQL", "Scorecards", "Power BI", "Risk Metrics"],
+    "tools": [
+      "SQL",
+      "Scorecards",
+      "Power BI",
+      "Risk Metrics"
+    ],
     "category": "Industry · BFSI",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/06.jpg",
-    "images": ["assets/images/thumbs/06.jpg"],
+    "images": [
+      "assets/images/thumbs/06.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -501,11 +688,18 @@
     "problem_statement": "<p>Delivery speed and right inventory drive conversions in quick-commerce. Data on orders, routes, and time windows supports both last-mile and replenishment decisions. The challenge is turning order and location data into clear metrics (ETAs, fill rate, stock-out) so ops and category teams can act.</p><p><strong>Goal:</strong> Summarize how order, slot, and route data support routing, demand, and stock decisions.</p>",
     "approach": "<p>Order and slot data; route and ETAs; demand by SKU and store; stock-out and fill-rate metrics; dashboards for ops and category teams. Discussion of how peak slots and basket composition drive staffing and stock, and how route clustering and capacity improve ETAs.</p>",
     "insights": "<p>Peak slots and basket composition drive staffing and stock; route clustering and capacity improve ETAs; fill rate and stock-out are key operational KPIs. Teams that instrument and monitor these metrics can optimize both delivery speed and inventory availability.</p>",
-    "tools": ["SQL", "Demand Forecasting", "Power BI", "Operational Analytics"],
+    "tools": [
+      "SQL",
+      "Demand Forecasting",
+      "Power BI",
+      "Operational Analytics"
+    ],
     "category": "Industry · Logistics & Retail",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/04.jpg",
-    "images": ["assets/images/thumbs/04.jpg"],
+    "images": [
+      "assets/images/thumbs/04.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
@@ -529,11 +723,18 @@
     "problem_statement": "<p>Hospitals and insurers need to improve outcomes and efficiency while staying compliant. Data supports both clinical and operational decisions—length-of-stay, readmission, capacity, and risk stratification. The challenge is building pipelines and dashboards that are trustworthy and usable by clinical and ops teams.</p><p><strong>Goal:</strong> Summarize how EHR and claims data, key metrics, and risk stratification support outcomes and capacity decisions.</p>",
     "approach": "<p>EHR and claims pipelines; length-of-stay and readmission metrics; capacity and utilization dashboards; risk stratification and outreach; optional predictive models for readmission or demand. Discussion of how structured reporting and risk tiers support care management and capacity planning while respecting compliance needs.</p>",
     "insights": "<p>Structured metrics and reporting are the base; risk stratification guides outreach; capacity and flow analytics improve utilization. Analytics that combine clinical and operational data in a compliant way enable better outcomes and resource use.</p>",
-    "tools": ["SQL", "Power BI", "Risk Stratification", "Compliance"],
+    "tools": [
+      "SQL",
+      "Power BI",
+      "Risk Stratification",
+      "Compliance"
+    ],
     "category": "Industry · Healthcare",
     "date": "2025",
     "thumbnail": "assets/images/thumbs/03.jpg",
-    "images": ["assets/images/thumbs/03.jpg"],
+    "images": [
+      "assets/images/thumbs/03.jpg"
+    ],
     "show_apps_section": false,
     "notebook_url": "",
     "video_url": "",
