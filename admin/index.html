@@ -59,6 +59,13 @@
         <button type="button" data-insert="header" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Heading</button>
         <button type="button" data-insert="list" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">List</button>
         <button type="button" data-insert="code" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Code</button>
+        <button type="button" data-insert="embed" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Embed</button>
+      </div>
+      <div id="rib-block-group" class="hidden flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">Block</span>
+        <button type="button" id="rib-block-up" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Up</button>
+        <button type="button" id="rib-block-down" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Down</button>
+        <button type="button" id="rib-block-delete" class="rounded px-2 py-1 hover:bg-slate-700 text-rose-300">Delete</button>
       </div>
       <div class="flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
         <span class="px-2 text-slate-500 font-medium">Draft</span>
@@ -70,7 +77,8 @@
         <button type="button" id="rib-publish" class="rounded px-2 py-1 bg-indigo-700 hover:bg-indigo-600 text-white font-semibold" title="Copy draft file to GitHub Pages branch">Publish to live</button>
       </div>
     </nav>
-    <div id="rib-status" class="ml-auto text-xs text-slate-400 max-w-[min(24rem,40vw)] truncate"></div>
+    <div id="rib-session-info" class="ml-auto text-xs text-slate-300 max-w-[min(28rem,45vw)] truncate"></div>
+    <div id="rib-status" class="text-xs text-slate-400 max-w-[min(24rem,40vw)] truncate"></div>
   </header>
 
   <div id="workspace-main" class="flex flex-1 min-h-0">
@@ -108,9 +116,19 @@
       </div>
       <div class="flex-1 overflow-y-auto p-3">
         <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Projects</p>
+        <div class="mb-2">
+          <button type="button" id="btn-new-project" class="w-full rounded bg-indigo-700/80 hover:bg-indigo-600 text-xs px-2 py-1.5">+ New project template</button>
+        </div>
         <ul id="admin-sortable-projects" class="space-y-0.5 text-sm mb-6"></ul>
         <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Case studies</p>
+        <div class="mb-2">
+          <button type="button" id="btn-new-case" class="w-full rounded bg-indigo-700/80 hover:bg-indigo-600 text-xs px-2 py-1.5">+ New case study template</button>
+        </div>
         <ul id="admin-sortable-cases" class="space-y-0.5 text-sm"></ul>
+        <div id="block-nav-wrap" class="hidden mt-6">
+          <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Current page blocks</p>
+          <ul id="block-nav-list" class="space-y-1 text-xs"></ul>
+        </div>
       </div>
     </aside>
 
@@ -139,6 +157,10 @@
             </article>
           </div>
           <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+            <div class="text-xs text-slate-400">Server time (IST)</div>
+            <div id="dash-server-time" class="mt-2 text-sm font-medium text-slate-200">-</div>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
             <h3 class="text-sm font-semibold text-white mb-2">Quick start</h3>
             <ol class="list-decimal pl-5 text-sm text-slate-300 space-y-1">
               <li>Login from ribbon.</li>
@@ -146,6 +168,37 @@
               <li>Edit blocks, then Save draft.</li>
               <li>Publish to live when ready.</li>
             </ol>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 space-y-2">
+            <h3 class="text-sm font-semibold text-white">Session Details</h3>
+            <p id="dash-session-detail" class="text-sm text-slate-300">Checking login status…</p>
+            <button type="button" id="btn-open-editor" class="rounded-lg bg-indigo-700 hover:bg-indigo-600 px-4 py-2 text-sm font-semibold">Edit Content Workspace</button>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 space-y-3">
+            <h3 class="text-sm font-semibold text-white">Site defaults</h3>
+            <p class="text-xs text-slate-400">Set default mode and color theme from dashboard (saved in <code class="text-slate-300">data/site-theme.json</code>).</p>
+            <div class="grid md:grid-cols-2 gap-3">
+              <label class="block text-sm">
+                <span class="text-slate-400 text-xs">Default mode</span>
+                <select id="dash-theme-mode" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm">
+                  <option value="system">System</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </label>
+              <label class="block text-sm">
+                <span class="text-slate-400 text-xs">Default color theme</span>
+                <select id="dash-theme-color" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm">
+                  <option value="theme-custom">Custom (use primary/accent)</option>
+                  <option value="theme-indigo">Indigo</option>
+                  <option value="theme-orange">Orange</option>
+                  <option value="theme-emerald">Emerald</option>
+                  <option value="theme-purple">Purple</option>
+                </select>
+              </label>
+            </div>
+            <button type="button" id="btn-dash-theme-save" class="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm font-semibold">Save defaults to draft</button>
+            <p id="msg-dash-theme" class="text-xs text-slate-500 min-h-[1em]"></p>
           </div>
         </div>
       </section>
@@ -155,6 +208,15 @@
         class="flex-1 w-full border-0 bg-white"
         sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
       ></iframe>
+      <div id="preview-bottom-actions" class="hidden border-t border-slate-700/70 bg-slate-900/70 p-2">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-slate-400 mr-1">Quick actions</span>
+          <button type="button" id="btn-bottom-insert" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1">Insert paragraph</button>
+          <button type="button" id="btn-bottom-delete" class="rounded bg-rose-900/70 hover:bg-rose-800 px-2 py-1">Delete selected</button>
+          <button type="button" id="btn-bottom-up" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1">Move up</button>
+          <button type="button" id="btn-bottom-down" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1">Move down</button>
+        </div>
+      </div>
     </div>
 
     <!-- Inspector -->
@@ -255,6 +317,24 @@
           <span class="text-slate-400 text-xs">Font family</span>
           <input id="theme-font-family" type="text" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm" placeholder="Inter, system-ui, sans-serif" />
         </label>
+        <label class="block text-sm">
+          <span class="text-slate-400 text-xs">Default mode</span>
+          <select id="theme-default-mode" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <label class="block text-sm">
+          <span class="text-slate-400 text-xs">Default color theme</span>
+          <select id="theme-default-color" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm">
+            <option value="theme-custom">Custom (use primary/accent)</option>
+            <option value="theme-indigo">Indigo</option>
+            <option value="theme-orange">Orange</option>
+            <option value="theme-emerald">Emerald</option>
+            <option value="theme-purple">Purple</option>
+          </select>
+        </label>
         <div class="grid grid-cols-2 gap-2 pt-2">
           <button type="button" id="btn-theme-load" class="rounded-lg bg-slate-700 hover:bg-slate-600 py-2 text-sm font-semibold">Load</button>
           <button type="button" id="btn-theme-save" class="rounded-lg bg-emerald-600 hover:bg-emerald-500 py-2 text-sm font-semibold">Save draft</button>
@@ -272,6 +352,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2.0.8/dist/editorjs-list.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260402-2"></script>
+  <script src="../assets/js/admin-app.js?v=20260402-5"></script>
 </body>
 </html>

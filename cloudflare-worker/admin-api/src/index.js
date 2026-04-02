@@ -4,7 +4,9 @@
   };
   const COOKIE_SESSION = "portfolio_admin_session";
   const COOKIE_STATE = "portfolio_admin_state";
+  const COOKIE_GATE = "portfolio_admin_gate";
   const SESSION_TTL_SECONDS = 60 * 60 * 8;
+  const GATE_TTL_SECONDS = 60 * 60 * 12;
 
   export default {
     async fetch(request, env) {
@@ -50,6 +52,12 @@
         }
         if (pathname === "/api/admin/session") {
           return withCors(request, env, await getSessionStatus(request, env));
+        }
+        if (pathname === "/api/admin/gate/status") {
+          return withCors(request, env, await getGateStatus(request, env));
+        }
+        if (pathname === "/api/admin/gate/verify" && request.method === "POST") {
+          return withCors(request, env, await verifyAdminGate(request, env));
         }
         if (pathname === "/api/admin/content/read" && request.method === "GET") {
           return withCors(request, env, await readContent(url, request, env));
@@ -174,6 +182,19 @@
     return `${name}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
   }
 
+  function formatIstTimestamp(ms = Date.now()) {
+    return new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).format(new Date(ms));
+  }
+
   async function startGithubAuth(request, env) {
     const url = new URL(request.url);
     const redirect = `${url.origin}/api/admin/auth/github/callback`;
@@ -252,10 +273,47 @@
   async function logout() {
     const headers = new Headers(JSON_HEADERS);
     headers.append("set-cookie", clearCookie(COOKIE_SESSION));
+    headers.append("set-cookie", clearCookie(COOKIE_GATE));
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
   }
 
+  async function isGateVerified(request, env) {
+    const gate = String(env.ADMIN_PANEL_PASSWORD || "").trim();
+    if (!gate) return true;
+    const cookies = parseCookieMap(request);
+    const token = cookies[COOKIE_GATE];
+    const parsed = await verifySignedToken(token, env.SESSION_SIGNING_KEY);
+    return !!(parsed && parsed.gate === "ok");
+  }
+
+  async function getGateStatus(request, env) {
+    const required = !!String(env.ADMIN_PANEL_PASSWORD || "").trim();
+    if (!required) {
+      return json({ ok: true, required: false, verified: true });
+    }
+    const verified = await isGateVerified(request, env);
+    return json({ ok: true, required: true, verified });
+  }
+
+  async function verifyAdminGate(request, env) {
+    const requiredPass = String(env.ADMIN_PANEL_PASSWORD || "").trim();
+    if (!requiredPass) return json({ ok: true, required: false, verified: true });
+    const body = await request.json().catch(() => ({}));
+    const pass = String(body.password || "");
+    if (!pass || pass !== requiredPass) {
+      return json({ ok: false, error: "Invalid admin password" }, 401);
+    }
+    const token = await createSignedToken(
+      { gate: "ok", exp: Date.now() + GATE_TTL_SECONDS * 1000 },
+      env.SESSION_SIGNING_KEY
+    );
+    const headers = new Headers(JSON_HEADERS);
+    headers.append("set-cookie", makeCookie(COOKIE_GATE, token, GATE_TTL_SECONDS));
+    return new Response(JSON.stringify({ ok: true, required: true, verified: true }), { status: 200, headers });
+  }
+
   async function getSessionUser(request, env) {
+    if (!(await isGateVerified(request, env))) return null;
     const cookies = parseCookieMap(request);
     const token = cookies[COOKIE_SESSION];
     const session = await verifySignedToken(token, env.SESSION_SIGNING_KEY);
@@ -264,8 +322,19 @@
   }
 
   async function getSessionStatus(request, env) {
+    const gateRequired = !!String(env.ADMIN_PANEL_PASSWORD || "").trim();
+    const gateVerified = await isGateVerified(request, env);
     const user = await getSessionUser(request, env);
-    return json({ ok: !!user, user: user || null });
+    return json({
+      ok: !!user,
+      user: user || null,
+      github: user ? { login: user } : null,
+      role: user ? "admin" : null,
+      gateRequired,
+      gateVerified,
+      serverTimeUtc: new Date().toISOString(),
+      serverTimeIst: formatIstTimestamp()
+    });
   }
 
   function isUserAllowed(login, allowListRaw) {

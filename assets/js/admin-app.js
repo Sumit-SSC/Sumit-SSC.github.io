@@ -18,6 +18,7 @@
   let editorInstance = null;
   let activeEditorHolderId = null;
   let editorPreviewTimer = null;
+  let blockNavSortable = null;
 
   const state = {
     kind: "dashboard",
@@ -25,6 +26,10 @@
     slug: "",
     homeTab: "titles",
     editWorkspace: false
+  };
+  const localDraftRecords = {
+    projects: [],
+    caseStudies: []
   };
 
   const el = (id) => document.getElementById(id);
@@ -34,6 +39,19 @@
     if (n) n.textContent = t || "";
     const d = el("dash-last-status");
     if (d) d.textContent = t || "";
+  }
+
+  function isEditingRoute() {
+    return state.kind === "project" || state.kind === "caseStudy" || (state.kind === "projects-home" && state.homeTab === "json");
+  }
+
+  function updateSessionUi(sess) {
+    const login = getSessionLogin(sess);
+    const role = sess && sess.role ? String(sess.role) : "admin";
+    const top = el("rib-session-info");
+    const dash = el("dash-session-detail");
+    if (top) top.textContent = sess && sess.ok ? `Signed in: ${login || "unknown"} · role: ${role}` : "Not signed in";
+    if (dash) dash.textContent = sess && sess.ok ? `GitHub: ${login || "unknown"} | role: ${role}` : "Not signed in. Click Login.";
   }
 
   function getSessionLogin(sessionData) {
@@ -56,11 +74,8 @@
     const previewPane = el("workspace-preview-pane");
     const inspector = el("workspace-inspector");
     const toggleBtn = el("rib-edit-workspace");
-    const isEditingRoute =
-      state.kind === "project" ||
-      state.kind === "caseStudy" ||
-      (state.kind === "projects-home" && state.homeTab === "json");
-    const active = state.editWorkspace && isEditingRoute;
+    const bottom = el("preview-bottom-actions");
+    const active = state.editWorkspace && isEditingRoute();
 
     if (previewPane) previewPane.classList.toggle("hidden", active);
     if (inspector) inspector.classList.toggle("w-[min(100%,420px)]", !active);
@@ -70,6 +85,7 @@
       toggleBtn.classList.toggle("bg-slate-700", active);
       toggleBtn.classList.toggle("text-white", active);
     }
+    if (bottom) bottom.classList.toggle("hidden", !isEditingRoute());
   }
 
   function previewUrl(pathWithQuery) {
@@ -237,6 +253,7 @@
       previewEl.textContent = JSON.stringify(data, null, 2);
       const draftEl = draftPreviewElForHolder(activeEditorHolderId);
       if (draftEl) draftEl.innerHTML = editorBlocksToHtml(data);
+      renderBlockNav(data);
     } catch (e) {
       previewEl.textContent = String(e && e.message ? e.message : e);
     }
@@ -245,6 +262,61 @@
   function scheduleEditorJsonPreview() {
     if (editorPreviewTimer) clearTimeout(editorPreviewTimer);
     editorPreviewTimer = setTimeout(() => updateEditorJsonPreviewNow(), 500);
+  }
+
+  function blockTitleFor(block, i) {
+    const t = block?.type || "block";
+    const d = block?.data || {};
+    const text = d.text || d.code || (Array.isArray(d.items) ? d.items[0] : "") || d.source || "";
+    const clipped = String(text || "").replace(/<[^>]*>/g, "").trim().slice(0, 40);
+    return `${i + 1}. ${t}${clipped ? ` - ${clipped}` : ""}`;
+  }
+
+  function renderBlockNav(editorData) {
+    const wrap = el("block-nav-wrap");
+    const list = el("block-nav-list");
+    if (!wrap || !list) return;
+    if (!isEditingRoute()) {
+      wrap.classList.add("hidden");
+      list.innerHTML = "";
+      return;
+    }
+    wrap.classList.remove("hidden");
+    const blocks = Array.isArray(editorData?.blocks) ? editorData.blocks : [];
+    list.innerHTML = "";
+    blocks.forEach((b, i) => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "w-full text-left rounded px-2 py-1 bg-slate-800/60 hover:bg-slate-700 text-slate-200";
+      btn.textContent = blockTitleFor(b, i);
+      btn.addEventListener("click", () => {
+        try {
+          const holder = el(activeEditorHolderId);
+          const node = holder?.querySelectorAll(".ce-block")[i];
+          node?.scrollIntoView({ behavior: "smooth", block: "center" });
+          node?.classList.add("ring-2", "ring-indigo-500");
+          setTimeout(() => node?.classList.remove("ring-2", "ring-indigo-500"), 900);
+        } catch (_) {}
+      });
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+    if (window.Sortable && !blockNavSortable) {
+      blockNavSortable = Sortable.create(list, {
+        animation: 150,
+        onEnd: async (evt) => {
+          if (!editorInstance?.blocks) return;
+          const from = evt.oldIndex;
+          const to = evt.newIndex;
+          if (typeof from !== "number" || typeof to !== "number" || from === to) return;
+          try {
+            await editorInstance.blocks.move(to, from);
+            await updateEditorJsonPreviewNow();
+          } catch (_) {}
+        }
+      });
+    }
   }
 
   async function mountEditor(holderId, data) {
@@ -287,6 +359,21 @@
     return res.json();
   }
 
+  async function apiGateStatus() {
+    const res = await fetch(`${API}/api/admin/gate/status`, { credentials: "include" });
+    return res.json();
+  }
+
+  async function apiGateVerify(password) {
+    const res = await fetch(`${API}/api/admin/gate/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ password })
+    });
+    return res.json();
+  }
+
   async function loadContentRead(target, slug) {
     const q = new URLSearchParams({ target });
     if (slug) q.set("slug", slug);
@@ -321,6 +408,7 @@
     const pSt = el("panel-static");
     const pSettings = el("panel-settings");
     const ribIns = el("rib-insert-group");
+    const ribBlock = el("rib-block-group");
 
     const isHome = state.kind === "projects-home";
     const isRecord = state.kind === "project" || state.kind === "caseStudy";
@@ -334,6 +422,8 @@
     if (pSt) pSt.classList.toggle("hidden", !isStatic);
     if (pSettings) pSettings.classList.toggle("hidden", !isSettings);
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
+    if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
+    renderBlockNav({ blocks: [] });
   }
 
   async function applyRoute() {
@@ -457,6 +547,7 @@
     const data = await loadContentRead(target, slug);
     if (!data.ok) {
       const unauthorized = data.error === "Unauthorized" || data._httpStatus === 401;
+      const missing = /No record found for slug/i.test(String(data.error || ""));
       if (unauthorized) {
         setRecordAuthBanner(
           true,
@@ -473,6 +564,11 @@
           console.warn(e);
         }
         await mountEditor("admin-editor-holder", getDefaultEditorData());
+        return;
+      }
+      if (missing) {
+        await mountEditor("admin-editor-holder", newRecordTemplate(target, slug, slug));
+        setStatus(`No draft/live record found for ${slug}. Start editing blocks and Save draft to create it.`);
         return;
       }
       setStatus(data.error || "Load failed");
@@ -501,6 +597,18 @@
         return;
       }
       setStatus(`Saved · ${out.branch || "draft"}`);
+      return;
+    }
+
+    if (state.kind === "settings") {
+      await saveThemeDraft();
+      setStatus("Theme draft saved.");
+      return;
+    }
+
+    if (state.kind === "dashboard") {
+      await saveDashboardThemeDefaults();
+      setStatus("Dashboard defaults saved.");
       return;
     }
 
@@ -577,9 +685,13 @@
       const pc = el("dash-project-count");
       const cc = el("dash-case-count");
       const login = getSessionLogin(session);
+      updateSessionUi(session);
       if (ses) ses.textContent = session.ok ? `Signed in (${login || "ok"})` : "Not signed in";
       if (pc) pc.textContent = Array.isArray(projects) ? String(projects.length) : "-";
       if (cc) cc.textContent = Array.isArray(cases) ? String(cases.length) : "-";
+      const st = el("dash-server-time");
+      if (st) st.textContent = session.serverTimeIst || "-";
+      await loadThemeSettings();
     } catch (_) {
       setStatus("Dashboard stats failed to load.");
     }
@@ -588,9 +700,11 @@
   function buildSidebarLists(projects, cases) {
     const pu = el("admin-sortable-projects");
     const cu = el("admin-sortable-cases");
+    const mergedProjects = [...(localDraftRecords.projects || []), ...(projects || []).filter((p) => !localDraftRecords.projects.some((lp) => lp.id === p.id))];
+    const mergedCases = [...(localDraftRecords.caseStudies || []), ...(cases || []).filter((c) => !localDraftRecords.caseStudies.some((lc) => lc.id === c.id))];
     if (pu) {
       pu.innerHTML = "";
-      (projects || []).forEach((p) => {
+      (mergedProjects || []).forEach((p) => {
         const li = document.createElement("li");
         const b = document.createElement("button");
         b.type = "button";
@@ -612,7 +726,7 @@
     }
     if (cu) {
       cu.innerHTML = "";
-      (cases || []).forEach((c) => {
+      (mergedCases || []).forEach((c) => {
         const li = document.createElement("li");
         const b = document.createElement("button");
         b.type = "button";
@@ -655,6 +769,7 @@
     el("rib-session")?.addEventListener("click", async () => {
       const d = await apiSession();
       const login = getSessionLogin(d);
+      updateSessionUi(d);
       setStatus(d.ok ? `Session: ${login || "ok"}` : "No session");
     });
     el("rib-refresh")?.addEventListener("click", () => {
@@ -677,7 +792,8 @@
           paragraph: { type: "paragraph", data: { text: "" } },
           header: { type: "header", data: { text: "Heading", level: 2 } },
           list: { type: "list", data: { style: "unordered", items: ["Item"] } },
-          code: { type: "code", data: { code: "" } }
+          code: { type: "code", data: { code: "" } },
+          embed: { type: "embed", data: { service: "github", source: "https://github.com/", embed: "https://github.com/", width: 580, height: 320, caption: "" } }
         };
         const block = map[type];
         if (!block) return;
@@ -689,6 +805,112 @@
         }
       });
     });
+
+    el("rib-block-delete")?.addEventListener("click", async () => {
+      if (!editorInstance?.blocks) return;
+      try {
+        const idx = editorInstance.blocks.getCurrentBlockIndex();
+        await editorInstance.blocks.delete(idx);
+      } catch (_) {
+        setStatus("Select a block in editor first.");
+      }
+    });
+    el("rib-block-up")?.addEventListener("click", async () => {
+      if (!editorInstance?.blocks) return;
+      try {
+        const idx = editorInstance.blocks.getCurrentBlockIndex();
+        if (idx > 0) await editorInstance.blocks.move(idx - 1, idx);
+      } catch (_) {
+        setStatus("Could not move block up.");
+      }
+    });
+    el("rib-block-down")?.addEventListener("click", async () => {
+      if (!editorInstance?.blocks) return;
+      try {
+        const idx = editorInstance.blocks.getCurrentBlockIndex();
+        await editorInstance.blocks.move(idx + 1, idx);
+      } catch (_) {
+        setStatus("Could not move block down.");
+      }
+    });
+    el("btn-bottom-insert")?.addEventListener("click", async () => {
+      if (!editorInstance?.blocks) return;
+      try {
+        await editorInstance.blocks.insert("paragraph", { text: "" });
+      } catch (_) {}
+    });
+    el("btn-bottom-delete")?.addEventListener("click", () => el("rib-block-delete")?.click());
+    el("btn-bottom-up")?.addEventListener("click", () => el("rib-block-up")?.click());
+    el("btn-bottom-down")?.addEventListener("click", () => el("rib-block-down")?.click());
+    el("btn-open-editor")?.addEventListener("click", () => {
+      state.kind = "projects-home";
+      state.homeTab = "json";
+      highlightNav();
+      applyRoute();
+    });
+  }
+
+  function cleanSlug(value) {
+    return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+
+  function newRecordTemplate(kind, title, slug) {
+    const isCase = kind === "caseStudies";
+    return {
+      time: Date.now(),
+      version: "2.30.7",
+      blocks: [
+        { type: "header", data: { text: title || "Untitled", level: 2 } },
+        { type: "paragraph", data: { text: isCase ? "Short summary for this case study." : "Short summary for this project." } },
+        { type: "header", data: { text: "Overview", level: 3 } },
+        { type: "paragraph", data: { text: "Add context, goals, and why this work matters." } },
+        { type: "header", data: { text: "Approach", level: 3 } },
+        { type: "list", data: { style: "unordered", items: ["Data", "Method", "Validation"] } },
+        { type: "header", data: { text: "Outcome", level: 3 } },
+        { type: "paragraph", data: { text: "Add measurable impact, results, or learnings." } },
+        { type: "code", data: { code: `<!-- Optional rich HTML section for ${slug} -->` } }
+      ]
+    };
+  }
+
+  async function createNewRecord(kind) {
+    const s = await apiSession();
+    if (!s.ok) {
+      setStatus("Login first.");
+      return;
+    }
+    const label = kind === "projects" ? "project" : "case study";
+    const title = (window.prompt(`New ${label} title:`) || "").trim();
+    if (!title) return;
+    const slugInput = (window.prompt(`Slug (optional). Leave blank to auto-generate from title:`) || "").trim();
+    const slug = cleanSlug(slugInput || title);
+    if (!slug) {
+      setStatus("Invalid slug.");
+      return;
+    }
+    const tpl = newRecordTemplate(kind, title, slug);
+    const out = await saveContentWrite(kind, slug, tpl);
+    if (!out.ok) {
+      setStatus(out.error || "Could not create draft.");
+      return;
+    }
+    const rec = { id: slug, title };
+    if (kind === "projects") {
+      localDraftRecords.projects.unshift(rec);
+      state.kind = "project";
+      state.target = "projects";
+    } else {
+      localDraftRecords.caseStudies.unshift(rec);
+      state.kind = "caseStudy";
+      state.target = "caseStudies";
+    }
+    state.slug = slug;
+    highlightNav();
+    const projects = await fetchJson("data/projects.json").catch(() => []);
+    const cases = await fetchJson("data/case_studies.json").catch(() => []);
+    buildSidebarLists(projects, cases);
+    await applyRoute();
+    setStatus(`Draft created for ${label}: ${slug}.`);
   }
 
   function setHomeTabStyle(which) {
@@ -760,6 +982,8 @@
   }
 
   el("btn-save-ui")?.addEventListener("click", saveHomeUi);
+  el("btn-new-project")?.addEventListener("click", () => createNewRecord("projects"));
+  el("btn-new-case")?.addEventListener("click", () => createNewRecord("caseStudies"));
 
   async function apiPublish(target) {
     const res = await fetch(`${API}/api/admin/content/publish`, {
@@ -793,10 +1017,18 @@
     const acc = el("theme-accent");
     const fs = el("theme-font-size");
     const ff = el("theme-font-family");
+    const dm = el("theme-default-mode");
+    const dc = el("theme-default-color");
     if (pri) pri.value = theme.primary || "#3B4CCA";
     if (acc) acc.value = theme.accent || "#2CB1A6";
     if (fs) fs.value = theme.baseFontSizePx || 16;
     if (ff) ff.value = theme.fontFamily || "Inter, system-ui, sans-serif";
+    if (dm) dm.value = theme.defaultMode || "system";
+    if (dc) dc.value = theme.defaultColorTheme || "theme-custom";
+    const dDm = el("dash-theme-mode");
+    const dDc = el("dash-theme-color");
+    if (dDm) dDm.value = theme.defaultMode || "system";
+    if (dDc) dDc.value = theme.defaultColorTheme || "theme-custom";
     if (msg) msg.textContent = "Loaded.";
   }
 
@@ -806,6 +1038,8 @@
     const acc = el("theme-accent")?.value || "#2CB1A6";
     const fs = Number(el("theme-font-size")?.value || 16);
     const ff = el("theme-font-family")?.value || "Inter, system-ui, sans-serif";
+    const dm = el("theme-default-mode")?.value || "system";
+    const dc = el("theme-default-color")?.value || "theme-custom";
     if (msg) msg.textContent = "Saving…";
     const res = await fetch(`${API}/api/admin/content/save`, {
       method: "POST",
@@ -820,7 +1054,7 @@
           blocks: [
             { type: "header", data: { text: "Site Theme", level: 2 } },
             { type: "paragraph", data: { text: "Edit settings via the form, Save draft, then Publish to live." } },
-            { type: "code", data: { code: JSON.stringify({ schemaVersion: 1, theme: { primary: pri, accent: acc, baseFontSizePx: fs, fontFamily: ff } }, null, 2) } }
+            { type: "code", data: { code: JSON.stringify({ schemaVersion: 1, theme: { primary: pri, accent: acc, baseFontSizePx: fs, fontFamily: ff, defaultMode: dm, defaultColorTheme: dc } }, null, 2) } }
           ]
         }
       })
@@ -833,8 +1067,47 @@
     if (msg) msg.textContent = `Saved draft (${data.branch || "draft"}).`;
   }
 
+  async function saveDashboardThemeDefaults() {
+    const msg = el("msg-dash-theme");
+    const mode = el("dash-theme-mode")?.value || "system";
+    const color = el("dash-theme-color")?.value || "theme-custom";
+    const pri = el("theme-primary")?.value || "#3B4CCA";
+    const acc = el("theme-accent")?.value || "#2CB1A6";
+    const fs = Number(el("theme-font-size")?.value || 16);
+    const ff = el("theme-font-family")?.value || "Inter, system-ui, sans-serif";
+    if (msg) msg.textContent = "Saving defaults…";
+    const res = await fetch(`${API}/api/admin/content/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        target: "siteTheme",
+        slug: "",
+        content: {
+          time: Date.now(),
+          version: "2.30.7",
+          blocks: [
+            { type: "header", data: { text: "Site Theme", level: 2 } },
+            { type: "code", data: { code: JSON.stringify({ schemaVersion: 1, theme: { primary: pri, accent: acc, baseFontSizePx: fs, fontFamily: ff, defaultMode: mode, defaultColorTheme: color } }, null, 2) } }
+          ]
+        }
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      if (msg) msg.textContent = data.error || "Save failed";
+      return;
+    }
+    const sDm = el("theme-default-mode");
+    const sDc = el("theme-default-color");
+    if (sDm) sDm.value = mode;
+    if (sDc) sDc.value = color;
+    if (msg) msg.textContent = `Saved defaults (${data.branch || "draft"}).`;
+  }
+
   el("btn-theme-load")?.addEventListener("click", () => loadThemeSettings());
   el("btn-theme-save")?.addEventListener("click", () => saveThemeDraft());
+  el("btn-dash-theme-save")?.addEventListener("click", () => saveDashboardThemeDefaults());
   el("btn-theme-publish")?.addEventListener("click", async () => {
     const s = await apiSession();
     if (!s.ok) {
@@ -893,9 +1166,11 @@
     else if (state.kind === "caseStudy") target = "caseStudies";
     else if (state.kind === "projects-home") {
       target = state.homeTab === "json" ? "homepage" : "homepageUi";
+    } else if (state.kind === "settings" || state.kind === "dashboard") {
+      target = "siteTheme";
     }
     if (!target) {
-      setStatus("Choose Projects (home) or a project/case study first.");
+      setStatus("Choose a supported page first.");
       return;
     }
     if (!window.confirm(`Publish draft file for ${target} to your live GitHub Pages branch? A backup of the current live file is saved first if it exists.`)) {
@@ -1028,14 +1303,35 @@
   async function refreshSessionLabel() {
     const sess = await apiSession();
     const login = getSessionLogin(sess);
-    setStatus(sess.ok ? `Signed in · ${login || "ok"}` : "Not signed in — use Login to load drafts & save.");
+    updateSessionUi(sess);
+    const ts = sess.serverTimeIst ? ` · IST ${sess.serverTimeIst}` : "";
+    setStatus(sess.ok ? `Signed in · ${login || "ok"}${ts}` : `Not signed in — use Login to load drafts & save.${ts}`);
     const hint = el("home-auth-hint");
     if (hint && state.kind === "projects-home") {
       hint.classList.toggle("hidden", sess.ok);
     }
   }
 
+  async function ensureAdminGate() {
+    const gate = await apiGateStatus();
+    if (!gate.ok || !gate.required || gate.verified) return true;
+    for (let i = 0; i < 3; i += 1) {
+      const pwd = window.prompt("Enter admin password to access this workspace:");
+      if (!pwd) break;
+      const out = await apiGateVerify(pwd);
+      if (out.ok) {
+        setStatus("Admin password verified.");
+        return true;
+      }
+      setStatus(out.error || "Invalid admin password.");
+    }
+    setStatus("Admin password required. Reload and try again.");
+    return false;
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
+    const gateOk = await ensureAdminGate();
+    if (!gateOk) return;
     wireRibbon();
     wireInspectorTabs();
     wireNav();

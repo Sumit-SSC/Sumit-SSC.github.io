@@ -262,13 +262,17 @@ async function init() {
 
 /* ---------- THEME (LIGHT / DARK) ---------- */
 function initTheme() {
+  const defaults = window.__SITE_THEME_DEFAULTS__ || {};
+  const defaultMode = defaults.defaultMode || 'system';
+  const defaultColorTheme = defaults.defaultColorTheme || 'theme-custom';
   const saved = localStorage.getItem('theme');
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initial = saved || (prefersDark ? 'dark' : 'light');
+  const resolvedDefaultMode = defaultMode === 'system' ? (prefersDark ? 'dark' : 'light') : defaultMode;
+  const initial = saved && saved !== 'system' ? saved : resolvedDefaultMode;
 
   applyTheme(initial);
   // Apply color theme immediately with saved value
-  const savedColorTheme = localStorage.getItem('colorTheme') || 'theme-indigo';
+  const savedColorTheme = localStorage.getItem('colorTheme') || defaultColorTheme;
   applyColorTheme(savedColorTheme);
 
   // Expose globally
@@ -279,15 +283,15 @@ function initTheme() {
     localStorage.setItem('theme', next);
     applyTheme(next);
     // Re-apply color theme to update text colors for new mode
-    const currentColorTheme = localStorage.getItem('colorTheme') || 'theme-indigo';
+    const currentColorTheme = localStorage.getItem('colorTheme') || defaultColorTheme;
     applyColorTheme(currentColorTheme);
   };
 
   // Theme + color controls - Add to navigation if it exists, otherwise create floating controls
   const nav = document.getElementById('nav');
   // Palette used by the color picker (distinct looks)
-  const themes = ['theme-indigo', 'theme-orange', 'theme-emerald', 'theme-purple'];
-  const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || 'theme-indigo';
+  const themes = ['theme-custom', 'theme-indigo', 'theme-orange', 'theme-emerald', 'theme-purple'];
+  const storedTheme = localStorage.getItem('colorTheme') || document.documentElement.dataset.colorTheme || defaultColorTheme;
   let colorIndex = themes.indexOf(storedTheme);
   if (colorIndex < 0) colorIndex = 0;
   const resolvedTheme = themes[colorIndex];
@@ -431,11 +435,15 @@ function applyTheme(theme) {
 function applyColorTheme(name) {
   const root = document.documentElement;
   const stored = localStorage.getItem('colorTheme');
-  const theme = name || stored || 'theme-indigo';
+  const theme = name || stored || (window.__SITE_THEME_DEFAULTS__ && window.__SITE_THEME_DEFAULTS__.defaultColorTheme) || 'theme-custom';
   root.dataset.colorTheme = theme;
 
   const colorMap = {
     // neutral-professional (default) – analytics / decision-science
+    'theme-custom': {
+      primary: (window.__SITE_THEME_DEFAULTS__ && window.__SITE_THEME_DEFAULTS__.customPrimary) || '#3B4CCA',
+      accent: (window.__SITE_THEME_DEFAULTS__ && window.__SITE_THEME_DEFAULTS__.customAccent) || '#2CB1A6'
+    },
     'theme-indigo': { primary: '#3B4CCA', accent: '#2CB1A6' },
     // warm product-analytics
     'theme-orange': { primary: '#F97316', accent: '#EA580C' },
@@ -450,7 +458,7 @@ function applyColorTheme(name) {
     'theme-amber': { primary: '#F59E0B', accent: '#D97706' }
   };
 
-  const colors = colorMap[theme] || colorMap['theme-indigo'];
+  const colors = colorMap[theme] || colorMap['theme-custom'];
 
   // Accent themes override only primary/accent brand tokens
   root.style.setProperty('--primary', colors.primary);
@@ -472,6 +480,7 @@ function applyColorTheme(name) {
 
 function updateColorSwatch(el, theme) {
   const colorMap = {
+    'theme-custom': (window.__SITE_THEME_DEFAULTS__ && window.__SITE_THEME_DEFAULTS__.customPrimary) || '#3B4CCA',
     'theme-indigo': '#3B4CCA',
     'theme-orange': '#F97316',
     'theme-emerald': '#10B981',
