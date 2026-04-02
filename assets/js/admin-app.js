@@ -97,6 +97,7 @@
     const inspector = el("workspace-inspector");
     const toggleBtn = el("rib-edit-workspace");
     const bottom = el("preview-bottom-actions");
+    const sidebar = document.querySelector("#workspace-main > aside");
     const active = state.editWorkspace && isEditingRoute();
 
     if (previewPane) previewPane.classList.toggle("hidden", active);
@@ -108,6 +109,7 @@
       toggleBtn.classList.toggle("text-white", active);
     }
     if (bottom) bottom.classList.toggle("hidden", !isEditingRoute());
+    if (sidebar) sidebar.classList.toggle("hidden", state.kind === "dashboard");
   }
 
   function previewUrl(pathWithQuery) {
@@ -246,26 +248,42 @@
     const blocks = Array.isArray(data?.blocks) ? data.blocks : [];
     if (!blocks.length) return "<p>No blocks.</p>";
     const out = [];
-    for (const b of blocks) {
+    for (let i = 0; i < blocks.length; i += 1) {
+      const b = blocks[i];
       const d = b?.data || {};
       if (b?.type === "header") {
         const lvl = Math.min(4, Math.max(2, Number(d.level || 2)));
-        out.push(`<h${lvl}>${String(d.text || "")}</h${lvl}>`);
+        out.push(`<div data-block-index="${i}" class="cursor-pointer"><h${lvl}>${String(d.text || "")}</h${lvl}></div>`);
       } else if (b?.type === "paragraph") {
-        out.push(`<p>${String(d.text || "")}</p>`);
+        out.push(`<div data-block-index="${i}" class="cursor-pointer"><p>${String(d.text || "")}</p></div>`);
       } else if (b?.type === "list") {
         const items = Array.isArray(d.items) ? d.items : [];
         const tag = d.style === "ordered" ? "ol" : "ul";
-        out.push(`<${tag}>${items.map((i) => `<li>${typeof i === "string" ? i : String(i || "")}</li>`).join("")}</${tag}>`);
+        out.push(`<div data-block-index="${i}" class="cursor-pointer"><${tag}>${items.map((it) => `<li>${typeof it === "string" ? it : String(it || "")}</li>`).join("")}</${tag}></div>`);
       } else if (b?.type === "code") {
         const safe = String(d.code || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        out.push(`<pre><code>${safe}</code></pre>`);
+        out.push(`<div data-block-index="${i}" class="cursor-pointer"><pre><code>${safe}</code></pre></div>`);
       } else if (b?.type === "embed") {
         const u = String(d.source || d.embed || "");
-        out.push(`<p><a href="${u}" target="_blank" rel="noopener">Embed link</a></p>`);
+        out.push(`<div data-block-index="${i}" class="cursor-pointer"><p><a href="${u}" target="_blank" rel="noopener">Embed link</a></p></div>`);
       }
     }
     return out.join("\n");
+  }
+
+  function bindPreviewBlockInteractions(container) {
+    if (!container) return;
+    container.onclick = (ev) => {
+      const node = ev.target.closest("[data-block-index]");
+      if (!node) return;
+      const idx = Number(node.getAttribute("data-block-index"));
+      if (!Number.isFinite(idx)) return;
+      const holder = el(activeEditorHolderId);
+      const editNode = holder?.querySelectorAll(".ce-block")[idx];
+      editNode?.scrollIntoView({ behavior: "smooth", block: "center" });
+      editNode?.classList.add("ring-2", "ring-indigo-500");
+      setTimeout(() => editNode?.classList.remove("ring-2", "ring-indigo-500"), 900);
+    };
   }
 
   async function updateEditorJsonPreviewNow() {
@@ -275,9 +293,15 @@
       const data = await editorInstance.save();
       previewEl.textContent = JSON.stringify(data, null, 2);
       const draftEl = draftPreviewElForHolder(activeEditorHolderId);
-      if (draftEl) draftEl.innerHTML = editorBlocksToHtml(data);
+      if (draftEl) {
+        draftEl.innerHTML = editorBlocksToHtml(data);
+        bindPreviewBlockInteractions(draftEl);
+      }
       const centerDraft = el("center-draft-preview");
-      if (centerDraft && isEditingRoute()) centerDraft.innerHTML = editorBlocksToHtml(data);
+      if (centerDraft && isEditingRoute()) {
+        centerDraft.innerHTML = editorBlocksToHtml(data);
+        bindPreviewBlockInteractions(centerDraft);
+      }
       renderBlockNav(data);
     } catch (e) {
       previewEl.textContent = String(e && e.message ? e.message : e);
@@ -533,6 +557,7 @@
     const pSource = el("panel-source");
     const ribIns = el("rib-insert-group");
     const ribBlock = el("rib-block-group");
+    const sideLists = el("sidebar-record-lists");
 
     const isHome = state.kind === "projects-home";
     const isRecord = state.kind === "project" || state.kind === "caseStudy";
@@ -548,6 +573,7 @@
     if (pSource) pSource.classList.toggle("hidden", !state.sourceMode || !(isHome || isRecord || isSettings));
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
+    if (sideLists) sideLists.classList.toggle("hidden", state.kind === "dashboard" || isEditingRoute());
     // Simple mode: hide noisy debug JSON panels while editing.
     if (!state.sourceMode && ((isHome && state.homeTab === "json") || isRecord)) {
       const jh = el("json-preview-home");
