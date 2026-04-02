@@ -25,7 +25,7 @@
     target: "homepage",
     slug: "",
     homeTab: "titles",
-    editWorkspace: true,
+    editWorkspace: false,
     compactListsOnSelect: true,
     centerPreviewMode: "live",
     sourceMode: false
@@ -104,7 +104,8 @@
     if (inspector) inspector.classList.toggle("w-[min(100%,420px)]", !active);
     if (inspector) inspector.classList.toggle("w-full", active);
     if (toggleBtn) {
-      toggleBtn.textContent = active ? "Preview workspace" : "Edit workspace";
+      toggleBtn.classList.toggle("hidden", !isEditingRoute());
+      toggleBtn.textContent = active ? "Split view" : "Focus editor";
       toggleBtn.classList.toggle("bg-slate-700", active);
       toggleBtn.classList.toggle("text-white", active);
     }
