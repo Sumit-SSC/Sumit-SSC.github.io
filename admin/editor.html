@@ -123,6 +123,13 @@
           <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 space-y-3"><h3 class="text-sm font-semibold text-white">Site defaults</h3><p class="text-xs text-slate-400">Set default mode and color theme from dashboard (saved in <code class="text-slate-300">data/site-theme.json</code>).</p><div class="grid md:grid-cols-2 gap-3"><label class="block text-sm"><span class="text-slate-400 text-xs">Default mode</span><select id="dash-theme-mode" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label><label class="block text-sm"><span class="text-slate-400 text-xs">Default color theme</span><select id="dash-theme-color" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm"><option value="theme-custom">Custom (use primary/accent)</option><option value="theme-indigo">Indigo</option><option value="theme-orange">Orange</option><option value="theme-emerald">Emerald</option><option value="theme-purple">Purple</option></select></label></div><button type="button" id="btn-dash-theme-save" class="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm font-semibold">Save defaults to draft</button><p id="msg-dash-theme" class="text-xs text-slate-500 min-h-[1em]"></p></div>
         </div>
       </section>
+      <div id="center-preview-header" class="hidden border-b border-slate-700/70 bg-slate-900/70 px-3 py-2 flex items-center gap-2 text-xs">
+        <span class="text-slate-400">Middle pane:</span>
+        <span id="center-preview-label" class="text-slate-200 font-medium">Draft preview</span>
+        <button type="button" id="btn-center-draft" class="rounded bg-indigo-700 hover:bg-indigo-600 px-2 py-1 text-white">Draft view</button>
+        <button type="button" id="btn-center-live" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1 text-slate-100">Live page</button>
+      </div>
+      <div id="center-draft-preview" class="hidden flex-1 overflow-auto bg-white text-gray-800 p-6"></div>
       <iframe id="admin-preview" title="Site preview" class="flex-1 w-full border-0 bg-white" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
       <div id="preview-bottom-actions" class="hidden border-t border-slate-700/70 bg-slate-900/70 p-2">
         <div class="flex flex-wrap items-center gap-2 text-xs">

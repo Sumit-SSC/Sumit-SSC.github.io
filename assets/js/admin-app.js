@@ -26,7 +26,8 @@
     slug: "",
     homeTab: "titles",
     editWorkspace: false,
-    compactListsOnSelect: true
+    compactListsOnSelect: true,
+    centerPreviewMode: "live"
   };
   const localDraftRecords = {
     projects: [],
@@ -66,9 +67,25 @@
   function setCenterView(mode) {
     const dash = el("admin-dashboard-view");
     const frame = el("admin-preview");
+    const draft = el("center-draft-preview");
+    const hdr = el("center-preview-header");
     if (dash) dash.classList.toggle("hidden", mode !== "dashboard");
     if (frame) frame.classList.toggle("hidden", mode === "dashboard");
+    if (draft) draft.classList.toggle("hidden", mode !== "preview" || state.centerPreviewMode !== "draft");
+    if (frame) frame.classList.toggle("hidden", mode !== "preview" || state.centerPreviewMode !== "live");
+    if (hdr) hdr.classList.toggle("hidden", mode !== "preview" || !isEditingRoute());
     applyWorkspaceLayout();
+  }
+
+  function setCenterPreviewMode(next) {
+    state.centerPreviewMode = next === "draft" ? "draft" : "live";
+    const lbl = el("center-preview-label");
+    const bd = el("btn-center-draft");
+    const bl = el("btn-center-live");
+    if (lbl) lbl.textContent = state.centerPreviewMode === "draft" ? "Draft preview" : "Live page preview";
+    if (bd) bd.classList.toggle("bg-indigo-700", state.centerPreviewMode === "draft");
+    if (bl) bl.classList.toggle("bg-indigo-700", state.centerPreviewMode === "live");
+    setCenterView(state.kind === "dashboard" ? "dashboard" : "preview");
   }
 
   function applyWorkspaceLayout() {
@@ -255,6 +272,8 @@
       previewEl.textContent = JSON.stringify(data, null, 2);
       const draftEl = draftPreviewElForHolder(activeEditorHolderId);
       if (draftEl) draftEl.innerHTML = editorBlocksToHtml(data);
+      const centerDraft = el("center-draft-preview");
+      if (centerDraft && isEditingRoute()) centerDraft.innerHTML = editorBlocksToHtml(data);
       renderBlockNav(data);
     } catch (e) {
       previewEl.textContent = String(e && e.message ? e.message : e);
@@ -445,6 +464,11 @@
       await destroyEditor();
       await loadDashboardStats();
       return;
+    }
+    if (isEditingRoute()) {
+      setCenterPreviewMode("draft");
+    } else {
+      setCenterPreviewMode("live");
     }
     setCenterView("preview");
     applyWorkspaceLayout();
@@ -865,6 +889,8 @@
       highlightNav();
       applyRoute();
     });
+    el("btn-center-draft")?.addEventListener("click", () => setCenterPreviewMode("draft"));
+    el("btn-center-live")?.addEventListener("click", () => setCenterPreviewMode("live"));
   }
 
   function cleanSlug(value) {
