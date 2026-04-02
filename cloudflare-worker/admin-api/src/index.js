@@ -63,12 +63,18 @@
 
   function withCors(request, env, response) {
     const allowedOrigin = getAllowedOrigin(request, env);
-    response.headers.set("access-control-allow-origin", allowedOrigin);
-    response.headers.set("access-control-allow-methods", "GET,POST,OPTIONS");
-    response.headers.set("access-control-allow-headers", "content-type,authorization");
-    response.headers.set("access-control-allow-credentials", "true");
-    response.headers.set("vary", "origin");
-    return response;
+    // Response.redirect() and some Responses use immutable headers; copy then extend.
+    const headers = new Headers(response.headers);
+    headers.set("access-control-allow-origin", allowedOrigin);
+    headers.set("access-control-allow-methods", "GET,POST,OPTIONS");
+    headers.set("access-control-allow-headers", "content-type,authorization");
+    headers.set("access-control-allow-credentials", "true");
+    headers.set("vary", "origin");
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
   }
 
   function json(payload, status = 200) {
@@ -148,9 +154,10 @@
     githubUrl.searchParams.set("scope", env.GITHUB_OAUTH_SCOPES || "read:user");
     githubUrl.searchParams.set("state", state);
 
-    const res = Response.redirect(githubUrl.toString(), 302);
-    res.headers.append("set-cookie", makeCookie(COOKIE_STATE, signedState, 600));
-    return res;
+    const headers = new Headers();
+    headers.set("Location", githubUrl.toString());
+    headers.append("set-cookie", makeCookie(COOKIE_STATE, signedState, 600));
+    return new Response(null, { status: 302, headers });
   }
 
   async function githubCallback(request, env) {
@@ -196,16 +203,17 @@
       env.SESSION_SIGNING_KEY
     );
     const successRedirect = env.ADMIN_SUCCESS_REDIRECT || getDefaultSuccessRedirect(env);
-    const res = Response.redirect(successRedirect, 302);
-    res.headers.append("set-cookie", makeCookie(COOKIE_SESSION, sessionToken, SESSION_TTL_SECONDS));
-    res.headers.append("set-cookie", clearCookie(COOKIE_STATE));
-    return res;
+    const headers = new Headers();
+    headers.set("Location", successRedirect);
+    headers.append("set-cookie", makeCookie(COOKIE_SESSION, sessionToken, SESSION_TTL_SECONDS));
+    headers.append("set-cookie", clearCookie(COOKIE_STATE));
+    return new Response(null, { status: 302, headers });
   }
 
   async function logout() {
-    const res = json({ ok: true });
-    res.headers.append("set-cookie", clearCookie(COOKIE_SESSION));
-    return res;
+    const headers = new Headers(JSON_HEADERS);
+    headers.append("set-cookie", clearCookie(COOKIE_SESSION));
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
   }
 
   async function getSessionUser(request, env) {
