@@ -34,10 +34,12 @@ You now have a workers.dev URL (temporary), but we will use custom domain next.
 
 ## 2) Attach custom domain to Worker
 
-1. Open your Worker -> **Settings** -> **Domains & Routes**.
+**Important:** **`admin-api.sumit.indevs.in`** must route to **this Worker**, not to GitHub Pages. Do **not** create a DNS record that points `admin-api` at `Sumit-SC.github.io`. (The optional **`admin`** subdomain is the one that points at GitHub — see §2b.)
+
+1. Open your Worker -> **Settings** -> **Domains & Routes** (or **Triggers** → **Custom Domains**, depending on UI).
 2. Add custom domain:
    - `admin-api.sumit.indevs.in`
-3. Save and let Cloudflare create/verify DNS route.
+3. Save and let Cloudflare create/verify DNS (it usually adds the correct proxy/route for you).
 
 After this, your Worker must be reachable at:
 

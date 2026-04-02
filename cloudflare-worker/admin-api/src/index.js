@@ -65,7 +65,10 @@
   function getAllowedOrigin(request, env) {
     const origin = request.headers.get("origin") || "";
     const allowlist = (env.ALLOWED_ORIGINS || "").split(",").map((v) => v.trim()).filter(Boolean);
-    if (!origin) return "*";
+    if (!origin) {
+      // No Origin (curl, same-origin Worker tests): use first allowlist entry so we never send * with credentials.
+      return allowlist[0] || "*";
+    }
     if (!allowlist.length) return origin;
     return allowlist.includes(origin) ? origin : "null";
   }
@@ -77,7 +80,10 @@
     headers.set("access-control-allow-origin", allowedOrigin);
     headers.set("access-control-allow-methods", "GET,POST,OPTIONS");
     headers.set("access-control-allow-headers", "content-type,authorization");
-    headers.set("access-control-allow-credentials", "true");
+    // Browsers forbid Access-Control-Allow-Origin: * together with Access-Control-Allow-Credentials: true
+    if (allowedOrigin !== "*" && allowedOrigin !== "null") {
+      headers.set("access-control-allow-credentials", "true");
+    }
     headers.set("vary", "origin");
     return new Response(response.body, {
       status: response.status,
