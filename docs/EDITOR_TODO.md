@@ -37,6 +37,14 @@
 - [x] Add safe embed block with domain allowlist.
 - [ ] Add collapsible notebook/code blocks.
 
+## Phase A - Visual edit on real pages (in progress)
+
+- [x] Homepage: `data/homepage-ui.json` + view title overrides (`featuredTitle`, `caseStudiesTitle`).
+- [x] `?admin_edit=1` panel on `pages/homepage.html` + Worker `GET/POST /api/admin/homepage-ui`.
+- [x] `CONTENT_BASE_BRANCH` required via Worker env (no hardcoded branch fallback in code).
+- [ ] About page + project list/detail visual bindings.
+- [ ] Preview URL / publish merge button.
+
 ## Phase 6 - Validation and deployment
 
 - [ ] Add JSON schema validation in GitHub Actions.

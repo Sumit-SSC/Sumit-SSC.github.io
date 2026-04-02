@@ -229,9 +229,16 @@
 		</div>
 	</footer>
 
+	<script>
+		window.__HOMEPAGE_UI_READY__ = fetch(new URL('../data/homepage-ui.json', window.location.href))
+			.then(function (r) { return r.ok ? r.json() : {}; })
+			.then(function (d) { window.__HOMEPAGE_UI__ = d && typeof d === 'object' ? d : {}; })
+			.catch(function () { window.__HOMEPAGE_UI__ = {}; });
+	</script>
 	<script src="../assets/js/jquery.min.js"></script>
 	<script src="../assets/js/jquery.scrolly.min.js"></script>
 	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/admin-visual-phase-a.js"></script>
 	<script src="../assets/js/analytics.js"></script>
 	<script>
 		initAnalyticsTracking({

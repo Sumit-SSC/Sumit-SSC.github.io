@@ -59,7 +59,8 @@ Add:
 
 - `ALLOWED_GITHUB_USERS` = `Sumit-SC`
 - `ALLOWED_ORIGINS` = `https://sumit.indevs.in,https://www.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000`
-- `CONTENT_BASE_BRANCH` = `feature/cf-admin-editor-foundation`
+- `CONTENT_BASE_BRANCH` = **your GitHub Pages source branch** (example: `feature/cf-admin-editor-foundation`).  
+  **Required:** the Worker code no longer guesses a default; if this is missing, read/save will error. Change only this variable when you switch Pages branch—no code change needed.
 - `CONTENT_DRAFT_BRANCH` = `content/drafts`
 - `GITHUB_REPO_OWNER` = `Sumit-SC`
 - `GITHUB_REPO_NAME` = `Sumit-SC.github.io`
@@ -154,6 +155,17 @@ Ensure config is:
 Push/deploy this frontend change to your site branch.
 
 ---
+
+## 8b) Phase A — edit real homepage titles
+
+After Worker is deployed and secrets/vars are set:
+
+1. Visit `https://sumit.indevs.in/pages/homepage.html?admin_edit=1` (adjust host if needed).
+2. Log in (link in the bar or via `/dev/index.html` first).
+3. Reload from API → edit **Featured** / **Case studies** titles → Save draft.
+4. Confirm commit on branch `content/drafts` for `data/homepage-ui.json`, then merge into your Pages branch.
+
+See `docs/PHASE_A_VISUAL_EDIT.md` for details.
 
 ## 9) End-to-end test checklist
 

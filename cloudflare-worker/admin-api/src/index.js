@@ -40,6 +40,12 @@
         if (pathname === "/api/admin/images/upload" && request.method === "POST") {
           return withCors(request, env, await uploadImage(request, env));
         }
+        if (pathname === "/api/admin/homepage-ui" && request.method === "GET") {
+          return withCors(request, env, await getHomepageUi(request, env));
+        }
+        if (pathname === "/api/admin/homepage-ui" && request.method === "POST") {
+          return withCors(request, env, await saveHomepageUi(request, env));
+        }
         return withCors(request, env, json({ ok: false, error: "Not found" }, 404));
       } catch (error) {
         return withCors(request, env, json({ ok: false, error: error.message || "Unknown error" }, 500));
@@ -220,6 +226,18 @@
     return allowed.includes(String(login || "").toLowerCase());
   }
 
+  const HOMEPAGE_UI_PATH = "data/homepage-ui.json";
+
+  function getContentBaseBranch(env) {
+    const b = env.CONTENT_BASE_BRANCH;
+    if (!b || !String(b).trim()) {
+      throw new Error(
+        "CONTENT_BASE_BRANCH is not set. In Cloudflare Worker → Settings → Variables, set it to the same branch GitHub Pages builds from (e.g. feature/cf-admin-editor-foundation or dev)."
+      );
+    }
+    return String(b).trim();
+  }
+
   function getDefaultSuccessRedirect(env) {
     const firstAllowedOrigin = (env.ALLOWED_ORIGINS || "")
       .split(",")
@@ -338,7 +356,7 @@
     const target = url.searchParams.get("target") || "homepage";
     const slug = url.searchParams.get("slug") || "";
     const branch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
-    const base = env.CONTENT_BASE_BRANCH || "feature/cf-admin-editor-foundation";
+    const base = getContentBaseBranch(env);
     await ensureBranchExists(env, branch, base);
 
     const path = mapTargetPath(target);
@@ -417,7 +435,7 @@
     const slug = (body.slug || "").trim();
     const path = mapTargetPath(target);
     const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
-    const baseBranch = env.CONTENT_BASE_BRANCH || "feature/cf-admin-editor-foundation";
+    const baseBranch = getContentBaseBranch(env);
     await ensureBranchExists(env, draftBranch, baseBranch);
 
     const existing = await getFileFromGithub(env, path, draftBranch) || await getFileFromGithub(env, path, baseBranch);
@@ -465,6 +483,77 @@
     });
   }
 
+  async function getHomepageUi(request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+    const baseBranch = getContentBaseBranch(env);
+    await ensureBranchExists(env, draftBranch, baseBranch);
+    const file =
+      (await getFileFromGithub(env, HOMEPAGE_UI_PATH, draftBranch)) ||
+      (await getFileFromGithub(env, HOMEPAGE_UI_PATH, baseBranch));
+    if (!file) {
+      return json({
+        ok: true,
+        ui: {
+          schemaVersion: 1,
+          featuredTitle: "Featured Projects",
+          caseStudiesTitle: "Case Studies"
+        }
+      });
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(file.text);
+    } catch {
+      return json({ ok: false, error: "Invalid homepage-ui JSON" }, 500);
+    }
+    return json({ ok: true, ui: parsed });
+  }
+
+  async function saveHomepageUi(request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const body = await request.json();
+    const featuredTitle = String(body.featuredTitle ?? "").trim() || "Featured Projects";
+    const caseStudiesTitle = String(body.caseStudiesTitle ?? "").trim() || "Case Studies";
+    const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+    const baseBranch = getContentBaseBranch(env);
+    await ensureBranchExists(env, draftBranch, baseBranch);
+    const existing =
+      (await getFileFromGithub(env, HOMEPAGE_UI_PATH, draftBranch)) ||
+      (await getFileFromGithub(env, HOMEPAGE_UI_PATH, baseBranch));
+    let prev = {};
+    if (existing) {
+      try {
+        prev = JSON.parse(existing.text);
+      } catch {
+        prev = {};
+      }
+    }
+    const next = {
+      ...prev,
+      schemaVersion: 1,
+      featuredTitle,
+      caseStudiesTitle,
+      updated_at: new Date().toISOString()
+    };
+    const commit = await putFileToGithub(
+      env,
+      HOMEPAGE_UI_PATH,
+      JSON.stringify(next, null, 2),
+      draftBranch,
+      `chore(content): homepage view titles (${user})`,
+      existing?.sha || null
+    );
+    return json({
+      ok: true,
+      ui: next,
+      branch: draftBranch,
+      commitSha: commit.commit?.sha || null
+    });
+  }
+
   function cleanSlug(value) {
     return String(value || "")
       .toLowerCase()
@@ -499,7 +588,7 @@
 
     const finalPath = `assets/images/projects/${slug}/${preset}-${slug}.webp`;
     const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
-    const baseBranch = env.CONTENT_BASE_BRANCH || "feature/cf-admin-editor-foundation";
+    const baseBranch = getContentBaseBranch(env);
     await ensureBranchExists(env, draftBranch, baseBranch);
 
     const existing = await getFileFromGithub(env, finalPath, draftBranch) || await getFileFromGithub(env, finalPath, baseBranch);

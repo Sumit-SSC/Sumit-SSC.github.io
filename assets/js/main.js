@@ -180,14 +180,24 @@ function renderCaseStudyTOC(rootEl) {
 
 // Initialize on DOM ready
 (function() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
+  function boot() {
     init();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
 })();
 
-function init() {
+async function init() {
+  if (window.__HOMEPAGE_UI_READY__) {
+    try {
+      await window.__HOMEPAGE_UI_READY__;
+    } catch (e) {
+      window.__HOMEPAGE_UI__ = window.__HOMEPAGE_UI__ || {};
+    }
+  }
   initTheme();             // Light/Dark theme (must be first for color theme)
   
   // Check URL for view mode parameter
@@ -721,10 +731,16 @@ function initViewSwitcher() {
 
   if (!projectsView || !caseStudiesView || !viewTitle || !backBtn || !arrowBtn) return;
 
+  function homepageUiTitle(key, fallback) {
+    const ui = window.__HOMEPAGE_UI__;
+    if (ui && typeof ui[key] === 'string' && ui[key].trim()) return ui[key].trim();
+    return fallback;
+  }
+
   function showProjects() {
     projectsView.classList.remove('hidden');
     caseStudiesView.classList.add('hidden');
-    viewTitle.textContent = 'Featured Projects';
+    viewTitle.textContent = homepageUiTitle('featuredTitle', 'Featured Projects');
     backBtn.classList.add('hidden');
     arrowBtn.classList.remove('hidden');
     if (archiveBtn) archiveBtn.classList.add('hidden');
@@ -734,7 +750,7 @@ function initViewSwitcher() {
   function showCaseStudies() {
     projectsView.classList.add('hidden');
     caseStudiesView.classList.remove('hidden');
-    viewTitle.textContent = 'Case Studies';
+    viewTitle.textContent = homepageUiTitle('caseStudiesTitle', 'Case Studies');
     backBtn.classList.remove('hidden');
     arrowBtn.classList.add('hidden');
     if (archiveBtn) archiveBtn.classList.remove('hidden');
@@ -751,6 +767,11 @@ function initViewSwitcher() {
   } else {
     showProjects();
   }
+
+  document.addEventListener('homepage-ui-updated', () => {
+    if (caseStudiesView.classList.contains('hidden')) showProjects();
+    else showCaseStudies();
+  });
 }
 
 /* ---------- CASE STUDIES SECTION (Medium / TDS style) ---------- */
