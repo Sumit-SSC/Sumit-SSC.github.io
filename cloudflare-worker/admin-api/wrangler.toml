@@ -12,7 +12,7 @@ CONTENT_DRAFT_BRANCH = "content/drafts"
 GITHUB_REPO_OWNER = "Sumit-SC"
 GITHUB_REPO_NAME = "Sumit-SC.github.io"
 GITHUB_OAUTH_SCOPES = "read:user"
-ADMIN_SUCCESS_REDIRECT = "https://sumit.indevs.in/dev/index.html"
+ADMIN_SUCCESS_REDIRECT = "https://sumit.indevs.in/admin/index.html"
 
 # Add secrets with:
 # wrangler secret put GITHUB_CLIENT_ID

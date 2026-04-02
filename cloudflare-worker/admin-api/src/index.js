@@ -46,6 +46,15 @@
         if (pathname === "/api/admin/homepage-ui" && request.method === "POST") {
           return withCors(request, env, await saveHomepageUi(request, env));
         }
+        if (pathname === "/api/admin/content/publish" && request.method === "POST") {
+          return withCors(request, env, await publishContent(request, env));
+        }
+        if (pathname === "/api/admin/content/backups" && request.method === "GET") {
+          return withCors(request, env, await listBackups(url, request, env));
+        }
+        if (pathname === "/api/admin/content/restore" && request.method === "POST") {
+          return withCors(request, env, await restoreFromBackup(request, env));
+        }
         return withCors(request, env, json({ ok: false, error: "Not found" }, 404));
       } catch (error) {
         return withCors(request, env, json({ ok: false, error: error.message || "Unknown error" }, 500));
@@ -252,15 +261,18 @@
       .map((v) => v.trim())
       .find((v) => v.startsWith("https://"));
     if (firstAllowedOrigin) {
-      return `${firstAllowedOrigin}/dev/index.html`;
+      return `${firstAllowedOrigin}/admin/index.html`;
     }
-    return "https://sumit.indevs.in/dev/index.html";
+    return "https://sumit.indevs.in/admin/index.html";
   }
+
+  const BACKUPS_DIR = "data/_admin_backups";
 
   function mapTargetPath(target) {
     if (target === "projects") return "data/projects.json";
     if (target === "caseStudies") return "data/case_studies.json";
     if (target === "homepage") return "data/homepage-content.json";
+    if (target === "homepageUi") return HOMEPAGE_UI_PATH;
     throw new Error("Unsupported target");
   }
 
@@ -446,13 +458,15 @@
     const baseBranch = getContentBaseBranch(env);
     await ensureBranchExists(env, draftBranch, baseBranch);
 
-    const existing = await getFileFromGithub(env, path, draftBranch) || await getFileFromGithub(env, path, baseBranch);
+    const draftFile = await getFileFromGithub(env, path, draftBranch);
+    const baseFile = await getFileFromGithub(env, path, baseBranch);
+    const existing = draftFile || baseFile;
     let contentObj;
     let sha = null;
 
     if (existing) {
-      sha = existing.sha;
       contentObj = JSON.parse(existing.text);
+      if (draftFile) sha = draftFile.sha;
     } else {
       contentObj = target === "homepage" ? {} : [];
     }
@@ -528,9 +542,9 @@
     const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
     const baseBranch = getContentBaseBranch(env);
     await ensureBranchExists(env, draftBranch, baseBranch);
-    const existing =
-      (await getFileFromGithub(env, HOMEPAGE_UI_PATH, draftBranch)) ||
-      (await getFileFromGithub(env, HOMEPAGE_UI_PATH, baseBranch));
+    const draftUi = await getFileFromGithub(env, HOMEPAGE_UI_PATH, draftBranch);
+    const baseUi = await getFileFromGithub(env, HOMEPAGE_UI_PATH, baseBranch);
+    const existing = draftUi || baseUi;
     let prev = {};
     if (existing) {
       try {
@@ -552,12 +566,145 @@
       JSON.stringify(next, null, 2),
       draftBranch,
       `chore(content): homepage view titles (${user})`,
-      existing?.sha || null
+      draftUi ? draftUi.sha : null
     );
     return json({
       ok: true,
       ui: next,
       branch: draftBranch,
+      commitSha: commit.commit?.sha || null
+    });
+  }
+
+  async function publishContent(request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const body = await request.json();
+    const target = body.target;
+    if (!target || !["projects", "caseStudies", "homepage", "homepageUi"].includes(target)) {
+      return json({ ok: false, error: "Invalid or missing target" }, 400);
+    }
+    const path = mapTargetPath(target);
+    const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+    const baseBranch = getContentBaseBranch(env);
+    await ensureBranchExists(env, draftBranch, baseBranch);
+
+    const draftFile = await getFileFromGithub(env, path, draftBranch);
+    if (!draftFile) {
+      return json({ ok: false, error: "Nothing on draft to publish — save from the editor first." }, 400);
+    }
+
+    const baseFile = await getFileFromGithub(env, path, baseBranch);
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    const backupPath = `${BACKUPS_DIR}/backup-${target}-${ts}.json`;
+
+    let backupWritten = null;
+    if (baseFile) {
+      const backupPayload = JSON.stringify(
+        {
+          sourcePath: path,
+          savedAt: new Date().toISOString(),
+          publishedBy: user,
+          snapshotText: baseFile.text
+        },
+        null,
+        2
+      );
+      await putFileToGithub(
+        env,
+        backupPath,
+        backupPayload,
+        baseBranch,
+        `chore(admin): backup live file before publish ${path} (${user})`,
+        null
+      );
+      backupWritten = backupPath;
+    }
+
+    const commit = await putFileToGithub(
+      env,
+      path,
+      draftFile.text,
+      baseBranch,
+      `chore(content): publish ${target} from draft (${user})`,
+      baseFile ? baseFile.sha : null
+    );
+
+    return json({
+      ok: true,
+      path,
+      baseBranch,
+      draftBranch,
+      backupPath: backupWritten,
+      commitSha: commit.commit?.sha || null
+    });
+  }
+
+  async function listBackups(url, request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const baseBranch = getContentBaseBranch(env);
+    const res = await githubApi(env, `/contents/${BACKUPS_DIR}?ref=${encodeURIComponent(baseBranch)}`);
+    if (res.status === 404) {
+      return json({ ok: true, backups: [] });
+    }
+    if (!res.ok) {
+      const t = await res.text();
+      return json({ ok: false, error: t || "Failed to list backups" }, 500);
+    }
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      return json({ ok: true, backups: [] });
+    }
+    const backups = data
+      .filter((item) => item.type === "file" && item.name.endsWith(".json"))
+      .map((item) => ({
+        name: item.name,
+        path: item.path,
+        sha: item.sha
+      }))
+      .sort((a, b) => b.name.localeCompare(a.name));
+    return json({ ok: true, backups });
+  }
+
+  async function restoreFromBackup(request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const body = await request.json();
+    const backupPath = (body.backupPath || "").trim();
+    if (!backupPath || !backupPath.startsWith(`${BACKUPS_DIR}/`)) {
+      return json({ ok: false, error: "Invalid backupPath" }, 400);
+    }
+    const baseBranch = getContentBaseBranch(env);
+    const backupFile = await getFileFromGithub(env, backupPath, baseBranch);
+    if (!backupFile) return json({ ok: false, error: "Backup not found" }, 404);
+
+    let meta;
+    try {
+      meta = JSON.parse(backupFile.text);
+    } catch {
+      return json({ ok: false, error: "Invalid backup file" }, 400);
+    }
+    const sourcePath = meta.sourcePath;
+    const snapshotText = meta.snapshotText;
+    if (!sourcePath || typeof snapshotText !== "string") {
+      return json({ ok: false, error: "Backup format invalid" }, 400);
+    }
+
+    const liveFile = await getFileFromGithub(env, sourcePath, baseBranch);
+    const commit = await putFileToGithub(
+      env,
+      sourcePath,
+      snapshotText,
+      baseBranch,
+      `chore(admin): restore ${sourcePath} from backup (${user})`,
+      liveFile ? liveFile.sha : null
+    );
+
+    return json({
+      ok: true,
+      path: sourcePath,
+      baseBranch,
       commitSha: commit.commit?.sha || null
     });
   }
@@ -599,8 +746,10 @@
     const baseBranch = getContentBaseBranch(env);
     await ensureBranchExists(env, draftBranch, baseBranch);
 
-    const existing = await getFileFromGithub(env, finalPath, draftBranch) || await getFileFromGithub(env, finalPath, baseBranch);
-    const sha = existing?.sha || null;
+    const draftImg = await getFileFromGithub(env, finalPath, draftBranch);
+    const baseImg = await getFileFromGithub(env, finalPath, baseBranch);
+    const existing = draftImg || baseImg;
+    const sha = draftImg ? draftImg.sha : null;
 
     const commit = await putFileToGithub(
       env,

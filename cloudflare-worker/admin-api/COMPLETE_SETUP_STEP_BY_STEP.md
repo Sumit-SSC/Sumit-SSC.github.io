@@ -80,7 +80,7 @@ Add:
 - `GITHUB_REPO_OWNER` = `Sumit-SC`
 - `GITHUB_REPO_NAME` = `Sumit-SC.github.io`
 - `GITHUB_OAUTH_SCOPES` = `read:user`
-- `ADMIN_SUCCESS_REDIRECT` = `https://sumit.indevs.in/dev/index.html`
+- `ADMIN_SUCCESS_REDIRECT` = `https://sumit.indevs.in/admin/index.html` (where users return after GitHub OAuth)
 
 Save changes.
 
