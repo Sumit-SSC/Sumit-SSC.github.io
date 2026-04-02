@@ -51,6 +51,21 @@ Expected response:
 
 ---
 
+## 2b) DNS: `admin.sumit.indevs.in` → GitHub Pages (optional)
+
+Use this if you want the admin workspace at **`https://admin.sumit.indevs.in/`** instead of only **`https://sumit.indevs.in/admin/`**.
+
+1. In Cloudflare **DNS** for the zone that owns **`sumit.indevs.in`**, add:
+   - **Type:** CNAME  
+   - **Name:** `admin`  
+   - **Target:** `Sumit-SC.github.io`  
+2. Prefer **DNS only (grey cloud)** first so GitHub can issue HTTPS; or use **Proxied** with SSL mode **Full**.
+3. After propagation, GitHub Pages will serve the same repo; root `index.html` redirects `admin.sumit.indevs.in` → `/admin/index.html`.
+
+Full checklist: **`docs/ADMIN_WORKSPACE.md`** (Cloudflare + GitHub + Worker `ALLOWED_ORIGINS`).
+
+---
+
 ## 3) Add Worker environment variables (non-secret)
 
 Worker -> **Settings** -> **Variables** -> **Environment Variables**
@@ -58,7 +73,7 @@ Worker -> **Settings** -> **Variables** -> **Environment Variables**
 Add:
 
 - `ALLOWED_GITHUB_USERS` = `Sumit-SC`
-- `ALLOWED_ORIGINS` = `https://sumit.indevs.in,https://www.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000`
+- `ALLOWED_ORIGINS` = include at least: `https://sumit.indevs.in,https://www.sumit.indevs.in,https://admin.sumit.indevs.in` (plus localhost origins if you test locally — see `wrangler.toml`)
 - `CONTENT_BASE_BRANCH` = **your GitHub Pages source branch** (example: `feature/cf-admin-editor-foundation`).  
   **Required:** the Worker code no longer guesses a default; if this is missing, read/save will error. Change only this variable when you switch Pages branch—no code change needed.
 - `CONTENT_DRAFT_BRANCH` = `content/drafts`

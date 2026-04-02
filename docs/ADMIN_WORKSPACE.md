@@ -5,12 +5,67 @@
 A full-screen **editor shell** (sidebar + live site preview + inspector). You do **not** add `?admin_edit=1` by hand: the shell loads your public pages with `?admin_embed=1` automatically.
 
 - **URL:** `https://sumit.indevs.in/admin/index.html`  
-- **Optional subdomain:** add DNS `admin` → GitHub Pages, then open `https://admin.sumit.indevs.in/` — the root `index.html` redirects to `/admin/index.html`.
+- **Optional subdomain:** `https://admin.sumit.indevs.in/` — after DNS is set, the site root `index.html` redirects to `/admin/index.html`.
 
-## Cloudflare
+---
 
-1. **Worker variable** `ALLOWED_ORIGINS` must include `https://admin.sumit.indevs.in` (and your main site origins) so cookies work for Login / Save.
-2. Deploy the latest Worker after changing variables.
+## Cloudflare DNS — `admin.sumit.indevs.in` → GitHub Pages
+
+Your Pages site is **`Sumit-SC.github.io`** (user site). GitHub serves it when the request hits **`Sumit-SC.github.io`** with a `Host` header that matches a hostname you control via DNS.
+
+### 1. Where to add the record
+
+Open the Cloudflare dashboard → select the **DNS zone** that contains **`sumit.indevs.in`** (the zone might be named `sumit.indevs.in`, or a parent zone like `indevs.in` — add the record under the zone that is authoritative for `*.sumit.indevs.in`).
+
+### 2. Create a CNAME
+
+| Field | Value |
+|--------|--------|
+| **Type** | `CNAME` |
+| **Name** | `admin` (this means `admin.sumit.indevs.in` when the zone is `sumit.indevs.in`) |
+| **Target / Content** | `Sumit-SC.github.io` |
+| **TTL** | Auto or 300 |
+
+If your DNS is under a **parent** zone (e.g. zone `indevs.in`), the **name** is often the full relative name, e.g. `admin.sumit` (check your provider’s UI — the result must resolve to `admin.sumit.indevs.in`).
+
+### 3. Proxy status (orange cloud vs grey cloud)
+
+- **DNS only (grey cloud)** — Recommended to start: traffic goes straight to GitHub. GitHub issues the TLS certificate for your hostname. Fewer moving parts.
+- **Proxied (orange cloud)** — Traffic goes through Cloudflare first. Then set **SSL/TLS** → encryption mode to **Full** or **Full (strict)** so the browser trusts Cloudflare and Cloudflare can reach GitHub over HTTPS. If you see **525** or redirect loops, switch this hostname to **DNS only** or adjust SSL mode.
+
+### 4. GitHub repository settings
+
+1. Repo **`Sumit-SC/Sumit-SC.github.io`** → **Settings** → **Pages**.
+2. Under **Custom domain**, you may already use `sumit.indevs.in`. The **same deployment** can also be reached at `admin.sumit.indevs.in` once DNS points to GitHub.
+3. After the CNAME propagates, open **https://admin.sumit.indevs.in** once. If GitHub shows a domain verification step or HTTPS pending, wait a few minutes and refresh; GitHub usually provisions a certificate for the new hostname automatically when DNS is correct.
+4. Keep **Enforce HTTPS** enabled when GitHub offers it.
+
+### 5. Verify DNS (optional)
+
+From your PC:
+
+```text
+nslookup admin.sumit.indevs.in
+```
+
+You should see a CNAME chain ending at something under **`github.io`**. Then:
+
+```text
+curl -sI https://admin.sumit.indevs.in/
+```
+
+Expect **HTTP/2 200** or **302** once TLS is active.
+
+### 6. What this repo does
+
+The root **`index.html`** includes a small script: if the host is **`admin.sumit.indevs.in`** and the path is `/` or `/index.html`, the browser is sent to **`/admin/index.html`**, so the admin workspace opens without typing `/admin/`.
+
+### 7. Cloudflare Worker (admin API)
+
+1. In the Worker → **Settings** → **Variables**, ensure **`ALLOWED_ORIGINS`** includes **`https://admin.sumit.indevs.in`** (see `wrangler.toml` in this repo).
+2. Redeploy the Worker after changing variables.
+
+Cookies for Login / Save are set on **`admin-api.sumit.indevs.in`**; the admin UI on **`admin.sumit.indevs.in`** calls that API with `credentials: "include"`, so the admin origin must be allowed by CORS.
 
 ## Features
 
