@@ -243,17 +243,20 @@
     const pJson = el("panel-home-json");
     const pEd = el("panel-editor-record");
     const pSt = el("panel-static");
+    const pSettings = el("panel-settings");
     const ribIns = el("rib-insert-group");
 
     const isHome = state.kind === "projects-home";
     const isRecord = state.kind === "project" || state.kind === "caseStudy";
     const isStatic = state.kind === "about" || state.kind === "case-archive";
+    const isSettings = state.kind === "settings";
 
     if (tabs) tabs.classList.toggle("hidden", !isHome);
     if (pUi) pUi.classList.toggle("hidden", !isHome || state.homeTab !== "titles");
     if (pJson) pJson.classList.toggle("hidden", !isHome || state.homeTab !== "json");
     if (pEd) pEd.classList.toggle("hidden", !isRecord);
     if (pSt) pSt.classList.toggle("hidden", !isStatic);
+    if (pSettings) pSettings.classList.toggle("hidden", !isSettings);
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
   }
 
@@ -267,6 +270,13 @@
       } else {
         await loadHomepageJsonEditor();
       }
+      return;
+    }
+
+    if (state.kind === "settings") {
+      setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
+      await destroyEditor();
+      await loadThemeSettings();
       return;
     }
 
@@ -597,6 +607,14 @@
         applyRoute();
       });
     });
+    document.querySelectorAll('.nav-item[data-route="settings"]').forEach((b) => {
+      b.addEventListener("click", () => {
+        state.kind = "settings";
+        state.slug = "";
+        highlightNav();
+        applyRoute();
+      });
+    });
     document.querySelectorAll('.nav-item[data-route="case-archive"]').forEach((b) => {
       b.addEventListener("click", () => {
         state.kind = "case-archive";
@@ -626,6 +644,84 @@
     });
     return res.json();
   }
+
+  async function loadThemeSettings() {
+    const msg = el("msg-theme");
+    if (msg) msg.textContent = "Loading…";
+    const data = await loadContentRead("siteTheme", "");
+    if (!data.ok) {
+      if (msg) msg.textContent = data.error || "Failed to load theme";
+      return;
+    }
+    // Worker returns Editor.js blocks; pull JSON from the code block.
+    const blocks = data.editorData?.blocks || [];
+    const code = blocks.find((b) => b.type === "code")?.data?.code || "";
+    let parsed;
+    try {
+      parsed = JSON.parse(code || "{}");
+    } catch {
+      parsed = {};
+    }
+    const theme = parsed.theme || {};
+    const pri = el("theme-primary");
+    const acc = el("theme-accent");
+    const fs = el("theme-font-size");
+    const ff = el("theme-font-family");
+    if (pri) pri.value = theme.primary || "#3B4CCA";
+    if (acc) acc.value = theme.accent || "#2CB1A6";
+    if (fs) fs.value = theme.baseFontSizePx || 16;
+    if (ff) ff.value = theme.fontFamily || "Inter, system-ui, sans-serif";
+    if (msg) msg.textContent = "Loaded.";
+  }
+
+  async function saveThemeDraft() {
+    const msg = el("msg-theme");
+    const pri = el("theme-primary")?.value || "#3B4CCA";
+    const acc = el("theme-accent")?.value || "#2CB1A6";
+    const fs = Number(el("theme-font-size")?.value || 16);
+    const ff = el("theme-font-family")?.value || "Inter, system-ui, sans-serif";
+    if (msg) msg.textContent = "Saving…";
+    const res = await fetch(`${API}/api/admin/content/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        target: "siteTheme",
+        slug: "",
+        content: {
+          time: Date.now(),
+          version: "2.30.7",
+          blocks: [
+            { type: "header", data: { text: "Site Theme", level: 2 } },
+            { type: "paragraph", data: { text: "Edit settings via the form, Save draft, then Publish to live." } },
+            { type: "code", data: { code: JSON.stringify({ schemaVersion: 1, theme: { primary: pri, accent: acc, baseFontSizePx: fs, fontFamily: ff } }, null, 2) } }
+          ]
+        }
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      if (msg) msg.textContent = data.error || "Save failed";
+      return;
+    }
+    if (msg) msg.textContent = `Saved draft (${data.branch || "draft"}).`;
+  }
+
+  el("btn-theme-load")?.addEventListener("click", () => loadThemeSettings());
+  el("btn-theme-save")?.addEventListener("click", () => saveThemeDraft());
+  el("btn-theme-publish")?.addEventListener("click", async () => {
+    const s = await apiSession();
+    if (!s.ok) {
+      setStatus("Login first.");
+      return;
+    }
+    if (!window.confirm("Publish site-theme.json draft to live?")) return;
+    setStatus("Publishing…");
+    const out = await apiPublish("siteTheme");
+    setStatus(out.ok ? "Published theme to live." : out.error || "Publish failed");
+    const iframe = el("admin-preview");
+    if (iframe && iframe.src) iframe.src = iframe.src;
+  });
 
   async function apiListBackups() {
     const res = await fetch(`${API}/api/admin/content/backups`, { credentials: "include" });

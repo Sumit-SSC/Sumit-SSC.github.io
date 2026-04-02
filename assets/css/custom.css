@@ -12,6 +12,8 @@
   --primary: #3B4CCA;
   --secondary: #64748B;
   --accent: #2CB1A6;
+  --site-font-family: Inter, system-ui, sans-serif;
+  --site-base-font-size: 16px;
 
   /* Light Mode */
   --bg-light: #F8FAFC;
@@ -541,6 +543,12 @@ html:not(.dark-theme) .text-gray-600,
 html:not(.dark-theme) .text-gray-700,
 html:not(.dark-theme) body {
   color: #374151;
+}
+
+/* Theme settings (loaded from data/site-theme.json) */
+html body {
+  font-family: var(--site-font-family, Inter, system-ui, sans-serif);
+  font-size: var(--site-base-font-size, 16px);
 }
 
 html:not(.dark-theme) .text-gray-400,

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "updated_at": "2026-04-02T00:00:00.000Z",
+  "theme": {
+    "primary": "#3B4CCA",
+    "accent": "#2CB1A6",
+    "fontFamily": "Inter, system-ui, sans-serif",
+    "baseFontSizePx": 16
+  }
+}

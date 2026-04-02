@@ -303,6 +303,7 @@
     if (target === "caseStudies") return "data/case_studies.json";
     if (target === "homepage") return "data/homepage-content.json";
     if (target === "homepageUi") return HOMEPAGE_UI_PATH;
+    if (target === "siteTheme") return "data/site-theme.json";
     throw new Error("Unsupported target");
   }
 
@@ -436,6 +437,23 @@
       if (!found) return json({ ok: false, error: `No record found for slug: ${slug}` }, 404);
       return json({ ok: true, target, slug, editorData: found.editor_content || toEditorDataFromRecord(found) });
     }
+    if (target === "siteTheme") {
+      // Show theme JSON inside Editor.js (code block) for editing.
+      return json({
+        ok: true,
+        target,
+        slug,
+        editorData: {
+          time: Date.now(),
+          version: "2.30.7",
+          blocks: [
+            { type: "header", data: { text: "Site Theme", level: 2 } },
+            { type: "paragraph", data: { text: "Edit the JSON below, then Save draft and Publish to apply on the live site." } },
+            { type: "code", data: { code: JSON.stringify(parsed, null, 2) } }
+          ]
+        }
+      });
+    }
     return json({ ok: true, target, slug, editorData: parsed.editor_content || parsed });
   }
 
@@ -499,6 +517,40 @@
       if (draftFile) sha = draftFile.sha;
     } else {
       contentObj = target === "homepage" ? {} : [];
+    }
+
+    if (target === "siteTheme") {
+      const blocks = body.content.blocks || [];
+      const codeBlock = blocks.find((b) => b.type === "code");
+      const raw = String(codeBlock?.data?.code || "").trim();
+      let nextObj;
+      try {
+        nextObj = raw ? JSON.parse(raw) : null;
+      } catch {
+        return json({ ok: false, error: "Site theme JSON is invalid. Fix the JSON in the code block and try again." }, 400);
+      }
+      if (!nextObj || typeof nextObj !== "object") {
+        return json({ ok: false, error: "Site theme JSON must be an object." }, 400);
+      }
+      // Ensure minimal shape
+      if (!nextObj.schemaVersion) nextObj.schemaVersion = 1;
+      nextObj.updated_at = new Date().toISOString();
+      if (!nextObj.theme || typeof nextObj.theme !== "object") nextObj.theme = {};
+
+      const commit = await putFileToGithub(
+        env,
+        path,
+        JSON.stringify(nextObj, null, 2),
+        draftBranch,
+        `chore(theme): update site theme via admin (${user})`,
+        sha
+      );
+      return json({
+        ok: true,
+        branch: draftBranch,
+        path,
+        commitSha: commit.commit?.sha || null
+      });
     }
 
     if (Array.isArray(contentObj)) {
@@ -611,7 +663,7 @@
     if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
     const body = await request.json();
     const target = body.target;
-    if (!target || !["projects", "caseStudies", "homepage", "homepageUi"].includes(target)) {
+    if (!target || !["projects", "caseStudies", "homepage", "homepageUi", "siteTheme"].includes(target)) {
       return json({ ok: false, error: "Invalid or missing target" }, 400);
     }
     const path = mapTargetPath(target);
