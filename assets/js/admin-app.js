@@ -194,6 +194,9 @@
       holder: holderId,
       data: normalized,
       tools,
+      autofocus: true,
+      minHeight: 80,
+      inlineToolbar: ["bold", "italic", "link"],
       onChange: () => {
         setStatus("Edited — save draft when ready.");
         scheduleEditorJsonPreview();
@@ -457,6 +460,7 @@
       const r = b.getAttribute("data-route");
       const on =
         (r === "projects-home" && state.kind === "projects-home") ||
+        (r === "settings" && state.kind === "settings") ||
         (r === "case-archive" && state.kind === "case-archive") ||
         (r === "about" && state.kind === "about");
       b.classList.toggle("bg-slate-800", on);

@@ -144,10 +144,10 @@
       <div id="panel-home-json" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
         <p class="px-4 pt-3 text-xs text-slate-400">Homepage content block (<code class="text-slate-300">homepage-content.json</code>).</p>
         <div id="admin-editor-holder-home" class="flex-1 overflow-y-auto mx-4 mb-2 mt-2 rounded-lg border border-slate-600 bg-slate-900/50 p-2 min-h-[200px]"></div>
-        <div class="px-4 mb-2">
-          <h3 class="text-[11px] font-medium text-slate-400 mb-2">Editor JSON (read-only)</h3>
-          <pre id="json-preview-home" class="overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre>
-        </div>
+        <details class="px-4 mb-2">
+          <summary class="text-[11px] font-medium text-slate-400 cursor-pointer select-none">Editor JSON (read-only)</summary>
+          <pre id="json-preview-home" class="mt-2 overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre>
+        </details>
         <div class="px-4 pb-3">
           <button type="button" id="btn-publish-home-json" class="w-full rounded-lg bg-indigo-700 hover:bg-indigo-600 py-2 text-sm font-semibold">Publish homepage JSON to live</button>
         </div>
@@ -155,12 +155,12 @@
       <div id="panel-editor-record" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
         <p id="record-label" class="px-4 pt-3 text-sm font-medium text-slate-200"></p>
         <p id="record-auth-banner" class="hidden mx-4 mt-2 text-xs text-amber-200 bg-amber-950/50 border border-amber-800/60 rounded-lg px-3 py-2"></p>
-        <p class="px-4 text-xs text-slate-500 pt-2">Drag blocks or use Insert on the ribbon. <strong class="text-slate-300">Save draft</strong> writes to the draft branch; <strong class="text-slate-300">Publish to live</strong> copies that file onto your GitHub Pages branch (with a backup of the previous live file).</p>
+        <p class="px-4 text-xs text-slate-500 pt-2">Click inside a block to edit. Use Insert from the ribbon for new blocks. <strong class="text-slate-300">Save draft</strong> writes to draft; <strong class="text-slate-300">Publish to live</strong> updates your Pages branch with backup.</p>
         <div id="admin-editor-holder" class="flex-1 overflow-y-auto mx-4 mb-2 mt-2 rounded-lg border border-slate-600 bg-slate-900/50 p-2 min-h-[220px]"></div>
-        <div class="px-4 mb-2">
-          <h3 class="text-[11px] font-medium text-slate-400 mb-2">Editor JSON (read-only)</h3>
-          <pre id="json-preview-record" class="overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre>
-        </div>
+        <details class="px-4 mb-2">
+          <summary class="text-[11px] font-medium text-slate-400 cursor-pointer select-none">Editor JSON (read-only)</summary>
+          <pre id="json-preview-record" class="mt-2 overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre>
+        </details>
         <div class="px-4 pb-2 space-y-2 border-t border-slate-700/60 pt-3">
           <p class="text-[11px] font-medium text-slate-400">Restore live site from backup</p>
           <div class="flex gap-2 flex-wrap items-center">
