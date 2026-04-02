@@ -10,12 +10,32 @@
     async fetch(request, env) {
       const url = new URL(request.url);
       const { pathname } = url;
+      const host = (url.hostname || "").toLowerCase();
 
       if (request.method === "OPTIONS") {
         return withCors(request, env, new Response(null, { status: 204 }));
       }
 
       try {
+        // Optional redirect: allow `admin.sumit.indevs.in` to route to the admin UI,
+        // without requiring GitHub Pages to serve that hostname.
+        // This only works if Cloudflare routes `admin.sumit.indevs.in/*` to this Worker.
+        if (host === "admin.sumit.indevs.in") {
+          const target =
+            env.ADMIN_UI_REDIRECT || "https://sumit.indevs.in/admin/index.html";
+          if (
+            pathname === "/" ||
+            pathname === "" ||
+            pathname === "/index.html" ||
+            pathname === "/admin/index.html" ||
+            pathname.startsWith("/admin")
+          ) {
+            const headers = new Headers();
+            headers.set("Location", target);
+            return new Response(null, { status: 302, headers });
+          }
+        }
+
         if (pathname === "/api/admin/health") {
           return withCors(request, env, json({ ok: true, service: "portfolio-admin-api" }));
         }
