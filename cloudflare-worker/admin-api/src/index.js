@@ -237,7 +237,11 @@
       { user: login, exp: Date.now() + SESSION_TTL_SECONDS * 1000 },
       env.SESSION_SIGNING_KEY
     );
-    const successRedirect = env.ADMIN_SUCCESS_REDIRECT || getDefaultSuccessRedirect(env);
+    // Prefer `/admin/` even if Cloudflare variables still contain an old legacy value.
+    let successRedirect = env.ADMIN_SUCCESS_REDIRECT || getDefaultSuccessRedirect(env);
+    if (!String(successRedirect).includes("/admin/")) {
+      successRedirect = getDefaultSuccessRedirect(env);
+    }
     const headers = new Headers();
     headers.set("Location", successRedirect);
     headers.append("set-cookie", makeCookie(COOKIE_SESSION, sessionToken, SESSION_TTL_SECONDS));
