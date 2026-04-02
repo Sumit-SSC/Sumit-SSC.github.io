@@ -78,6 +78,11 @@
         <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Site</p>
         <ul class="space-y-1 text-sm">
           <li>
+            <button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="dashboard">
+              Dashboard
+            </button>
+          </li>
+          <li>
             <button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="projects-home">
               Projects (home)
             </button>
@@ -107,8 +112,41 @@
       </div>
     </aside>
 
-    <!-- Preview -->
+    <!-- Center workspace -->
     <div class="flex-1 flex flex-col min-w-0 bg-slate-950">
+      <section id="admin-dashboard-view" class="hidden flex-1 overflow-y-auto p-6">
+        <div class="max-w-5xl mx-auto w-full space-y-5">
+          <h2 class="text-2xl font-bold text-white">Admin Dashboard</h2>
+          <p class="text-sm text-slate-400">Overview first. Use the left menu to open editor pages. Save draft writes to draft branch; Publish pushes to live.</p>
+          <div class="grid md:grid-cols-4 gap-3">
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+              <div class="text-xs text-slate-400">Session</div>
+              <div id="dash-session" class="mt-2 text-lg font-semibold">-</div>
+            </article>
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+              <div class="text-xs text-slate-400">Projects</div>
+              <div id="dash-project-count" class="mt-2 text-lg font-semibold">-</div>
+            </article>
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+              <div class="text-xs text-slate-400">Case studies</div>
+              <div id="dash-case-count" class="mt-2 text-lg font-semibold">-</div>
+            </article>
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+              <div class="text-xs text-slate-400">Latest status</div>
+              <div id="dash-last-status" class="mt-2 text-sm font-medium text-slate-200">Ready</div>
+            </article>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+            <h3 class="text-sm font-semibold text-white mb-2">Quick start</h3>
+            <ol class="list-decimal pl-5 text-sm text-slate-300 space-y-1">
+              <li>Login from ribbon.</li>
+              <li>Select a page/record from left menu.</li>
+              <li>Edit blocks, then Save draft.</li>
+              <li>Publish to live when ready.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
       <iframe
         id="admin-preview"
         title="Site preview"
@@ -144,6 +182,10 @@
       <div id="panel-home-json" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
         <p class="px-4 pt-3 text-xs text-slate-400">Homepage content block (<code class="text-slate-300">homepage-content.json</code>).</p>
         <div id="admin-editor-holder-home" class="flex-1 overflow-y-auto mx-4 mb-2 mt-2 rounded-lg border border-slate-600 bg-slate-900/50 p-2 min-h-[200px]"></div>
+        <div class="px-4 mb-2">
+          <h3 class="text-[11px] font-medium text-slate-400 mb-2">Draft preview</h3>
+          <div id="draft-preview-home" class="rounded-lg bg-white text-gray-800 border border-slate-700/60 p-3 min-h-[8rem]"></div>
+        </div>
         <details class="px-4 mb-2">
           <summary class="text-[11px] font-medium text-slate-400 cursor-pointer select-none">Editor JSON (read-only)</summary>
           <pre id="json-preview-home" class="mt-2 overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre>
@@ -157,6 +199,10 @@
         <p id="record-auth-banner" class="hidden mx-4 mt-2 text-xs text-amber-200 bg-amber-950/50 border border-amber-800/60 rounded-lg px-3 py-2"></p>
         <p class="px-4 text-xs text-slate-500 pt-2">Click inside a block to edit. Use Insert from the ribbon for new blocks. <strong class="text-slate-300">Save draft</strong> writes to draft; <strong class="text-slate-300">Publish to live</strong> updates your Pages branch with backup.</p>
         <div id="admin-editor-holder" class="flex-1 overflow-y-auto mx-4 mb-2 mt-2 rounded-lg border border-slate-600 bg-slate-900/50 p-2 min-h-[220px]"></div>
+        <div class="px-4 mb-2">
+          <h3 class="text-[11px] font-medium text-slate-400 mb-2">Draft preview</h3>
+          <div id="draft-preview-record" class="rounded-lg bg-white text-gray-800 border border-slate-700/60 p-3 min-h-[8rem]"></div>
+        </div>
         <details class="px-4 mb-2">
           <summary class="text-[11px] font-medium text-slate-400 cursor-pointer select-none">Editor JSON (read-only)</summary>
           <pre id="json-preview-record" class="mt-2 overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre>

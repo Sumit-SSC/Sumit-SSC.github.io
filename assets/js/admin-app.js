@@ -20,7 +20,7 @@
   let editorPreviewTimer = null;
 
   const state = {
-    kind: "projects-home",
+    kind: "dashboard",
     target: "homepage",
     slug: "",
     homeTab: "titles"
@@ -31,6 +31,15 @@
   function setStatus(t) {
     const n = el("rib-status");
     if (n) n.textContent = t || "";
+    const d = el("dash-last-status");
+    if (d) d.textContent = t || "";
+  }
+
+  function setCenterView(mode) {
+    const dash = el("admin-dashboard-view");
+    const frame = el("admin-preview");
+    if (dash) dash.classList.toggle("hidden", mode !== "dashboard");
+    if (frame) frame.classList.toggle("hidden", mode === "dashboard");
   }
 
   function previewUrl(pathWithQuery) {
@@ -158,12 +167,46 @@
     return null;
   }
 
+  function draftPreviewElForHolder(holderId) {
+    if (holderId === "admin-editor-holder-home") return el("draft-preview-home");
+    if (holderId === "admin-editor-holder") return el("draft-preview-record");
+    return null;
+  }
+
+  function editorBlocksToHtml(data) {
+    const blocks = Array.isArray(data?.blocks) ? data.blocks : [];
+    if (!blocks.length) return "<p>No blocks.</p>";
+    const out = [];
+    for (const b of blocks) {
+      const d = b?.data || {};
+      if (b?.type === "header") {
+        const lvl = Math.min(4, Math.max(2, Number(d.level || 2)));
+        out.push(`<h${lvl}>${String(d.text || "")}</h${lvl}>`);
+      } else if (b?.type === "paragraph") {
+        out.push(`<p>${String(d.text || "")}</p>`);
+      } else if (b?.type === "list") {
+        const items = Array.isArray(d.items) ? d.items : [];
+        const tag = d.style === "ordered" ? "ol" : "ul";
+        out.push(`<${tag}>${items.map((i) => `<li>${typeof i === "string" ? i : String(i || "")}</li>`).join("")}</${tag}>`);
+      } else if (b?.type === "code") {
+        const safe = String(d.code || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        out.push(`<pre><code>${safe}</code></pre>`);
+      } else if (b?.type === "embed") {
+        const u = String(d.source || d.embed || "");
+        out.push(`<p><a href="${u}" target="_blank" rel="noopener">Embed link</a></p>`);
+      }
+    }
+    return out.join("\n");
+  }
+
   async function updateEditorJsonPreviewNow() {
     const previewEl = previewElForHolder(activeEditorHolderId);
     if (!previewEl || !editorInstance) return;
     try {
       const data = await editorInstance.save();
       previewEl.textContent = JSON.stringify(data, null, 2);
+      const draftEl = draftPreviewElForHolder(activeEditorHolderId);
+      if (draftEl) draftEl.innerHTML = editorBlocksToHtml(data);
     } catch (e) {
       previewEl.textContent = String(e && e.message ? e.message : e);
     }
@@ -265,6 +308,14 @@
 
   async function applyRoute() {
     showPanels();
+
+    if (state.kind === "dashboard") {
+      setCenterView("dashboard");
+      await destroyEditor();
+      await loadDashboardStats();
+      return;
+    }
+    setCenterView("preview");
 
     if (state.kind === "projects-home") {
       setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
@@ -459,6 +510,7 @@
     document.querySelectorAll(".nav-item").forEach((b) => {
       const r = b.getAttribute("data-route");
       const on =
+        (r === "dashboard" && state.kind === "dashboard") ||
         (r === "projects-home" && state.kind === "projects-home") ||
         (r === "settings" && state.kind === "settings") ||
         (r === "case-archive" && state.kind === "case-archive") ||
@@ -481,6 +533,24 @@
     const res = await fetch(url.toString());
     if (!res.ok) throw new Error(res.statusText);
     return res.json();
+  }
+
+  async function loadDashboardStats() {
+    try {
+      const [session, projects, cases] = await Promise.all([
+        apiSession(),
+        fetchJson("data/projects.json"),
+        fetchJson("data/case_studies.json")
+      ]);
+      const ses = el("dash-session");
+      const pc = el("dash-project-count");
+      const cc = el("dash-case-count");
+      if (ses) ses.textContent = session.ok ? `Signed in (${session.user?.login || "ok"})` : "Not signed in";
+      if (pc) pc.textContent = Array.isArray(projects) ? String(projects.length) : "-";
+      if (cc) cc.textContent = Array.isArray(cases) ? String(cases.length) : "-";
+    } catch (_) {
+      setStatus("Dashboard stats failed to load.");
+    }
   }
 
   function buildSidebarLists(projects, cases) {
@@ -602,6 +672,14 @@
   }
 
   function wireNav() {
+    document.querySelectorAll('.nav-item[data-route="dashboard"]').forEach((b) => {
+      b.addEventListener("click", () => {
+        state.kind = "dashboard";
+        state.slug = "";
+        highlightNav();
+        applyRoute();
+      });
+    });
     document.querySelectorAll('.nav-item[data-route="projects-home"]').forEach((b) => {
       b.addEventListener("click", () => {
         state.kind = "projects-home";
