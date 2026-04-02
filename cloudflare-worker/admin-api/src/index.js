@@ -679,7 +679,15 @@
       if (idx >= 0) {
         contentObj[idx] = updateRecordFromEditor(contentObj[idx], body);
       } else {
-        contentObj.unshift(updateRecordFromEditor({ id: slug, title: slug, short_description: "" }, body));
+        const meta = body.meta && typeof body.meta === "object" ? body.meta : {};
+        const baseRecord = {
+          id: slug,
+          title: meta.title || slug,
+          short_description: meta.short_description || "",
+          ...meta
+        };
+        if (!baseRecord.id) baseRecord.id = slug;
+        contentObj.unshift(updateRecordFromEditor(baseRecord, body));
       }
     } else {
       contentObj = {

@@ -25,7 +25,8 @@
     target: "homepage",
     slug: "",
     homeTab: "titles",
-    editWorkspace: false
+    editWorkspace: false,
+    compactListsOnSelect: true
   };
   const localDraftRecords = {
     projects: [],
@@ -159,7 +160,7 @@
     return null;
   }
 
-  function sanitizeEditorPayload(editorData, target) {
+  function sanitizeEditorPayload(editorData, target, options = {}) {
     const allowedTypes = new Set(["paragraph", "header", "list", "code", "embed"]);
     const blocks = (editorData.blocks || [])
       .filter((block) => allowedTypes.has(block.type))
@@ -172,7 +173,8 @@
         ...editorData,
         blocks
       },
-      themeTokens: THEME_TOKENS
+      themeTokens: THEME_TOKENS,
+      meta: options.meta && typeof options.meta === "object" ? options.meta : undefined
     };
   }
 
@@ -267,7 +269,10 @@
   function blockTitleFor(block, i) {
     const t = block?.type || "block";
     const d = block?.data || {};
-    const text = d.text || d.code || (Array.isArray(d.items) ? d.items[0] : "") || d.source || "";
+    const firstListItem = Array.isArray(d.items)
+      ? (typeof d.items[0] === "string" ? d.items[0] : (d.items[0]?.content || ""))
+      : "";
+    const text = d.text || d.code || firstListItem || d.source || "";
     const clipped = String(text || "").replace(/<[^>]*>/g, "").trim().slice(0, 40);
     return `${i + 1}. ${t}${clipped ? ` - ${clipped}` : ""}`;
   }
@@ -276,6 +281,12 @@
     const wrap = el("block-nav-wrap");
     const list = el("block-nav-list");
     if (!wrap || !list) return;
+    const previewPane = el("workspace-preview-pane");
+    const iframe = el("admin-preview");
+    // Keep block navigator at middle-top (above preview) when editing.
+    if (previewPane && iframe && wrap.parentElement !== previewPane) {
+      previewPane.insertBefore(wrap, iframe);
+    }
     if (!isEditingRoute()) {
       wrap.classList.add("hidden");
       list.innerHTML = "";
@@ -383,8 +394,8 @@
     return data;
   }
 
-  async function saveContentWrite(target, slug, editorData) {
-    const payload = sanitizeEditorPayload(editorData, target);
+  async function saveContentWrite(target, slug, editorData, options = {}) {
+    const payload = sanitizeEditorPayload(editorData, target, options);
     payload.slug = slug || "";
     const res = await fetch(`${API}/api/admin/content/save`, {
       method: "POST",
@@ -702,9 +713,15 @@
     const cu = el("admin-sortable-cases");
     const mergedProjects = [...(localDraftRecords.projects || []), ...(projects || []).filter((p) => !localDraftRecords.projects.some((lp) => lp.id === p.id))];
     const mergedCases = [...(localDraftRecords.caseStudies || []), ...(cases || []).filter((c) => !localDraftRecords.caseStudies.some((lc) => lc.id === c.id))];
+    const visibleProjects = state.compactListsOnSelect && state.kind === "project"
+      ? (mergedProjects || []).filter((p) => p.id === state.slug)
+      : (mergedProjects || []);
+    const visibleCases = state.compactListsOnSelect && state.kind === "caseStudy"
+      ? (mergedCases || []).filter((c) => c.id === state.slug)
+      : (mergedCases || []);
     if (pu) {
       pu.innerHTML = "";
-      (mergedProjects || []).forEach((p) => {
+      visibleProjects.forEach((p) => {
         const li = document.createElement("li");
         const b = document.createElement("button");
         b.type = "button";
@@ -726,7 +743,7 @@
     }
     if (cu) {
       cu.innerHTML = "";
-      (mergedCases || []).forEach((c) => {
+      visibleCases.forEach((c) => {
         const li = document.createElement("li");
         const b = document.createElement("button");
         b.type = "button";
@@ -861,15 +878,44 @@
       version: "2.30.7",
       blocks: [
         { type: "header", data: { text: title || "Untitled", level: 2 } },
-        { type: "paragraph", data: { text: isCase ? "Short summary for this case study." : "Short summary for this project." } },
+        { type: "paragraph", data: { text: isCase ? "Short summary for this case study with decision context." : "Short summary for this project and measurable impact." } },
         { type: "header", data: { text: "Overview", level: 3 } },
         { type: "paragraph", data: { text: "Add context, goals, and why this work matters." } },
-        { type: "header", data: { text: "Approach", level: 3 } },
-        { type: "list", data: { style: "unordered", items: ["Data", "Method", "Validation"] } },
-        { type: "header", data: { text: "Outcome", level: 3 } },
-        { type: "paragraph", data: { text: "Add measurable impact, results, or learnings." } },
-        { type: "code", data: { code: `<!-- Optional rich HTML section for ${slug} -->` } }
+        { type: "header", data: { text: isCase ? "Method" : "Approach", level: 3 } },
+        { type: "list", data: { style: "unordered", items: isCase ? ["Context", "Hypothesis", "Analysis"] : ["Data", "Method", "Validation"] } },
+        { type: "header", data: { text: isCase ? "Findings" : "Outcome", level: 3 } },
+        { type: "paragraph", data: { text: isCase ? "Add what changed, why it matters, and trade-offs." : "Add measurable impact, results, or learnings." } },
+        { type: "code", data: { code: `<!-- Optional rich HTML section for ${kind}/${slug} -->` } }
       ]
+    };
+  }
+
+  function newRecordMeta(kind, title, slug) {
+    if (kind === "projects") {
+      return {
+        id: slug,
+        title,
+        category: "Analytics",
+        date: String(new Date().getFullYear()),
+        thumbnail: "assets/images/thumbs/01.jpg",
+        images: [],
+        content_path: `data/projects/${slug}.html`,
+        show_apps_section: true,
+        tools: [],
+        featured: false
+      };
+    }
+    return {
+      id: slug,
+      title,
+      category: "Case Study",
+      date: String(new Date().getFullYear()),
+      thumbnail: "assets/images/thumbs/01.jpg",
+      case_study_path: `data/case_studies/${slug}.html`,
+      case_study_read_mins: 10,
+      tier: "featured",
+      tools: [],
+      related_case_studies: []
     };
   }
 
@@ -889,7 +935,7 @@
       return;
     }
     const tpl = newRecordTemplate(kind, title, slug);
-    const out = await saveContentWrite(kind, slug, tpl);
+    const out = await saveContentWrite(kind, slug, tpl, { meta: newRecordMeta(kind, title, slug) });
     if (!out.ok) {
       setStatus(out.error || "Could not create draft.");
       return;
