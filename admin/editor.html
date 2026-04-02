@@ -26,6 +26,8 @@
     <button id="rib-save" class="px-2 py-1 rounded bg-emerald-700 hover:bg-emerald-600">Save draft</button>
     <button id="rib-publish" class="px-2 py-1 rounded bg-indigo-700 hover:bg-indigo-600">Publish</button>
     <button id="rib-load" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Reload</button>
+    <button id="btn-mode-visual" class="px-2 py-1 rounded bg-indigo-700 hover:bg-indigo-600">Visual</button>
+    <button id="btn-mode-source" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Source</button>
     <div id="rib-insert-group" class="ml-2 flex items-center gap-1">
       <button data-insert="paragraph" class="rib-ins px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">P</button>
       <button data-insert="header" class="rib-ins px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">H</button>
@@ -133,6 +135,19 @@
           <button id="btn-upload"></button>
         </div>
       </div>
+      <div id="panel-source" class="hidden flex-1 min-h-0 flex flex-col">
+        <div class="p-3 border-b border-slate-800 flex items-center gap-2 text-xs">
+          <span class="text-slate-400">Source mode</span>
+          <select id="source-format" class="rounded bg-slate-800 px-2 py-1">
+            <option value="auto">Auto</option>
+            <option value="record-json">Record JSON</option>
+            <option value="record-html">Record HTML</option>
+            <option value="file">File</option>
+          </select>
+          <button id="btn-source-reload" class="rounded bg-slate-800 hover:bg-slate-700 px-2 py-1">Reload source</button>
+        </div>
+        <div id="source-editor-holder" class="flex-1 min-h-0"></div>
+      </div>
       <div id="panel-static" class="hidden p-3 text-sm text-slate-400">Static page preview.</div>
       <div id="panel-settings" class="hidden p-3 space-y-2 overflow-y-auto">
         <input id="theme-primary" type="color" class="w-full h-10 rounded bg-slate-800" />
@@ -156,6 +171,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2.0.8/dist/editorjs-list.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260402-8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
+  <script src="../assets/js/admin-app.js?v=20260402-9"></script>
 </body>
 </html>

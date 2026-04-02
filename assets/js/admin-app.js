@@ -27,8 +27,12 @@
     homeTab: "titles",
     editWorkspace: true,
     compactListsOnSelect: true,
-    centerPreviewMode: "live"
+    centerPreviewMode: "live",
+    sourceMode: false
   };
+  let monacoEditor = null;
+  let monacoReady = null;
+  let sourceDoc = { target: "", slug: "", mode: "file", language: "json" };
   const localDraftRecords = {
     projects: [],
     caseStudies: []
@@ -425,6 +429,95 @@
     return res.json();
   }
 
+  async function loadRawSource(target, slug, mode) {
+    const q = new URLSearchParams({ target, mode: mode || "file" });
+    if (slug) q.set("slug", slug);
+    const res = await fetch(`${API}/api/admin/content/raw?${q.toString()}`, { credentials: "include" });
+    const data = await res.json();
+    data._httpStatus = res.status;
+    return data;
+  }
+
+  async function saveRawSource(target, slug, mode, text) {
+    const res = await fetch(`${API}/api/admin/content/raw/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ target, slug, mode, text })
+    });
+    const data = await res.json();
+    data._httpStatus = res.status;
+    return data;
+  }
+
+  async function ensureMonaco() {
+    if (monacoReady) return monacoReady;
+    monacoReady = new Promise((resolve, reject) => {
+      try {
+        if (!window.require) throw new Error("Monaco loader missing");
+        window.require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs" } });
+        window.require(["vs/editor/editor.main"], () => resolve(window.monaco), reject);
+      } catch (e) {
+        reject(e);
+      }
+    });
+    return monacoReady;
+  }
+
+  function currentSourceRequest() {
+    if (state.kind === "project") {
+      return { target: "projects", slug: state.slug, mode: el("source-format")?.value || "record-json", language: "json" };
+    }
+    if (state.kind === "caseStudy") {
+      return { target: "caseStudies", slug: state.slug, mode: el("source-format")?.value || "record-json", language: "json" };
+    }
+    if (state.kind === "projects-home") {
+      if (state.homeTab === "titles") return { target: "homepageUi", slug: "", mode: "file", language: "json" };
+      return { target: "homepage", slug: "", mode: "file", language: "json" };
+    }
+    if (state.kind === "settings") return { target: "siteTheme", slug: "", mode: "file", language: "json" };
+    return null;
+  }
+
+  async function openSourceMode() {
+    const req = currentSourceRequest();
+    if (!req) {
+      setStatus("Source mode is available for editable targets only.");
+      return;
+    }
+    state.sourceMode = true;
+    showPanels();
+    await ensureMonaco();
+    const holder = el("source-editor-holder");
+    if (!holder) return;
+    const data = await loadRawSource(req.target, req.slug, req.mode === "auto" ? "record-json" : req.mode);
+    if (!data.ok) {
+      setStatus(data.error || "Failed to load source.");
+      return;
+    }
+    sourceDoc = { target: req.target, slug: req.slug, mode: data.mode || req.mode, language: data.language || req.language || "json" };
+    if (!monacoEditor) {
+      monacoEditor = window.monaco.editor.create(holder, {
+        value: data.text || "",
+        language: sourceDoc.language,
+        theme: "vs-dark",
+        automaticLayout: true,
+        minimap: { enabled: false },
+        fontSize: 13
+      });
+    } else {
+      const model = monacoEditor.getModel();
+      if (model) window.monaco.editor.setModelLanguage(model, sourceDoc.language);
+      monacoEditor.setValue(data.text || "");
+    }
+    setStatus(`Source loaded (${sourceDoc.mode}).`);
+  }
+
+  function closeSourceMode() {
+    state.sourceMode = false;
+    showPanels();
+  }
+
   function setIframe(path) {
     const f = el("admin-preview");
     if (f) f.src = previewUrl(path);
@@ -437,6 +530,7 @@
     const pEd = el("panel-editor-record");
     const pSt = el("panel-static");
     const pSettings = el("panel-settings");
+    const pSource = el("panel-source");
     const ribIns = el("rib-insert-group");
     const ribBlock = el("rib-block-group");
 
@@ -446,15 +540,16 @@
     const isSettings = state.kind === "settings";
 
     if (tabs) tabs.classList.toggle("hidden", !isHome);
-    if (pUi) pUi.classList.toggle("hidden", !isHome || state.homeTab !== "titles");
-    if (pJson) pJson.classList.toggle("hidden", !isHome || state.homeTab !== "json");
-    if (pEd) pEd.classList.toggle("hidden", !isRecord);
+    if (pUi) pUi.classList.toggle("hidden", state.sourceMode || !isHome || state.homeTab !== "titles");
+    if (pJson) pJson.classList.toggle("hidden", state.sourceMode || !isHome || state.homeTab !== "json");
+    if (pEd) pEd.classList.toggle("hidden", state.sourceMode || !isRecord);
     if (pSt) pSt.classList.toggle("hidden", !isStatic);
-    if (pSettings) pSettings.classList.toggle("hidden", !isSettings);
+    if (pSettings) pSettings.classList.toggle("hidden", state.sourceMode || !isSettings);
+    if (pSource) pSource.classList.toggle("hidden", !state.sourceMode || !(isHome || isRecord || isSettings));
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     // Simple mode: hide noisy debug JSON panels while editing.
-    if ((isHome && state.homeTab === "json") || isRecord) {
+    if (!state.sourceMode && ((isHome && state.homeTab === "json") || isRecord)) {
       const jh = el("json-preview-home");
       const jr = el("json-preview-record");
       if (jh && jh.parentElement?.tagName === "DETAILS") jh.parentElement.classList.add("hidden");
@@ -465,6 +560,10 @@
 
   async function applyRoute() {
     showPanels();
+    if (state.sourceMode) {
+      await openSourceMode();
+      return;
+    }
 
     if (state.kind === "dashboard") {
       setCenterView("dashboard");
@@ -623,6 +722,20 @@
   }
 
   async function ribSave() {
+    if (state.sourceMode) {
+      if (!monacoEditor) {
+        setStatus("Source editor not ready.");
+        return;
+      }
+      const out = await saveRawSource(sourceDoc.target, sourceDoc.slug, sourceDoc.mode, monacoEditor.getValue());
+      if (!out.ok) {
+        setStatus(out.error || "Source save failed");
+        return;
+      }
+      setStatus(`Saved source · ${out.branch || "draft"}`);
+      await ribLoad();
+      return;
+    }
     const s = await apiSession();
     if (!s.ok) {
       setStatus("Not logged in.");
@@ -668,6 +781,10 @@
   }
 
   async function ribLoad() {
+    if (state.sourceMode) {
+      await openSourceMode();
+      return;
+    }
     if (state.kind === "projects-home" && state.homeTab === "json") {
       await loadHomepageJsonEditor();
       return;
@@ -831,6 +948,16 @@
     });
     el("rib-save")?.addEventListener("click", ribSave);
     el("rib-load")?.addEventListener("click", ribLoad);
+    el("btn-mode-visual")?.addEventListener("click", () => {
+      closeSourceMode();
+      applyRoute();
+    });
+    el("btn-mode-source")?.addEventListener("click", async () => {
+      await openSourceMode();
+    });
+    el("btn-source-reload")?.addEventListener("click", async () => {
+      await openSourceMode();
+    });
 
     document.querySelectorAll(".rib-ins").forEach((btn) => {
       btn.addEventListener("click", async () => {

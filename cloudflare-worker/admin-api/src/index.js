@@ -56,8 +56,14 @@
         if (pathname === "/api/admin/content/read" && request.method === "GET") {
           return withCors(request, env, await readContent(url, request, env));
         }
+        if (pathname === "/api/admin/content/raw" && request.method === "GET") {
+          return withCors(request, env, await readRawContent(url, request, env));
+        }
         if (pathname === "/api/admin/content/save" && request.method === "POST") {
           return withCors(request, env, await saveContent(request, env));
+        }
+        if (pathname === "/api/admin/content/raw/save" && request.method === "POST") {
+          return withCors(request, env, await saveRawContent(request, env));
         }
         if (pathname === "/api/admin/images/upload" && request.method === "POST") {
           return withCors(request, env, await uploadImage(request, env));
@@ -713,6 +719,139 @@
       path,
       commitSha: commit.commit?.sha || null
     });
+  }
+
+  function getRecordPathKey(target) {
+    if (target === "projects") return "content_path";
+    if (target === "caseStudies") return "case_study_path";
+    return null;
+  }
+
+  async function readRawContent(url, request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const target = url.searchParams.get("target") || "";
+    const slug = url.searchParams.get("slug") || "";
+    const mode = url.searchParams.get("mode") || "file";
+    const path = mapTargetPath(target);
+    const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+    const baseBranch = getContentBaseBranch(env);
+    await ensureBranchExists(env, draftBranch, baseBranch);
+
+    const draftFile = await getFileFromGithub(env, path, draftBranch);
+    const baseFile = await getFileFromGithub(env, path, baseBranch);
+    const file = draftFile || baseFile;
+    if (!file) return json({ ok: false, error: `File not found: ${path}` }, 404);
+
+    if (mode === "file") {
+      return json({ ok: true, target, slug, mode, language: path.endsWith(".json") ? "json" : "html", text: file.text });
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(file.text);
+    } catch {
+      return json({ ok: false, error: "Raw mode requires JSON target for record editing" }, 400);
+    }
+    if (!Array.isArray(parsed)) return json({ ok: false, error: "record modes are only valid for list targets" }, 400);
+    if (!slug) return json({ ok: false, error: "slug is required" }, 400);
+    const idx = parsed.findIndex((r) => r.id === slug);
+    if (idx < 0) return json({ ok: false, error: `No record found for slug: ${slug}` }, 404);
+    const rec = parsed[idx];
+
+    if (mode === "record-json") {
+      return json({ ok: true, target, slug, mode, language: "json", text: JSON.stringify(rec, null, 2) });
+    }
+    if (mode === "record-html") {
+      const key = getRecordPathKey(target);
+      const htmlPath = key ? String(rec[key] || "").trim() : "";
+      if (!htmlPath) return json({ ok: false, error: "No html path configured on record" }, 400);
+      const draftHtml = await getFileFromGithub(env, htmlPath, draftBranch);
+      const baseHtml = await getFileFromGithub(env, htmlPath, baseBranch);
+      const html = draftHtml || baseHtml;
+      if (!html) return json({ ok: false, error: `HTML file not found: ${htmlPath}` }, 404);
+      return json({ ok: true, target, slug, mode, language: "html", path: htmlPath, text: html.text });
+    }
+    return json({ ok: false, error: "Invalid mode" }, 400);
+  }
+
+  async function saveRawContent(request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const body = await request.json();
+    const target = String(body.target || "");
+    const slug = String(body.slug || "");
+    const mode = String(body.mode || "file");
+    const text = String(body.text || "");
+    const path = mapTargetPath(target);
+    const draftBranch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+    const baseBranch = getContentBaseBranch(env);
+    await ensureBranchExists(env, draftBranch, baseBranch);
+
+    if (mode === "file") {
+      if (path.endsWith(".json")) {
+        try { JSON.parse(text); } catch { return json({ ok: false, error: "Invalid JSON" }, 400); }
+      }
+      const draftFile = await getFileFromGithub(env, path, draftBranch);
+      const commit = await putFileToGithub(
+        env,
+        path,
+        text,
+        draftBranch,
+        `chore(raw): update ${target} via source mode (${user})`,
+        draftFile ? draftFile.sha : null
+      );
+      return json({ ok: true, branch: draftBranch, path, commitSha: commit.commit?.sha || null });
+    }
+
+    const draftFile = await getFileFromGithub(env, path, draftBranch);
+    const baseFile = await getFileFromGithub(env, path, baseBranch);
+    const file = draftFile || baseFile;
+    if (!file) return json({ ok: false, error: `File not found: ${path}` }, 404);
+    let parsed;
+    try {
+      parsed = JSON.parse(file.text);
+    } catch {
+      return json({ ok: false, error: "List target JSON invalid" }, 500);
+    }
+    if (!Array.isArray(parsed)) return json({ ok: false, error: "record modes are only valid for list targets" }, 400);
+    if (!slug) return json({ ok: false, error: "slug is required" }, 400);
+    const idx = parsed.findIndex((r) => r.id === slug);
+    if (idx < 0) return json({ ok: false, error: `No record found for slug: ${slug}` }, 404);
+
+    if (mode === "record-json") {
+      let next;
+      try { next = JSON.parse(text); } catch { return json({ ok: false, error: "Invalid JSON" }, 400); }
+      if (!next || typeof next !== "object") return json({ ok: false, error: "record JSON must be an object" }, 400);
+      next.id = next.id || slug;
+      parsed[idx] = next;
+      const commit = await putFileToGithub(
+        env,
+        path,
+        JSON.stringify(parsed, null, 2),
+        draftBranch,
+        `chore(raw): update ${target}/${slug} json (${user})`,
+        draftFile ? draftFile.sha : null
+      );
+      return json({ ok: true, branch: draftBranch, path, commitSha: commit.commit?.sha || null });
+    }
+
+    if (mode === "record-html") {
+      const key = getRecordPathKey(target);
+      const htmlPath = key ? String(parsed[idx][key] || "").trim() : "";
+      if (!htmlPath) return json({ ok: false, error: "No html path configured on record" }, 400);
+      const draftHtml = await getFileFromGithub(env, htmlPath, draftBranch);
+      const commit = await putFileToGithub(
+        env,
+        htmlPath,
+        text,
+        draftBranch,
+        `chore(raw): update html ${target}/${slug} (${user})`,
+        draftHtml ? draftHtml.sha : null
+      );
+      return json({ ok: true, branch: draftBranch, path: htmlPath, commitSha: commit.commit?.sha || null });
+    }
+    return json({ ok: false, error: "Invalid mode" }, 400);
   }
 
   async function getHomepageUi(request, env) {
