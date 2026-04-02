@@ -44,6 +44,9 @@
         if (pathname === "/api/admin/session") {
           return withCors(request, env, await getSessionStatus(request, env));
         }
+        if (pathname === "/api/admin/stats" && request.method === "GET") {
+          return withCors(request, env, await getAdminStats(request, env));
+        }
         if (pathname === "/api/admin/gate/status") {
           return withCors(request, env, await getGateStatus(request, env));
         }
@@ -325,6 +328,63 @@
       gateVerified,
       serverTimeUtc: new Date().toISOString(),
       serverTimeIst: formatIstTimestamp()
+    });
+  }
+
+  async function getAdminStats(request, env) {
+    if (!(await isGateVerified(request, env))) {
+      return json({ ok: false, error: "Admin password verification required" }, 401);
+    }
+    const baseBranch = getContentBaseBranch(env);
+    const pagesRes = await githubApi(
+      env,
+      `/contents/pages?ref=${encodeURIComponent(baseBranch)}`
+    );
+    let htmlPages = [];
+    if (pagesRes.ok) {
+      const arr = await pagesRes.json();
+      if (Array.isArray(arr)) {
+        htmlPages = arr.filter((f) => f.type === "file" && String(f.name).endsWith(".html"));
+      }
+    }
+
+    const totalHtmlBytes = htmlPages.reduce((sum, f) => sum + Number(f.size || 0), 0);
+
+    const lastCommitRes = await githubApi(
+      env,
+      `/commits?sha=${encodeURIComponent(baseBranch)}&per_page=1`
+    );
+    let lastCommit = null;
+    if (lastCommitRes.ok) {
+      const rows = await lastCommitRes.json();
+      const c = Array.isArray(rows) ? rows[0] : null;
+      if (c) {
+        const iso = c.commit?.author?.date || null;
+        lastCommit = {
+          sha: c.sha || null,
+          message: c.commit?.message || "",
+          atUtc: iso,
+          atIst: iso ? formatIstTimestamp(Date.parse(iso)) : null
+        };
+      }
+    }
+
+    return json({
+      ok: true,
+      generatedAtUtc: new Date().toISOString(),
+      generatedAtIst: formatIstTimestamp(),
+      pages: {
+        htmlCount: htmlPages.length,
+        totalHtmlBytes
+      },
+      deploy: {
+        baseBranch,
+        lastCommit
+      },
+      traffic: {
+        cfLast24h: null,
+        note: "Cloudflare traffic analytics API not configured yet."
+      }
     });
   }
 

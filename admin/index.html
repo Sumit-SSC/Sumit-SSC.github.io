@@ -19,9 +19,32 @@
       <p id="home-session" class="text-sm text-slate-300">Checking session…</p>
       <p id="home-server-time" class="text-xs text-slate-400 mt-1"></p>
       <div class="mt-3 flex flex-wrap gap-2">
+        <button id="btn-unlock" class="rounded bg-indigo-700 hover:bg-indigo-600 px-3 py-2 text-sm">Unlock Admin</button>
         <button id="btn-login" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Login</button>
         <button id="btn-logout" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Logout</button>
         <button id="btn-refresh-session" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Refresh session</button>
+      </div>
+    </section>
+
+    <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
+      <h2 class="text-sm font-semibold mb-2">Admin Stats</h2>
+      <div class="grid md:grid-cols-2 gap-3 text-sm">
+        <div class="rounded border border-slate-700 p-3">
+          <p class="text-slate-400 text-xs">HTML pages</p>
+          <p id="stat-html-count" class="text-slate-100">-</p>
+        </div>
+        <div class="rounded border border-slate-700 p-3">
+          <p class="text-slate-400 text-xs">Total HTML size</p>
+          <p id="stat-html-size" class="text-slate-100">-</p>
+        </div>
+        <div class="rounded border border-slate-700 p-3 md:col-span-2">
+          <p class="text-slate-400 text-xs">Last repo update (IST)</p>
+          <p id="stat-last-update" class="text-slate-100">-</p>
+        </div>
+        <div class="rounded border border-slate-700 p-3 md:col-span-2">
+          <p class="text-slate-400 text-xs">Cloudflare traffic</p>
+          <p id="stat-traffic" class="text-slate-100">Not configured</p>
+        </div>
       </div>
     </section>
 
@@ -50,6 +73,12 @@
         if (!sess || !sess.user) return "";
         if (typeof sess.user === "string") return sess.user;
         return sess.user.login || "";
+      }
+      function fmtBytes(v) {
+        const n = Number(v || 0);
+        if (n < 1024) return `${n} B`;
+        if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+        return `${(n / (1024 * 1024)).toFixed(2)} MB`;
       }
       async function refreshSession() {
         try {
@@ -85,6 +114,30 @@
         }
       }
 
+      async function refreshStats() {
+        try {
+          const d = await fetch(`${API}/api/admin/stats`, { credentials: "include" }).then((r) => r.json());
+          if (!d.ok) {
+            el("stat-last-update").textContent = d.error || "Stats unavailable";
+            return;
+          }
+          el("stat-html-count").textContent = String(d.pages?.htmlCount ?? "-");
+          el("stat-html-size").textContent = fmtBytes(d.pages?.totalHtmlBytes || 0);
+          const lc = d.deploy?.lastCommit;
+          el("stat-last-update").textContent = lc ? `${lc.atIst || "-"} (${(lc.sha || "").slice(0, 7)})` : "-";
+          el("stat-traffic").textContent = d.traffic?.cfLast24h != null ? String(d.traffic.cfLast24h) : (d.traffic?.note || "Not configured");
+        } catch (e) {
+          el("stat-last-update").textContent = String(e && e.message ? e.message : e);
+        }
+      }
+
+      el("btn-unlock").addEventListener("click", async () => {
+        const ok = await ensureGate();
+        if (ok) {
+          await refreshSession();
+          await refreshStats();
+        }
+      });
       el("btn-login").addEventListener("click", async () => {
         const ok = await ensureGate();
         if (!ok) return;
@@ -98,10 +151,10 @@
         const ok = await ensureGate();
         if (!ok) return;
         await refreshSession();
+        await refreshStats();
       });
-      ensureGate().then((ok) => {
-        if (ok) refreshSession();
-      });
+      refreshSession();
+      refreshStats();
     })();
   </script>
 </body>
