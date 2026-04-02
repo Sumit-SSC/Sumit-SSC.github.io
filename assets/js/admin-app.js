@@ -17,6 +17,7 @@
 
   let editorInstance = null;
   let activeEditorHolderId = null;
+  let editorPreviewTimer = null;
 
   const state = {
     kind: "projects-home",
@@ -131,16 +132,46 @@
   }
 
   function getTools() {
-    const H = window.Header;
-    const L = window.EditorjsList;
-    const C = window.CodeTool;
-    const E = window.Embed;
+    // Editor.js tools are exposed as different globals depending on the CDN bundle.
+    // We try multiple known names so the editor actually renders blocks.
+    const W = window || {};
     const tools = {};
-    if (H) tools.header = H;
-    if (L) tools.list = L;
-    if (C) tools.code = C;
-    if (E) tools.embed = E;
+
+    const headerTool = W.Header || W.HeaderTool;
+    const listTool = W.EditorjsList || W.List || W.EditorjsListTool;
+    const codeTool = W.CodeTool || W.Code || W.CodeToolPlugin;
+    const embedTool = W.Embed || W.EmbedTool;
+    const paragraphTool = W.Paragraph || W.ParagraphTool;
+
+    if (headerTool) tools.header = headerTool;
+    if (listTool) tools.list = listTool;
+    if (codeTool) tools.code = codeTool;
+    if (embedTool) tools.embed = embedTool;
+    if (paragraphTool) tools.paragraph = paragraphTool;
+
     return tools;
+  }
+
+  function previewElForHolder(holderId) {
+    if (holderId === "admin-editor-holder-home") return el("json-preview-home");
+    if (holderId === "admin-editor-holder") return el("json-preview-record");
+    return null;
+  }
+
+  async function updateEditorJsonPreviewNow() {
+    const previewEl = previewElForHolder(activeEditorHolderId);
+    if (!previewEl || !editorInstance) return;
+    try {
+      const data = await editorInstance.save();
+      previewEl.textContent = JSON.stringify(data, null, 2);
+    } catch (e) {
+      previewEl.textContent = String(e && e.message ? e.message : e);
+    }
+  }
+
+  function scheduleEditorJsonPreview() {
+    if (editorPreviewTimer) clearTimeout(editorPreviewTimer);
+    editorPreviewTimer = setTimeout(() => updateEditorJsonPreviewNow(), 500);
   }
 
   async function mountEditor(holderId, data) {
@@ -159,11 +190,16 @@
       holder: holderId,
       data: normalized,
       tools: getTools(),
-      onChange: () => setStatus("Edited — save draft when ready.")
+      onChange: () => {
+        setStatus("Edited — save draft when ready.");
+        scheduleEditorJsonPreview();
+      }
     });
     if (editorInstance.isReady && typeof editorInstance.isReady.then === "function") {
       await editorInstance.isReady;
     }
+    // Initial preview after tools and data are ready.
+    await updateEditorJsonPreviewNow();
   }
 
   async function apiSession() {
