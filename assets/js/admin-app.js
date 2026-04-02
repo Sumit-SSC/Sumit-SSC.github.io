@@ -25,7 +25,7 @@
     target: "homepage",
     slug: "",
     homeTab: "titles",
-    editWorkspace: false,
+    editWorkspace: true,
     compactListsOnSelect: true,
     centerPreviewMode: "live"
   };
@@ -453,6 +453,13 @@
     if (pSettings) pSettings.classList.toggle("hidden", !isSettings);
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
+    // Simple mode: hide noisy debug JSON panels while editing.
+    if ((isHome && state.homeTab === "json") || isRecord) {
+      const jh = el("json-preview-home");
+      const jr = el("json-preview-record");
+      if (jh && jh.parentElement?.tagName === "DETAILS") jh.parentElement.classList.add("hidden");
+      if (jr && jr.parentElement?.tagName === "DETAILS") jr.parentElement.classList.add("hidden");
+    }
     renderBlockNav({ blocks: [] });
   }
 
