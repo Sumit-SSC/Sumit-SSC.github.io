@@ -10,8 +10,11 @@
 			(function () {
 				var h = location.hostname || "";
 				var p = location.pathname || "";
+				/* Canonical admin UI lives on the main Pages host (same repo). GitHub must serve this
+				   page for admin.sumit.indevs.in — if you see 404, add that host in Pages settings or
+				   use a Cloudflare redirect (see docs/ADMIN_WORKSPACE.md). */
 				if (h === "admin.sumit.indevs.in" && (p === "/" || p === "" || p === "/index.html")) {
-					location.replace(location.origin + "/admin/index.html");
+					location.replace("https://sumit.indevs.in/admin/index.html");
 				}
 			})();
 		</script>

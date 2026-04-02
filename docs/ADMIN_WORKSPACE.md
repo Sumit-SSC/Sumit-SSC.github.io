@@ -72,7 +72,21 @@ Expect **HTTP/2 200** or **302** once TLS is active.
 
 ### 6. What this repo does
 
-The root **`index.html`** includes a small script: if the host is **`admin.sumit.indevs.in`** and the path is `/` or `/index.html`, the browser is sent to **`/admin/index.html`**, so the admin workspace opens without typing `/admin/`.
+The root **`index.html`** includes a small script: if the host is **`admin.sumit.indevs.in`** and the path is `/` or `/index.html`, the browser is sent to **`https://sumit.indevs.in/admin/index.html`** (canonical URL for the admin UI).
+
+That script runs **only after GitHub serves `index.html`**. If you see **GitHub’s 404 page** for `https://admin.sumit.indevs.in/`, GitHub is not serving this repo for that hostname yet — the script never runs.
+
+**Fix (pick one):**
+
+1. **GitHub Pages — add the hostname**  
+   Repo → **Settings** → **Pages** → **Custom domain** → add **`admin.sumit.indevs.in`** (keep `sumit.indevs.in` as well). Save and wait for the DNS check / certificate. Then `https://admin.sumit.indevs.in/` should load `index.html` and redirect.
+
+2. **Cloudflare — redirect only (no GitHub host needed)**  
+   If DNS for `admin` is **DNS only** (grey cloud) to GitHub, Cloudflare redirect rules **do not run** (traffic bypasses Cloudflare). Do this instead:  
+   - **Rules** → **Redirect Rules** → create: if `hostname` equals `admin.sumit.indevs.in`, then redirect to `https://sumit.indevs.in/admin/index.html` (302).  
+   - Ensure an `admin` DNS record exists and is **proxied** (orange cloud) so the rule applies. You may replace `admin`’s CNAME to `github.io` with a proxied placeholder (e.g. CNAME to `sumit.indevs.in`) or follow Cloudflare’s redirect docs — the redirect fires **before** any origin, so you never rely on GitHub accepting `admin` as a Pages host.
+
+**Practical default:** use **`https://sumit.indevs.in/admin/index.html`** directly and skip the `admin` subdomain until DNS + GitHub or Cloudflare are configured.
 
 ### 7. Cloudflare Worker (`admin-api` — API only)
 
