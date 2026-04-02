@@ -23,7 +23,8 @@
     kind: "dashboard",
     target: "homepage",
     slug: "",
-    homeTab: "titles"
+    homeTab: "titles",
+    editWorkspace: false
   };
 
   const el = (id) => document.getElementById(id);
@@ -40,6 +41,27 @@
     const frame = el("admin-preview");
     if (dash) dash.classList.toggle("hidden", mode !== "dashboard");
     if (frame) frame.classList.toggle("hidden", mode === "dashboard");
+    applyWorkspaceLayout();
+  }
+
+  function applyWorkspaceLayout() {
+    const previewPane = el("workspace-preview-pane");
+    const inspector = el("workspace-inspector");
+    const toggleBtn = el("rib-edit-workspace");
+    const isEditingRoute =
+      state.kind === "project" ||
+      state.kind === "caseStudy" ||
+      (state.kind === "projects-home" && state.homeTab === "json");
+    const active = state.editWorkspace && isEditingRoute;
+
+    if (previewPane) previewPane.classList.toggle("hidden", active);
+    if (inspector) inspector.classList.toggle("w-[min(100%,420px)]", !active);
+    if (inspector) inspector.classList.toggle("w-full", active);
+    if (toggleBtn) {
+      toggleBtn.textContent = active ? "Preview workspace" : "Edit workspace";
+      toggleBtn.classList.toggle("bg-slate-700", active);
+      toggleBtn.classList.toggle("text-white", active);
+    }
   }
 
   function previewUrl(pathWithQuery) {
@@ -316,6 +338,7 @@
       return;
     }
     setCenterView("preview");
+    applyWorkspaceLayout();
 
     if (state.kind === "projects-home") {
       setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
@@ -622,6 +645,10 @@
       if (f && f.src) f.src = f.src;
     });
     el("rib-open-live")?.addEventListener("click", ribOpenLive);
+    el("rib-edit-workspace")?.addEventListener("click", () => {
+      state.editWorkspace = !state.editWorkspace;
+      applyWorkspaceLayout();
+    });
     el("rib-save")?.addEventListener("click", ribSave);
     el("rib-load")?.addEventListener("click", ribLoad);
 

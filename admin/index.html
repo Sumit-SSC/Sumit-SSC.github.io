@@ -50,6 +50,7 @@
         <span class="px-2 text-slate-500 font-medium">View</span>
         <button type="button" id="rib-refresh" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Refresh preview</button>
         <button type="button" id="rib-open-live" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Open live page</button>
+        <button type="button" id="rib-edit-workspace" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Edit workspace</button>
       </div>
       <div id="rib-insert-group" class="hidden flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
         <span class="px-2 text-slate-500 font-medium">Insert</span>
@@ -71,7 +72,7 @@
     <div id="rib-status" class="ml-auto text-xs text-slate-400 max-w-[min(24rem,40vw)] truncate"></div>
   </header>
 
-  <div class="flex flex-1 min-h-0">
+  <div id="workspace-main" class="flex flex-1 min-h-0">
     <!-- Sidebar -->
     <aside class="w-72 shrink-0 border-r border-slate-700/80 bg-panel flex flex-col overflow-hidden">
       <div class="p-3 border-b border-slate-700/60">
@@ -113,7 +114,7 @@
     </aside>
 
     <!-- Center workspace -->
-    <div class="flex-1 flex flex-col min-w-0 bg-slate-950">
+    <div id="workspace-preview-pane" class="flex-1 flex flex-col min-w-0 bg-slate-950">
       <section id="admin-dashboard-view" class="hidden flex-1 overflow-y-auto p-6">
         <div class="max-w-5xl mx-auto w-full space-y-5">
           <h2 class="text-2xl font-bold text-white">Admin Dashboard</h2>
@@ -156,7 +157,7 @@
     </div>
 
     <!-- Inspector -->
-    <aside class="w-[min(100%,420px)] shrink-0 border-l border-slate-700/80 bg-panel flex flex-col overflow-hidden">
+    <aside id="workspace-inspector" class="w-[min(100%,420px)] shrink-0 border-l border-slate-700/80 bg-panel flex flex-col overflow-hidden">
       <div class="p-2 border-b border-slate-700/60 flex gap-1 text-xs" id="inspector-tabs">
         <button type="button" id="tab-titles" class="inspector-tab px-2 py-1 rounded bg-slate-700 text-white">Titles</button>
         <button type="button" id="tab-json" class="inspector-tab px-2 py-1 rounded text-slate-400 hover:bg-slate-800">Homepage JSON</button>
