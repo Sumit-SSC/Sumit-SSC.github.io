@@ -27,7 +27,7 @@ This document is the implementation baseline for a secure `/dev` editor on top o
   - `data/projects/*.html`
   - `data/case_studies/*.html`
   - `assets/images/projects/**`
-- Save to `content/drafts` first (PR flow), then merge to `main`.
+- Save to `content/drafts` first (PR flow), then merge to your live GitHub Pages branch (e.g. `feature/cf-admin-editor-foundation`).
 
 ## Content model and style control
 
