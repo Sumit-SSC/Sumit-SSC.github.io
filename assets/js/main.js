@@ -60,6 +60,45 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+function editorBlocksToHtml(editorContent) {
+  const blocks = Array.isArray(editorContent?.blocks) ? editorContent.blocks : [];
+  if (!blocks.length) return "";
+  const out = [];
+  for (const b of blocks) {
+    if (!b || !b.type) continue;
+    const d = b.data || {};
+    if (b.type === "header") {
+      const level = Math.min(4, Math.max(2, Number(d.level || 2)));
+      out.push(`<h${level} class="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-8 mb-3">${escapeHtml(d.text || "")}</h${level}>`);
+      continue;
+    }
+    if (b.type === "paragraph") {
+      // Editor.js paragraph text may contain safe inline HTML from the editor itself; we keep it minimal.
+      out.push(`<p class="text-gray-600 dark:text-gray-300 leading-relaxed">${d.text || ""}</p>`);
+      continue;
+    }
+    if (b.type === "list") {
+      const style = String(d.style || "unordered");
+      const items = Array.isArray(d.items) ? d.items : [];
+      const tag = style === "ordered" ? "ol" : "ul";
+      const li = items.map((it) => `<li>${typeof it === "string" ? it : escapeHtml(String(it ?? ""))}</li>`).join("");
+      out.push(`<${tag} class="list-disc pl-6 space-y-1 text-gray-600 dark:text-gray-300">${li}</${tag}>`);
+      continue;
+    }
+    if (b.type === "code") {
+      out.push(`<pre class="rounded-lg bg-slate-900 text-slate-100 p-4 overflow-auto text-sm"><code>${escapeHtml(d.code || "")}</code></pre>`);
+      continue;
+    }
+    if (b.type === "embed") {
+      const url = String(d.source || d.embed || "").trim();
+      if (!url) continue;
+      out.push(`<p class="text-sm"><a class="text-primary hover:underline" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open embed</a></p>`);
+      continue;
+    }
+  }
+  return out.join("\n");
+}
+
 function truncateText(text, maxLen = 120) {
   if (!text) return '';
   const t = String(text);
@@ -1529,6 +1568,14 @@ async function loadCaseStudyPage() {
   const container = document.getElementById('case-study-content');
   if (!container) return;
   try {
+    const editorStory = editorBlocksToHtml(caseStudy?.editor_content);
+    if (editorStory) {
+      container.innerHTML = editorStory;
+      renderCaseStudyQuickSummary(caseStudy, container);
+      renderCaseStudyTOC(container);
+      renderRelatedCaseStudiesCallout(caseStudy, caseStudies);
+      return;
+    }
     const casePath = caseStudy.case_study_path.startsWith('data/') ? getDataBase() + caseStudy.case_study_path.slice(5) : caseStudy.case_study_path;
     const res = await fetch(casePath);
     if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
@@ -1673,12 +1720,13 @@ function renderProject(project, caseStudy, contentFromFile) {
 
   // Build sections with IDs for TOC (use content from HTML file if available, else JSON)
   const sections = [];
-  const overview = contentFromFile?.overview || project.full_description;
+  const editorStory = editorBlocksToHtml(project?.editor_content);
+  const overview = editorStory || contentFromFile?.overview || project.full_description;
   const problem = contentFromFile?.problem || project.problem_statement;
   const approach = contentFromFile?.approach || project.approach;
   const insights = contentFromFile?.insights || project.insights;
   const mediaNotes = contentFromFile?.media || project.media_notes;
-  if (overview) sections.push({ id: 'overview', title: 'Overview', content: overview });
+  if (overview) sections.push({ id: 'overview', title: editorStory ? 'Story' : 'Overview', content: overview });
   if (problem) sections.push({ id: 'problem', title: 'Problem Statement', content: problem });
   if (approach) sections.push({ id: 'approach', title: 'Approach / Methodology', content: approach });
   if (insights) sections.push({ id: 'insights', title: 'Insights & Outcomes', content: insights });
@@ -1763,6 +1811,13 @@ async function loadCaseStudyIntoProject(project, caseStudy) {
   if (!container) return;
 
   try {
+    const editorStory = editorBlocksToHtml(caseStudy?.editor_content);
+    if (editorStory) {
+      container.innerHTML = editorStory;
+      const assetsSlot = document.getElementById('case-study-assets');
+      if (assetsSlot) assetsSlot.innerHTML = caseStudyAssetsCallout(project);
+      return;
+    }
     const casePath = caseStudy.case_study_path.startsWith('data/') ? getDataBase() + caseStudy.case_study_path.slice(5) : caseStudy.case_study_path;
     const res = await fetch(casePath);
     if (!res.ok) throw new Error(`Failed to load case study: ${res.status}`);
