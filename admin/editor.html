@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio Admin Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#4f46e5",
+            accent: "#0ea5e9",
+            shell: "#0b1220",
+            panel: "#111827"
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; }
+    #admin-preview { min-height: 0; }
+  </style>
+  <script>
+    window.__ADMIN_APP__ = {
+      siteOrigin: "https://sumit.indevs.in",
+      apiBase: "https://admin-api.sumit.indevs.in",
+      pagesPrefix: "/pages/"
+    };
+  </script>
+</head>
+<body class="h-screen flex flex-col overflow-hidden bg-shell text-slate-100">
+  <header class="flex flex-wrap items-center gap-2 border-b border-slate-700/80 bg-panel px-3 py-2 shadow-lg shrink-0 z-20">
+    <div class="flex items-center gap-2 mr-4">
+      <span class="text-lg font-bold tracking-tight text-white">Portfolio Admin</span>
+      <span class="hidden sm:inline text-xs text-slate-500">Workspace</span>
+    </div>
+    <nav class="flex flex-wrap items-center gap-1 text-xs" aria-label="Ribbon">
+      <div class="flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">File</span>
+        <button type="button" id="rib-login" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Login</button>
+        <button type="button" id="rib-logout" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Logout</button>
+        <button type="button" id="rib-session" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Session</button>
+      </div>
+      <div class="flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">View</span>
+        <button type="button" id="rib-refresh" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Refresh preview</button>
+        <button type="button" id="rib-open-live" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Open live page</button>
+        <button type="button" id="rib-edit-workspace" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Edit workspace</button>
+      </div>
+      <div id="rib-insert-group" class="hidden flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">Insert</span>
+        <button type="button" data-insert="paragraph" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Paragraph</button>
+        <button type="button" data-insert="header" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Heading</button>
+        <button type="button" data-insert="list" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">List</button>
+        <button type="button" data-insert="code" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Code</button>
+        <button type="button" data-insert="embed" class="rib-ins rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Embed</button>
+      </div>
+      <div id="rib-block-group" class="hidden flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">Block</span>
+        <button type="button" id="rib-block-up" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Up</button>
+        <button type="button" id="rib-block-down" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Down</button>
+        <button type="button" id="rib-block-delete" class="rounded px-2 py-1 hover:bg-slate-700 text-rose-300">Delete</button>
+      </div>
+      <div class="flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">Draft</span>
+        <button type="button" id="rib-load" class="rounded px-2 py-1 hover:bg-slate-700 text-slate-200">Reload</button>
+        <button type="button" id="rib-save" class="rounded px-2 py-1 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold">Save draft</button>
+      </div>
+      <div class="flex items-center rounded-md bg-slate-800/80 px-1 py-0.5 border border-slate-600/60">
+        <span class="px-2 text-slate-500 font-medium">Live</span>
+        <button type="button" id="rib-publish" class="rounded px-2 py-1 bg-indigo-700 hover:bg-indigo-600 text-white font-semibold" title="Copy draft file to GitHub Pages branch">Publish to live</button>
+      </div>
+    </nav>
+    <div id="rib-session-info" class="ml-auto text-xs text-slate-300 max-w-[min(28rem,45vw)] truncate"></div>
+    <div id="rib-status" class="text-xs text-slate-400 max-w-[min(24rem,40vw)] truncate"></div>
+  </header>
+
+  <div id="workspace-main" class="flex flex-1 min-h-0">
+    <aside class="w-72 shrink-0 border-r border-slate-700/80 bg-panel flex flex-col overflow-hidden">
+      <div class="p-3 border-b border-slate-700/60">
+        <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Site</p>
+        <ul class="space-y-1 text-sm">
+          <li><button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="dashboard">Dashboard</button></li>
+          <li><button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="projects-home">Projects (home)</button></li>
+          <li><button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="settings">Settings (theme)</button></li>
+          <li><button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="case-archive">Case studies archive</button></li>
+          <li><button type="button" class="nav-item w-full text-left rounded-lg px-3 py-2 hover:bg-slate-800 text-slate-200" data-route="about">About</button></li>
+        </ul>
+      </div>
+      <div class="flex-1 overflow-y-auto p-3">
+        <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Projects</p>
+        <div class="mb-2"><button type="button" id="btn-new-project" class="w-full rounded bg-indigo-700/80 hover:bg-indigo-600 text-xs px-2 py-1.5">+ New project template</button></div>
+        <ul id="admin-sortable-projects" class="space-y-0.5 text-sm mb-6"></ul>
+        <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Case studies</p>
+        <div class="mb-2"><button type="button" id="btn-new-case" class="w-full rounded bg-indigo-700/80 hover:bg-indigo-600 text-xs px-2 py-1.5">+ New case study template</button></div>
+        <ul id="admin-sortable-cases" class="space-y-0.5 text-sm"></ul>
+        <div id="block-nav-wrap" class="hidden mt-6">
+          <p class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Current page blocks</p>
+          <ul id="block-nav-list" class="space-y-1 text-xs"></ul>
+        </div>
+      </div>
+    </aside>
+
+    <div id="workspace-preview-pane" class="flex-1 flex flex-col min-w-0 bg-slate-950">
+      <section id="admin-dashboard-view" class="hidden flex-1 overflow-y-auto p-6">
+        <div class="max-w-5xl mx-auto w-full space-y-5">
+          <h2 class="text-2xl font-bold text-white">Admin Dashboard</h2>
+          <p class="text-sm text-slate-400">Overview first. Use the left menu to open editor pages. Save draft writes to draft branch; Publish pushes to live.</p>
+          <div class="grid md:grid-cols-4 gap-3">
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4"><div class="text-xs text-slate-400">Session</div><div id="dash-session" class="mt-2 text-lg font-semibold">-</div></article>
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4"><div class="text-xs text-slate-400">Projects</div><div id="dash-project-count" class="mt-2 text-lg font-semibold">-</div></article>
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4"><div class="text-xs text-slate-400">Case studies</div><div id="dash-case-count" class="mt-2 text-lg font-semibold">-</div></article>
+            <article class="rounded-xl border border-slate-700 bg-slate-900/70 p-4"><div class="text-xs text-slate-400">Latest status</div><div id="dash-last-status" class="mt-2 text-sm font-medium text-slate-200">Ready</div></article>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4"><div class="text-xs text-slate-400">Server time (IST)</div><div id="dash-server-time" class="mt-2 text-sm font-medium text-slate-200">-</div></div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4"><h3 class="text-sm font-semibold text-white mb-2">Quick start</h3><ol class="list-decimal pl-5 text-sm text-slate-300 space-y-1"><li>Login from ribbon.</li><li>Select a page/record from left menu.</li><li>Edit blocks, then Save draft.</li><li>Publish to live when ready.</li></ol></div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 space-y-2"><h3 class="text-sm font-semibold text-white">Session Details</h3><p id="dash-session-detail" class="text-sm text-slate-300">Checking login status…</p><button type="button" id="btn-open-editor" class="rounded-lg bg-indigo-700 hover:bg-indigo-600 px-4 py-2 text-sm font-semibold">Edit Content Workspace</button></div>
+          <div class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 space-y-3"><h3 class="text-sm font-semibold text-white">Site defaults</h3><p class="text-xs text-slate-400">Set default mode and color theme from dashboard (saved in <code class="text-slate-300">data/site-theme.json</code>).</p><div class="grid md:grid-cols-2 gap-3"><label class="block text-sm"><span class="text-slate-400 text-xs">Default mode</span><select id="dash-theme-mode" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label><label class="block text-sm"><span class="text-slate-400 text-xs">Default color theme</span><select id="dash-theme-color" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm"><option value="theme-custom">Custom (use primary/accent)</option><option value="theme-indigo">Indigo</option><option value="theme-orange">Orange</option><option value="theme-emerald">Emerald</option><option value="theme-purple">Purple</option></select></label></div><button type="button" id="btn-dash-theme-save" class="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm font-semibold">Save defaults to draft</button><p id="msg-dash-theme" class="text-xs text-slate-500 min-h-[1em]"></p></div>
+        </div>
+      </section>
+      <iframe id="admin-preview" title="Site preview" class="flex-1 w-full border-0 bg-white" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
+      <div id="preview-bottom-actions" class="hidden border-t border-slate-700/70 bg-slate-900/70 p-2">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-slate-400 mr-1">Quick actions</span>
+          <button type="button" id="btn-bottom-insert" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1">Insert paragraph</button>
+          <button type="button" id="btn-bottom-delete" class="rounded bg-rose-900/70 hover:bg-rose-800 px-2 py-1">Delete selected</button>
+          <button type="button" id="btn-bottom-up" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1">Move up</button>
+          <button type="button" id="btn-bottom-down" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1">Move down</button>
+        </div>
+      </div>
+    </div>
+
+    <aside id="workspace-inspector" class="w-[min(100%,420px)] shrink-0 border-l border-slate-700/80 bg-panel flex flex-col overflow-hidden">
+      <div class="p-2 border-b border-slate-700/60 flex gap-1 text-xs" id="inspector-tabs">
+        <button type="button" id="tab-titles" class="inspector-tab px-2 py-1 rounded bg-slate-700 text-white">Titles</button>
+        <button type="button" id="tab-json" class="inspector-tab px-2 py-1 rounded text-slate-400 hover:bg-slate-800">Homepage JSON</button>
+      </div>
+      <div id="panel-home-ui" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <p id="home-auth-hint" class="hidden text-xs text-amber-300 border border-amber-800/60 rounded-lg px-2 py-1.5 mb-2">Sign in (ribbon → Login) to load/save. Public site data is unchanged until you save and publish.</p>
+        <p class="text-xs text-slate-400">View switcher labels (saved to <code class="text-slate-300">data/homepage-ui.json</code>).</p>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Featured title</span><input id="fld-featured" type="text" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm" /></label>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Case studies title</span><input id="fld-cs" type="text" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm" /></label>
+        <button type="button" id="btn-save-ui" class="w-full rounded-lg bg-emerald-600 hover:bg-emerald-500 py-2 text-sm font-semibold">Save draft</button>
+        <p id="msg-home-ui" class="text-xs text-slate-500 min-h-[1em]"></p>
+        <div class="pt-2 border-t border-slate-700/60 space-y-2">
+          <p class="text-[11px] text-slate-500">Backups live under <code class="text-slate-400">data/_admin_backups/</code> on your Pages branch.</p>
+          <button type="button" id="btn-publish-home-ui" class="w-full rounded-lg bg-indigo-700 hover:bg-indigo-600 py-2 text-sm font-semibold">Publish titles to live</button>
+        </div>
+      </div>
+      <div id="panel-home-json" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
+        <p class="px-4 pt-3 text-xs text-slate-400">Homepage content block (<code class="text-slate-300">homepage-content.json</code>).</p>
+        <div id="admin-editor-holder-home" class="flex-1 overflow-y-auto mx-4 mb-2 mt-2 rounded-lg border border-slate-600 bg-slate-900/50 p-2 min-h-[200px]"></div>
+        <div class="px-4 mb-2"><h3 class="text-[11px] font-medium text-slate-400 mb-2">Draft preview</h3><div id="draft-preview-home" class="rounded-lg bg-white text-gray-800 border border-slate-700/60 p-3 min-h-[8rem]"></div></div>
+        <details class="px-4 mb-2"><summary class="text-[11px] font-medium text-slate-400 cursor-pointer select-none">Editor JSON (read-only)</summary><pre id="json-preview-home" class="mt-2 overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre></details>
+        <div class="px-4 pb-3"><button type="button" id="btn-publish-home-json" class="w-full rounded-lg bg-indigo-700 hover:bg-indigo-600 py-2 text-sm font-semibold">Publish homepage JSON to live</button></div>
+      </div>
+      <div id="panel-editor-record" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
+        <p id="record-label" class="px-4 pt-3 text-sm font-medium text-slate-200"></p>
+        <p id="record-auth-banner" class="hidden mx-4 mt-2 text-xs text-amber-200 bg-amber-950/50 border border-amber-800/60 rounded-lg px-3 py-2"></p>
+        <p class="px-4 text-xs text-slate-500 pt-2">Click inside a block to edit. Use Insert from the ribbon for new blocks. <strong class="text-slate-300">Save draft</strong> writes to draft; <strong class="text-slate-300">Publish to live</strong> updates your Pages branch with backup.</p>
+        <div id="admin-editor-holder" class="flex-1 overflow-y-auto mx-4 mb-2 mt-2 rounded-lg border border-slate-600 bg-slate-900/50 p-2 min-h-[220px]"></div>
+        <div class="px-4 mb-2"><h3 class="text-[11px] font-medium text-slate-400 mb-2">Draft preview</h3><div id="draft-preview-record" class="rounded-lg bg-white text-gray-800 border border-slate-700/60 p-3 min-h-[8rem]"></div></div>
+        <details class="px-4 mb-2"><summary class="text-[11px] font-medium text-slate-400 cursor-pointer select-none">Editor JSON (read-only)</summary><pre id="json-preview-record" class="mt-2 overflow-auto rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 p-2 text-[11px] min-h-[6rem]"></pre></details>
+        <div class="px-4 pb-2 space-y-2 border-t border-slate-700/60 pt-3"><p class="text-[11px] font-medium text-slate-400">Restore live site from backup</p><div class="flex gap-2 flex-wrap items-center"><select id="sel-restore-backup" class="flex-1 min-w-[8rem] rounded border border-slate-600 bg-slate-900 text-xs px-2 py-1.5"><option value="">Load backups…</option></select><button type="button" id="btn-refresh-backups" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1 text-xs">Refresh</button><button type="button" id="btn-restore-backup" class="rounded bg-amber-900/80 hover:bg-amber-800 px-2 py-1 text-xs text-amber-100">Restore selected</button></div></div>
+        <div class="px-4 pb-4 space-y-2 border-t border-slate-700/60 pt-3"><p class="text-xs font-medium text-slate-400">Image upload (WebP)</p><div class="flex flex-wrap gap-2 items-center"><select id="img-preset" class="rounded border border-slate-600 bg-slate-900 text-xs px-2 py-1"><option value="thumbnail">thumbnail</option><option value="banner">banner</option><option value="hero">hero</option><option value="inline">inline</option></select><input id="img-file" type="file" accept="image/png,image/jpeg,image/webp" class="text-xs max-w-[10rem]" /><button type="button" id="btn-upload" class="rounded bg-slate-700 hover:bg-slate-600 px-2 py-1 text-xs">Upload</button></div></div>
+      </div>
+      <div id="panel-static" class="hidden flex-1 overflow-y-auto p-4 text-sm text-slate-400"><p class="mb-2">This page is mostly static HTML. For large edits, use the GitHub repo or split content into JSON in a later phase.</p><p class="text-xs">Preview still updates when you refresh after other changes.</p></div>
+      <div id="panel-settings" class="hidden flex-1 overflow-y-auto p-4 space-y-3">
+        <p class="text-xs text-slate-400">Theme settings (saved to <code class="text-slate-300">data/site-theme.json</code>). Save draft then Publish to apply on the live site.</p>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Primary color</span><input id="theme-primary" type="color" class="mt-1 w-full h-10 rounded-md border border-slate-600 bg-slate-900 px-2" /></label>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Accent color</span><input id="theme-accent" type="color" class="mt-1 w-full h-10 rounded-md border border-slate-600 bg-slate-900 px-2" /></label>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Base font size (px)</span><input id="theme-font-size" type="number" min="12" max="22" step="1" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm" /></label>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Font family</span><input id="theme-font-family" type="text" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm" placeholder="Inter, system-ui, sans-serif" /></label>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Default mode</span><select id="theme-default-mode" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+        <label class="block text-sm"><span class="text-slate-400 text-xs">Default color theme</span><select id="theme-default-color" class="mt-1 w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm"><option value="theme-custom">Custom (use primary/accent)</option><option value="theme-indigo">Indigo</option><option value="theme-orange">Orange</option><option value="theme-emerald">Emerald</option><option value="theme-purple">Purple</option></select></label>
+        <div class="grid grid-cols-2 gap-2 pt-2"><button type="button" id="btn-theme-load" class="rounded-lg bg-slate-700 hover:bg-slate-600 py-2 text-sm font-semibold">Load</button><button type="button" id="btn-theme-save" class="rounded-lg bg-emerald-600 hover:bg-emerald-500 py-2 text-sm font-semibold">Save draft</button></div>
+        <button type="button" id="btn-theme-publish" class="w-full rounded-lg bg-indigo-700 hover:bg-indigo-600 py-2 text-sm font-semibold">Publish theme to live</button>
+        <p id="msg-theme" class="text-xs text-slate-500 min-h-[1em]"></p>
+      </div>
+    </aside>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2.0.8/dist/editorjs-list.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
+  <script src="../assets/js/admin-app.js?v=20260402-6"></script>
+</body>
+</html>
