@@ -89,9 +89,10 @@ function editorBlocksToHtml(editorContent) {
       const raw = String(d.url || d.file?.url || "").trim();
       if (!raw) continue;
       const src = escapeHtml(raw);
-      const cap = escapeHtml(d.caption || "");
+      const capHtml = String(d.caption || "");
+      const altText = stripHtmlToText(capHtml).slice(0, 160);
       out.push(
-        `<figure class="my-6"><img src="${src}" alt="${cap}" class="w-full rounded-lg border border-gray-200 dark:border-gray-700"/><figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">${cap}</figcaption></figure>`
+        `<figure class="my-6"><img src="${src}" alt="${escapeHtml(altText)}" class="w-full rounded-lg border border-gray-200 dark:border-gray-700"/><figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">${capHtml}</figcaption></figure>`
       );
       continue;
     }

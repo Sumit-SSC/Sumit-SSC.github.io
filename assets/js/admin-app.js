@@ -294,6 +294,18 @@
     const blocks = [];
     for (const b of blocksIn) {
       if (!b || !b.type || !b.data) continue;
+      if (b.type === "image") {
+        const url = b.data.url || b.data.file?.url || "";
+        blocks.push({
+          type: "image",
+          data: {
+            ...b.data,
+            url: String(url || ""),
+            caption: b.data.caption != null ? String(b.data.caption) : ""
+          }
+        });
+        continue;
+      }
       if (b.type === "list") {
         const items = b.data.items;
         if (Array.isArray(items)) {
@@ -419,7 +431,7 @@
       "EditorjsNestedList"
     );
     const codeTool = pickToolConstructor("CodeTool", "Code", "CodeToolPlugin", "EditorjsCode");
-    const imageTool = pickToolConstructor("SimpleImage", "ImageTool", "Image");
+    const imageTool = pickToolConstructor("SimpleImage", "ImageTool", "Image", "EditorjsSimpleImage");
     const embedTool = pickToolConstructor("Embed", "EmbedTool", "Embedder", "EditorjsEmbed");
 
     if (headerTool) tools.header = headerTool;
@@ -432,6 +444,9 @@
     if (!tools.paragraph || !tools.header) {
       const keys = Object.keys(window || {}).filter((k) => /header|paragraph|editor|list|code|embed/i.test(k));
       console.warn("[admin-app] Editor.js tool globals partial match:", keys.slice(0, 40));
+    }
+    if (!tools.image) {
+      console.warn("[admin-app] SimpleImage tool not found — image blocks disabled until CDN loads.");
     }
 
     return tools;
@@ -471,9 +486,9 @@
           `<div data-block-index="${i}" data-block-type="header" data-preview-editable="1" class="preview-block mb-6 cursor-pointer rounded-md px-1 -mx-1 hover:bg-black/5 transition-colors"><h${lvl} class="font-serif font-bold text-gray-900 leading-tight">${t}</h${lvl}></div>`
         );
       } else if (b?.type === "paragraph") {
-        const t = escHtml(d.text || "");
+        const raw = String(d.text || "");
         out.push(
-          `<div data-block-index="${i}" data-block-type="paragraph" data-preview-editable="1" class="preview-block mb-5 cursor-pointer rounded-md px-1 -mx-1 hover:bg-black/5 transition-colors"><p class="font-serif text-lg leading-8 text-gray-800">${t.replace(/\n/g, "<br/>")}</p></div>`
+          `<div data-block-index="${i}" data-block-type="paragraph" data-preview-editable="1" class="preview-block mb-5 cursor-pointer rounded-md px-1 -mx-1 hover:bg-black/5 transition-colors"><div class="font-serif text-lg leading-8 text-gray-800 prose prose-slate max-w-none">${raw.replace(/\n/g, "<br/>")}</div></div>`
         );
       } else if (b?.type === "list") {
         const items = Array.isArray(d.items) ? d.items : [];
@@ -487,17 +502,24 @@
       } else if (b?.type === "image") {
         const raw = String(d.url || d.file?.url || "").trim();
         let src = "";
-        try {
-          const u = new URL(raw, SITE + "/");
-          if (u.protocol === "http:" || u.protocol === "https:") src = u.href;
-        } catch (_) {
-          src = "";
+        if (raw.startsWith("data:image/")) {
+          src = raw;
+        } else if (raw) {
+          try {
+            const u = new URL(raw, SITE + "/");
+            if (u.protocol === "http:" || u.protocol === "https:") src = u.href;
+          } catch (_) {}
         }
-        if (!src) continue;
-        const cap = escHtml(d.caption || "");
-        out.push(
-          `<div data-block-index="${i}" data-block-type="image" class="preview-block mb-6 cursor-pointer"><figure><img src="${escHtml(src)}" alt="${cap}" class="w-full rounded-lg border border-slate-200"/><figcaption class="text-sm text-slate-600 mt-2">${cap}</figcaption></figure></div>`
-        );
+        if (!src) {
+          out.push(
+            `<div data-block-index="${i}" data-block-type="image" class="preview-block mb-6 rounded-md border border-dashed border-amber-300/80 bg-amber-50/90 p-3 text-sm text-amber-900">Add a valid image URL (or paste an image into the block).</div>`
+          );
+        } else {
+          const cap = String(d.caption || "");
+          out.push(
+            `<div data-block-index="${i}" data-block-type="image" class="preview-block mb-6 cursor-pointer"><figure><img src="${escHtml(src)}" alt="" class="w-full rounded-lg border border-slate-200"/><figcaption class="text-sm text-slate-600 mt-2">${cap}</figcaption></figure></div>`
+          );
+        }
       } else if (b?.type === "code") {
         const safe = escHtml(String(d.code || ""));
         out.push(
@@ -765,6 +787,12 @@
     });
     if (editorInstance.isReady && typeof editorInstance.isReady.then === "function") {
       await editorInstance.isReady;
+    }
+    if (normalized.blocks.some((b) => b && b.type === "image") && !tools.image) {
+      setStatus(
+        "Image blocks need the SimpleImage tool — hard refresh (Ctrl+F5). If it persists, check the SimpleImage script in admin/editor.html.",
+        { title: "SimpleImage tool missing" }
+      );
     }
     // Initial preview after tools and data are ready.
     await updateEditorJsonPreviewNow();
@@ -1262,6 +1290,8 @@
         state.draftDirty = false;
         setAutosaveStateLabel("Auto-save: saved", "ok");
         setStatus("No changes detected. Draft not updated.");
+        await updateEditorJsonPreviewNow();
+        setCenterPreviewMode("draft");
         return;
       }
       setBranchHint(out.branch || "");
@@ -1269,6 +1299,8 @@
       setAutosaveStateLabel("Auto-save: saved", "ok");
       setStatus(`Saved · ${out.branch || "draft"}`);
       toast("Draft saved", "success");
+      await updateEditorJsonPreviewNow();
+      setCenterPreviewMode("draft");
       return;
     }
 
@@ -1296,6 +1328,8 @@
         state.draftDirty = false;
         setAutosaveStateLabel("Auto-save: saved", "ok");
         setStatus("No changes detected. Draft not updated.");
+        await updateEditorJsonPreviewNow();
+        setCenterPreviewMode("draft");
         return;
       }
       setBranchHint(out.branch || "");
@@ -1303,6 +1337,8 @@
       setAutosaveStateLabel("Auto-save: saved", "ok");
       setStatus(`Saved · ${out.branch || "draft"}`);
       toast("Draft saved", "success");
+      await updateEditorJsonPreviewNow();
+      setCenterPreviewMode("draft");
     }
   }
 
@@ -1620,6 +1656,13 @@
       if (!isSaveKey) return;
       ev.preventDefault();
       ribSave();
+    });
+
+    window.addEventListener("beforeunload", (ev) => {
+      if (state.draftDirty && !state.sourceMode) {
+        ev.preventDefault();
+        ev.returnValue = "";
+      }
     });
   }
 
