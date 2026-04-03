@@ -18,6 +18,9 @@
   let editorInstance = null;
   let activeEditorHolderId = null;
   let editorPreviewTimer = null;
+  let autoSaveTimer = null;
+  let autoSaveInFlight = false;
+  let lastSessionData = null;
   let blockNavSortable = null;
 
   const state = {
@@ -28,7 +31,8 @@
     editWorkspace: false,
     compactListsOnSelect: true,
     centerPreviewMode: "live",
-    sourceMode: false
+    sourceMode: false,
+    draftDirty: false
   };
   let monacoEditor = null;
   let monacoReady = null;
@@ -52,6 +56,16 @@
     }
     const d = el("dash-last-status");
     if (d) d.textContent = text;
+  }
+
+  function setAutosaveStateLabel(text, tone = "ok") {
+    const n = el("rib-autosave-state");
+    if (!n) return;
+    n.textContent = text;
+    n.classList.remove("text-emerald-400/90", "text-amber-300", "text-slate-400");
+    if (tone === "warn") n.classList.add("text-amber-300");
+    else if (tone === "idle") n.classList.add("text-slate-400");
+    else n.classList.add("text-emerald-400/90");
   }
 
   function setBranchHint(branch) {
@@ -147,9 +161,14 @@
 
   async function applyRibbonChromeOnly() {
     const sess = await apiSession();
+    lastSessionData = sess;
     updateSessionUi(sess);
     setRibbonAuthState(sess);
     updateAuthBanner(sess);
+    setAutosaveStateLabel(
+      sess && sess.ok ? (state.draftDirty ? "Auto-save: pending…" : "Auto-save: on") : "Auto-save: login required",
+      sess && sess.ok ? "ok" : "warn"
+    );
     updateLastPublishedLabel();
     return sess;
   }
@@ -563,6 +582,58 @@
     editorPreviewTimer = setTimeout(() => updateEditorJsonPreviewNow(), 120);
   }
 
+  function canAutosaveCurrentRoute() {
+    if (state.sourceMode) return false;
+    if (!isEditingRoute()) return false;
+    return !!(lastSessionData && lastSessionData.ok);
+  }
+
+  function scheduleDraftAutosave() {
+    if (autoSaveTimer) clearTimeout(autoSaveTimer);
+    if (!canAutosaveCurrentRoute()) {
+      setAutosaveStateLabel("Auto-save: login required", "warn");
+      return;
+    }
+    setAutosaveStateLabel("Auto-save: pending…", "warn");
+    autoSaveTimer = setTimeout(() => {
+      autoSaveCurrentDraft();
+    }, 1400);
+  }
+
+  async function saveDraftForCurrentRoute({ silent = false } = {}) {
+    if (state.kind === "projects-home" && state.homeTab === "json") {
+      if (!editorInstance) return { ok: false, error: "Editor not ready." };
+      const d = await editorInstance.save();
+      return saveContentWrite("homepage", "", d);
+    }
+    if (state.kind === "project" || state.kind === "caseStudy") {
+      if (!editorInstance) return { ok: false, error: "Editor not ready." };
+      const d = await editorInstance.save();
+      return saveContentWrite(state.target, state.slug, d);
+    }
+    if (!silent) setStatus("Nothing to save on this screen.");
+    return { ok: false, error: "No editable target." };
+  }
+
+  async function autoSaveCurrentDraft() {
+    if (autoSaveInFlight || !state.draftDirty || !canAutosaveCurrentRoute()) return;
+    autoSaveInFlight = true;
+    try {
+      const out = await saveDraftForCurrentRoute({ silent: true });
+      if (!out.ok) {
+        setAutosaveStateLabel("Auto-save: failed", "warn");
+        return;
+      }
+      if (out.branch) setBranchHint(out.branch);
+      state.draftDirty = false;
+      setAutosaveStateLabel("Auto-save: saved", "ok");
+    } catch (_) {
+      setAutosaveStateLabel("Auto-save: failed", "warn");
+    } finally {
+      autoSaveInFlight = false;
+    }
+  }
+
   function blockTitleFor(block, i) {
     const t = block?.type || "block";
     const d = block?.data || {};
@@ -656,8 +727,11 @@
       minHeight: 80,
       inlineToolbar: tools.paragraph ? ["bold", "italic", "link"] : false,
       onChange: () => {
-        setStatus("Edited — save draft when ready.");
+        state.draftDirty = true;
+        setStatus("Edited — changes are auto-saved.");
+        setAutosaveStateLabel("Auto-save: pending…", "warn");
         scheduleEditorJsonPreview();
+        scheduleDraftAutosave();
       }
     });
     if (editorInstance.isReady && typeof editorInstance.isReady.then === "function") {
@@ -1027,6 +1101,8 @@
         }
         const pub = await loadPublicHomepageEditor();
         await mountEditor("admin-editor-holder-home", pub);
+        state.draftDirty = false;
+        setAutosaveStateLabel("Auto-save: login required", "warn");
         setStatus("Read-only baseline loaded. Use Account > Log in to load draft and save.");
         return;
       }
@@ -1037,6 +1113,8 @@
     }
     if (jsonHint) jsonHint.classList.add("hidden");
     await mountEditor("admin-editor-holder-home", data.editorData || getDefaultEditorData());
+    state.draftDirty = false;
+    setAutosaveStateLabel("Auto-save: on", "ok");
     setStatus("Homepage content loaded — edit, then Save draft and Publish when ready.");
   }
 
@@ -1082,6 +1160,8 @@
           const pub = await loadPublicRecordEditor(target, slug);
           if (pub) {
             await mountEditor("admin-editor-holder", pub);
+            state.draftDirty = false;
+            setAutosaveStateLabel("Auto-save: login required", "warn");
             updateRecordHtmlHint(pub);
             return;
           }
@@ -1102,6 +1182,8 @@
     }
     setRecordAuthBanner(false, "");
     await mountEditor("admin-editor-holder", data.editorData || getDefaultEditorData());
+    state.draftDirty = false;
+    setAutosaveStateLabel("Auto-save: on", "ok");
     updateRecordHtmlHint(data.editorData || getDefaultEditorData());
     setStatus("Loaded — Save draft, then Publish to live to update the public site.");
   }
@@ -1138,19 +1220,21 @@
     }
 
     if (state.kind === "projects-home" && state.homeTab === "json") {
-      if (!editorInstance) return;
-      const d = await editorInstance.save();
       setStatus("Saving…");
-      const out = await saveContentWrite("homepage", "", d);
+      const out = await saveDraftForCurrentRoute();
       if (!out.ok) {
         setStatus(out.error || "Save failed");
         return;
       }
       if (out.unchanged) {
+        state.draftDirty = false;
+        setAutosaveStateLabel("Auto-save: saved", "ok");
         setStatus("No changes detected. Draft not updated.");
         return;
       }
       setBranchHint(out.branch || "");
+      state.draftDirty = false;
+      setAutosaveStateLabel("Auto-save: saved", "ok");
       setStatus(`Saved · ${out.branch || "draft"}`);
       return;
     }
@@ -1168,19 +1252,21 @@
     }
 
     if (state.kind === "project" || state.kind === "caseStudy") {
-      if (!editorInstance) return;
-      const d = await editorInstance.save();
       setStatus("Saving…");
-      const out = await saveContentWrite(state.target, state.slug, d);
+      const out = await saveDraftForCurrentRoute();
       if (!out.ok) {
         setStatus(out.error || "Save failed");
         return;
       }
       if (out.unchanged) {
+        state.draftDirty = false;
+        setAutosaveStateLabel("Auto-save: saved", "ok");
         setStatus("No changes detected. Draft not updated.");
         return;
       }
       setBranchHint(out.branch || "");
+      state.draftDirty = false;
+      setAutosaveStateLabel("Auto-save: saved", "ok");
       setStatus(`Saved · ${out.branch || "draft"}`);
     }
   }
@@ -1484,6 +1570,13 @@
       }
       setStatus("Loaded a past draft save — use Save draft to continue from here, then Publish when ready.");
       await refreshDraftCommits();
+    });
+
+    window.addEventListener("keydown", (ev) => {
+      const isSaveKey = (ev.ctrlKey || ev.metaKey) && String(ev.key || "").toLowerCase() === "s";
+      if (!isSaveKey) return;
+      ev.preventDefault();
+      ribSave();
     });
   }
 
