@@ -8,12 +8,26 @@
   <style>
     body { font-family: "Inter", system-ui, sans-serif; }
     #admin-preview { min-height: 0; }
-    .ce-block:focus-within { outline: 2px solid rgb(99 102 241 / 0.85); outline-offset: 2px; border-radius: 4px; }
-    .admin-editor-canvas { border-radius: 12px; border: 1px solid rgb(51 65 85 / 0.9); background: rgb(15 23 42 / 0.5); padding: 1rem 1.25rem; min-height: 220px; }
+    .ce-block:focus-within { outline: 2px solid rgb(99 102 241 / 0.75); outline-offset: 3px; border-radius: 6px; }
+    .admin-editor-canvas {
+      border-radius: 14px;
+      border: 1px solid rgb(51 65 85 / 0.85);
+      background: rgb(15 23 42 / 0.65);
+      padding: 1.25rem 1.5rem 2rem;
+      min-height: 240px;
+    }
     .admin-editor-canvas .codex-editor { z-index: 1; }
+    .admin-editor-canvas .ce-block { margin: 0.15rem 0; }
+    .admin-editor-canvas .ce-paragraph { font-size: 1.0625rem; line-height: 1.75; color: rgb(226 232 240); }
+    .admin-editor-canvas .ce-header { color: rgb(248 250 252); }
+    .admin-editor-canvas .ce-header[data-placeholder]::before { color: rgb(100 116 139); }
+    .admin-editor-canvas .codex-editor__redactor { padding-bottom: 3rem !important; }
+    .admin-editor-canvas .ce-toolbar__plus, .admin-editor-canvas .ce-toolbar__settings-btn { color: rgb(148 163 184); }
     #center-draft-preview.medium-draft-preview { background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); }
     .medium-draft-inner { max-width: 42rem; margin: 0 auto; padding-bottom: 3rem; }
     .medium-draft-inner .preview-block:first-child { margin-top: 0.5rem; }
+    details.rib-account > summary { list-style: none; }
+    details.rib-account > summary::-webkit-details-marker { display: none; }
   </style>
   <script>
     window.__ADMIN_APP__ = {
@@ -24,45 +38,59 @@
   </script>
 </head>
 <body class="h-screen bg-slate-950 text-slate-100 overflow-hidden">
-  <header class="border-b border-slate-800/90 bg-slate-900/95 backdrop-blur-sm px-3 py-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs shadow-sm">
-    <div class="flex items-center gap-2 pr-2 border-r border-slate-700/80">
-      <strong class="text-sm font-semibold tracking-tight text-white">Studio</strong>
-      <span class="text-[10px] text-slate-500 hidden sm:inline">portfolio CMS</span>
+  <header class="border-b border-slate-800/90 bg-slate-900/95 backdrop-blur-sm shadow-sm">
+    <div class="px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
+      <div class="flex items-center gap-2 shrink-0">
+        <strong class="text-sm font-semibold tracking-tight text-white">Studio</strong>
+        <div id="mode-segment" class="inline-flex rounded-lg bg-slate-800/90 p-0.5 border border-slate-700/80" title="Write = blocks (like Medium). Code = files (like VS Code).">
+          <button id="btn-mode-visual" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors bg-indigo-600 text-white shadow-sm">Write</button>
+          <button id="btn-mode-source" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-slate-200">Code</button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-1 rounded-lg bg-emerald-950/25 px-0.5 py-0.5 border border-emerald-900/35" title="Draft stays private until Publish">
+        <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-100">Preview</button>
+        <button id="rib-save" type="button" class="px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-600 text-white font-medium">Save</button>
+        <button id="rib-publish" type="button" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-medium">Publish</button>
+        <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300">Undo</button>
+      </div>
+
+      <details class="rib-account relative shrink-0 rounded-lg border border-slate-700/70 bg-slate-800/50">
+        <summary class="px-2.5 py-1 rounded-md text-slate-300 text-[11px] cursor-pointer hover:bg-slate-700/80">Account</summary>
+        <div class="absolute left-0 top-full mt-1 z-[100] min-w-[10rem] rounded-lg border border-slate-700 bg-slate-900 py-1 shadow-xl flex flex-col">
+          <button id="rib-login" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Log in</button>
+          <button id="rib-logout" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Log out</button>
+          <button id="rib-session" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Refresh session</button>
+        </div>
+      </details>
+
+      <details id="rib-blocks-toolbar" class="hidden rounded-lg border border-slate-700/60 bg-slate-900/60 max-w-full">
+        <summary class="px-2.5 py-1 text-[11px] text-slate-400 cursor-pointer hover:text-slate-200 select-none list-none">Blocks</summary>
+        <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-0 border-t border-slate-800/80">
+          <div id="rib-insert-group" class="flex flex-wrap items-center gap-0.5">
+            <button type="button" data-insert="paragraph" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Paragraph">¶</button>
+            <button type="button" data-insert="header" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Heading">H</button>
+            <button type="button" data-insert="list" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="List">•</button>
+            <button type="button" data-insert="code" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Code">&lt;/&gt;</button>
+            <button type="button" data-insert="embed" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Embed">↗</button>
+          </div>
+          <span class="text-slate-600 px-0.5">|</span>
+          <div id="rib-block-group" class="flex items-center gap-0.5">
+            <button id="rib-block-up" type="button" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Move up">↑</button>
+            <button id="rib-block-down" type="button" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Move down">↓</button>
+            <button id="rib-block-delete" type="button" class="px-2 py-0.5 rounded bg-rose-950/80 hover:bg-rose-900 text-[11px]" title="Delete">✕</button>
+          </div>
+        </div>
+      </details>
+
+      <button id="rib-edit-workspace" type="button" class="px-2 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 hidden shrink-0 text-[11px] text-slate-300" title="Hide site preview — full width editor">Focus</button>
+
+      <span id="rib-session-info" class="ml-auto shrink-0 text-slate-500 text-[10px] max-w-[10rem] truncate hidden sm:inline"></span>
+      <span id="rib-branch-hint" class="hidden shrink-0 text-[10px] text-slate-600 max-w-[8rem] truncate"></span>
+      <span id="rib-status" class="flex-1 min-w-[6rem] text-slate-500 text-[10px] max-h-16 overflow-y-auto break-words" title=""></span>
     </div>
-    <div class="flex flex-wrap items-center gap-1 rounded-lg bg-slate-800/40 p-0.5 border border-slate-700/50">
-      <button id="rib-login" type="button" class="px-2.5 py-1 rounded-md hover:bg-slate-700/80 text-slate-200">Login</button>
-      <button id="rib-logout" type="button" class="px-2.5 py-1 rounded-md hover:bg-slate-700/80 text-slate-200">Logout</button>
-      <button id="rib-session" type="button" class="px-2.5 py-1 rounded-md hover:bg-slate-700/80 text-slate-200">Session</button>
-    </div>
-    <div class="flex flex-wrap items-center gap-1 rounded-lg bg-emerald-950/20 p-0.5 border border-emerald-900/40" title="Draft is private until you publish">
-      <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-100">Preview</button>
-      <button id="rib-save" type="button" class="px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-600 text-white font-medium">Save draft</button>
-      <button id="rib-publish" type="button" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-medium">Publish</button>
-      <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-slate-700">Revert</button>
-    </div>
-    <div class="flex flex-wrap items-center gap-1">
-      <button id="btn-mode-visual" type="button" class="px-2.5 py-1 rounded-md bg-indigo-700 hover:bg-indigo-600">Visual</button>
-      <button id="btn-mode-source" type="button" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700">Source</button>
-    </div>
-    <div id="rib-insert-group" class="flex flex-wrap items-center gap-0.5 rounded-md border border-slate-700/60 bg-slate-900/50 px-1 py-0.5">
-      <span class="text-[10px] text-slate-500 px-1 hidden sm:inline">Insert</span>
-      <button type="button" data-insert="paragraph" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="Paragraph">P</button>
-      <button type="button" data-insert="header" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="Heading">H</button>
-      <button type="button" data-insert="list" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="List">•</button>
-      <button type="button" data-insert="code" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="Code">&lt;/&gt;</button>
-      <button type="button" data-insert="embed" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="Embed">🔗</button>
-    </div>
-    <div id="rib-block-group" class="flex items-center gap-0.5">
-      <button id="rib-block-up" type="button" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="Move block up">↑</button>
-      <button id="rib-block-down" type="button" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700" title="Move block down">↓</button>
-      <button id="rib-block-delete" type="button" class="px-2 py-0.5 rounded bg-rose-900/90 hover:bg-rose-800" title="Delete block">✕</button>
-    </div>
-    <span id="rib-session-info" class="ml-auto shrink-0 text-slate-400 text-[11px] max-w-[11rem] truncate"></span>
-    <span id="rib-branch-hint" class="hidden shrink-0 text-[10px] text-slate-500 max-w-[9rem] truncate" title="Active draft branch after last save"></span>
-    <span id="rib-status" class="flex-1 min-w-[8rem] text-slate-400 text-[11px] max-h-20 overflow-y-auto break-words px-1" title=""></span>
     <button id="rib-refresh" type="button" class="hidden"></button>
     <button id="rib-open-live" type="button" class="hidden"></button>
-    <button id="rib-edit-workspace" type="button" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 hidden shrink-0" title="Hide the live preview to focus on writing. Split view shows preview + editor.">Focus</button>
   </header>
 
   <div id="workspace-main" class="h-[calc(100vh-44px)] flex min-h-0">
@@ -116,11 +144,11 @@
       </div>
       <div id="center-draft-preview" class="hidden medium-draft-preview flex-1 overflow-auto text-gray-900 p-6 md:p-10"></div>
       <iframe id="admin-preview" class="flex-1 w-full border-0 bg-white" title="preview" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
-      <div id="preview-bottom-actions" class="hidden border-t border-slate-800 p-2 text-xs flex gap-2">
-        <button id="btn-bottom-insert" class="px-2 py-1 rounded bg-slate-800">Insert</button>
-        <button id="btn-bottom-delete" class="px-2 py-1 rounded bg-slate-800">Delete</button>
-        <button id="btn-bottom-up" class="px-2 py-1 rounded bg-slate-800">Up</button>
-        <button id="btn-bottom-down" class="px-2 py-1 rounded bg-slate-800">Down</button>
+      <div id="preview-bottom-actions" class="hidden" aria-hidden="true">
+        <button id="btn-bottom-insert" type="button" class="hidden"></button>
+        <button id="btn-bottom-delete" type="button" class="hidden"></button>
+        <button id="btn-bottom-up" type="button" class="hidden"></button>
+        <button id="btn-bottom-down" type="button" class="hidden"></button>
       </div>
     </div>
 
@@ -131,14 +159,14 @@
       </div>
       <div id="draft-history-panel" class="hidden border-b border-slate-800 px-3 py-2 space-y-2 bg-slate-900/80">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-[11px] font-medium text-slate-400">Draft file history</span>
-          <button id="btn-refresh-draft-commits" type="button" class="text-[11px] text-indigo-400 hover:text-indigo-300">Refresh</button>
+          <span class="text-[11px] font-medium text-slate-500">History</span>
+          <button id="btn-refresh-draft-commits" type="button" class="text-[11px] text-indigo-400 hover:text-indigo-300">↻</button>
         </div>
         <div class="flex gap-1.5">
           <select id="sel-draft-commits" class="flex-1 min-w-0 rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]"></select>
           <button id="btn-load-draft-commit" type="button" class="shrink-0 rounded-lg bg-indigo-700 hover:bg-indigo-600 px-2.5 py-1.5 text-[11px] font-medium">Load</button>
         </div>
-        <p class="text-[10px] text-slate-500 leading-snug">Loads an older <strong class="text-slate-400">saved draft</strong> from GitHub (same file). Save draft to continue; Publish still merges to live.</p>
+        <p class="text-[10px] text-slate-600 leading-snug">Older saves of this file. Load, then Save to branch from here.</p>
       </div>
       <div id="panel-home-ui" class="hidden p-3 space-y-2 overflow-y-auto">
         <p id="home-auth-hint" class="hidden text-xs"></p>
@@ -181,15 +209,15 @@
         </div>
       </div>
       <div id="panel-source" class="hidden flex-1 min-h-0 flex flex-col">
-        <div class="p-3 border-b border-slate-800 flex items-center gap-2 text-xs">
-          <span class="text-slate-400">Source mode</span>
-          <select id="source-format" class="rounded bg-slate-800 px-2 py-1">
+        <div class="p-3 border-b border-slate-800 flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-slate-500 font-medium">Code</span>
+          <select id="source-format" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="What to edit in the repo">
             <option value="auto">Auto</option>
             <option value="record-json">Record JSON</option>
             <option value="record-html">Record HTML</option>
-            <option value="file">File</option>
+            <option value="file">Whole file</option>
           </select>
-          <button id="btn-source-reload" class="rounded bg-slate-800 hover:bg-slate-700 px-2 py-1">Reload source</button>
+          <button id="btn-source-reload" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Reload</button>
         </div>
         <div id="source-editor-holder" class="flex-1 min-h-0"></div>
       </div>
@@ -217,6 +245,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260403-2"></script>
+  <script src="../assets/js/admin-app.js?v=20260403-3"></script>
 </body>
 </html>

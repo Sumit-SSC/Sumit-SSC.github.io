@@ -118,11 +118,21 @@
     setCenterView(state.kind === "dashboard" ? "dashboard" : "preview");
   }
 
+  function syncWriteCodeSegment() {
+    const v = el("btn-mode-visual");
+    const s = el("btn-mode-source");
+    if (!v || !s) return;
+    const code = state.sourceMode;
+    const active = "px-3 py-1 rounded-md text-xs font-medium transition-colors bg-indigo-600 text-white shadow-sm";
+    const idle = "px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-slate-200";
+    v.className = code ? idle : active;
+    s.className = code ? active : idle;
+  }
+
   function applyWorkspaceLayout() {
     const previewPane = el("workspace-preview-pane");
     const inspector = el("workspace-inspector");
     const toggleBtn = el("rib-edit-workspace");
-    const bottom = el("preview-bottom-actions");
     const sidebar = document.querySelector("#workspace-main > aside");
     const active = state.editWorkspace && isEditingRoute();
 
@@ -131,11 +141,10 @@
     if (inspector) inspector.classList.toggle("w-full", active);
     if (toggleBtn) {
       toggleBtn.classList.toggle("hidden", !isEditingRoute());
-      toggleBtn.textContent = active ? "Split view" : "Focus editor";
+      toggleBtn.textContent = active ? "Split" : "Focus";
       toggleBtn.classList.toggle("bg-slate-700", active);
       toggleBtn.classList.toggle("text-white", active);
     }
-    if (bottom) bottom.classList.toggle("hidden", !isEditingRoute());
     if (sidebar) sidebar.classList.toggle("hidden", state.kind === "dashboard");
   }
 
@@ -757,8 +766,7 @@
     const pSt = el("panel-static");
     const pSettings = el("panel-settings");
     const pSource = el("panel-source");
-    const ribIns = el("rib-insert-group");
-    const ribBlock = el("rib-block-group");
+    const ribBlocksToolbar = el("rib-blocks-toolbar");
     const sideLists = el("sidebar-record-lists");
 
     const isHome = state.kind === "projects-home";
@@ -773,8 +781,8 @@
     if (pSt) pSt.classList.toggle("hidden", !isStatic);
     if (pSettings) pSettings.classList.toggle("hidden", state.sourceMode || !isSettings);
     if (pSource) pSource.classList.toggle("hidden", !state.sourceMode || !(isHome || isRecord || isSettings));
-    if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
-    if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
+    const showBlocksChrome = ((isHome && state.homeTab === "json") || isRecord) && !state.sourceMode;
+    if (ribBlocksToolbar) ribBlocksToolbar.classList.toggle("hidden", !showBlocksChrome);
     if (sideLists) sideLists.classList.toggle("hidden", state.kind === "dashboard" || isEditingRoute());
     const dhp = el("draft-history-panel");
     if (dhp) dhp.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
@@ -788,6 +796,7 @@
       if (jr && jr.parentElement?.tagName === "DETAILS") jr.parentElement.classList.add("hidden");
     }
     renderBlockNav({ blocks: [] });
+    syncWriteCodeSegment();
   }
 
   async function applyRoute() {
@@ -1055,7 +1064,7 @@
 
   async function ribPreview() {
     if (state.sourceMode) {
-      setStatus("Source mode preview: use Live page toggle.");
+      setStatus("Code mode: use center Draft/Live for site preview — or switch to Write for block preview.");
       return;
     }
     if ((state.kind === "projects-home" && state.homeTab === "json") || state.kind === "project" || state.kind === "caseStudy") {
