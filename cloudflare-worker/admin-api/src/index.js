@@ -56,6 +56,9 @@
         if (pathname === "/api/admin/content/read" && request.method === "GET") {
           return withCors(request, env, await readContent(url, request, env));
         }
+        if (pathname === "/api/admin/content/commits" && request.method === "GET") {
+          return withCors(request, env, await listContentCommits(url, request, env));
+        }
         if (pathname === "/api/admin/content/raw" && request.method === "GET") {
           return withCors(request, env, await readRawContent(url, request, env));
         }
@@ -526,18 +529,96 @@
     return next;
   }
 
+  function buildReadContentResponse(parsed, target, slug) {
+    if (Array.isArray(parsed)) {
+      if (!slug) return json({ ok: false, error: "slug is required for list content" }, 400);
+      const found = parsed.find((r) => r.id === slug);
+      if (!found) return json({ ok: false, error: `No record found for slug: ${slug}` }, 404);
+      return json({ ok: true, target, slug, editorData: found.editor_content || toEditorDataFromRecord(found) });
+    }
+    if (target === "siteTheme") {
+      return json({
+        ok: true,
+        target,
+        slug,
+        editorData: {
+          time: Date.now(),
+          version: "2.30.7",
+          blocks: [
+            { type: "header", data: { text: "Site Theme", level: 2 } },
+            { type: "paragraph", data: { text: "Edit the JSON below, then Save draft and Publish to apply on the live site." } },
+            { type: "code", data: { code: JSON.stringify(parsed, null, 2) } }
+          ]
+        }
+      });
+    }
+    return json({ ok: true, target, slug, editorData: parsed.editor_content || parsed });
+  }
+
+  async function listContentCommits(url, request, env) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+    const target = url.searchParams.get("target") || "homepage";
+    try {
+      mapTargetPath(target);
+    } catch (e) {
+      return json({ ok: false, error: e.message || "Unsupported target" }, 400);
+    }
+    const branch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
+    const base = getContentBaseBranch(env);
+    await ensureBranchExists(env, branch, base);
+    const path = mapTargetPath(target);
+    const perPage = Math.min(30, Math.max(1, Number(url.searchParams.get("per_page") || 15)));
+    const res = await githubApi(
+      env,
+      `/commits?sha=${encodeURIComponent(branch)}&path=${encodeURIComponent(path)}&per_page=${perPage}`
+    );
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ ok: false, error: `GitHub commits failed: ${errText}` }, 502);
+    }
+    const commits = await res.json();
+    const items = (Array.isArray(commits) ? commits : []).map((c) => ({
+      sha: c.sha,
+      shortSha: String(c.sha || "").slice(0, 7),
+      message: c.commit && c.commit.message ? String(c.commit.message).split("\n")[0] : "",
+      date: c.commit && c.commit.author && c.commit.author.date ? c.commit.author.date : "",
+      author: c.author && c.author.login ? c.author.login : ""
+    }));
+    return json({ ok: true, path, branch, commits: items });
+  }
+
   async function readContent(url, request, env) {
     const user = await getSessionUser(request, env);
     if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
 
     const target = url.searchParams.get("target") || "homepage";
     const slug = url.searchParams.get("slug") || "";
+    const path = mapTargetPath(target);
+    const refParam = String(url.searchParams.get("ref") || "").trim();
+
+    if (refParam) {
+      let file;
+      try {
+        file = await getFileFromGithub(env, path, refParam);
+      } catch (e) {
+        return json({ ok: false, error: e.message || "Read failed" }, 500);
+      }
+      if (!file) return json({ ok: false, error: "File not found at this revision" }, 404);
+      let parsed;
+      try {
+        parsed = JSON.parse(file.text);
+      } catch {
+        return json({ ok: false, error: "Invalid JSON at this revision" }, 500);
+      }
+      return buildReadContentResponse(parsed, target, slug);
+    }
+
     const branch = env.CONTENT_DRAFT_BRANCH || "content/drafts";
     const base = getContentBaseBranch(env);
     const source = String(url.searchParams.get("source") || "auto");
     await ensureBranchExists(env, branch, base);
 
-    const path = mapTargetPath(target);
     let file = null;
     if (source === "draft") file = await getFileFromGithub(env, path, branch);
     else if (source === "base") file = await getFileFromGithub(env, path, base);
@@ -561,30 +642,7 @@
       return json({ ok: false, error: `Invalid JSON in ${path}` }, 500);
     }
 
-    if (Array.isArray(parsed)) {
-      if (!slug) return json({ ok: false, error: "slug is required for list content" }, 400);
-      const found = parsed.find((r) => r.id === slug);
-      if (!found) return json({ ok: false, error: `No record found for slug: ${slug}` }, 404);
-      return json({ ok: true, target, slug, editorData: found.editor_content || toEditorDataFromRecord(found) });
-    }
-    if (target === "siteTheme") {
-      // Show theme JSON inside Editor.js (code block) for editing.
-      return json({
-        ok: true,
-        target,
-        slug,
-        editorData: {
-          time: Date.now(),
-          version: "2.30.7",
-          blocks: [
-            { type: "header", data: { text: "Site Theme", level: 2 } },
-            { type: "paragraph", data: { text: "Edit the JSON below, then Save draft and Publish to apply on the live site." } },
-            { type: "code", data: { code: JSON.stringify(parsed, null, 2) } }
-          ]
-        }
-      });
-    }
-    return json({ ok: true, target, slug, editorData: parsed.editor_content || parsed });
+    return buildReadContentResponse(parsed, target, slug);
   }
 
   function validateSaveRequest(body) {

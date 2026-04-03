@@ -316,36 +316,67 @@
     return null;
   }
 
+  function escHtml(s) {
+    return String(s ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function editorBlocksToHtml(data) {
     const blocks = Array.isArray(data?.blocks) ? data.blocks : [];
-    if (!blocks.length) return "<p>No blocks.</p>";
+    if (!blocks.length) return '<p class="text-gray-500 italic">No blocks yet — use the editor or Insert in the toolbar.</p>';
     const out = [];
     for (let i = 0; i < blocks.length; i += 1) {
       const b = blocks[i];
       const d = b?.data || {};
       if (b?.type === "header") {
         const lvl = Math.min(4, Math.max(2, Number(d.level || 2)));
-        out.push(`<div data-block-index="${i}" class="cursor-pointer"><h${lvl}>${String(d.text || "")}</h${lvl}></div>`);
+        const t = escHtml(d.text || "");
+        out.push(
+          `<div data-block-index="${i}" data-block-type="header" data-preview-editable="1" class="preview-block mb-6 cursor-pointer rounded-md px-1 -mx-1 hover:bg-black/5 transition-colors"><h${lvl} class="font-serif font-bold text-gray-900 leading-tight">${t}</h${lvl}></div>`
+        );
       } else if (b?.type === "paragraph") {
-        out.push(`<div data-block-index="${i}" class="cursor-pointer"><p>${String(d.text || "")}</p></div>`);
+        const t = escHtml(d.text || "");
+        out.push(
+          `<div data-block-index="${i}" data-block-type="paragraph" data-preview-editable="1" class="preview-block mb-5 cursor-pointer rounded-md px-1 -mx-1 hover:bg-black/5 transition-colors"><p class="font-serif text-lg leading-8 text-gray-800">${t.replace(/\n/g, "<br/>")}</p></div>`
+        );
       } else if (b?.type === "list") {
         const items = Array.isArray(d.items) ? d.items : [];
         const tag = d.style === "ordered" ? "ol" : "ul";
-        out.push(`<div data-block-index="${i}" class="cursor-pointer"><${tag}>${items.map((it) => `<li>${typeof it === "string" ? it : String(it || "")}</li>`).join("")}</${tag}></div>`);
+        const cls = tag === "ol" ? "list-decimal" : "list-disc";
+        out.push(
+          `<div data-block-index="${i}" data-block-type="list" class="preview-block mb-5 cursor-pointer font-serif text-gray-800 pl-4"><${tag} class="${cls} space-y-2">${items
+            .map((it) => `<li>${escHtml(typeof it === "string" ? it : String(it || ""))}</li>`)
+            .join("")}</${tag}></div>`
+        );
       } else if (b?.type === "code") {
-        const safe = String(d.code || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        out.push(`<div data-block-index="${i}" class="cursor-pointer"><pre><code>${safe}</code></pre></div>`);
+        const safe = escHtml(String(d.code || ""));
+        out.push(
+          `<div data-block-index="${i}" data-block-type="code" class="preview-block mb-5 cursor-pointer rounded-lg bg-slate-100 p-4 text-sm overflow-x-auto"><pre><code class="font-mono text-slate-800">${safe}</code></pre></div>`
+        );
       } else if (b?.type === "embed") {
-        const u = String(d.source || d.embed || "");
-        out.push(`<div data-block-index="${i}" class="cursor-pointer"><p><a href="${u}" target="_blank" rel="noopener">Embed link</a></p></div>`);
+        const rawU = String(d.source || d.embed || "").trim();
+        let href = "#";
+        try {
+          const u = new URL(rawU);
+          if (u.protocol === "http:" || u.protocol === "https:") href = u.href;
+        } catch (_) {
+          href = "#";
+        }
+        out.push(
+          `<div data-block-index="${i}" data-block-type="embed" class="preview-block mb-5 cursor-pointer border border-gray-200 rounded-lg p-4"><a class="text-indigo-600 underline" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">Embed → open link</a></div>`
+        );
       }
     }
-    return out.join("\n");
+    return `<div class="medium-draft-inner">${out.join("\n")}</div>`;
   }
 
   function bindPreviewBlockInteractions(container) {
     if (!container) return;
     container.onclick = (ev) => {
+      if (ev.detail !== 1) return;
       const node = ev.target.closest("[data-block-index]");
       if (!node) return;
       const idx = Number(node.getAttribute("data-block-index"));
@@ -356,6 +387,54 @@
       editNode?.classList.add("ring-2", "ring-indigo-500");
       setTimeout(() => editNode?.classList.remove("ring-2", "ring-indigo-500"), 900);
     };
+    container.addEventListener(
+      "dblclick",
+      async (ev) => {
+        const node = ev.target.closest("[data-preview-editable]");
+        if (!node || !editorInstance?.blocks) return;
+        const idx = Number(node.getAttribute("data-block-index"));
+        const btype = node.getAttribute("data-block-type");
+        if (!Number.isFinite(idx) || (btype !== "paragraph" && btype !== "header")) return;
+        ev.preventDefault();
+        let blockEl = btype === "header" ? node.querySelector("h2, h3, h4") : node.querySelector("p");
+        if (!blockEl) return;
+        const snap = await editorInstance.save();
+        const block = snap.blocks[idx];
+        if (!block || (block.type !== "paragraph" && block.type !== "header")) return;
+        let api;
+        try {
+          api = editorInstance.blocks.getBlockByIndex(idx);
+          if (api && typeof api.then === "function") api = await api;
+        } catch (_) {
+          return;
+        }
+        const id = api?.id;
+        if (!id) return;
+        blockEl.contentEditable = "true";
+        blockEl.classList.add("outline", "outline-2", "outline-indigo-400", "rounded-sm");
+        blockEl.focus();
+        const cleanup = async () => {
+          blockEl.contentEditable = "false";
+          blockEl.classList.remove("outline", "outline-2", "outline-indigo-400", "rounded-sm");
+          const next = (blockEl.innerText || "").trim();
+          try {
+            if (block.type === "header") {
+              await editorInstance.blocks.update(id, {
+                data: { ...(block.data || {}), text: next, level: block.data?.level || 2 }
+              });
+            } else {
+              await editorInstance.blocks.update(id, { data: { text: next } });
+            }
+            await updateEditorJsonPreviewNow();
+            setStatus("Preview edit synced — save draft when ready.");
+          } catch (err) {
+            setStatus(String(err?.message || err) || "Could not sync preview edit.");
+          }
+        };
+        blockEl.addEventListener("blur", () => cleanup(), { once: true });
+      },
+      true
+    );
   }
 
   async function updateEditorJsonPreviewNow() {
@@ -509,14 +588,47 @@
     return res.json();
   }
 
-  async function loadContentRead(target, slug, source = "auto") {
+  async function loadContentRead(target, slug, source = "auto", ref = "") {
     const q = new URLSearchParams({ target });
     if (slug) q.set("slug", slug);
     if (source && source !== "auto") q.set("source", source);
+    if (ref) q.set("ref", ref);
     const res = await fetch(`${API}/api/admin/content/read?${q}`, { credentials: "include" });
     const data = await res.json();
     data._httpStatus = res.status;
     return data;
+  }
+
+  async function apiListDraftCommits(target) {
+    const res = await fetch(`${API}/api/admin/content/commits?${new URLSearchParams({ target, per_page: "20" })}`, {
+      credentials: "include"
+    });
+    return res.json();
+  }
+
+  async function refreshDraftCommits() {
+    const panel = el("draft-history-panel");
+    const sel = el("sel-draft-commits");
+    if (!sel || !panel || panel.classList.contains("hidden")) return;
+    let target = "";
+    if (state.kind === "projects-home" && state.homeTab === "json") target = "homepage";
+    else if (state.kind === "project") target = "projects";
+    else if (state.kind === "caseStudy") target = "caseStudies";
+    if (!target) return;
+    sel.innerHTML = '<option value="">Loading…</option>';
+    const data = await apiListDraftCommits(target);
+    sel.innerHTML = '<option value="">— Pick a past save —</option>';
+    if (!data.ok || !Array.isArray(data.commits)) {
+      sel.innerHTML = '<option value="">Unavailable (login or deploy Worker)</option>';
+      return;
+    }
+    data.commits.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c.sha;
+      const when = c.date ? new Date(c.date).toLocaleString() : "";
+      opt.textContent = `${c.shortSha} · ${when} · ${(c.message || "").slice(0, 42)}`;
+      sel.appendChild(opt);
+    });
   }
 
   async function saveContentWrite(target, slug, editorData, options = {}) {
@@ -664,6 +776,8 @@
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (sideLists) sideLists.classList.toggle("hidden", state.kind === "dashboard" || isEditingRoute());
+    const dhp = el("draft-history-panel");
+    if (dhp) dhp.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     const rrh = el("record-html-hint");
     if (rrh && !isRecord) rrh.classList.add("hidden");
     // Simple mode: hide noisy debug JSON panels while editing.
@@ -703,6 +817,7 @@
         await loadHomeUiFields();
       } else {
         await loadHomepageJsonEditor();
+        await refreshDraftCommits();
       }
       return;
     }
@@ -717,12 +832,14 @@
     if (state.kind === "project") {
       setIframe(`${PAGES}project.html?id=${encodeURIComponent(state.slug)}`.replace(/^\//, ""));
       await loadRecordEditor(state.target, state.slug);
+      await refreshDraftCommits();
       return;
     }
 
     if (state.kind === "caseStudy") {
       setIframe(`${PAGES}case-study.html?id=${encodeURIComponent(state.slug)}`.replace(/^\//, ""));
       await loadRecordEditor(state.target, state.slug);
+      await refreshDraftCommits();
       return;
     }
 
@@ -777,10 +894,10 @@
     setIframe(`${PAGES}homepage.html`.replace(/^\//, ""), true);
   }
 
-  async function loadHomepageJsonEditor(source = "auto") {
+  async function loadHomepageJsonEditor(source = "auto", ref = "") {
     setStatus("Loading homepage JSON…");
     const hint = el("home-auth-hint");
-    const data = await loadContentRead("homepage", "", source);
+    const data = await loadContentRead("homepage", "", source, ref);
     if (hint) hint.classList.toggle("hidden", data.ok);
     if (!data.ok) {
       setStatus(data.error === "Unauthorized" ? "Sign in — then Reload." : data.error || "Load failed");
@@ -814,12 +931,12 @@
     }
   }
 
-  async function loadRecordEditor(target, slug, source = "auto") {
+  async function loadRecordEditor(target, slug, source = "auto", ref = "") {
     const label = el("record-label");
     if (label) label.textContent = `${target === "projects" ? "Project" : "Case study"} · ${slug}`;
     setRecordAuthBanner(false, "");
     setStatus("Loading record…");
-    const data = await loadContentRead(target, slug, source);
+    const data = await loadContentRead(target, slug, source, ref);
     if (!data.ok) {
       const unauthorized = data.error === "Unauthorized" || data._httpStatus === 401;
       const missing = /No record found for slug/i.test(String(data.error || ""));
@@ -1204,6 +1321,24 @@
     el("btn-load-live-home")?.addEventListener("click", () => loadHomepageJsonEditor("base"));
     el("btn-load-draft-record")?.addEventListener("click", () => loadRecordEditor(state.target, state.slug, "draft"));
     el("btn-load-live-record")?.addEventListener("click", () => loadRecordEditor(state.target, state.slug, "base"));
+    el("btn-refresh-draft-commits")?.addEventListener("click", () => refreshDraftCommits());
+    el("btn-load-draft-commit")?.addEventListener("click", async () => {
+      const sha = el("sel-draft-commits")?.value;
+      if (!sha) {
+        setStatus("Choose a commit from Draft file history.");
+        return;
+      }
+      if (!window.confirm("Load this saved version into the editor? Current unsaved edits in the panel will be replaced.")) return;
+      if (state.kind === "projects-home" && state.homeTab === "json") {
+        await loadHomepageJsonEditor("auto", sha);
+      } else if (state.kind === "project" || state.kind === "caseStudy") {
+        await loadRecordEditor(state.target, state.slug, "auto", sha);
+      } else {
+        return;
+      }
+      setStatus("Loaded a past draft save — use Save draft to continue from here, then Publish when ready.");
+      await refreshDraftCommits();
+    });
   }
 
   function cleanSlug(value) {
@@ -1265,9 +1400,9 @@
       return;
     }
     const label = kind === "projects" ? "project" : "case study";
-    const title = (window.prompt(`New ${label} title:`) || "").trim();
+    const title = (window.prompt(`Title for your new ${label} (shown on the site):`) || "").trim();
     if (!title) return;
-    const slugInput = (window.prompt(`Slug (optional). Leave blank to auto-generate from title:`) || "").trim();
+    const slugInput = (window.prompt(`URL slug (optional, e.g. my-analytics-project). Leave blank to derive from title:`) || "").trim();
     const slug = cleanSlug(slugInput || title);
     if (!slug) {
       setStatus("Invalid slug.");

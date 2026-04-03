@@ -143,3 +143,9 @@ After GitHub OAuth, users land on `ADMIN_SUCCESS_REDIRECT` (default in `wrangler
    so browsers load the new bundle (GitHub Pages caches aggressively).
 3. Push to the branch GitHub Pages builds from; wait for the Pages deploy to finish.
 4. Hard refresh the editor (`Ctrl+F5`) when testing.
+5. After **Worker** API changes, run `wrangler deploy` from `cloudflare-worker/admin-api/`.
+
+## Worker APIs (content)
+
+- **`GET /api/admin/content/read`** — `target`, optional `slug`, `source` (`auto` | `draft` | `base`), optional **`ref`** (commit SHA) to load that revision of the JSON file.
+- **`GET /api/admin/content/commits`** — `target` — lists recent commits touching the mapped file on the **draft** branch (for “Draft file history” in the editor).
