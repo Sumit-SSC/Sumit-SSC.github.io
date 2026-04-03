@@ -903,13 +903,29 @@
     setIframe(`${PAGES}homepage.html`.replace(/^\//, ""), true);
   }
 
+  async function loadPublicHomepageEditor() {
+    try {
+      const pub = await fetchJson("data/homepage-content.json");
+      if (pub && pub.editor_content && Array.isArray(pub.editor_content.blocks)) return pub.editor_content;
+      if (pub && Array.isArray(pub.blocks)) return pub;
+    } catch (_) {}
+    return getDefaultEditorData();
+  }
+
   async function loadHomepageJsonEditor(source = "auto", ref = "") {
     setStatus("Loading homepage JSON…");
     const hint = el("home-auth-hint");
     const data = await loadContentRead("homepage", "", source, ref);
     if (hint) hint.classList.toggle("hidden", data.ok);
     if (!data.ok) {
-      setStatus(data.error === "Unauthorized" ? "Sign in — then Reload." : data.error || "Load failed");
+      const unauthorized = data.error === "Unauthorized" || data._httpStatus === 401;
+      if (unauthorized) {
+        const pub = await loadPublicHomepageEditor();
+        await mountEditor("admin-editor-holder-home", pub);
+        setStatus("Read-only baseline loaded. Use Account > Log in to load draft and save.");
+        return;
+      }
+      setStatus(data.error || "Load failed");
       await mountEditor("admin-editor-holder-home", getDefaultEditorData());
       return;
     }
@@ -1479,7 +1495,8 @@
       b.addEventListener("click", () => {
         state.kind = "projects-home";
         state.slug = "";
-        state.homeTab = "titles";
+        state.homeTab = "json";
+        setHomeTabStyle("json");
         highlightNav();
         applyRoute();
       });
