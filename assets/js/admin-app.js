@@ -501,8 +501,23 @@
     }
     wrap.classList.remove("hidden");
     const blocks = Array.isArray(editorData?.blocks) ? editorData.blocks : [];
+    const headerBlocks = blocks
+      .map((b, i) => ({ b, i }))
+      .filter(({ b }) => b && b.type === "header");
+    if (!headerBlocks.length) {
+      wrap.classList.add("hidden");
+      list.innerHTML = "";
+      return;
+    }
     list.innerHTML = "";
-    blocks.forEach((b, i) => {
+    // Medium-like behavior: show only headings as "sections" navigation.
+    // We intentionally disable drag-reorder here because filtered indices don't map cleanly to the editor block order.
+    if (blockNavSortable && typeof blockNavSortable.destroy === "function") {
+      try { blockNavSortable.destroy(); } catch (_) {}
+    }
+    blockNavSortable = null;
+
+    headerBlocks.forEach(({ b, i }) => {
       const li = document.createElement("li");
       const btn = document.createElement("button");
       btn.type = "button";
@@ -520,21 +535,6 @@
       li.appendChild(btn);
       list.appendChild(li);
     });
-    if (window.Sortable && !blockNavSortable) {
-      blockNavSortable = Sortable.create(list, {
-        animation: 150,
-        onEnd: async (evt) => {
-          if (!editorInstance?.blocks) return;
-          const from = evt.oldIndex;
-          const to = evt.newIndex;
-          if (typeof from !== "number" || typeof to !== "number" || from === to) return;
-          try {
-            await editorInstance.blocks.move(to, from);
-            await updateEditorJsonPreviewNow();
-          } catch (_) {}
-        }
-      });
-    }
   }
 
   async function mountEditor(holderId, data) {

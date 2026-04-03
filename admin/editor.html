@@ -11,18 +11,24 @@
     .ce-block:focus-within { outline: 2px solid rgb(99 102 241 / 0.75); outline-offset: 3px; border-radius: 6px; }
     .admin-editor-canvas {
       border-radius: 14px;
-      border: 1px solid rgb(51 65 85 / 0.85);
-      background: rgb(15 23 42 / 0.65);
-      padding: 1.25rem 1.5rem 2rem;
+      border: 1px solid rgb(229 231 235);
+      background: #ffffff;
+      padding: 1.5rem 1.5rem 2rem;
       min-height: 240px;
+      color: rgb(17 24 39);
     }
-    .admin-editor-canvas .codex-editor { z-index: 1; }
+    .admin-editor-canvas .codex-editor { z-index: 1; background: transparent !important; }
     .admin-editor-canvas .ce-block { margin: 0.15rem 0; }
-    .admin-editor-canvas .ce-paragraph { font-size: 1.0625rem; line-height: 1.75; color: rgb(226 232 240); }
-    .admin-editor-canvas .ce-header { color: rgb(248 250 252); }
-    .admin-editor-canvas .ce-header[data-placeholder]::before { color: rgb(100 116 139); }
+    .admin-editor-canvas .ce-paragraph { font-size: 1.0625rem; line-height: 1.75; color: rgb(17 24 39); }
+    .admin-editor-canvas .ce-header { color: rgb(17 24 39); }
+    .admin-editor-canvas .ce-header[data-placeholder]::before { color: rgb(107 114 128); }
     .admin-editor-canvas .codex-editor__redactor { padding-bottom: 3rem !important; }
-    .admin-editor-canvas .ce-toolbar__plus, .admin-editor-canvas .ce-toolbar__settings-btn { color: rgb(148 163 184); }
+    .admin-editor-canvas .ce-toolbar__plus,
+    .admin-editor-canvas .ce-toolbar__settings-btn {
+      color: rgb(55 65 81) !important;
+      background: rgb(243 244 246) !important;
+      border-radius: 8px !important;
+    }
     #center-draft-preview.medium-draft-preview { background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); }
     .medium-draft-inner { max-width: 42rem; margin: 0 auto; padding-bottom: 3rem; }
     .medium-draft-inner .preview-block:first-child { margin-top: 0.5rem; }
@@ -245,6 +251,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260403-3"></script>
+  <script src="../assets/js/admin-app.js?v=20260403-4"></script>
 </body>
 </html>
