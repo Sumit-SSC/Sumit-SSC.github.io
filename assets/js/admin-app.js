@@ -21,6 +21,7 @@
   let autoSaveTimer = null;
   let autoSaveInFlight = false;
   let lastSessionData = null;
+  let toastTimer = null;
   let blockNavSortable = null;
 
   const state = {
@@ -56,6 +57,18 @@
     }
     const d = el("dash-last-status");
     if (d) d.textContent = text;
+  }
+
+  function toast(message, tone = "info") {
+    const n = el("ui-toast");
+    if (!n) return;
+    n.textContent = message || "";
+    n.classList.remove("hidden", "border-emerald-700", "border-rose-700", "border-slate-700");
+    if (tone === "success") n.classList.add("border-emerald-700");
+    else if (tone === "error") n.classList.add("border-rose-700");
+    else n.classList.add("border-slate-700");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => n.classList.add("hidden"), 2400);
   }
 
   function setAutosaveStateLabel(text, tone = "ok") {
@@ -1197,6 +1210,7 @@
       const out = await saveRawSource(sourceDoc.target, sourceDoc.slug, sourceDoc.mode, monacoEditor.getValue());
       if (!out.ok) {
         setStatus(out.error || "Source save failed");
+        toast(out.error || "Save failed", "error");
         return;
       }
       if (out.unchanged) {
@@ -1205,6 +1219,7 @@
       }
       setBranchHint(out.branch || "");
       setStatus(`Saved source · ${out.branch || "draft"}`);
+      toast("Draft saved", "success");
       await ribLoad();
       return;
     }
@@ -1224,6 +1239,7 @@
       const out = await saveDraftForCurrentRoute();
       if (!out.ok) {
         setStatus(out.error || "Save failed");
+        toast(out.error || "Save failed", "error");
         return;
       }
       if (out.unchanged) {
@@ -1236,6 +1252,7 @@
       state.draftDirty = false;
       setAutosaveStateLabel("Auto-save: saved", "ok");
       setStatus(`Saved · ${out.branch || "draft"}`);
+      toast("Draft saved", "success");
       return;
     }
 
@@ -1256,6 +1273,7 @@
       const out = await saveDraftForCurrentRoute();
       if (!out.ok) {
         setStatus(out.error || "Save failed");
+        toast(out.error || "Save failed", "error");
         return;
       }
       if (out.unchanged) {
@@ -1268,6 +1286,7 @@
       state.draftDirty = false;
       setAutosaveStateLabel("Auto-save: saved", "ok");
       setStatus(`Saved · ${out.branch || "draft"}`);
+      toast("Draft saved", "success");
     }
   }
 
@@ -1882,6 +1901,9 @@
     if (out.ok) {
       recordPublishSuccess("siteTheme");
       updateLastPublishedLabel();
+      toast("Published to live site", "success");
+    } else {
+      toast(out.error || "Publish failed", "error");
     }
     setStatus(out.ok ? "Published theme to live." : out.error || "Publish failed");
     if (out.ok) refreshPreviewIframe();
@@ -1949,11 +1971,13 @@
     const out = await apiPublish(target);
     if (!out.ok) {
       setStatus(out.error || "Publish failed");
+      toast(out.error || "Publish failed", "error");
       return;
     }
     recordPublishSuccess(target);
     updateLastPublishedLabel();
     setStatus(`Published to ${out.baseBranch || "live"}. ${out.backupPath ? "Backup: " + out.backupPath : ""}`);
+    toast("Published to live site", "success");
     refreshPreviewIframe();
   });
 
@@ -1969,6 +1993,9 @@
     if (out.ok) {
       recordPublishSuccess("homepageUi");
       updateLastPublishedLabel();
+      toast("Published section titles", "success");
+    } else {
+      toast(out.error || "Publish failed", "error");
     }
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
     if (out.ok) refreshPreviewIframe();
@@ -1986,6 +2013,9 @@
     if (out.ok) {
       recordPublishSuccess("homepage");
       updateLastPublishedLabel();
+      toast("Published homepage content", "success");
+    } else {
+      toast(out.error || "Publish failed", "error");
     }
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
     if (out.ok) refreshPreviewIframe();
