@@ -85,6 +85,16 @@ function editorBlocksToHtml(editorContent) {
       out.push(`<${tag} class="list-disc pl-6 space-y-1 text-gray-600 dark:text-gray-300">${li}</${tag}>`);
       continue;
     }
+    if (b.type === "image") {
+      const raw = String(d.url || d.file?.url || "").trim();
+      if (!raw) continue;
+      const src = escapeHtml(raw);
+      const cap = escapeHtml(d.caption || "");
+      out.push(
+        `<figure class="my-6"><img src="${src}" alt="${cap}" class="w-full rounded-lg border border-gray-200 dark:border-gray-700"/><figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">${cap}</figcaption></figure>`
+      );
+      continue;
+    }
     if (b.type === "code") {
       out.push(`<pre class="rounded-lg bg-slate-900 text-slate-100 p-4 overflow-auto text-sm"><code>${escapeHtml(d.code || "")}</code></pre>`);
       continue;

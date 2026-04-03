@@ -371,7 +371,7 @@
   }
 
   function sanitizeEditorPayload(editorData, target, options = {}) {
-    const allowedTypes = new Set(["paragraph", "header", "list", "code", "embed"]);
+    const allowedTypes = new Set(["paragraph", "header", "list", "image", "code", "embed"]);
     const blocks = (editorData.blocks || [])
       .filter((block) => allowedTypes.has(block.type))
       .map((block) => ({ type: block.type, data: block.data || {} }));
@@ -419,11 +419,13 @@
       "EditorjsNestedList"
     );
     const codeTool = pickToolConstructor("CodeTool", "Code", "CodeToolPlugin", "EditorjsCode");
+    const imageTool = pickToolConstructor("SimpleImage", "ImageTool", "Image");
     const embedTool = pickToolConstructor("Embed", "EmbedTool", "Embedder", "EditorjsEmbed");
 
     if (headerTool) tools.header = headerTool;
     if (paragraphTool) tools.paragraph = paragraphTool;
     if (listTool) tools.list = listTool;
+    if (imageTool) tools.image = imageTool;
     if (codeTool) tools.code = codeTool;
     if (embedTool) tools.embed = embedTool;
 
@@ -481,6 +483,20 @@
           `<div data-block-index="${i}" data-block-type="list" class="preview-block mb-5 cursor-pointer font-serif text-gray-800 pl-4"><${tag} class="${cls} space-y-2">${items
             .map((it) => `<li>${escHtml(typeof it === "string" ? it : String(it || ""))}</li>`)
             .join("")}</${tag}></div>`
+        );
+      } else if (b?.type === "image") {
+        const raw = String(d.url || d.file?.url || "").trim();
+        let src = "";
+        try {
+          const u = new URL(raw, SITE + "/");
+          if (u.protocol === "http:" || u.protocol === "https:") src = u.href;
+        } catch (_) {
+          src = "";
+        }
+        if (!src) continue;
+        const cap = escHtml(d.caption || "");
+        out.push(
+          `<div data-block-index="${i}" data-block-type="image" class="preview-block mb-6 cursor-pointer"><figure><img src="${escHtml(src)}" alt="${cap}" class="w-full rounded-lg border border-slate-200"/><figcaption class="text-sm text-slate-600 mt-2">${cap}</figcaption></figure></div>`
         );
       } else if (b?.type === "code") {
         const safe = escHtml(String(d.code || ""));
@@ -1510,12 +1526,20 @@
           paragraph: { type: "paragraph", data: { text: "" } },
           header: { type: "header", data: { text: "Heading", level: 2 } },
           list: { type: "list", data: { style: "unordered", items: ["Item"] } },
+          image: { type: "image", data: { url: "", caption: "" } },
           code: { type: "code", data: { code: "" } },
           embed: { type: "embed", data: { service: "github", source: "https://github.com/", embed: "https://github.com/", width: 580, height: 320, caption: "" } }
         };
         const block = map[type];
         if (!block) return;
         try {
+          if (type === "image") {
+            const src = (window.prompt("Image URL (https://...):") || "").trim();
+            if (!src) return;
+            const caption = (window.prompt("Optional caption:") || "").trim();
+            await editorInstance.blocks.insert("image", { url: src, caption });
+            return;
+          }
           await editorInstance.blocks.insert(block.type, block.data);
         } catch (e) {
           setStatus("Could not insert block — use + inside the editor.");
@@ -1906,7 +1930,10 @@
       toast(out.error || "Publish failed", "error");
     }
     setStatus(out.ok ? "Published theme to live." : out.error || "Publish failed");
-    if (out.ok) refreshPreviewIframe();
+    if (out.ok) {
+      refreshPreviewIframe();
+      setCenterPreviewMode("live");
+    }
   });
 
   async function apiListBackups() {
@@ -1979,6 +2006,7 @@
     setStatus(`Published to ${out.baseBranch || "live"}. ${out.backupPath ? "Backup: " + out.backupPath : ""}`);
     toast("Published to live site", "success");
     refreshPreviewIframe();
+    setCenterPreviewMode("live");
   });
 
   el("btn-publish-home-ui")?.addEventListener("click", async () => {
@@ -1998,7 +2026,10 @@
       toast(out.error || "Publish failed", "error");
     }
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
-    if (out.ok) refreshPreviewIframe();
+    if (out.ok) {
+      refreshPreviewIframe();
+      setCenterPreviewMode("live");
+    }
   });
 
   el("btn-publish-home-json")?.addEventListener("click", async () => {
@@ -2018,7 +2049,10 @@
       toast(out.error || "Publish failed", "error");
     }
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
-    if (out.ok) refreshPreviewIframe();
+    if (out.ok) {
+      refreshPreviewIframe();
+      setCenterPreviewMode("live");
+    }
   });
 
   el("btn-refresh-backups")?.addEventListener("click", () => refreshBackupSelect());
