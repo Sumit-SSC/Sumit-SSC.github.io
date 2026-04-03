@@ -134,3 +134,12 @@ After GitHub OAuth, users land on `ADMIN_SUCCESS_REDIRECT` (default in `wrangler
 
 - `/dev/index.html` remains a lightweight JSON editor.
 - Standalone `?admin_edit=1` on `homepage.html` still works **outside** the iframe; inside the admin preview iframe, the duplicate Phase A bar is suppressed so controls stay in the workspace.
+
+## Deploying editor UI changes
+
+1. Edit `assets/js/admin-app.js` and/or `admin/editor.html`.
+2. **Bump the cache-buster** on the script tag in `admin/editor.html`:  
+   `../assets/js/admin-app.js?v=YYYYMMDD-N`  
+   so browsers load the new bundle (GitHub Pages caches aggressively).
+3. Push to the branch GitHub Pages builds from; wait for the Pages deploy to finish.
+4. Hard refresh the editor (`Ctrl+F5`) when testing.

@@ -8,6 +8,7 @@
   <style>
     body { font-family: Inter, system-ui, sans-serif; }
     #admin-preview { min-height: 0; }
+    .ce-block:focus-within { outline: 2px solid rgb(99 102 241 / 0.85); outline-offset: 2px; border-radius: 4px; }
   </style>
   <script>
     window.__ADMIN_APP__ = {
@@ -41,11 +42,12 @@
       <button id="rib-block-down" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Down</button>
       <button id="rib-block-delete" class="px-2 py-1 rounded bg-rose-900 hover:bg-rose-800">Delete</button>
     </div>
-    <span id="rib-session-info" class="ml-auto text-slate-300"></span>
-    <span id="rib-status" class="text-slate-400 max-w-[32rem] truncate"></span>
+    <span id="rib-session-info" class="ml-auto shrink-0 text-slate-300"></span>
+    <span id="rib-branch-hint" class="hidden shrink-0 text-[10px] text-slate-500 max-w-[10rem] truncate" title="Active draft branch after last save"></span>
+    <span id="rib-status" class="flex-1 min-w-0 text-slate-400 text-xs max-h-24 overflow-y-auto break-words px-1" title=""></span>
     <button id="rib-refresh" class="hidden"></button>
     <button id="rib-open-live" class="hidden"></button>
-    <button id="rib-edit-workspace" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 hidden">Focus editor</button>
+    <button id="rib-edit-workspace" type="button" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 hidden" title="Hide the live preview to focus on the editor. Use Split view to see both again.">Focus editor</button>
   </header>
 
   <div id="workspace-main" class="h-[calc(100vh-44px)] flex min-h-0">
@@ -111,10 +113,11 @@
       </div>
       <div id="panel-home-ui" class="hidden p-3 space-y-2 overflow-y-auto">
         <p id="home-auth-hint" class="hidden text-xs"></p>
+        <p class="text-[11px] text-slate-500">Use the <strong class="text-slate-400">top bar</strong> for Save draft, Publish, and Preview.</p>
         <input id="fld-featured" class="w-full rounded bg-slate-800 px-2 py-1.5" placeholder="Featured title" />
         <input id="fld-cs" class="w-full rounded bg-slate-800 px-2 py-1.5" placeholder="Case studies title" />
-        <button id="btn-save-ui" class="w-full rounded bg-emerald-700 px-2 py-1.5">Save draft</button>
-        <button id="btn-publish-home-ui" class="w-full rounded bg-indigo-700 px-2 py-1.5">Publish</button>
+        <button id="btn-save-ui" type="button" class="hidden" tabindex="-1" aria-hidden="true">Save draft</button>
+        <button id="btn-publish-home-ui" type="button" class="hidden" tabindex="-1" aria-hidden="true">Publish</button>
         <p id="msg-home-ui" class="text-xs text-slate-400"></p>
       </div>
       <div id="panel-home-json" class="hidden flex-1 min-h-0 flex flex-col">
@@ -124,12 +127,14 @@
         </div>
         <div id="admin-editor-holder-home" class="flex-1 overflow-y-auto p-3"></div>
         <details class="px-3 pb-2"><summary class="text-xs text-slate-400">JSON</summary><pre id="json-preview-home" class="text-xs mt-1 whitespace-pre-wrap"></pre></details>
-        <button id="btn-publish-home-json" class="mx-3 mb-3 rounded bg-indigo-700 px-2 py-1.5">Publish homepage JSON</button>
+        <p class="px-3 text-[11px] text-slate-500 mb-2">Publish homepage JSON from the <strong class="text-slate-400">top bar</strong> (Publish).</p>
+        <button id="btn-publish-home-json" type="button" class="hidden mx-3 mb-3" tabindex="-1" aria-hidden="true">Publish homepage JSON</button>
         <div id="draft-preview-home" class="hidden"></div>
       </div>
       <div id="panel-editor-record" class="hidden flex-1 min-h-0 flex flex-col">
         <p id="record-label" class="px-3 pt-3 text-sm font-medium"></p>
         <p id="record-auth-banner" class="hidden px-3 text-xs text-amber-300"></p>
+        <p id="record-html-hint" class="hidden px-3 text-[11px] text-sky-300/90 leading-snug"></p>
         <div class="px-3 pt-2 flex gap-2 text-xs">
           <button id="btn-load-draft-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
           <button id="btn-load-live-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
@@ -183,6 +188,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260402-11"></script>
+  <script src="../assets/js/admin-app.js?v=20260403-1"></script>
 </body>
 </html>

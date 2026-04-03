@@ -40,11 +40,37 @@
 
   const el = (id) => document.getElementById(id);
 
-  function setStatus(t) {
+  /** Last branch label from save/publish (draft branch name when known). */
+  let lastBranchHint = "";
+
+  function setStatus(t, opts = {}) {
+    const text = t || "";
     const n = el("rib-status");
-    if (n) n.textContent = t || "";
+    if (n) {
+      n.textContent = text;
+      n.title = opts.title || text;
+    }
     const d = el("dash-last-status");
-    if (d) d.textContent = t || "";
+    if (d) d.textContent = text;
+  }
+
+  function setBranchHint(branch) {
+    lastBranchHint = branch && String(branch).trim() ? String(branch).trim() : "";
+    const hintEl = el("rib-branch-hint");
+    if (hintEl) {
+      hintEl.textContent = lastBranchHint ? `Draft: ${lastBranchHint}` : "";
+      hintEl.classList.toggle("hidden", !lastBranchHint);
+      hintEl.title = lastBranchHint ? `Last saved draft branch: ${lastBranchHint}` : "";
+    }
+  }
+
+  function pickToolConstructor(...names) {
+    const W = window || {};
+    for (const n of names) {
+      const c = W[n];
+      if (typeof c === "function") return c;
+    }
+    return null;
   }
 
   function isEditingRoute() {
@@ -113,9 +139,10 @@
     if (sidebar) sidebar.classList.toggle("hidden", state.kind === "dashboard");
   }
 
-  function previewUrl(pathWithQuery) {
+  function previewUrl(pathWithQuery, bustCache = false) {
     const u = new URL(pathWithQuery.startsWith("/") ? pathWithQuery : `/${pathWithQuery}`, SITE + "/");
     u.searchParams.set("admin_embed", "1");
+    if (bustCache) u.searchParams.set("_admin_cb", String(Date.now()));
     return u.toString();
   }
 
@@ -158,6 +185,17 @@
     };
   }
 
+  function stripHtml(s) {
+    return String(s || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function looksLikeHtml(s) {
+    return /<\/?[a-z][\s\S]*>/i.test(String(s || "").trim());
+  }
+
   function recordToEditorData(record) {
     if (!record) return getDefaultEditorData();
     const blocks = [
@@ -165,7 +203,24 @@
       { type: "paragraph", data: { text: record.short_description || "" } }
     ];
     if (record.full_description) {
-      blocks.push({ type: "code", data: { code: String(record.full_description) } });
+      const raw = String(record.full_description);
+      if (looksLikeHtml(raw)) {
+        const plain = stripHtml(raw).slice(0, 2000);
+        blocks.push({
+          type: "paragraph",
+          data: {
+            text: plain || "(HTML body — open Source → Record HTML to edit the full page HTML.)"
+          }
+        });
+        blocks.push({
+          type: "code",
+          data: {
+            code: `<!-- Original HTML stored in content file. Edit in Source mode → Record HTML for full control. -->\n${raw.slice(0, 8000)}${raw.length > 8000 ? "\n… (truncated in preview)" : ""}`
+          }
+        });
+      } else {
+        blocks.push({ type: "code", data: { code: raw } });
+      }
     }
     return { time: Date.now(), blocks, version: "2.30.7" };
   }
@@ -214,21 +269,37 @@
 
   function getTools() {
     // Editor.js tools are exposed as different globals depending on the CDN bundle.
-    // We try multiple known names so the editor actually renders blocks.
-    const W = window || {};
     const tools = {};
 
-    const headerTool = W.Header || W.HeaderTool;
-    const paragraphTool = W.Paragraph || W.ParagraphTool;
-    const listTool = W.List || W.EditorjsList || W.EditorjsListTool || W.ListRenderer;
-    const codeTool = W.CodeTool || W.Code || W.CodeToolPlugin;
-    const embedTool = W.Embed || W.EmbedTool || W.Embedder;
+    const headerTool = pickToolConstructor("Header", "HeaderTool");
+    const paragraphTool = pickToolConstructor(
+      "Paragraph",
+      "ParagraphTool",
+      "ParagraphBlock",
+      "paragraph",
+      "EditorjsParagraph"
+    );
+    const listTool = pickToolConstructor(
+      "List",
+      "EditorjsList",
+      "EditorjsListTool",
+      "ListRenderer",
+      "NestedList",
+      "EditorjsNestedList"
+    );
+    const codeTool = pickToolConstructor("CodeTool", "Code", "CodeToolPlugin", "EditorjsCode");
+    const embedTool = pickToolConstructor("Embed", "EmbedTool", "Embedder", "EditorjsEmbed");
 
     if (headerTool) tools.header = headerTool;
     if (paragraphTool) tools.paragraph = paragraphTool;
     if (listTool) tools.list = listTool;
     if (codeTool) tools.code = codeTool;
     if (embedTool) tools.embed = embedTool;
+
+    if (!tools.paragraph || !tools.header) {
+      const keys = Object.keys(window || {}).filter((k) => /header|paragraph|editor|list|code|embed/i.test(k));
+      console.warn("[admin-app] Editor.js tool globals partial match:", keys.slice(0, 40));
+    }
 
     return tools;
   }
@@ -391,7 +462,12 @@
     }
     const normalized = normalizeEditorData(data);
     const tools = getTools();
-    if (!tools || Object.keys(tools).length === 0) {
+    if (!tools.paragraph) {
+      setStatus(
+        "Editor tools failed to load (paragraph missing). Hard refresh (Ctrl+F5). If it persists, check network/CDN.",
+        { title: "Editor.js paragraph tool not found on window" }
+      );
+    } else if (!tools || Object.keys(tools).length === 0) {
       setStatus("Editor.js tools not loaded (check CDN). Hard refresh and retry.");
     }
     editorInstance = new Editor({
@@ -400,7 +476,7 @@
       tools,
       autofocus: true,
       minHeight: 80,
-      inlineToolbar: ["bold", "italic", "link"],
+      inlineToolbar: tools.paragraph ? ["bold", "italic", "link"] : false,
       onChange: () => {
         setStatus("Edited — save draft when ready.");
         scheduleEditorJsonPreview();
@@ -544,9 +620,21 @@
     showPanels();
   }
 
-  function setIframe(path) {
+  function setIframe(path, bustCache = false) {
     const f = el("admin-preview");
-    if (f) f.src = previewUrl(path);
+    if (f) f.src = previewUrl(path, bustCache);
+  }
+
+  function refreshPreviewIframe() {
+    const f = el("admin-preview");
+    if (!f || !f.src) return;
+    try {
+      const u = new URL(f.src);
+      u.searchParams.set("_admin_cb", String(Date.now()));
+      f.src = u.toString();
+    } catch (_) {
+      f.src = f.src;
+    }
   }
 
   function showPanels() {
@@ -576,6 +664,8 @@
     if (ribIns) ribIns.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (ribBlock) ribBlock.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     if (sideLists) sideLists.classList.toggle("hidden", state.kind === "dashboard" || isEditingRoute());
+    const rrh = el("record-html-hint");
+    if (rrh && !isRecord) rrh.classList.add("hidden");
     // Simple mode: hide noisy debug JSON panels while editing.
     if (!state.sourceMode && ((isHome && state.homeTab === "json") || isRecord)) {
       const jh = el("json-preview-home");
@@ -683,8 +773,8 @@
       if (msg) msg.textContent = data.error || "Save failed";
       return;
     }
-    if (msg) msg.textContent = "Saved. Refresh preview to see titles.";
-    setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
+    if (msg) msg.textContent = "Saved. Preview updated below.";
+    setIframe(`${PAGES}homepage.html`.replace(/^\//, ""), true);
   }
 
   async function loadHomepageJsonEditor(source = "auto") {
@@ -708,6 +798,22 @@
     if (show && message) b.textContent = message;
   }
 
+  function updateRecordHtmlHint(editorData) {
+    const hint = el("record-html-hint");
+    if (!hint) return;
+    const blocks = Array.isArray(editorData?.blocks) ? editorData.blocks : [];
+    const codeBlock = blocks.find((b) => b.type === "code");
+    const c = String(codeBlock?.data?.code || "");
+    const show =
+      c.length > 120 &&
+      (looksLikeHtml(c) || /Original HTML|content file|Record HTML/i.test(c));
+    hint.classList.toggle("hidden", !show);
+    if (show) {
+      hint.textContent =
+        "Long HTML body detected: use Source → Record HTML to edit the full page file. Visual mode is best for short blocks and summaries.";
+    }
+  }
+
   async function loadRecordEditor(target, slug, source = "auto") {
     const label = el("record-label");
     if (label) label.textContent = `${target === "projects" ? "Project" : "Case study"} · ${slug}`;
@@ -727,6 +833,7 @@
           const pub = await loadPublicRecordEditor(target, slug);
           if (pub) {
             await mountEditor("admin-editor-holder", pub);
+            updateRecordHtmlHint(pub);
             return;
           }
         } catch (e) {
@@ -746,6 +853,7 @@
     }
     setRecordAuthBanner(false, "");
     await mountEditor("admin-editor-holder", data.editorData || getDefaultEditorData());
+    updateRecordHtmlHint(data.editorData || getDefaultEditorData());
     setStatus("Loaded — Save draft, then Publish to live to update the public site.");
   }
 
@@ -764,6 +872,7 @@
         setStatus("No changes detected. Draft not updated.");
         return;
       }
+      setBranchHint(out.branch || "");
       setStatus(`Saved source · ${out.branch || "draft"}`);
       await ribLoad();
       return;
@@ -771,6 +880,11 @@
     const s = await apiSession();
     if (!s.ok) {
       setStatus("Not logged in.");
+      return;
+    }
+
+    if (state.kind === "projects-home" && state.homeTab === "titles") {
+      await saveHomeUi();
       return;
     }
 
@@ -787,6 +901,7 @@
         setStatus("No changes detected. Draft not updated.");
         return;
       }
+      setBranchHint(out.branch || "");
       setStatus(`Saved · ${out.branch || "draft"}`);
       return;
     }
@@ -816,6 +931,7 @@
         setStatus("No changes detected. Draft not updated.");
         return;
       }
+      setBranchHint(out.branch || "");
       setStatus(`Saved · ${out.branch || "draft"}`);
     }
   }
@@ -837,6 +953,10 @@
   async function ribLoad() {
     if (state.sourceMode) {
       await openSourceMode();
+      return;
+    }
+    if (state.kind === "projects-home" && state.homeTab === "titles") {
+      await loadHomeUiFields();
       return;
     }
     if (state.kind === "projects-home" && state.homeTab === "json") {
@@ -1329,6 +1449,7 @@
       if (msg) msg.textContent = data.error || "Save failed";
       return;
     }
+    setBranchHint(data.branch || "");
     if (msg) msg.textContent = `Saved draft (${data.branch || "draft"}).`;
   }
 
@@ -1363,6 +1484,7 @@
       if (msg) msg.textContent = data.error || "Save failed";
       return;
     }
+    setBranchHint(data.branch || "");
     const sDm = el("theme-default-mode");
     const sDc = el("theme-default-color");
     if (sDm) sDm.value = mode;
@@ -1383,8 +1505,7 @@
     setStatus("Publishing…");
     const out = await apiPublish("siteTheme");
     setStatus(out.ok ? "Published theme to live." : out.error || "Publish failed");
-    const iframe = el("admin-preview");
-    if (iframe && iframe.src) iframe.src = iframe.src;
+    if (out.ok) refreshPreviewIframe();
   });
 
   async function apiListBackups() {
@@ -1448,8 +1569,7 @@
       return;
     }
     setStatus(`Published to ${out.baseBranch || "live"}. ${out.backupPath ? "Backup: " + out.backupPath : ""}`);
-    const iframe = el("admin-preview");
-    if (iframe && iframe.src) iframe.src = iframe.src;
+    refreshPreviewIframe();
   });
 
   el("btn-publish-home-ui")?.addEventListener("click", async () => {
@@ -1462,10 +1582,7 @@
     setStatus("Publishing…");
     const out = await apiPublish("homepageUi");
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
-    if (out.ok) {
-      const iframe = el("admin-preview");
-      if (iframe && iframe.src) iframe.src = iframe.src;
-    }
+    if (out.ok) refreshPreviewIframe();
   });
 
   el("btn-publish-home-json")?.addEventListener("click", async () => {
@@ -1478,10 +1595,7 @@
     setStatus("Publishing…");
     const out = await apiPublish("homepage");
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
-    if (out.ok) {
-      const iframe = el("admin-preview");
-      if (iframe && iframe.src) iframe.src = iframe.src;
-    }
+    if (out.ok) refreshPreviewIframe();
   });
 
   el("btn-refresh-backups")?.addEventListener("click", () => refreshBackupSelect());
@@ -1501,8 +1615,7 @@
     const out = await apiRestore(path);
     setStatus(out.ok ? `Restored ${out.path}` : out.error || "Restore failed");
     if (out.ok) {
-      const iframe = el("admin-preview");
-      if (iframe && iframe.src) iframe.src = iframe.src;
+      refreshPreviewIframe();
       await ribLoad();
     }
   });
