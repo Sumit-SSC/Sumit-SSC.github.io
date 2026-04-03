@@ -1,0 +1,40 @@
+{
+  "editor_content": {
+    "time": 1743648000000,
+    "version": "2.30.7",
+    "blocks": [
+      {
+        "type": "header",
+        "data": { "text": "Projects & analytics work", "level": 2 }
+      },
+      {
+        "type": "paragraph",
+        "data": {
+          "text": "This block editor drives optional intro copy for your projects hub. Pair it with Featured / Case study section titles in the Titles tab."
+        }
+      },
+      {
+        "type": "header",
+        "data": { "text": "What visitors see", "level": 3 }
+      },
+      {
+        "type": "list",
+        "data": {
+          "style": "unordered",
+          "items": [
+            "SQL-first analytics, BI, and product analytics highlights",
+            "End-to-end workflows: data → insight → decision",
+            "Long-form case studies alongside shorter project cards"
+          ]
+        }
+      },
+      {
+        "type": "paragraph",
+        "data": {
+          "text": "Sign in under Account to load your GitHub draft, save, and publish. Until then you are viewing the public copy from this file."
+        }
+      }
+    ]
+  },
+  "updated_at": "2026-04-03T00:00:00.000Z"
+}

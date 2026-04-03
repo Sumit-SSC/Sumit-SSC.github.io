@@ -24,7 +24,7 @@
     kind: "dashboard",
     target: "homepage",
     slug: "",
-    homeTab: "titles",
+    homeTab: "json",
     editWorkspace: false,
     compactListsOnSelect: true,
     centerPreviewMode: "live",
@@ -112,7 +112,7 @@
     const lbl = el("center-preview-label");
     const bd = el("btn-center-draft");
     const bl = el("btn-center-live");
-    if (lbl) lbl.textContent = state.centerPreviewMode === "draft" ? "Draft preview" : "Live page preview";
+    if (lbl) lbl.textContent = state.centerPreviewMode === "draft" ? "Live editing preview (auto updates)" : "Published live page preview";
     if (bd) bd.classList.toggle("bg-indigo-700", state.centerPreviewMode === "draft");
     if (bl) bl.classList.toggle("bg-indigo-700", state.centerPreviewMode === "live");
     setCenterView(state.kind === "dashboard" ? "dashboard" : "preview");
@@ -448,10 +448,10 @@
 
   async function updateEditorJsonPreviewNow() {
     const previewEl = previewElForHolder(activeEditorHolderId);
-    if (!previewEl || !editorInstance) return;
+    if (!editorInstance) return;
     try {
       const data = await editorInstance.save();
-      previewEl.textContent = JSON.stringify(data, null, 2);
+      if (previewEl) previewEl.textContent = JSON.stringify(data, null, 2);
       const draftEl = draftPreviewElForHolder(activeEditorHolderId);
       if (draftEl) {
         draftEl.innerHTML = editorBlocksToHtml(data);
@@ -464,13 +464,13 @@
       }
       renderBlockNav(data);
     } catch (e) {
-      previewEl.textContent = String(e && e.message ? e.message : e);
+      if (previewEl) previewEl.textContent = String(e && e.message ? e.message : e);
     }
   }
 
   function scheduleEditorJsonPreview() {
     if (editorPreviewTimer) clearTimeout(editorPreviewTimer);
-    editorPreviewTimer = setTimeout(() => updateEditorJsonPreviewNow(), 500);
+    editorPreviewTimer = setTimeout(() => updateEditorJsonPreviewNow(), 120);
   }
 
   function blockTitleFor(block, i) {
@@ -870,7 +870,10 @@
     const hint = el("home-auth-hint");
     const res = await fetch(`${API}/api/admin/homepage-ui`, { credentials: "include" });
     const data = await res.json();
-    if (hint) hint.classList.toggle("hidden", data.ok);
+    if (hint) {
+      hint.classList.toggle("hidden", data.ok);
+      if (!data.ok) hint.textContent = "Sign in under Account to load and save section titles.";
+    }
     if (!data.ok) {
       if (msg) msg.textContent = data.error || "Sign in with Login to load/save.";
       return;
@@ -912,23 +915,33 @@
     return getDefaultEditorData();
   }
 
+  const HOME_JSON_HINT =
+    "Public copy from data/homepage-content.json (read-only). Open Account → Log in to load your draft and save.";
+
   async function loadHomepageJsonEditor(source = "auto", ref = "") {
     setStatus("Loading homepage JSON…");
     const hint = el("home-auth-hint");
+    const jsonHint = el("home-json-auth-hint");
     const data = await loadContentRead("homepage", "", source, ref);
     if (hint) hint.classList.toggle("hidden", data.ok);
     if (!data.ok) {
       const unauthorized = data.error === "Unauthorized" || data._httpStatus === 401;
       if (unauthorized) {
+        if (jsonHint) {
+          jsonHint.textContent = HOME_JSON_HINT;
+          jsonHint.classList.remove("hidden");
+        }
         const pub = await loadPublicHomepageEditor();
         await mountEditor("admin-editor-holder-home", pub);
         setStatus("Read-only baseline loaded. Use Account > Log in to load draft and save.");
         return;
       }
+      if (jsonHint) jsonHint.classList.add("hidden");
       setStatus(data.error || "Load failed");
       await mountEditor("admin-editor-holder-home", getDefaultEditorData());
       return;
     }
+    if (jsonHint) jsonHint.classList.add("hidden");
     await mountEditor("admin-editor-holder-home", data.editorData || getDefaultEditorData());
     setStatus("Homepage JSON loaded — edit and Save draft, then Publish to live when ready.");
   }
@@ -1086,7 +1099,7 @@
     if ((state.kind === "projects-home" && state.homeTab === "json") || state.kind === "project" || state.kind === "caseStudy") {
       await updateEditorJsonPreviewNow();
       setCenterPreviewMode("draft");
-      setStatus("Preview updated (not saved).");
+      setStatus("Preview updated instantly (not saved yet).");
       return;
     }
     setStatus("Nothing to preview on this screen.");
@@ -1270,6 +1283,7 @@
       applyRoute();
     });
     el("btn-mode-source")?.addEventListener("click", async () => {
+      if (!window.confirm("Advanced mode opens raw files and JSON. Continue?")) return;
       await openSourceMode();
     });
     el("btn-source-reload")?.addEventListener("click", async () => {
@@ -1479,7 +1493,7 @@
       setHomeTabStyle("json");
       applyRoute();
     });
-    setHomeTabStyle("titles");
+    setHomeTabStyle(state.homeTab);
   }
 
   function wireNav() {
@@ -1848,6 +1862,11 @@
     const hint = el("home-auth-hint");
     if (hint && state.kind === "projects-home") {
       hint.classList.toggle("hidden", sess.ok);
+    }
+    const jsonHint = el("home-json-auth-hint");
+    if (jsonHint && state.kind === "projects-home" && state.homeTab === "json") {
+      jsonHint.classList.toggle("hidden", sess.ok);
+      if (!sess.ok && !jsonHint.textContent) jsonHint.textContent = HOME_JSON_HINT;
     }
   }
 

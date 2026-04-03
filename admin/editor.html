@@ -56,9 +56,9 @@
     <div class="px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
       <div class="flex items-center gap-2 shrink-0">
         <strong class="text-sm font-semibold tracking-tight text-white">Studio</strong>
-        <div id="mode-segment" class="inline-flex rounded-lg bg-slate-800/90 p-0.5 border border-slate-700/80" title="Write = blocks (like Medium). Code = files (like VS Code).">
+        <div id="mode-segment" class="inline-flex rounded-lg bg-slate-800/90 p-0.5 border border-slate-700/80" title="Write = simple block editor. Code = advanced file editor.">
           <button id="btn-mode-visual" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors bg-indigo-600 text-white shadow-sm">Write</button>
-          <button id="btn-mode-source" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-slate-200">Code</button>
+          <button id="btn-mode-source" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-slate-200">Advanced</button>
         </div>
       </div>
 
@@ -149,7 +149,7 @@
 
       <div id="center-preview-header" class="hidden border-b border-slate-800 px-3 py-2 text-xs flex flex-wrap items-center gap-2 bg-slate-900/50">
         <strong class="text-slate-300">Preview</strong>
-        <button id="btn-center-draft" type="button" class="px-2 py-1 rounded-md bg-indigo-700 hover:bg-indigo-600">Draft</button>
+        <button id="btn-center-draft" type="button" class="px-2 py-1 rounded-md bg-indigo-700 hover:bg-indigo-600">Live editor</button>
         <button id="btn-center-live" type="button" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700">Live site</button>
         <span id="center-preview-label" class="text-slate-400"></span>
       </div>
@@ -192,12 +192,12 @@
         <p id="msg-home-ui" class="text-xs text-slate-400"></p>
       </div>
       <div id="panel-home-json" class="hidden flex-1 min-h-0 flex flex-col">
+        <p id="home-json-auth-hint" class="hidden mx-3 mt-2 px-2 py-1.5 rounded-md border border-amber-700/60 bg-amber-950/40 text-[11px] text-amber-100/95 leading-snug"></p>
         <div class="px-3 pt-2 flex gap-2 text-xs">
           <button id="btn-load-draft-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
           <button id="btn-load-live-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
         </div>
         <div id="admin-editor-holder-home" class="admin-editor-canvas flex-1 overflow-y-auto mx-3 mb-2"></div>
-        <details class="px-3 pb-2"><summary class="text-xs text-slate-400">JSON</summary><pre id="json-preview-home" class="text-xs mt-1 whitespace-pre-wrap"></pre></details>
         <p class="px-3 text-[11px] text-slate-500 mb-2">Publish homepage JSON from the <strong class="text-slate-400">top bar</strong> (Publish).</p>
         <button id="btn-publish-home-json" type="button" class="hidden mx-3 mb-3" tabindex="-1" aria-hidden="true">Publish homepage JSON</button>
         <div id="draft-preview-home" class="hidden"></div>
@@ -211,7 +211,6 @@
           <button id="btn-load-live-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
         </div>
         <div id="admin-editor-holder" class="admin-editor-canvas flex-1 overflow-y-auto mx-3 mb-2"></div>
-        <details class="px-3 pb-2"><summary class="text-xs text-slate-400">JSON</summary><pre id="json-preview-record" class="text-xs mt-1 whitespace-pre-wrap"></pre></details>
         <div id="draft-preview-record" class="hidden"></div>
         <div class="hidden">
           <select id="sel-restore-backup"></select>
@@ -259,6 +258,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260403-5"></script>
+  <script src="../assets/js/admin-app.js?v=20260403-7"></script>
 </body>
 </html>

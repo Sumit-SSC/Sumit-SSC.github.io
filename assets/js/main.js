@@ -237,6 +237,13 @@ async function init() {
       window.__HOMEPAGE_UI__ = window.__HOMEPAGE_UI__ || {};
     }
   }
+  if (window.__HOMEPAGE_CONTENT_READY__) {
+    try {
+      await window.__HOMEPAGE_CONTENT_READY__;
+    } catch (e) {
+      window.__HOMEPAGE_CONTENT__ = window.__HOMEPAGE_CONTENT__ || {};
+    }
+  }
   initTheme();             // Light/Dark theme (must be first for color theme)
   
   // Check URL for view mode parameter
@@ -635,6 +642,7 @@ function routePage() {
     initViewModeToggle(); // Initialize view mode toggle
     initViewSwitcher(); // Toggle between Projects content and Case Studies content (same page)
     initFilterModeControls(); // Type (projects / case studies / both) + sort controls when filter is active
+    renderHomepageContentSection();
   }
 
   // Case studies grid (homepage + archive page)
@@ -658,6 +666,33 @@ function routePage() {
   if (document.querySelectorAll('.story-item').length > 0) {
     initStoryTimeline();
   }
+}
+
+function renderHomepageContentSection() {
+  const section = document.getElementById("homepage-content-section");
+  const mount = document.getElementById("homepage-content-render");
+  if (!section || !mount) return;
+
+  const raw = window.__HOMEPAGE_CONTENT__ || {};
+  const editorData =
+    raw && raw.editor_content && Array.isArray(raw.editor_content.blocks)
+      ? raw.editor_content
+      : (raw && Array.isArray(raw.blocks) ? raw : null);
+
+  if (!editorData || !Array.isArray(editorData.blocks) || !editorData.blocks.length) {
+    section.classList.add("hidden");
+    mount.innerHTML = "";
+    return;
+  }
+
+  const html = editorBlocksToHtml(editorData);
+  if (!html || !String(html).trim()) {
+    section.classList.add("hidden");
+    mount.innerHTML = "";
+    return;
+  }
+  mount.innerHTML = html;
+  section.classList.remove("hidden");
 }
 
 /* ---------- SCROLL ANIMATIONS ---------- */

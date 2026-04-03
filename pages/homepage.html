@@ -127,6 +127,9 @@
 				</button>
 			</div>
 		</div>
+		<section id="homepage-content-section" class="mb-10 hidden">
+			<div id="homepage-content-render" class="prose prose-slate dark:prose-invert max-w-none"></div>
+		</section>
 
 		<!-- Projects view (Featured + All Projects) -->
 		<div id="projects-view">
@@ -235,10 +238,14 @@
 			.then(function (r) { return r.ok ? r.json() : {}; })
 			.then(function (d) { window.__HOMEPAGE_UI__ = d && typeof d === 'object' ? d : {}; })
 			.catch(function () { window.__HOMEPAGE_UI__ = {}; });
+		window.__HOMEPAGE_CONTENT_READY__ = fetch(new URL('../data/homepage-content.json', window.location.href))
+			.then(function (r) { return r.ok ? r.json() : {}; })
+			.then(function (d) { window.__HOMEPAGE_CONTENT__ = d && typeof d === 'object' ? d : {}; })
+			.catch(function () { window.__HOMEPAGE_CONTENT__ = {}; });
 	</script>
 	<script src="../assets/js/jquery.min.js"></script>
 	<script src="../assets/js/jquery.scrolly.min.js"></script>
-	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/main.js?v=20260403-home-1"></script>
 	<script src="../assets/js/admin-embed-bootstrap.js"></script>
 	<script src="../assets/js/admin-visual-phase-a.js"></script>
 	<script src="../assets/js/analytics.js"></script>
