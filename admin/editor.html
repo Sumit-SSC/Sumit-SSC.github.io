@@ -53,6 +53,9 @@
 </head>
 <body class="h-screen bg-slate-950 text-slate-100 overflow-hidden">
   <header class="border-b border-slate-800/90 bg-slate-900/95 backdrop-blur-sm shadow-sm">
+    <div id="rib-auth-banner" class="hidden px-3 py-1.5 text-[11px] border-b border-amber-900/40 bg-amber-950/35 text-amber-100/95">
+      Not signed in — use <strong class="font-medium">Account → Log in</strong> to save drafts and publish to the live site.
+    </div>
     <div class="px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
       <div class="flex items-center gap-2 shrink-0">
         <strong class="text-sm font-semibold tracking-tight text-white">Studio</strong>
@@ -62,11 +65,12 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-1 rounded-lg bg-emerald-950/25 px-0.5 py-0.5 border border-emerald-900/35" title="Draft stays private until Publish">
+      <div class="flex flex-wrap items-center gap-1 rounded-lg bg-emerald-950/25 px-0.5 py-0.5 border border-emerald-900/35" title="Draft stays private until you publish">
         <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-100">Preview</button>
-        <button id="rib-save" type="button" class="px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-600 text-white font-medium">Save</button>
-        <button id="rib-publish" type="button" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-medium">Publish</button>
-        <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300">Undo</button>
+        <button id="rib-save" type="button" class="px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium">Save draft</button>
+        <button id="rib-publish" type="button" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium">Publish</button>
+        <button id="rib-open-live" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-200" title="Opens the real page in a new tab (bypasses cache)">Open live</button>
+        <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300">Reload</button>
       </div>
 
       <details class="rib-account relative shrink-0 rounded-lg border border-slate-700/70 bg-slate-800/50">
@@ -101,10 +105,10 @@
 
       <span id="rib-session-info" class="ml-auto shrink-0 text-slate-500 text-[10px] max-w-[10rem] truncate hidden sm:inline"></span>
       <span id="rib-branch-hint" class="hidden shrink-0 text-[10px] text-slate-600 max-w-[8rem] truncate"></span>
+      <span id="rib-last-published" class="hidden shrink-0 text-[10px] text-slate-500 max-w-[14rem] truncate" title=""></span>
       <span id="rib-status" class="flex-1 min-w-[6rem] text-slate-500 text-[10px] max-h-16 overflow-y-auto break-words" title=""></span>
     </div>
     <button id="rib-refresh" type="button" class="hidden"></button>
-    <button id="rib-open-live" type="button" class="hidden"></button>
   </header>
 
   <div id="workspace-main" class="h-[calc(100vh-44px)] flex min-h-0">
@@ -168,8 +172,8 @@
 
     <aside id="workspace-inspector" class="w-[min(100%,460px)] border-l border-slate-800 bg-slate-900 flex flex-col min-h-0">
       <div id="inspector-tabs" class="p-2 border-b border-slate-800 flex gap-1 text-xs">
-        <button id="tab-titles" type="button" class="px-2 py-1 rounded bg-slate-800">Titles</button>
-        <button id="tab-json" type="button" class="px-2 py-1 rounded bg-slate-800">Homepage content</button>
+        <button id="tab-titles" type="button" class="px-2 py-1 rounded bg-slate-800">Section titles</button>
+        <button id="tab-json" type="button" class="px-2 py-1 rounded bg-slate-800">Content</button>
       </div>
       <div id="draft-history-panel" class="hidden border-b border-slate-800 px-3 py-2 space-y-2 bg-slate-900/80">
         <div class="flex items-center justify-between gap-2">
@@ -192,14 +196,18 @@
         <p id="msg-home-ui" class="text-xs text-slate-400"></p>
       </div>
       <div id="panel-home-json" class="hidden flex-1 min-h-0 flex flex-col">
+        <div id="home-onboarding" class="mx-3 mt-2 mb-1 px-2.5 py-2 rounded-lg border border-slate-700/80 bg-slate-800/40 text-[11px] text-slate-300 leading-relaxed">
+          <span class="font-medium text-slate-200">Steps:</span>
+          1 Edit blocks here · 2 <strong class="text-slate-100">Save draft</strong> (GitHub) · 3 <strong class="text-slate-100">Publish</strong> (live site) · Use <strong class="text-slate-100">Open live</strong> to verify
+        </div>
         <p id="home-json-auth-hint" class="hidden mx-3 mt-2 px-2 py-1.5 rounded-md border border-amber-700/60 bg-amber-950/40 text-[11px] text-amber-100/95 leading-snug"></p>
         <div class="px-3 pt-2 flex gap-2 text-xs">
           <button id="btn-load-draft-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
           <button id="btn-load-live-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
         </div>
         <div id="admin-editor-holder-home" class="admin-editor-canvas flex-1 overflow-y-auto mx-3 mb-2"></div>
-        <p class="px-3 text-[11px] text-slate-500 mb-2">Publish homepage JSON from the <strong class="text-slate-400">top bar</strong> (Publish).</p>
-        <button id="btn-publish-home-json" type="button" class="hidden mx-3 mb-3" tabindex="-1" aria-hidden="true">Publish homepage JSON</button>
+        <p class="px-3 text-[11px] text-slate-500 mb-2">When ready, use <strong class="text-slate-400">Publish</strong> in the top bar to push this page to the live site.</p>
+        <button id="btn-publish-home-json" type="button" class="hidden mx-3 mb-3" tabindex="-1" aria-hidden="true">Publish homepage content</button>
         <div id="draft-preview-home" class="hidden"></div>
       </div>
       <div id="panel-editor-record" class="hidden flex-1 min-h-0 flex flex-col">
@@ -226,7 +234,7 @@
           <span class="text-slate-500 font-medium">Code</span>
           <select id="source-format" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="What to edit in the repo">
             <option value="auto">Auto</option>
-            <option value="record-json">Record JSON</option>
+            <option value="record-json">Record data</option>
             <option value="record-html">Record HTML</option>
             <option value="file">Whole file</option>
           </select>
@@ -258,6 +266,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260403-7"></script>
+  <script src="../assets/js/admin-app.js?v=20260403-8"></script>
 </body>
 </html>

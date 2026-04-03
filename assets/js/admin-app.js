@@ -64,6 +64,96 @@
     }
   }
 
+  const LS_PUBLISH_KEY = "admin_last_publish_v1";
+
+  function recordPublishSuccess(target) {
+    try {
+      const raw = localStorage.getItem(LS_PUBLISH_KEY);
+      const o = raw ? JSON.parse(raw) : {};
+      o[target] = new Date().toISOString();
+      localStorage.setItem(LS_PUBLISH_KEY, JSON.stringify(o));
+    } catch (_) {}
+  }
+
+  function labelForPublishTarget(key) {
+    const m = {
+      homepage: "Homepage content",
+      homepageUi: "Section titles",
+      projects: "Projects",
+      caseStudies: "Case studies",
+      siteTheme: "Site theme"
+    };
+    return m[key] || key;
+  }
+
+  function getActivePublishTarget() {
+    if (state.kind === "project") return "projects";
+    if (state.kind === "caseStudy") return "caseStudies";
+    if (state.kind === "projects-home") return state.homeTab === "json" ? "homepage" : "homepageUi";
+    if (state.kind === "settings" || state.kind === "dashboard") return "siteTheme";
+    return null;
+  }
+
+  function updateLastPublishedLabel() {
+    const span = el("rib-last-published");
+    if (!span) return;
+    const key = getActivePublishTarget();
+    if (!key) {
+      span.textContent = "";
+      span.classList.add("hidden");
+      return;
+    }
+    let ts = null;
+    try {
+      const raw = localStorage.getItem(LS_PUBLISH_KEY);
+      const o = raw ? JSON.parse(raw) : {};
+      ts = o[key] || null;
+    } catch (_) {
+      ts = null;
+    }
+    if (!ts) {
+      span.textContent = "";
+      span.classList.add("hidden");
+      return;
+    }
+    const d = new Date(ts);
+    const short = Number.isNaN(d.getTime())
+      ? String(ts)
+      : d.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
+    span.textContent = `Last published (${labelForPublishTarget(key)}): ${short}`;
+    span.title = `Last successful publish for this content type`;
+    span.classList.remove("hidden");
+  }
+
+  function setRibbonAuthState(sess) {
+    const ok = !!(sess && sess.ok);
+    const saveBtn = el("rib-save");
+    const pubBtn = el("rib-publish");
+    if (saveBtn) {
+      saveBtn.disabled = !ok;
+      saveBtn.title = ok ? "Save draft to your GitHub branch" : "Log in under Account to save drafts";
+    }
+    if (pubBtn) {
+      pubBtn.disabled = !ok;
+      pubBtn.title = ok ? "Publish draft to the live site" : "Log in under Account to publish";
+    }
+  }
+
+  function updateAuthBanner(sess) {
+    const b = el("rib-auth-banner");
+    if (!b) return;
+    b.classList.toggle("hidden", !!(sess && sess.ok));
+  }
+
+  async function applyRibbonChromeOnly() {
+    const sess = await apiSession();
+    updateSessionUi(sess);
+    setRibbonAuthState(sess);
+    updateAuthBanner(sess);
+    updateLastPublishedLabel();
+    return sess;
+  }
+
   function pickToolConstructor(...names) {
     const W = window || {};
     for (const n of names) {
@@ -800,67 +890,71 @@
   }
 
   async function applyRoute() {
-    showPanels();
-    if (state.sourceMode) {
-      await openSourceMode();
-      return;
-    }
-
-    if (state.kind === "dashboard") {
-      setCenterView("dashboard");
-      await destroyEditor();
-      await loadDashboardStats();
-      return;
-    }
-    if (isEditingRoute()) {
-      setCenterPreviewMode("draft");
-    } else {
-      setCenterPreviewMode("live");
-    }
-    setCenterView("preview");
-    applyWorkspaceLayout();
-
-    if (state.kind === "projects-home") {
-      setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
-      if (state.homeTab === "titles") {
-        await loadHomeUiFields();
-      } else {
-        await loadHomepageJsonEditor();
-        await refreshDraftCommits();
+    try {
+      showPanels();
+      if (state.sourceMode) {
+        await openSourceMode();
+        return;
       }
-      return;
-    }
 
-    if (state.kind === "settings") {
-      setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
-      await destroyEditor();
-      await loadThemeSettings();
-      return;
-    }
+      if (state.kind === "dashboard") {
+        setCenterView("dashboard");
+        await destroyEditor();
+        await loadDashboardStats();
+        return;
+      }
+      if (isEditingRoute()) {
+        setCenterPreviewMode("draft");
+      } else {
+        setCenterPreviewMode("live");
+      }
+      setCenterView("preview");
+      applyWorkspaceLayout();
 
-    if (state.kind === "project") {
-      setIframe(`${PAGES}project.html?id=${encodeURIComponent(state.slug)}`.replace(/^\//, ""));
-      await loadRecordEditor(state.target, state.slug);
-      await refreshDraftCommits();
-      return;
-    }
+      if (state.kind === "projects-home") {
+        setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
+        if (state.homeTab === "titles") {
+          await loadHomeUiFields();
+        } else {
+          await loadHomepageJsonEditor();
+          await refreshDraftCommits();
+        }
+        return;
+      }
 
-    if (state.kind === "caseStudy") {
-      setIframe(`${PAGES}case-study.html?id=${encodeURIComponent(state.slug)}`.replace(/^\//, ""));
-      await loadRecordEditor(state.target, state.slug);
-      await refreshDraftCommits();
-      return;
-    }
+      if (state.kind === "settings") {
+        setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
+        await destroyEditor();
+        await loadThemeSettings();
+        return;
+      }
 
-    if (state.kind === "case-archive") {
-      setIframe(`${PAGES}case-studies-archive.html`.replace(/^\//, ""));
-      await destroyEditor();
-      return;
-    }
+      if (state.kind === "project") {
+        setIframe(`${PAGES}project.html?id=${encodeURIComponent(state.slug)}`.replace(/^\//, ""));
+        await loadRecordEditor(state.target, state.slug);
+        await refreshDraftCommits();
+        return;
+      }
 
-    if (state.kind === "about") {
-      setIframe(`${PAGES}about.html`.replace(/^\//, ""));
-      await destroyEditor();
+      if (state.kind === "caseStudy") {
+        setIframe(`${PAGES}case-study.html?id=${encodeURIComponent(state.slug)}`.replace(/^\//, ""));
+        await loadRecordEditor(state.target, state.slug);
+        await refreshDraftCommits();
+        return;
+      }
+
+      if (state.kind === "case-archive") {
+        setIframe(`${PAGES}case-studies-archive.html`.replace(/^\//, ""));
+        await destroyEditor();
+        return;
+      }
+
+      if (state.kind === "about") {
+        setIframe(`${PAGES}about.html`.replace(/^\//, ""));
+        await destroyEditor();
+      }
+    } finally {
+      await applyRibbonChromeOnly();
     }
   }
 
@@ -916,10 +1010,10 @@
   }
 
   const HOME_JSON_HINT =
-    "Public copy from data/homepage-content.json (read-only). Open Account → Log in to load your draft and save.";
+    "You're viewing the public homepage text (read-only). Open Account → Log in to load your draft and save.";
 
   async function loadHomepageJsonEditor(source = "auto", ref = "") {
-    setStatus("Loading homepage JSON…");
+    setStatus("Loading homepage content…");
     const hint = el("home-auth-hint");
     const jsonHint = el("home-json-auth-hint");
     const data = await loadContentRead("homepage", "", source, ref);
@@ -943,7 +1037,7 @@
     }
     if (jsonHint) jsonHint.classList.add("hidden");
     await mountEditor("admin-editor-holder-home", data.editorData || getDefaultEditorData());
-    setStatus("Homepage JSON loaded — edit and Save draft, then Publish to live when ready.");
+    setStatus("Homepage content loaded — edit, then Save draft and Publish when ready.");
   }
 
   function setRecordAuthBanner(show, message) {
@@ -1093,7 +1187,7 @@
 
   async function ribPreview() {
     if (state.sourceMode) {
-      setStatus("Code mode: use center Draft/Live for site preview — or switch to Write for block preview.");
+      setStatus("Advanced mode: use center preview toggles, or switch to Write for block preview.");
       return;
     }
     if ((state.kind === "projects-home" && state.homeTab === "json") || state.kind === "project" || state.kind === "caseStudy") {
@@ -1123,14 +1217,27 @@
     }
   }
 
+  function livePathForCurrentRoute() {
+    const pp = PAGES.replace(/^\//, "");
+    if (state.kind === "projects-home" || state.kind === "settings" || state.kind === "dashboard") {
+      return `${pp}homepage.html`;
+    }
+    if (state.kind === "project") return `${pp}project.html?id=${encodeURIComponent(state.slug)}`;
+    if (state.kind === "caseStudy") return `${pp}case-study.html?id=${encodeURIComponent(state.slug)}`;
+    if (state.kind === "case-archive") return `${pp}case-studies-archive.html`;
+    if (state.kind === "about") return `${pp}about.html`;
+    return `${pp}homepage.html`;
+  }
+
   function ribOpenLive() {
-    const f = el("admin-preview");
-    if (!f || !f.src) return;
     try {
-      const u = new URL(f.src);
-      u.searchParams.delete("admin_embed");
+      const path = livePathForCurrentRoute();
+      const u = new URL(path, SITE + "/");
+      u.searchParams.set("_cb", String(Date.now()));
       window.open(u.toString(), "_blank", "noopener,noreferrer");
-    } catch (_) {}
+    } catch (_) {
+      setStatus("Could not open live page.");
+    }
   }
 
   function highlightNav() {
@@ -1676,9 +1783,13 @@
       setStatus("Login first.");
       return;
     }
-    if (!window.confirm("Publish site-theme.json draft to live?")) return;
+    if (!window.confirm("Publish theme changes to the live site?")) return;
     setStatus("Publishing…");
     const out = await apiPublish("siteTheme");
+    if (out.ok) {
+      recordPublishSuccess("siteTheme");
+      updateLastPublishedLabel();
+    }
     setStatus(out.ok ? "Published theme to live." : out.error || "Publish failed");
     if (out.ok) refreshPreviewIframe();
   });
@@ -1719,7 +1830,7 @@
   el("rib-publish")?.addEventListener("click", async () => {
     const s = await apiSession();
     if (!s.ok) {
-      setStatus("Login first, then Publish.");
+      setStatus("Log in under Account first, then Publish.");
       return;
     }
     let target = null;
@@ -1734,7 +1845,11 @@
       setStatus("Choose a supported page first.");
       return;
     }
-    if (!window.confirm(`Publish draft file for ${target} to your live GitHub Pages branch? A backup of the current live file is saved first if it exists.`)) {
+    if (
+      !window.confirm(
+        "Publish your saved draft to the live website? A backup of the current live file is created when possible."
+      )
+    ) {
       return;
     }
     setStatus("Publishing…");
@@ -1743,6 +1858,8 @@
       setStatus(out.error || "Publish failed");
       return;
     }
+    recordPublishSuccess(target);
+    updateLastPublishedLabel();
     setStatus(`Published to ${out.baseBranch || "live"}. ${out.backupPath ? "Backup: " + out.backupPath : ""}`);
     refreshPreviewIframe();
   });
@@ -1753,9 +1870,13 @@
       setStatus("Login first.");
       return;
     }
-    if (!window.confirm("Publish homepage-ui.json draft to the live branch?")) return;
+    if (!window.confirm("Publish section title changes to the live site?")) return;
     setStatus("Publishing…");
     const out = await apiPublish("homepageUi");
+    if (out.ok) {
+      recordPublishSuccess("homepageUi");
+      updateLastPublishedLabel();
+    }
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
     if (out.ok) refreshPreviewIframe();
   });
@@ -1766,9 +1887,13 @@
       setStatus("Login first.");
       return;
     }
-    if (!window.confirm("Publish homepage-content.json draft to the live branch?")) return;
+    if (!window.confirm("Publish homepage text to the live site?")) return;
     setStatus("Publishing…");
     const out = await apiPublish("homepage");
+    if (out.ok) {
+      recordPublishSuccess("homepage");
+      updateLastPublishedLabel();
+    }
     setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
     if (out.ok) refreshPreviewIframe();
   });
@@ -1854,9 +1979,8 @@
   });
 
   async function refreshSessionLabel() {
-    const sess = await apiSession();
+    const sess = await applyRibbonChromeOnly();
     const login = getSessionLogin(sess);
-    updateSessionUi(sess);
     const ts = sess.serverTimeIst ? ` · IST ${sess.serverTimeIst}` : "";
     setStatus(sess.ok ? `Signed in · ${login || "ok"}${ts}` : `Not signed in — use Login to load drafts & save.${ts}`);
     const hint = el("home-auth-hint");
