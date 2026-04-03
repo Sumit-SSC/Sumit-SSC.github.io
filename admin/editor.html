@@ -29,6 +29,14 @@
       background: rgb(243 244 246) !important;
       border-radius: 8px !important;
     }
+    /* Medium-like: hide block settings chrome (settings gear/popover). */
+    .admin-editor-canvas .ce-toolbar__settings-btn,
+    .admin-editor-canvas .ce-toolbar__settings-btn svg,
+    .admin-editor-canvas .ce-popover,
+    .admin-editor-canvas .ce-settings,
+    .admin-editor-canvas .ce-settings__button {
+      display: none !important;
+    }
     #center-draft-preview.medium-draft-preview { background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); }
     .medium-draft-inner { max-width: 42rem; margin: 0 auto; padding-bottom: 3rem; }
     .medium-draft-inner .preview-block:first-child { margin-top: 0.5rem; }
@@ -251,6 +259,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260403-4"></script>
+  <script src="../assets/js/admin-app.js?v=20260403-5"></script>
 </body>
 </html>
