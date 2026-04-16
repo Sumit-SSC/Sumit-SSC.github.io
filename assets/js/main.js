@@ -159,29 +159,9 @@ function setMetaContent(selector, content) {
 function renderCaseStudyQuickSummary(caseStudy, rootEl) {
   const wrap = document.getElementById('case-study-quick-summary');
   if (!wrap) return;
-  const bullets = extractFirstListItemsText(rootEl?.innerHTML || '', 3)
-    .map(b => truncateText(b, 110))
-    .filter(Boolean);
-  if (!bullets.length) {
-    wrap.classList.add('hidden');
-    wrap.innerHTML = '';
-    return;
-  }
-
-  wrap.classList.remove('hidden');
-  wrap.innerHTML = `
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border border-gray-200 dark:border-gray-700">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300 mb-3">Key takeaways</h2>
-      <ul class="space-y-2">
-        ${bullets.map(item => `
-          <li class="flex gap-2 text-sm text-gray-700 dark:text-gray-200">
-            <span class="text-primary font-bold">•</span>
-            <span>${escapeHtml(item)}</span>
-          </li>
-        `).join('')}
-      </ul>
-    </div>
-  `;
+  // Disable auto-generated key takeaways for now; keep section hidden.
+  wrap.classList.add('hidden');
+  wrap.innerHTML = '';
 }
 
 function renderCaseStudyTOC(rootEl) {
@@ -683,6 +663,14 @@ function renderHomepageContentSection() {
   const section = document.getElementById("homepage-content-section");
   const mount = document.getElementById("homepage-content-render");
   if (!section || !mount) return;
+
+  // Only show this intro section inside the admin/embed view, not on the public projects page.
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('admin_embed') !== '1') {
+    section.classList.add("hidden");
+    mount.innerHTML = "";
+    return;
+  }
 
   const raw = window.__HOMEPAGE_CONTENT__ || {};
   const editorData =
