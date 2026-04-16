@@ -61,18 +61,25 @@
 	<section id="case-study-hero" class="bg-gradient-to-br from-primary via-accent to-purple-900 text-white"></section>
 
 	<main class="py-12">
-		<div class="container mx-auto px-6 max-w-4xl">
+		<div class="container mx-auto px-4 sm:px-6">
 			<div id="case-study-view-project" class="mb-6"></div>
-			<section id="case-study-quick-summary" class="mb-6 hidden"></section>
-			<section id="case-study-toc-wrap" class="mb-6 hidden">
-				<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border border-gray-200 dark:border-gray-700">
-					<h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300 mb-3">On this page</h2>
-					<nav id="case-study-toc" class="grid gap-2"></nav>
+			<div class="grid gap-8 project-layout-grid">
+				<aside id="case-study-nav" class="hidden lg:block sticky top-28 self-start">
+					<section id="case-study-toc-wrap" class="hidden">
+						<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border border-gray-200 dark:border-gray-700">
+							<h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300 mb-3">On this page</h2>
+							<nav id="case-study-toc" class="grid gap-2"></nav>
+						</div>
+					</section>
+				</aside>
+				<div class="space-y-6">
+					<section id="case-study-quick-summary" class="hidden"></section>
+					<article id="case-study-article" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-gray-600 dark:text-gray-300 leading-relaxed">
+						<div id="case-study-content">Loading case study…</div>
+					</article>
 				</div>
-			</section>
-			<article id="case-study-article" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-gray-600 dark:text-gray-300 leading-relaxed">
-				<div id="case-study-content">Loading case study…</div>
-			</article>
+				<aside id="case-study-side" class="hidden lg:block"></aside>
+			</div>
 		</div>
 	</main>
 
