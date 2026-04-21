@@ -39,7 +39,7 @@ The following files still mention `_backup_old_portfolio` but are documentation/
 - `docs/GITHUB_PAGES_DEV_BRANCH_FIX.md` - Documentation only
 - `docs/TROUBLESHOOTING.md` - Documentation only
 - `docs/COMPONENT_SYSTEM.md` - Documentation only
-- `legacy/about-demo.html` - Legacy demo file (not used)
+- `archive/legacy/about-demo.html` - Legacy demo file (not used)
 
 ## Next Steps
 

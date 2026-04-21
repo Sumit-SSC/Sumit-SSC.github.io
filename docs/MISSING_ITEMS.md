@@ -69,7 +69,7 @@
 **Note**: If these don't work, follow `docs/GISCUS_SETUP.md` to get new IDs
 
 ### 7. Project Structure Cleanup
-**Status**: ✅ Mostly done (files moved to `legacy/` and `docs/`)  
+**Status**: ✅ Mostly done (files moved to `archive/legacy/` and `docs/`)  
 **Remaining**: Check for any unused CSS/JS files in `assets/`
 
 ### 8. Color Theme Extensions

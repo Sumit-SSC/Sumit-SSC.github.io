@@ -63,7 +63,7 @@ def iter_source_files() -> list[Path]:
         "pages/**/*.html",
         "*.html",
         "assets/css/**/*.css",
-        "legacy/**/*.html",
+        "archive/legacy/**/*.html",
         "docs/**/*.md",
     ]
     files: list[Path] = []

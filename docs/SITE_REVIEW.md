@@ -29,9 +29,9 @@ Summary of structure, linking, theme behavior, missing pieces, and suggested imp
 - **assets/images/** – Thumbs, fulls, placeholders; paths in `projects.json` point here.
 
 ### Other
-- **legacy/** – Old demos (about-demo, material UI, navbar, page2).
+- **archive/legacy/** – Old demos (about-demo, material UI, navbar, page2).
 - **docs/** – Setup/migration docs, Giscus, troubleshooting; **docs/projects-legacy/** – Old project HTML (reference only).
-- **_backup_old_portfolio/** – Full backup; not used by live site.
+- **archive/_backup_old_portfolio/** – Full backup; not used by live site.
 
 ---
 
@@ -54,7 +54,7 @@ So: **Skills is missing from homepage, project, and about.**
 - **projects.json** `id` values (e.g. `ai-governance-workbench`) must match `project.html?id=` and case study filenames.
 
 ### Broken / legacy references (safe to ignore for main site)
-- **docs/projects-legacy/** and **_backup_old_portfolio/** reference `profile.html`, which does not exist at root. Those are legacy; no fix needed unless you restore a profile page.
+- **docs/projects-legacy/** and **archive/_backup_old_portfolio/** reference `profile.html`, which does not exist at root. Those are legacy; no fix needed unless you restore a profile page.
 
 ### projects.html (old stack)
 - Nav: Home (index), Projects (self), About, Contact (mailto only).
