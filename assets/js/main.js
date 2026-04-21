@@ -167,12 +167,17 @@ function renderCaseStudyQuickSummary(caseStudy, rootEl) {
 function renderCaseStudyTOC(rootEl) {
   const tocWrap = document.getElementById('case-study-toc-wrap');
   const toc = document.getElementById('case-study-toc');
+  const tocSelect = document.getElementById('case-study-toc-select');
   if (!tocWrap || !toc || !rootEl) return;
 
   const headings = Array.from(rootEl.querySelectorAll('h2, h3'));
   if (!headings.length) {
     tocWrap.classList.add('hidden');
     toc.innerHTML = '';
+    if (tocSelect) {
+      tocSelect.innerHTML = '<option value="">Select a section…</option>';
+      tocSelect.classList.add('hidden');
+    }
     return;
   }
 
@@ -201,11 +206,35 @@ function renderCaseStudyTOC(rootEl) {
   if (!items.length) {
     tocWrap.classList.add('hidden');
     toc.innerHTML = '';
+    if (tocSelect) {
+      tocSelect.innerHTML = '<option value="">Select a section…</option>';
+      tocSelect.classList.add('hidden');
+    }
     return;
   }
 
   tocWrap.classList.remove('hidden');
   toc.innerHTML = items.join('');
+  if (tocSelect) {
+    tocSelect.classList.remove('hidden');
+    tocSelect.innerHTML = '<option value="">Select a section…</option>';
+    headings.forEach((heading) => {
+      if (!heading.id || !heading.textContent) return;
+      const opt = document.createElement('option');
+      opt.value = heading.id;
+      opt.textContent = heading.textContent.trim();
+      tocSelect.appendChild(opt);
+    });
+    tocSelect.onchange = () => {
+      const id = tocSelect.value;
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      const headerOffset = 100;
+      const top = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    };
+  }
 }
 
 // Initialize on DOM ready

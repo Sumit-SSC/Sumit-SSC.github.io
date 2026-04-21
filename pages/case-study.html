@@ -63,7 +63,13 @@
 	<main class="py-12">
 		<div class="container mx-auto px-4 sm:px-6">
 			<div id="case-study-view-project" class="mb-6"></div>
-			<div class="grid gap-8 project-layout-grid">
+			<div class="mb-6 lg:hidden">
+				<label for="case-study-toc-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">On this page</label>
+				<select id="case-study-toc-select" class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+					<option value="">Select a section…</option>
+				</select>
+			</div>
+			<div class="grid gap-8 case-study-layout-grid">
 				<aside id="case-study-nav" class="hidden lg:block sticky top-28 self-start">
 					<section id="case-study-toc-wrap" class="hidden">
 						<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border border-gray-200 dark:border-gray-700">
@@ -78,7 +84,6 @@
 						<div id="case-study-content">Loading case study…</div>
 					</article>
 				</div>
-				<aside id="case-study-side" class="hidden lg:block"></aside>
 			</div>
 		</div>
 	</main>

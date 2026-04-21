@@ -5192,6 +5192,13 @@ html.dark-theme .case-study-tag {
   line-height: 1.35;
 }
 
+@media (min-width: 1024px) {
+  .case-study-layout-grid {
+    grid-template-columns: 22% 78%;
+    align-items: flex-start;
+  }
+}
+
 @media (max-width: 768px) {
   /* Keep article reading first on mobile; TOC can be noisy */
   #case-study-toc-wrap {
