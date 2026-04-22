@@ -1028,15 +1028,15 @@
 
     const baseFile = await getFileFromGithub(env, path, baseBranch);
     const ts = new Date().toISOString().replace(/[:.]/g, "-");
-    const backupPath = `${BACKUPS_DIR}/backup-${target}-${ts}.json`;
-
-    let backupWritten = null;
+    const backupPaths = [];
     if (baseFile) {
-      const backupPayload = JSON.stringify(
+      const backupLivePath = `${BACKUPS_DIR}/backup-${target}-live-${ts}.json`;
+      const backupLivePayload = JSON.stringify(
         {
           sourcePath: path,
           savedAt: new Date().toISOString(),
           publishedBy: user,
+          snapshotType: "live",
           snapshotText: baseFile.text
         },
         null,
@@ -1044,13 +1044,59 @@
       );
       await putFileToGithub(
         env,
-        backupPath,
-        backupPayload,
+        backupLivePath,
+        backupLivePayload,
         baseBranch,
         `chore(admin): backup live file before publish ${path} (${user})`,
         null
       );
-      backupWritten = backupPath;
+      backupPaths.push(backupLivePath);
+    }
+
+    const backupDraftPath = `${BACKUPS_DIR}/backup-${target}-draft-${ts}.json`;
+    const backupDraftPayload = JSON.stringify(
+      {
+        sourcePath: path,
+        savedAt: new Date().toISOString(),
+        publishedBy: user,
+        snapshotType: "draft",
+        snapshotText: draftFile.text
+      },
+      null,
+      2
+    );
+    await putFileToGithub(
+      env,
+      backupDraftPath,
+      backupDraftPayload,
+      baseBranch,
+      `chore(admin): backup draft file before publish ${path} (${user})`,
+      null
+    );
+    backupPaths.push(backupDraftPath);
+
+    if (!baseFile) {
+      const backupBaselinePath = `${BACKUPS_DIR}/backup-${target}-baseline-${ts}.json`;
+      const backupBaselinePayload = JSON.stringify(
+        {
+          sourcePath: path,
+          savedAt: new Date().toISOString(),
+          publishedBy: user,
+          snapshotType: "baseline",
+          snapshotText: ""
+        },
+        null,
+        2
+      );
+      await putFileToGithub(
+        env,
+        backupBaselinePath,
+        backupBaselinePayload,
+        baseBranch,
+        `chore(admin): create baseline backup before first publish ${path} (${user})`,
+        null
+      );
+      backupPaths.push(backupBaselinePath);
     }
 
     const commit = await putFileToGithub(
@@ -1067,7 +1113,8 @@
       path,
       baseBranch,
       draftBranch,
-      backupPath: backupWritten,
+      backupPath: backupPaths[0] || null,
+      backupPaths,
       commitSha: commit.commit?.sha || null
     });
   }

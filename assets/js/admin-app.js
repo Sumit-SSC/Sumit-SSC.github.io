@@ -92,6 +92,7 @@
   }
 
   const LS_PUBLISH_KEY = "admin_last_publish_v1";
+  const LS_PUBLISH_HISTORY_KEY = "admin_publish_history_v1";
 
   function recordPublishSuccess(target) {
     try {
@@ -100,6 +101,39 @@
       o[target] = new Date().toISOString();
       localStorage.setItem(LS_PUBLISH_KEY, JSON.stringify(o));
     } catch (_) {}
+    try {
+      const rawHistory = localStorage.getItem(LS_PUBLISH_HISTORY_KEY);
+      const history = Array.isArray(rawHistory ? JSON.parse(rawHistory) : null) ? JSON.parse(rawHistory) : [];
+      history.unshift({
+        target,
+        at: new Date().toISOString()
+      });
+      localStorage.setItem(LS_PUBLISH_HISTORY_KEY, JSON.stringify(history.slice(0, 25)));
+    } catch (_) {}
+  }
+
+  function renderDashboardPublishHistory() {
+    const list = el("dash-publish-history");
+    if (!list) return;
+    let history = [];
+    try {
+      const raw = localStorage.getItem(LS_PUBLISH_HISTORY_KEY);
+      history = Array.isArray(raw ? JSON.parse(raw) : null) ? JSON.parse(raw) : [];
+    } catch (_) {
+      history = [];
+    }
+    if (!history.length) {
+      list.innerHTML = '<li class="text-slate-500">No publish history yet.</li>';
+      return;
+    }
+    list.innerHTML = "";
+    history.slice(0, 8).forEach((item) => {
+      const when = item?.at ? new Date(item.at).toLocaleString() : "-";
+      const li = document.createElement("li");
+      li.className = "rounded border border-slate-800 bg-slate-900/40 px-2 py-1";
+      li.textContent = `${labelForPublishTarget(item?.target || "content")} · ${when}`;
+      list.appendChild(li);
+    });
   }
 
   function labelForPublishTarget(key) {
@@ -400,6 +434,24 @@
     };
   }
 
+  function validateEditorIntegrity(editorData) {
+    const blocks = Array.isArray(editorData?.blocks) ? editorData.blocks : [];
+    if (!blocks.length) {
+      return { ok: false, error: "Add at least one content block before saving." };
+    }
+    const hasReadableContent = blocks.some((block) => {
+      if (!block || typeof block !== "object") return false;
+      const data = block.data || {};
+      const text = `${data.text || ""} ${data.code || ""} ${data.url || ""}`.trim();
+      const listItems = Array.isArray(data.items) ? data.items.join(" ").trim() : "";
+      return text.length > 0 || listItems.length > 0;
+    });
+    if (!hasReadableContent) {
+      return { ok: false, error: "Content is empty. Please type something first." };
+    }
+    return { ok: true };
+  }
+
   async function destroyEditor() {
     if (editorInstance && typeof editorInstance.destroy === "function") {
       try {
@@ -655,11 +707,15 @@
     if (state.kind === "projects-home" && state.homeTab === "json") {
       if (!editorInstance) return { ok: false, error: "Editor not ready." };
       const d = await editorInstance.save();
+      const integrity = validateEditorIntegrity(d);
+      if (!integrity.ok) return integrity;
       return saveContentWrite("homepage", "", d);
     }
     if (state.kind === "project" || state.kind === "caseStudy") {
       if (!editorInstance) return { ok: false, error: "Editor not ready." };
       const d = await editorInstance.save();
+      const integrity = validateEditorIntegrity(d);
+      if (!integrity.ok) return integrity;
       return saveContentWrite(state.target, state.slug, d);
     }
     if (!silent) setStatus("Nothing to save on this screen.");
@@ -1443,6 +1499,8 @@
       if (cc) cc.textContent = Array.isArray(cases) ? String(cases.length) : "-";
       const st = el("dash-server-time");
       if (st) st.textContent = session.serverTimeIst || "-";
+      renderDashboardPublishHistory();
+      await refreshBackupSelect("dash-restore-backup");
       await loadThemeSettings();
     } catch (_) {
       setStatus("Dashboard stats failed to load.");
@@ -1994,8 +2052,8 @@
     return res.json();
   }
 
-  async function refreshBackupSelect() {
-    const sel = el("sel-restore-backup");
+  async function refreshBackupSelect(selectId = "sel-restore-backup") {
+    const sel = el(selectId);
     if (!sel) return;
     sel.innerHTML = '<option value="">Loading…</option>';
     const data = await apiListBackups();
@@ -2046,7 +2104,12 @@
     }
     recordPublishSuccess(target);
     updateLastPublishedLabel();
-    setStatus(`Published to ${out.baseBranch || "live"}. ${out.backupPath ? "Backup: " + out.backupPath : ""}`);
+    const backupLabel = Array.isArray(out.backupPaths) && out.backupPaths.length
+      ? `Backups: ${out.backupPaths.length}`
+      : out.backupPath
+        ? `Backup: ${out.backupPath}`
+        : "";
+    setStatus(`Published to ${out.baseBranch || "live"}. ${backupLabel}`);
     toast("Published to live site", "success");
     refreshPreviewIframe();
     setCenterPreviewMode("live");
@@ -2068,7 +2131,10 @@
     } else {
       toast(out.error || "Publish failed", "error");
     }
-    setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
+    const homeUiBackupLabel = Array.isArray(out.backupPaths) && out.backupPaths.length
+      ? `Backups: ${out.backupPaths.length}`
+      : out.backupPath || "";
+    setStatus(out.ok ? `Published. ${homeUiBackupLabel}` : out.error || "Failed");
     if (out.ok) {
       refreshPreviewIframe();
       setCenterPreviewMode("live");
@@ -2091,7 +2157,10 @@
     } else {
       toast(out.error || "Publish failed", "error");
     }
-    setStatus(out.ok ? `Published. ${out.backupPath || ""}` : out.error || "Failed");
+    const homeBackupLabel = Array.isArray(out.backupPaths) && out.backupPaths.length
+      ? `Backups: ${out.backupPaths.length}`
+      : out.backupPath || "";
+    setStatus(out.ok ? `Published. ${homeBackupLabel}` : out.error || "Failed");
     if (out.ok) {
       refreshPreviewIframe();
       setCenterPreviewMode("live");
@@ -2099,6 +2168,8 @@
   });
 
   el("btn-refresh-backups")?.addEventListener("click", () => refreshBackupSelect());
+  el("btn-dash-refresh-history")?.addEventListener("click", () => renderDashboardPublishHistory());
+  el("btn-dash-refresh-backups")?.addEventListener("click", () => refreshBackupSelect("dash-restore-backup"));
   el("btn-restore-backup")?.addEventListener("click", async () => {
     const s = await apiSession();
     if (!s.ok) {
@@ -2117,6 +2188,27 @@
     if (out.ok) {
       refreshPreviewIframe();
       await ribLoad();
+    }
+  });
+  el("btn-dash-restore")?.addEventListener("click", async () => {
+    const s = await apiSession();
+    if (!s.ok) {
+      setStatus("Login first.");
+      return;
+    }
+    const path = el("dash-restore-backup")?.value;
+    if (!path) {
+      setStatus("Select a backup.");
+      return;
+    }
+    if (!window.confirm("Restore this backup to LIVE branch now?")) return;
+    setStatus("Restoring…");
+    const out = await apiRestore(path);
+    setStatus(out.ok ? `Restored ${out.path}` : out.error || "Restore failed");
+    if (out.ok) {
+      toast("Backup restored to live", "success");
+      refreshPreviewIframe();
+      await applyRoute();
     }
   });
 
