@@ -156,6 +156,26 @@ function setMetaContent(selector, content) {
   if (el) el.setAttribute('content', content);
 }
 
+function maybeShowAdminStudioLink() {
+  const params = new URLSearchParams(window.location.search);
+  const enable = params.get('studio');
+  if (enable === '1') localStorage.setItem('showAdminStudioLink', '1');
+  if (enable === '0') localStorage.removeItem('showAdminStudioLink');
+  if (localStorage.getItem('showAdminStudioLink') !== '1') return;
+
+  const existing = document.getElementById('admin-studio-link');
+  if (existing) return;
+
+  const a = document.createElement('a');
+  a.id = 'admin-studio-link';
+  a.href = `${window.location.origin}/admin/editor.html`;
+  a.textContent = 'Admin Studio';
+  a.className =
+    'fixed bottom-4 right-4 z-50 rounded-full bg-slate-900 text-white text-xs px-3 py-2 shadow-lg border border-slate-700 hover:bg-slate-800';
+  a.setAttribute('aria-label', 'Open admin studio');
+  document.body.appendChild(a);
+}
+
 function renderCaseStudyQuickSummary(caseStudy, rootEl) {
   const wrap = document.getElementById('case-study-quick-summary');
   if (!wrap) return;
@@ -275,6 +295,7 @@ async function init() {
   }
   
   routePage();
+  maybeShowAdminStudioLink();
   initScrollAnimations();
   initScrollProgress();
   initTapRipple();
