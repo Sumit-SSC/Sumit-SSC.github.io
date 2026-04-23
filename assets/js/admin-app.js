@@ -103,7 +103,8 @@
     } catch (_) {}
     try {
       const rawHistory = localStorage.getItem(LS_PUBLISH_HISTORY_KEY);
-      const history = Array.isArray(rawHistory ? JSON.parse(rawHistory) : null) ? JSON.parse(rawHistory) : [];
+      const parsed = rawHistory ? JSON.parse(rawHistory) : null;
+      const history = Array.isArray(parsed) ? parsed : [];
       history.unshift({
         target,
         at: new Date().toISOString()
@@ -2060,14 +2061,46 @@
     sel.innerHTML = '<option value="">Select backup…</option>';
     if (!data.ok || !Array.isArray(data.backups)) {
       sel.innerHTML = '<option value="">No backups or unauthorized</option>';
+      syncDashboardRestoreState();
       return;
     }
     data.backups.forEach((b) => {
       const opt = document.createElement("option");
       opt.value = b.path;
-      opt.textContent = b.name;
+      opt.textContent = formatBackupOptionLabel(b);
       sel.appendChild(opt);
     });
+    syncDashboardRestoreState();
+  }
+
+  function formatBackupOptionLabel(backup) {
+    const name = String(backup?.name || "");
+    const m = /^backup-([^-]+)-(live|draft|baseline)-(.+)\.json$/i.exec(name);
+    if (!m) return name;
+    const [, target, snapType, rawTs] = m;
+    const tsMatch = /^(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z$/.exec(rawTs);
+    const whenIso = tsMatch
+      ? `${tsMatch[1]}T${tsMatch[2]}:${tsMatch[3]}:${tsMatch[4]}.${tsMatch[5]}Z`
+      : rawTs;
+    const d = new Date(whenIso);
+    const when = Number.isNaN(d.getTime()) ? rawTs : d.toLocaleString();
+    const targetLabel = labelForPublishTarget(target);
+    const snapLabel = snapType === "live" ? "Live before publish" : snapType === "draft" ? "Draft snapshot" : "Baseline snapshot";
+    return `${targetLabel} · ${snapLabel} · ${when}`;
+  }
+
+  function syncDashboardRestoreState() {
+    const sel = el("dash-restore-backup");
+    const btn = el("btn-dash-restore");
+    const hint = el("dash-restore-hint");
+    if (!btn) return;
+    const selected = !!(sel && sel.value);
+    btn.disabled = !selected;
+    if (hint) {
+      hint.textContent = selected
+        ? "Selected backup will be restored to live after confirmation."
+        : "Select a backup first.";
+    }
   }
 
   el("rib-publish")?.addEventListener("click", async () => {
@@ -2170,6 +2203,7 @@
   el("btn-refresh-backups")?.addEventListener("click", () => refreshBackupSelect());
   el("btn-dash-refresh-history")?.addEventListener("click", () => renderDashboardPublishHistory());
   el("btn-dash-refresh-backups")?.addEventListener("click", () => refreshBackupSelect("dash-restore-backup"));
+  el("dash-restore-backup")?.addEventListener("change", () => syncDashboardRestoreState());
   el("btn-restore-backup")?.addEventListener("click", async () => {
     const s = await apiSession();
     if (!s.ok) {
@@ -2201,7 +2235,8 @@
       setStatus("Select a backup.");
       return;
     }
-    if (!window.confirm("Restore this backup to LIVE branch now?")) return;
+    const selectedText = el("dash-restore-backup")?.selectedOptions?.[0]?.textContent || "the selected backup";
+    if (!window.confirm(`Restore ${selectedText} to LIVE branch now?`)) return;
     setStatus("Restoring…");
     const out = await apiRestore(path);
     setStatus(out.ok ? `Restored ${out.path}` : out.error || "Restore failed");

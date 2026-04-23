@@ -146,6 +146,7 @@
         <div class="mt-3 rounded-lg border border-indigo-900/50 bg-indigo-950/25 p-3 text-sm text-slate-200">
           <strong class="text-indigo-200">Quick start:</strong>
           Open Homepage, edit in Write mode, then Save draft and Publish.
+          <div class="mt-1 text-xs text-indigo-100/80">Tip: use Open live after publish to verify exactly what visitors will see.</div>
         </div>
         <div class="mt-3 rounded-lg border border-slate-800 p-3">
           <div class="flex items-center justify-between gap-2">
@@ -161,8 +162,9 @@
           </div>
           <div class="mt-2 flex gap-2">
             <select id="dash-restore-backup" class="flex-1 min-w-0 rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]"></select>
-            <button id="btn-dash-restore" type="button" class="shrink-0 rounded-lg bg-rose-700 hover:bg-rose-600 px-2.5 py-1.5 text-[11px] font-medium">Restore live</button>
+            <button id="btn-dash-restore" type="button" class="shrink-0 rounded-lg bg-rose-700 hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed px-2.5 py-1.5 text-[11px] font-medium" disabled>Restore live</button>
           </div>
+          <p id="dash-restore-hint" class="mt-1 text-[10px] text-slate-400">Select a backup first.</p>
           <p class="mt-2 text-[10px] text-slate-500">Every publish saves backup snapshots before overwrite. Pick one and restore to live branch.</p>
         </div>
         <p id="dash-session-detail" class="text-sm text-slate-300 mt-3"></p>
@@ -292,6 +294,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260417-01"></script>
+  <script src="../assets/js/admin-app.js?v=20260417-02"></script>
 </body>
 </html>
