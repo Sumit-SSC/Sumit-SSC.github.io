@@ -234,11 +234,18 @@
 	</footer>
 
 	<script>
-		window.__HOMEPAGE_UI_READY__ = fetch(new URL('../data/homepage-ui.json', window.location.href))
+		var HOMEPAGE_DATA_CACHE_BUSTER = '20260423-home-data-1';
+		window.__HOMEPAGE_UI_READY__ = fetch(
+			new URL('../data/homepage-ui.json?v=' + encodeURIComponent(HOMEPAGE_DATA_CACHE_BUSTER), window.location.href),
+			{ cache: 'no-store' }
+		)
 			.then(function (r) { return r.ok ? r.json() : {}; })
 			.then(function (d) { window.__HOMEPAGE_UI__ = d && typeof d === 'object' ? d : {}; })
 			.catch(function () { window.__HOMEPAGE_UI__ = {}; });
-		window.__HOMEPAGE_CONTENT_READY__ = fetch(new URL('../data/homepage-content.json', window.location.href))
+		window.__HOMEPAGE_CONTENT_READY__ = fetch(
+			new URL('../data/homepage-content.json?v=' + encodeURIComponent(HOMEPAGE_DATA_CACHE_BUSTER), window.location.href),
+			{ cache: 'no-store' }
+		)
 			.then(function (r) { return r.ok ? r.json() : {}; })
 			.then(function (d) { window.__HOMEPAGE_CONTENT__ = d && typeof d === 'object' ? d : {}; })
 			.catch(function () { window.__HOMEPAGE_CONTENT__ = {}; });

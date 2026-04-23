@@ -5205,3 +5205,125 @@ html.dark-theme .case-study-tag {
     display: none !important;
   }
 }
+
+/* ---------------------------------------------------
+   Project + Case Study density and vibrancy refresh
+   --------------------------------------------------- */
+@media (min-width: 1200px) {
+  .project-layout-grid {
+    max-width: 1380px;
+    grid-template-columns: minmax(180px, 12%) minmax(0, 1fr) minmax(180px, 12%);
+    column-gap: 1.25rem;
+  }
+
+  .case-study-layout-grid {
+    max-width: 1320px;
+    margin-left: auto;
+    margin-right: auto;
+    grid-template-columns: minmax(180px, 16%) minmax(0, 1fr);
+    column-gap: 1.25rem;
+  }
+}
+
+#project-main,
+#case-study-article {
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  box-shadow:
+    0 14px 35px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  background-image:
+    radial-gradient(130% 90% at 0% 0%, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0) 52%),
+    radial-gradient(120% 85% at 100% 100%, rgba(79, 70, 229, 0.08) 0%, rgba(79, 70, 229, 0) 50%);
+}
+
+#project-nav > div,
+#case-study-toc-wrap > div,
+#project-side .artifact-container,
+#project-side > div {
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.95) 100%);
+}
+
+.dark-theme #project-main,
+.dark-theme #case-study-article {
+  border-color: rgba(129, 140, 248, 0.25);
+  box-shadow:
+    0 18px 40px rgba(2, 6, 23, 0.5),
+    inset 0 1px 0 rgba(148, 163, 184, 0.08);
+  background-image:
+    radial-gradient(140% 90% at 0% 0%, rgba(14, 165, 233, 0.14) 0%, rgba(14, 165, 233, 0) 56%),
+    radial-gradient(120% 85% at 100% 100%, rgba(99, 102, 241, 0.16) 0%, rgba(99, 102, 241, 0) 52%);
+}
+
+.dark-theme #project-nav > div,
+.dark-theme #case-study-toc-wrap > div,
+.dark-theme #project-side .artifact-container,
+.dark-theme #project-side > div {
+  border-color: rgba(129, 140, 248, 0.25);
+  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.45);
+  background-image:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(17, 24, 39, 0.94) 100%);
+}
+
+@media (max-width: 1279px) {
+  #project-main,
+  #case-study-article {
+    padding: 1.5rem;
+  }
+}
+
+/* Denser reading flow on detail pages */
+#project-main,
+#case-study-article {
+  line-height: 1.72;
+}
+
+#project-main h2,
+#case-study-article h2 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.7rem;
+  letter-spacing: 0.01em;
+}
+
+#project-main h3,
+#case-study-article h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.55rem;
+}
+
+#project-main p,
+#project-main li,
+#case-study-article p,
+#case-study-article li {
+  font-size: 0.98rem;
+}
+
+/* Compact and more scan-friendly artifact/tools chips */
+#project-side .artifact-container {
+  padding: 0.9rem 1rem;
+  margin: 0 0 0.85rem;
+}
+
+#project-side .artifact-container-header {
+  margin-bottom: 0.55rem;
+  font-size: 0.78rem;
+}
+
+#project-side .artifact-buttons {
+  gap: 0.4rem;
+}
+
+#project-side .tool-badge,
+#project-side .artifact-button {
+  padding: 0.34rem 0.68rem;
+  font-size: 0.69rem;
+}
+
+/* Keep side rails visible and useful while scrolling */
+#project-nav,
+#project-side,
+#case-study-nav {
+  top: 5.8rem;
+}

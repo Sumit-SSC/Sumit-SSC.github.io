@@ -32,7 +32,7 @@
     editWorkspace: false,
     compactListsOnSelect: true,
     centerPreviewMode: "live",
-    sourceMode: false,
+    sourceMode: true,
     draftDirty: false
   };
   let monacoEditor = null;
@@ -966,24 +966,158 @@
   }
 
   function currentSourceRequest() {
+    const pickerMode = el("source-format")?.value || "auto";
     if (state.kind === "project") {
-      return { target: "projects", slug: state.slug, mode: el("source-format")?.value || "record-json", language: "json" };
+      const mode = pickerMode === "homepage-text" ? "record-html" : pickerMode;
+      return { target: "projects", slug: state.slug, mode: mode || "record-html", language: "html" };
     }
     if (state.kind === "caseStudy") {
-      return { target: "caseStudies", slug: state.slug, mode: el("source-format")?.value || "record-json", language: "json" };
+      const mode = pickerMode === "homepage-text" ? "record-html" : pickerMode;
+      return { target: "caseStudies", slug: state.slug, mode: mode || "record-html", language: "html" };
     }
     if (state.kind === "projects-home") {
       if (state.homeTab === "titles") return { target: "homepageUi", slug: "", mode: "file", language: "json" };
-      return { target: "homepage", slug: "", mode: "file", language: "json" };
+      return { target: "homepage", slug: "", mode: pickerMode || "homepage-text", language: "markdown" };
     }
-    if (state.kind === "settings") return { target: "siteTheme", slug: "", mode: "file", language: "json" };
+    if (state.kind === "settings") return { target: "siteTheme", slug: "", mode: pickerMode || "file", language: "json" };
     return null;
+  }
+
+  function resolveAutoSourceMode(req) {
+    if (!req) return "file";
+    if (req.target === "projects" || req.target === "caseStudies") return "record-html";
+    if (req.target === "homepage") return "homepage-text";
+    return "file";
+  }
+
+  function isVirtualHomepageTextMode(target, mode) {
+    return target === "homepage" && mode === "homepage-text";
+  }
+
+  function editorDataToPlainText(editorData) {
+    const blocks = Array.isArray(editorData?.blocks) ? editorData.blocks : [];
+    if (!blocks.length) return "";
+    const lines = [];
+    for (const block of blocks) {
+      const type = block?.type;
+      const data = block?.data || {};
+      if (type === "header") {
+        const level = Math.max(1, Math.min(4, Number(data.level || 2)));
+        lines.push(`${"#".repeat(level)} ${String(data.text || "").trim()}`.trim());
+        lines.push("");
+        continue;
+      }
+      if (type === "paragraph") {
+        const text = stripHtml(String(data.text || "")).trim();
+        if (text) lines.push(text);
+        lines.push("");
+        continue;
+      }
+      if (type === "list") {
+        const items = Array.isArray(data.items) ? data.items : [];
+        const ordered = data.style === "ordered";
+        items.forEach((item, idx) => {
+          const txt = stripHtml(typeof item === "string" ? item : String(item || "")).trim();
+          if (txt) lines.push(ordered ? `${idx + 1}. ${txt}` : `- ${txt}`);
+        });
+        lines.push("");
+        continue;
+      }
+      if (type === "code") {
+        const code = String(data.code || "").trim();
+        if (code) {
+          lines.push("```");
+          lines.push(code);
+          lines.push("```");
+          lines.push("");
+        }
+        continue;
+      }
+    }
+    return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
+
+  function plainTextToHomepageEditorData(text) {
+    const src = String(text || "").replace(/\r\n/g, "\n");
+    const lines = src.split("\n");
+    const blocks = [];
+    let i = 0;
+
+    const pushParagraph = (buffer) => {
+      const raw = buffer.join(" ").replace(/\s+/g, " ").trim();
+      if (!raw) return;
+      blocks.push({ type: "paragraph", data: { text: raw } });
+    };
+
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line.trim()) {
+        i += 1;
+        continue;
+      }
+
+      const heading = /^(#{1,4})\s+(.+)$/.exec(line.trim());
+      if (heading) {
+        const level = Math.max(2, Math.min(4, heading[1].length));
+        blocks.push({ type: "header", data: { text: heading[2].trim(), level } });
+        i += 1;
+        continue;
+      }
+
+      if (line.trim() === "```") {
+        const codeLines = [];
+        i += 1;
+        while (i < lines.length && lines[i].trim() !== "```") {
+          codeLines.push(lines[i]);
+          i += 1;
+        }
+        if (i < lines.length && lines[i].trim() === "```") i += 1;
+        const code = codeLines.join("\n").trim();
+        if (code) blocks.push({ type: "code", data: { code } });
+        continue;
+      }
+
+      const bullet = /^[-*]\s+(.+)$/.exec(line.trim());
+      const numbered = /^(\d+)\.\s+(.+)$/.exec(line.trim());
+      if (bullet || numbered) {
+        const ordered = !!numbered;
+        const items = [];
+        while (i < lines.length) {
+          const current = lines[i].trim();
+          const m = ordered ? /^(\d+)\.\s+(.+)$/.exec(current) : /^[-*]\s+(.+)$/.exec(current);
+          if (!m) break;
+          items.push(m[ordered ? 2 : 1].trim());
+          i += 1;
+        }
+        if (items.length) blocks.push({ type: "list", data: { style: ordered ? "ordered" : "unordered", items } });
+        continue;
+      }
+
+      const para = [];
+      while (i < lines.length && lines[i].trim()) {
+        const current = lines[i].trim();
+        if (/^(#{1,4})\s+/.test(current) || current === "```" || /^[-*]\s+/.test(current) || /^(\d+)\.\s+/.test(current)) break;
+        para.push(current);
+        i += 1;
+      }
+      pushParagraph(para);
+    }
+
+    if (!blocks.length) {
+      blocks.push({ type: "paragraph", data: { text: "Start writing here." } });
+    }
+
+    return {
+      time: Date.now(),
+      version: "2.30.7",
+      blocks
+    };
   }
 
   async function openSourceMode() {
     const req = currentSourceRequest();
     if (!req) {
-      setStatus("Source mode is available for editable targets only.");
+      setStatus("Text mode is available for editable targets only.");
       return;
     }
     state.sourceMode = true;
@@ -991,32 +1125,56 @@
     await ensureMonaco();
     const holder = el("source-editor-holder");
     if (!holder) return;
-    const data = await loadRawSource(req.target, req.slug, req.mode === "auto" ? "record-json" : req.mode);
-    if (!data.ok) {
-      setStatus(data.error || "Failed to load source.");
-      return;
+    const effectiveMode = req.mode === "auto" ? resolveAutoSourceMode(req) : req.mode;
+    let textValue = "";
+    let language = req.language || "json";
+    if (isVirtualHomepageTextMode(req.target, effectiveMode)) {
+      const data = await loadContentRead("homepage", "", "auto");
+      if (!data.ok) {
+        setStatus(data.error || "Failed to load homepage content.");
+        return;
+      }
+      sourceDoc = { target: req.target, slug: req.slug, mode: effectiveMode, language: "markdown" };
+      textValue = editorDataToPlainText(data.editorData || getDefaultEditorData());
+      language = "markdown";
+    } else {
+      const data = await loadRawSource(req.target, req.slug, effectiveMode);
+      if (!data.ok) {
+        setStatus(data.error || "Failed to load source.");
+        return;
+      }
+      sourceDoc = {
+        target: req.target,
+        slug: req.slug,
+        mode: data.mode || effectiveMode,
+        language: data.language || req.language || "json"
+      };
+      textValue = data.text || "";
+      language = sourceDoc.language;
     }
-    sourceDoc = { target: req.target, slug: req.slug, mode: data.mode || req.mode, language: data.language || req.language || "json" };
     if (!monacoEditor) {
       monacoEditor = window.monaco.editor.create(holder, {
-        value: data.text || "",
-        language: sourceDoc.language,
+        value: textValue,
+        language,
         theme: "vs-dark",
         automaticLayout: true,
         minimap: { enabled: false },
+        wordWrap: "on",
+        smoothScrolling: true,
         fontSize: 13
       });
     } else {
       const model = monacoEditor.getModel();
-      if (model) window.monaco.editor.setModelLanguage(model, sourceDoc.language);
-      monacoEditor.setValue(data.text || "");
+      if (model) window.monaco.editor.setModelLanguage(model, language);
+      monacoEditor.setValue(textValue);
     }
-    setStatus(`Source loaded (${sourceDoc.mode}).`);
+    setStatus(`Text editor ready (${sourceDoc.mode}). Edit, Save draft, then Publish.`);
   }
 
   function closeSourceMode() {
     state.sourceMode = false;
     showPanels();
+    setStatus("Block editor mode. Switch back to Text for raw content editing.");
   }
 
   function setIframe(path, bustCache = false) {
@@ -1308,6 +1466,24 @@
         setStatus("Source editor not ready.");
         return;
       }
+      if (isVirtualHomepageTextMode(sourceDoc.target, sourceDoc.mode)) {
+        const editorData = plainTextToHomepageEditorData(monacoEditor.getValue());
+        const out = await saveContentWrite("homepage", "", editorData);
+        if (!out.ok) {
+          setStatus(out.error || "Save failed");
+          toast(out.error || "Save failed", "error");
+          return;
+        }
+        if (out.unchanged) {
+          setStatus("No changes detected. Draft not updated.");
+          return;
+        }
+        setBranchHint(out.branch || "");
+        setStatus(`Saved text draft · ${out.branch || "draft"}`);
+        toast("Draft saved", "success");
+        await ribLoad();
+        return;
+      }
       const out = await saveRawSource(sourceDoc.target, sourceDoc.slug, sourceDoc.mode, monacoEditor.getValue());
       if (!out.ok) {
         setStatus(out.error || "Source save failed");
@@ -1401,7 +1577,7 @@
 
   async function ribPreview() {
     if (state.sourceMode) {
-      setStatus("Advanced mode: use center preview toggles, or switch to Write for block preview.");
+      setStatus("Text mode active: use center preview toggles, or switch to Blocks for visual preview.");
       return;
     }
     if ((state.kind === "projects-home" && state.homeTab === "json") || state.kind === "project" || state.kind === "caseStudy") {
@@ -1606,7 +1782,6 @@
       applyRoute();
     });
     el("btn-mode-source")?.addEventListener("click", async () => {
-      if (!window.confirm("Advanced mode opens raw files and JSON. Continue?")) return;
       await openSourceMode();
     });
     el("btn-source-reload")?.addEventListener("click", async () => {
