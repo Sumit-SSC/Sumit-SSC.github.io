@@ -135,11 +135,9 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-1 rounded-lg bg-emerald-950/25 px-0.5 py-0.5 border border-emerald-900/35" title="Draft stays private until you publish">
-        <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-100">Preview</button>
         <button id="rib-save" type="button" class="px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium">Save draft</button>
         <button id="rib-publish" type="button" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium">Publish</button>
         <button id="rib-open-live" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-200" title="Opens the real page in a new tab (bypasses cache)">Open live</button>
-        <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300">Reload</button>
       </div>
 
       <details class="rib-account relative shrink-0 rounded-lg border border-slate-700/70 bg-slate-800/50">
@@ -151,23 +149,30 @@
         </div>
       </details>
 
-      <details id="rib-blocks-toolbar" class="hidden rounded-lg border border-slate-700/60 bg-slate-900/60 max-w-full">
-        <summary class="px-2.5 py-1 text-[11px] text-slate-400 cursor-pointer hover:text-slate-200 select-none list-none">Blocks</summary>
-        <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-0 border-t border-slate-800/80">
-          <div id="rib-insert-group" class="flex flex-wrap items-center gap-0.5">
-            <button type="button" data-insert="paragraph" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Paragraph">¶</button>
-            <button type="button" data-insert="header" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Heading">H</button>
-            <button type="button" data-insert="list" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="List">•</button>
-            <button type="button" data-insert="image" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Image">🖼</button>
-            <button type="button" data-insert="code" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Code">&lt;/&gt;</button>
-            <button type="button" data-insert="embed" class="rib-ins px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Embed">↗</button>
-          </div>
-          <span class="text-slate-600 px-0.5">|</span>
-          <div id="rib-block-group" class="flex items-center gap-0.5">
-            <button id="rib-block-up" type="button" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Move up">↑</button>
-            <button id="rib-block-down" type="button" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px]" title="Move down">↓</button>
-            <button id="rib-block-delete" type="button" class="px-2 py-0.5 rounded bg-rose-950/80 hover:bg-rose-900 text-[11px]" title="Delete">✕</button>
-          </div>
+      <details id="rib-more" class="rounded-lg border border-slate-300/80 bg-white/80 max-w-full">
+        <summary class="px-2.5 py-1 text-[11px] text-slate-600 cursor-pointer hover:text-slate-900 select-none list-none">More</summary>
+        <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-2 border-t border-slate-200/80">
+          <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Preview</button>
+          <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Reload</button>
+          <details id="rib-blocks-toolbar" class="hidden rounded-lg border border-slate-300/80 bg-white max-w-full">
+            <summary class="px-2.5 py-1 text-[11px] text-slate-500 cursor-pointer hover:text-slate-700 select-none list-none">Blocks</summary>
+            <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-1 border-t border-slate-200/80">
+              <div id="rib-insert-group" class="flex flex-wrap items-center gap-0.5">
+                <button type="button" data-insert="paragraph" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Paragraph">¶</button>
+                <button type="button" data-insert="header" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Heading">H</button>
+                <button type="button" data-insert="list" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="List">•</button>
+                <button type="button" data-insert="image" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Image">🖼</button>
+                <button type="button" data-insert="code" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Code">&lt;/&gt;</button>
+                <button type="button" data-insert="embed" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Embed">↗</button>
+              </div>
+              <span class="text-slate-400 px-0.5">|</span>
+              <div id="rib-block-group" class="flex items-center gap-0.5">
+                <button id="rib-block-up" type="button" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Move up">↑</button>
+                <button id="rib-block-down" type="button" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Move down">↓</button>
+                <button id="rib-block-delete" type="button" class="px-2 py-0.5 rounded bg-rose-100 hover:bg-rose-200 text-[11px]" title="Delete">✕</button>
+              </div>
+            </div>
+          </details>
         </div>
       </details>
 
@@ -364,6 +369,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260423-04"></script>
+  <script src="../assets/js/admin-app.js?v=20260423-05"></script>
 </body>
 </html>
