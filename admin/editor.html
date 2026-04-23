@@ -8,6 +8,75 @@
   <style>
     body { font-family: "Inter", system-ui, sans-serif; }
     #admin-preview { min-height: 0; }
+    /* Light, friendly workspace shell */
+    body {
+      background: #eef2ff;
+      color: #1f2937;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.92) !important;
+      border-bottom-color: #e2e8f0 !important;
+    }
+    #workspace-main > aside,
+    #workspace-inspector {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    #workspace-preview-pane {
+      background: #eef2ff !important;
+    }
+    #rib-status,
+    #rib-session-info,
+    #rib-last-published,
+    #rib-branch-hint {
+      color: #64748b !important;
+    }
+    #mode-segment {
+      background: #e2e8f0 !important;
+      border-color: #cbd5e1 !important;
+    }
+    #mode-segment button {
+      color: #334155 !important;
+    }
+    #mode-segment button.bg-indigo-600 {
+      color: #ffffff !important;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.25);
+    }
+    #rib-save { background: #059669 !important; }
+    #rib-publish { background: #4f46e5 !important; }
+    #rib-preview, #rib-open-live, #rib-load, #rib-edit-workspace {
+      background: #e2e8f0 !important;
+      color: #334155 !important;
+    }
+    #home-onboarding {
+      background: #eff6ff !important;
+      border-color: #bfdbfe !important;
+      color: #334155 !important;
+    }
+    #source-format,
+    #dash-restore-backup,
+    #sel-draft-commits,
+    #theme-default-mode,
+    #theme-default-color,
+    #theme-font-family,
+    #theme-font-size,
+    #fld-featured,
+    #fld-cs {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1f2937 !important;
+    }
+    #panel-source .border-b,
+    #draft-history-panel,
+    #inspector-tabs {
+      border-color: #e2e8f0 !important;
+      background: #f8fafc !important;
+    }
+    #ui-toast {
+      background: #ffffff !important;
+      color: #1f2937 !important;
+      border-color: #cbd5e1 !important;
+    }
     .ce-block:focus-within { outline: 2px solid rgb(99 102 241 / 0.75); outline-offset: 3px; border-radius: 6px; }
     .admin-editor-canvas {
       border-radius: 14px;
@@ -51,7 +120,7 @@
     };
   </script>
 </head>
-<body class="h-screen bg-slate-950 text-slate-100 overflow-hidden">
+<body class="h-screen overflow-hidden">
   <header class="border-b border-slate-800/90 bg-slate-900/95 backdrop-blur-sm shadow-sm">
     <div id="rib-auth-banner" class="hidden px-3 py-1.5 text-[11px] border-b border-amber-900/40 bg-amber-950/35 text-amber-100/95">
       Not signed in — use <strong class="font-medium">Account → Log in</strong> to save drafts and publish to the live site.
