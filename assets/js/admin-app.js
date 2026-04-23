@@ -2002,15 +2002,37 @@
     b.className = "inspector-tab px-2 py-1 rounded " + (which === "json" ? active : idle);
   }
 
+  function syncSourceFormatOptions() {
+    const sel = el("source-format");
+    if (!sel) return;
+    const options = Array.from(sel.options || []);
+    const isRecord = state.kind === "project" || state.kind === "caseStudy";
+    const isHomeContent = state.kind === "projects-home" && state.homeTab === "json";
+
+    options.forEach((opt) => {
+      const value = opt.value;
+      let show = value === "auto" || value === "file";
+      if (value === "record-html" || value === "record-json") show = isRecord;
+      if (value === "homepage-text") show = isHomeContent;
+      opt.hidden = !show;
+      opt.disabled = !show;
+    });
+
+    if (isRecord && sel.value === "homepage-text") sel.value = "auto";
+    if (isHomeContent && (sel.value === "record-html" || sel.value === "record-json")) sel.value = "homepage-text";
+  }
+
   function wireInspectorTabs() {
     el("tab-titles")?.addEventListener("click", () => {
       state.homeTab = "titles";
       setHomeTabStyle("titles");
+      syncSourceFormatOptions();
       applyRoute();
     });
     el("tab-json")?.addEventListener("click", () => {
       state.homeTab = "json";
       setHomeTabStyle("json");
+      syncSourceFormatOptions();
       applyRoute();
     });
     setHomeTabStyle(state.homeTab);
@@ -2022,6 +2044,7 @@
         state.kind = "dashboard";
         state.slug = "";
         highlightNav();
+        syncSourceFormatOptions();
         applyRoute();
       });
     });
@@ -2032,6 +2055,7 @@
         state.homeTab = "json";
         setHomeTabStyle("json");
         highlightNav();
+        syncSourceFormatOptions();
         applyRoute();
       });
     });
@@ -2040,6 +2064,7 @@
         state.kind = "settings";
         state.slug = "";
         highlightNav();
+        syncSourceFormatOptions();
         applyRoute();
       });
     });
@@ -2048,6 +2073,7 @@
         state.kind = "case-archive";
         state.slug = "";
         highlightNav();
+        syncSourceFormatOptions();
         applyRoute();
       });
     });
@@ -2056,6 +2082,7 @@
         state.kind = "about";
         state.slug = "";
         highlightNav();
+        syncSourceFormatOptions();
         applyRoute();
       });
     });
@@ -2529,6 +2556,7 @@
       console.error(e);
     }
     highlightNav();
+    syncSourceFormatOptions();
     await applyRoute();
     await refreshSessionLabel();
     await refreshBackupSelect();
