@@ -27,7 +27,7 @@ ICONS_DIR = ROOT / "assets" / "images" / "icons"
 ICONS_WEBP_DIR = ROOT / "assets" / "images" / "icons-webp"
 
 RASTER_EXTS = (".png", ".jpg", ".jpeg", ".webp")
-LOCAL_EXT_PRIORITY = (".svg", ".png", ".webp", ".jpg", ".jpeg")
+LOCAL_EXT_PRIORITY = (".png", ".webp", ".jpg", ".jpeg", ".svg")
 
 
 def skill_icon_slug(key: str) -> str:

@@ -80,7 +80,7 @@
   "Power BI": {
     "slug": "power-bi",
     "localPreferred": "../assets/images/icons-webp/power-bi.webp",
-    "localFallback": "../assets/images/icons/power-bi.svg",
+    "localFallback": "../assets/images/icons/power-bi.png",
     "cdn": "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/power_bi.png"
   },
   "Tableau": {
@@ -98,14 +98,14 @@
   "Excel": {
     "slug": "excel",
     "localPreferred": "../assets/images/icons-webp/excel.webp",
-    "localFallback": "../assets/images/icons/excel.svg",
+    "localFallback": "../assets/images/icons/excel.png",
     "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Excel_Logo_256px.png"
   },
   "Polars": {
     "slug": "polars",
-    "localPreferred": "../assets/images/icons/polars.svg",
-    "localFallback": "../assets/images/icons/polars.svg",
-    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/polars.svg"
+    "localPreferred": "../assets/images/icons-webp/polars.webp",
+    "localFallback": "../assets/images/icons/polars.png",
+    "cdn": "https://raw.githubusercontent.com/pola-rs/polars-static/master/logos/polars_logo_blue_square_white_background.png"
   },
   "SQL Server": {
     "slug": "sql-server",
@@ -140,7 +140,7 @@
   "Google Analytics": {
     "slug": "google-analytics",
     "localPreferred": "../assets/images/icons-webp/google-analytics.webp",
-    "localFallback": "../assets/images/icons/google-analytics.svg",
+    "localFallback": "../assets/images/icons/google-analytics.png",
     "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google-Analytics-Logo.png/1280px-Google-Analytics-Logo.png?20260117144756"
   },
   "Apache Airflow": {
@@ -158,13 +158,13 @@
   "Google Colab": {
     "slug": "google-colab",
     "localPreferred": "../assets/images/icons-webp/google-colab.webp",
-    "localFallback": "../assets/images/icons/google-colab.svg",
+    "localFallback": "../assets/images/icons/google-colab.png",
     "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Colab_pic.png/1280px-Google_Colab_pic.png?20250705202320"
   },
   "Linux": {
     "slug": "linux",
     "localPreferred": "../assets/images/icons-webp/linux.webp",
-    "localFallback": "../assets/images/icons/linux.svg",
+    "localFallback": "../assets/images/icons/linux.png",
     "cdn": "https://icon.icepanel.io/Technology/png-shadow-512/Linux.png"
   },
   "Ubuntu": {
@@ -254,19 +254,19 @@
   "Jira": {
     "slug": "jira",
     "localPreferred": "../assets/images/icons-webp/jira.webp",
-    "localFallback": "../assets/images/icons/jira.svg",
+    "localFallback": "../assets/images/icons/jira.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
   },
   "Atlassian": {
     "slug": "atlassian",
     "localPreferred": "../assets/images/icons-webp/atlassian.webp",
-    "localFallback": "../assets/images/icons/atlassian.svg",
+    "localFallback": "../assets/images/icons/atlassian.png",
     "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/atlassian.svg"
   },
   "Hugging Face": {
     "slug": "hugging-face",
     "localPreferred": "../assets/images/icons-webp/hugging-face.webp",
-    "localFallback": "../assets/images/icons/hugging-face.svg",
+    "localFallback": "../assets/images/icons/hugging-face.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/huggingface-color.png"
   },
   "Hadoop": {
@@ -290,7 +290,7 @@
   "Notion": {
     "slug": "notion",
     "localPreferred": "../assets/images/icons-webp/notion.webp",
-    "localFallback": "../assets/images/icons/notion.svg",
+    "localFallback": "../assets/images/icons/notion.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/notion.png"
   },
   "PostgreSQL": {
@@ -314,13 +314,13 @@
   "TensorFlow": {
     "slug": "tensorflow",
     "localPreferred": "../assets/images/icons-webp/tensorflow.webp",
-    "localFallback": "../assets/images/icons/tensorflow.svg",
+    "localFallback": "../assets/images/icons/tensorflow.png",
     "cdn": "https://icon.icepanel.io/Technology/svg/TensorFlow.svg"
   },
   "LangChain": {
     "slug": "langchain",
     "localPreferred": "../assets/images/icons-webp/langchain.webp",
-    "localFallback": "../assets/images/icons/langchain.svg",
+    "localFallback": "../assets/images/icons/langchain.png",
     "cdn": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.78.0/icons/langchain-color.svg"
   },
   "OpenCV": {
@@ -331,9 +331,9 @@
   },
   "FastAPI": {
     "slug": "fastapi",
-    "localPreferred": "../assets/images/icons/fastapi.svg",
-    "localFallback": "../assets/images/icons/fastapi.svg",
-    "cdn": "https://icon.icepanel.io/Technology/svg/FastAPI.svg"
+    "localPreferred": "../assets/images/icons-webp/fastapi.webp",
+    "localFallback": "../assets/images/icons/fastapi.png",
+    "cdn": "https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/img/logo-margin/logo-teal.png"
   },
   "DAX": {
     "slug": "dax",
@@ -350,7 +350,7 @@
   "Microsoft Teams": {
     "slug": "microsoft-teams",
     "localPreferred": "../assets/images/icons-webp/microsoft-teams.webp",
-    "localFallback": "../assets/images/icons/microsoft-teams.svg",
+    "localFallback": "../assets/images/icons/microsoft-teams.png",
     "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Teams_Logo_256px.png"
   },
   "Zoom": {
@@ -368,7 +368,7 @@
   "Gmail": {
     "slug": "gmail",
     "localPreferred": "../assets/images/icons-webp/gmail.webp",
-    "localFallback": "../assets/images/icons/gmail.svg",
+    "localFallback": "../assets/images/icons/gmail.png",
     "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/1280px-Gmail_icon_%282020%29.svg.png?20221017173631"
   },
   "Google Workspace": {
@@ -380,13 +380,13 @@
   "Outlook": {
     "slug": "outlook",
     "localPreferred": "../assets/images/icons-webp/outlook.webp",
-    "localFallback": "../assets/images/icons/outlook.svg",
+    "localFallback": "../assets/images/icons/outlook.png",
     "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Outlook_Logo_256px.png"
   },
   "Google Calendar": {
     "slug": "google-calendar",
     "localPreferred": "../assets/images/icons-webp/google-calendar.webp",
-    "localFallback": "../assets/images/icons/google-calendar.svg",
+    "localFallback": "../assets/images/icons/google-calendar.png",
     "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1280px-Google_Calendar_icon_%282020%29.svg.png?20221106121915"
   },
   "Trello": {
@@ -416,7 +416,7 @@
   "Google Docs": {
     "slug": "google-docs",
     "localPreferred": "../assets/images/icons-webp/google-docs.webp",
-    "localFallback": "../assets/images/icons/google-docs.svg",
+    "localFallback": "../assets/images/icons/google-docs.png",
     "cdn": "https://mailmeteor.com/logos/assets/PNG/Google_Docs_Logo_512px.png"
   },
   "OneNote": {
@@ -446,7 +446,7 @@
   "SharePoint": {
     "slug": "sharepoint",
     "localPreferred": "../assets/images/icons-webp/sharepoint.webp",
-    "localFallback": "../assets/images/icons/sharepoint.svg",
+    "localFallback": "../assets/images/icons/sharepoint.png",
     "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Teams_Logo_256px.png"
   },
   "PowerApps": {
@@ -458,97 +458,97 @@
   "Fabric": {
     "slug": "fabric",
     "localPreferred": "../assets/images/icons-webp/fabric.webp",
-    "localFallback": "../assets/images/icons/fabric.svg",
+    "localFallback": "../assets/images/icons/fabric.png",
     "cdn": "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/fabric.png"
   },
   "OpenAI ChatGPT": {
     "slug": "openai-chatgpt",
     "localPreferred": "../assets/images/icons-webp/openai-chatgpt.webp",
-    "localFallback": "../assets/images/icons/openai-chatgpt.svg",
+    "localFallback": "../assets/images/icons/openai-chatgpt.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/openai.png"
   },
   "Google Gemini": {
     "slug": "google-gemini",
     "localPreferred": "../assets/images/icons-webp/google-gemini.webp",
-    "localFallback": "../assets/images/icons/google-gemini.svg",
+    "localFallback": "../assets/images/icons/google-gemini.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/gemini-color.png"
   },
   "Claude": {
     "slug": "claude",
     "localPreferred": "../assets/images/icons-webp/claude.webp",
-    "localFallback": "../assets/images/icons/claude.svg",
+    "localFallback": "../assets/images/icons/claude.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png"
   },
   "Cursor": {
     "slug": "cursor",
     "localPreferred": "../assets/images/icons-webp/cursor.webp",
-    "localFallback": "../assets/images/icons/cursor.svg",
+    "localFallback": "../assets/images/icons/cursor.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/cursor.png"
   },
   "Ollama": {
     "slug": "ollama",
     "localPreferred": "../assets/images/icons-webp/ollama.webp",
-    "localFallback": "../assets/images/icons/ollama.svg",
+    "localFallback": "../assets/images/icons/ollama.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/ollama.png"
   },
   "DeepSeek": {
     "slug": "deepseek",
     "localPreferred": "../assets/images/icons-webp/deepseek.webp",
-    "localFallback": "../assets/images/icons/deepseek.svg",
+    "localFallback": "../assets/images/icons/deepseek.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/deepseek-color.png"
   },
   "Perplexity": {
     "slug": "perplexity",
     "localPreferred": "../assets/images/icons-webp/perplexity.webp",
-    "localFallback": "../assets/images/icons/perplexity.svg",
+    "localFallback": "../assets/images/icons/perplexity.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/perplexity-color.png"
   },
   "Meta AI": {
     "slug": "meta-ai",
     "localPreferred": "../assets/images/icons-webp/meta-ai.webp",
-    "localFallback": "../assets/images/icons/meta-ai.svg",
+    "localFallback": "../assets/images/icons/meta-ai.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/metaai-color.png"
   },
   "Anthropic": {
     "slug": "anthropic",
     "localPreferred": "../assets/images/icons-webp/anthropic.webp",
-    "localFallback": "../assets/images/icons/anthropic.svg",
+    "localFallback": "../assets/images/icons/anthropic.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/anthropic.png"
   },
   "Qwen": {
     "slug": "qwen",
     "localPreferred": "../assets/images/icons-webp/qwen.webp",
-    "localFallback": "../assets/images/icons/qwen.svg",
+    "localFallback": "../assets/images/icons/qwen.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/qwen-color.png"
   },
   "Moonshot": {
     "slug": "moonshot",
     "localPreferred": "../assets/images/icons-webp/moonshot.webp",
-    "localFallback": "../assets/images/icons/moonshot.svg",
+    "localFallback": "../assets/images/icons/moonshot.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/moonshot.png"
   },
   "Amazon Bedrock": {
     "slug": "amazon-bedrock",
     "localPreferred": "../assets/images/icons-webp/amazon-bedrock.webp",
-    "localFallback": "../assets/images/icons/amazon-bedrock.svg",
+    "localFallback": "../assets/images/icons/amazon-bedrock.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/bedrock-color.png"
   },
   "GitHub Copilot": {
     "slug": "github-copilot",
     "localPreferred": "../assets/images/icons-webp/github-copilot.webp",
-    "localFallback": "../assets/images/icons/github-copilot.svg",
+    "localFallback": "../assets/images/icons/github-copilot.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/githubcopilot.png"
   },
   "Lovable": {
     "slug": "lovable",
     "localPreferred": "../assets/images/icons-webp/lovable.webp",
-    "localFallback": "../assets/images/icons/lovable.svg",
+    "localFallback": "../assets/images/icons/lovable.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/lovable-color.png"
   },
   "Make": {
     "slug": "make",
     "localPreferred": "../assets/images/icons-webp/make.webp",
-    "localFallback": "../assets/images/icons/make.svg",
+    "localFallback": "../assets/images/icons/make.png",
     "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
   },
   "PyCaret": {
@@ -603,7 +603,7 @@
     "slug": "featuretools",
     "localPreferred": "../assets/images/icons-webp/featuretools.webp",
     "localFallback": "../assets/images/icons/featuretools.png",
-    "cdn": "https://avatars.githubusercontent.com/u/17783564?s=200&v=4"
+    "cdn": "https://github.com/Featuretools.png"
   },
   "Airbyte": {
     "slug": "airbyte",
@@ -615,7 +615,7 @@
     "slug": "dagster",
     "localPreferred": "../assets/images/icons-webp/dagster.webp",
     "localFallback": "../assets/images/icons/dagster.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://github.com/dagster-io.png"
   },
   "Prefect": {
     "slug": "prefect",
@@ -661,7 +661,7 @@
   },
   "H2O AutoML": {
     "slug": "h2o-automl",
-    "localPreferred": "../assets/images/icons-webp/h2o-automl.webp",
+    "localPreferred": "../assets/images/icons/h2o-automl.svg",
     "localFallback": "../assets/images/icons/h2o-automl.svg",
     "cdn": "https://www.h2o.ai/wp-content/uploads/2023/01/h2o-logo.svg"
   },
@@ -687,13 +687,13 @@
     "slug": "ydata",
     "localPreferred": "../assets/images/icons-webp/ydata.webp",
     "localFallback": "../assets/images/icons/ydata.png",
-    "cdn": "https://avatars.githubusercontent.com/u/101373851?s=200&v=4"
+    "cdn": "https://github.com/ydataai.png"
   },
   "ydata-profiling": {
     "slug": "ydata-profiling",
     "localPreferred": "../assets/images/icons-webp/ydata-profiling.webp",
     "localFallback": "../assets/images/icons/ydata-profiling.png",
-    "cdn": "https://avatars.githubusercontent.com/u/101373851?s=200&v=4"
+    "cdn": "https://github.com/ydataai.png"
   },
   "SHAP": {
     "slug": "shap",
@@ -717,7 +717,7 @@
     "slug": "sweetviz",
     "localPreferred": "../assets/images/icons-webp/sweetviz.webp",
     "localFallback": "../assets/images/icons/sweetviz.png",
-    "cdn": "https://avatars.githubusercontent.com/u/15643079?v=4"
+    "cdn": "https://github.com/fbdesignpro.png"
   },
   "Lux": {
     "slug": "lux",
