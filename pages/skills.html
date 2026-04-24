@@ -79,20 +79,20 @@
 			</div>
 
 			<div class="mb-10">
-				<div class="skills-icons-box bg-white dark:bg-white rounded-xl p-6 border border-gray-200 dark:border-gray-400 shadow-sm">
+				<div class="skills-icons-box bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
 					<div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-						<h2 class="text-lg font-semibold text-gray-800">Programming / tech</h2>
-						<div class="inline-flex items-center rounded-full border border-gray-300 bg-white p-1 text-xs">
+						<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Programming / tech</h2>
+						<div class="inline-flex items-center rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 p-1 text-xs">
 							<button type="button" id="tech-stack-core-btn" class="px-3 py-1 rounded-full bg-primary text-white font-semibold">Core</button>
-							<button type="button" id="tech-stack-extended-btn" class="px-3 py-1 rounded-full text-gray-700 hover:bg-gray-100">Extended</button>
+							<button type="button" id="tech-stack-extended-btn" class="px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Extended</button>
 						</div>
 					</div>
 					<div id="tech-stack-programming" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 					<hr class="my-6 border-gray-300 dark:border-gray-500" />
-					<h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">AI Tools</h2>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">AI Tools</h2>
 					<div id="tech-stack-ai-tools" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 					<hr class="my-6 border-gray-300 dark:border-gray-500" />
-					<h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Non-tech / Tools</h2>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">Non-tech / Tools</h2>
 					<div id="tech-stack-nontech" class="skills-icon-grid flex flex-wrap justify-center gap-3 sm:gap-4"></div>
 				</div>
 			</div>
@@ -569,10 +569,10 @@
 				const coreActive = mode === 'core';
 				coreBtn.className = coreActive
 					? 'px-3 py-1 rounded-full bg-primary text-white font-semibold'
-					: 'px-3 py-1 rounded-full text-gray-700 hover:bg-gray-100';
+					: 'px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700';
 				extBtn.className = !coreActive
 					? 'px-3 py-1 rounded-full bg-primary text-white font-semibold'
-					: 'px-3 py-1 rounded-full text-gray-700 hover:bg-gray-100';
+					: 'px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700';
 			}
 			coreBtn.addEventListener('click', () => setMode('core'));
 			extBtn.addEventListener('click', () => setMode('extended'));
@@ -602,9 +602,9 @@
 				if (f.iconUrl) {
 					const cdn = (iconUrlMapCdn && iconUrlMapCdn[f.key]) ? iconUrlMapCdn[f.key].replace(/"/g, '&quot;') : '';
 					const localFallback = (iconUrlMapLocalFallback && iconUrlMapLocalFallback[f.key]) ? iconUrlMapLocalFallback[f.key].replace(/"/g, '&quot;') : '';
-					return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><img src="${f.iconUrl}" alt="${f.label}" class="w-6 h-6 sm:w-7 sm:h-7 object-contain" data-local-fallback="${localFallback}" data-cdn="${cdn}" onerror="if(this.dataset.localFallback && this.src !== this.dataset.localFallback){this.src=this.dataset.localFallback;return;}if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn}else{this.style.display='none'; var n=this.nextElementSibling; if(n) n.style.display='inline-block'}" /><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl hidden" style="color: ${f.color}; display: none;"></i></a>`;
+					return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-primary/50" title="${title}"><img src="${f.iconUrl}" alt="${f.label}" class="w-6 h-6 sm:w-7 sm:h-7 object-contain" data-local-fallback="${localFallback}" data-cdn="${cdn}" onerror="if(this.dataset.localFallback && this.src !== this.dataset.localFallback){this.src=this.dataset.localFallback;return;}if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn}else{this.style.display='none'; var n=this.nextElementSibling; if(n) n.style.display='inline-block'}" /><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl hidden" style="color: ${f.color}; display: none;"></i></a>`;
 				}
-				return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl" style="color: ${f.color}"></i></a>`;
+				return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-primary/50" title="${title}"><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl" style="color: ${f.color}"></i></a>`;
 			}).join('');
 		}
 
@@ -621,14 +621,14 @@
 				`
 				: `<i class="${skill.icon || 'fas fa-tag'} text-2xl flex-shrink-0" style="color: ${skill.color}"></i>`;
 			return `
-				<div class="skill-card bg-white dark:bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-300 p-5">
+				<div class="skill-card bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-5">
 					<div class="flex items-center gap-3 mb-3">
 						${iconHtml}
-						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-900">${skill.name}</h3>
+						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${skill.name}</h3>
 					</div>
 					<div class="flex justify-between items-center text-sm text-gray-600 dark:text-gray-600">
 						<span>Proficiency</span>
-						<span class="font-semibold text-gray-800 dark:text-gray-900">${skill.level}%</span>
+						<span class="font-semibold text-gray-800 dark:text-gray-100">${skill.level}%</span>
 					</div>
 					<div class="w-full bg-gray-200 dark:bg-gray-200 rounded-full h-2 mt-1 overflow-hidden">
 						<div class="h-full rounded-full transition-all duration-500" style="width: ${skill.level}%; background: linear-gradient(135deg, ${skill.color} 0%, ${skill.color}dd 100%);"></div>
@@ -651,7 +651,7 @@
 				html += `
 					<div id="${slug}" class="skill-category scroll-mt-24 mb-12">
 						<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">${category}</h2>
-						<div class="bg-white dark:bg-white rounded-xl border border-gray-200 dark:border-gray-300 p-6 shadow-sm">
+						<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
 							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 								${skills.map(skill => skillCardHtml(skill)).join('')}
 							</div>
@@ -665,10 +665,10 @@
 			html += `
 				<div id="skills-tools" class="skill-category scroll-mt-24 mb-12">
 					<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Tools</h2>
-					<div class="bg-white dark:bg-white rounded-xl border border-gray-200 dark:border-gray-300 overflow-hidden shadow-sm">
+					<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
 						<!-- Section 1: Tech / programming -->
-						<div class="p-6 border-b border-gray-200 dark:border-gray-300 bg-gray-50/50 dark:bg-gray-50">
-							<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-900 mb-4 flex items-center gap-2">
+						<div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40">
+							<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
 								<span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary">
 									<i class="fas fa-code text-sm"></i>
 								</span>
@@ -679,8 +679,8 @@
 							</div>
 						</div>
 						<!-- Section 2: Non-tech / Tools -->
-						<div class="p-6 bg-white dark:bg-white">
-							<h3 id="skills-productivity" class="text-lg font-semibold text-gray-800 dark:text-gray-900 mb-4 flex items-center gap-2 scroll-mt-24">
+						<div class="p-6 bg-white dark:bg-gray-800">
+							<h3 id="skills-productivity" class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2 scroll-mt-24">
 								<span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary">
 									<i class="fas fa-tools text-sm"></i>
 								</span>
