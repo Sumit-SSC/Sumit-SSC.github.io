@@ -156,6 +156,13 @@
 				.replace(/&/g, 'and');
 		}
 
+		const ICON_ASSET_VERSION = '20260424-icons-final-2';
+		function withIconVersion(url) {
+			if (!url) return '';
+			const sep = url.includes('?') ? '&' : '?';
+			return `${url}${sep}v=${ICON_ASSET_VERSION}`;
+		}
+
 		// CDN URLs (backup if local icon missing). Local copies in assets/images/icons/ for speed and reliability.
 		let iconUrlMapCdn = {
 			Python: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
@@ -281,10 +288,10 @@
 			Lux: "https://raw.githubusercontent.com/lux-org/lux-resources/master/readme_img/logo.png"
 		};
 		let iconUrlMapLocalWebp = Object.fromEntries(
-			Object.keys(iconUrlMapCdn).map((name) => [name, `../assets/images/icons-webp/${skillIconSlug(name)}.webp`])
+			Object.keys(iconUrlMapCdn).map((name) => [name, withIconVersion(`../assets/images/icons-webp/${skillIconSlug(name)}.webp`)])
 		);
 		let iconUrlMapLocalFallback = Object.fromEntries(
-			Object.keys(iconUrlMapCdn).map((name) => [name, `../assets/images/icons/${skillIconSlug(name)}.svg`])
+			Object.keys(iconUrlMapCdn).map((name) => [name, withIconVersion(`../assets/images/icons/${skillIconSlug(name)}.svg`)])
 		);
 		// Local-first icon loading: webp -> local svg/png fallback (best-effort) -> CDN backup.
 		let iconUrlMap = { ...iconUrlMapLocalWebp };
@@ -295,9 +302,9 @@
 				if (!res.ok) return;
 				const manifest = await res.json();
 				for (const [name, meta] of Object.entries(manifest)) {
-					if (meta?.cdn) iconUrlMapCdn[name] = meta.cdn;
-					if (meta?.localPreferred) iconUrlMapLocalWebp[name] = meta.localPreferred;
-					if (meta?.localFallback) iconUrlMapLocalFallback[name] = meta.localFallback;
+					if (meta?.cdn) iconUrlMapCdn[name] = withIconVersion(meta.cdn);
+					if (meta?.localPreferred) iconUrlMapLocalWebp[name] = withIconVersion(meta.localPreferred);
+					if (meta?.localFallback) iconUrlMapLocalFallback[name] = withIconVersion(meta.localFallback);
 				}
 				iconUrlMap = { ...iconUrlMapLocalWebp };
 			} catch (_) {
