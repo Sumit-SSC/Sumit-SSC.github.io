@@ -59,7 +59,7 @@ def convert_image(src_path: Path) -> None:
     print("SKIP (exists):", dest_path.relative_to(ROOT))
     return
 
-  print("OPTIMIZE:", src_path.relative_to(ROOT), "→", dest_path.relative_to(ROOT))
+  print("OPTIMIZE:", src_path.relative_to(ROOT), "->", dest_path.relative_to(ROOT))
 
   # Thumbnails: smaller + stronger compression
   thumb = is_thumbnail(rel_from_src)

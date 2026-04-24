@@ -26,6 +26,20 @@ powershell -ExecutionPolicy Bypass -File scripts/download-skill-icons.ps1
 
 Icon URLs are read from `data/skill_icon_urls.json`. After running, the skills page will load icons from `assets/images/icons/` first and fall back to the CDN URL if a local file is missing.
 
+## build_skill_icon_assets.py
+
+Builds optimized local icon assets + manifest for skills page local-first loading.
+
+- Reads CDN backup links from `data/skill_icon_urls.json`
+- Converts local raster icons into `assets/images/icons-webp/`
+- Writes `data/skill_icon_asset_manifest.json` with `localPreferred`, `localFallback`, and `cdn`
+
+Run:
+
+```powershell
+python scripts/build_skill_icon_assets.py
+```
+
 ## optimize_images.py (image → WebP optimizer)
 
 Converts all PNG/JPG images under `assets/images/` into optimized **WebP** copies under `assets/optimized-images/…`.  

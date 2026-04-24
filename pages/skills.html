@@ -148,8 +148,16 @@
 		});
 	</script>
 	<script>
+		function skillIconSlug(key) {
+			return key
+				.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[()]/g, '')
+				.replace(/&/g, 'and');
+		}
+
 		// CDN URLs (backup if local icon missing). Local copies in assets/images/icons/ for speed and reliability.
-		const iconUrlMapCdn = {
+		let iconUrlMapCdn = {
 			Python: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
 			SQL: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/mysql.png",
 			MySQL: "https://icon.icepanel.io/Technology/svg/MySQL.svg",
@@ -193,7 +201,7 @@
 			"Azure Data Factory": "https://az-icons.com/export/icons/679e395158754f2aa1194eb8a15ec8ec.svg",
 			Figma: "https://icon.icepanel.io/Technology/svg/Figma.svg",
 			Jira: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png",
-			Atlassian: "https://logos-world.net/wp-content/uploads/2023/03/Atlassian-Logo.png",
+			Atlassian: "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/atlassian.svg",
 			"Hugging Face": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/huggingface-color.png",
 			"Hadoop": "https://cdn.worldvectorlogo.com/logos/hadoop.svg",
 			"Apache Spark": "https://icon.icepanel.io/Technology/svg/Apache-Spark.svg",
@@ -224,7 +232,7 @@
 			Miro: "https://cdn.worldvectorlogo.com/logos/miro-2.svg",
 			Lucidchart: "https://www.vectorlogo.zone/logos/lucidchart/lucidchart-icon.svg",
 			"Linux Mint": "https://cdn.worldvectorlogo.com/logos/linux-mint.svg",
-			SharePoint: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Microsoft_Office_SharePoint_%282019%E2%80%932025%29.svg/1280px-Microsoft_Office_SharePoint_%282019%E2%80%932025%29.svg.png?20190925170659",
+			SharePoint: "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Teams_Logo_256px.png",
 			PowerApps: "https://az-icons.com/export/icons/80d8079c293d8a4447ade44c7322b65d.svg",
 			Fabric: "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/fabric.png",
 			"OpenAI ChatGPT": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/openai.png",
@@ -241,11 +249,61 @@
 			"Amazon Bedrock": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/bedrock-color.png",
 			"GitHub Copilot": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/githubcopilot.png",
 			Lovable: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/lovable-color.png",
-			Make: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
+			Make: "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png",
+			PyCaret: "https://raw.githubusercontent.com/pycaret/pycaret/master/docs/images/logo.png",
+			AutoGluon: "https://user-images.githubusercontent.com/16392542/77208906-224aa500-6aba-11ea-96bd-e81806074030.png",
+			LightGBM: "https://raw.githubusercontent.com/lightgbm-org/LightGBM/master/docs/logo/LightGBM_logo_no_text_huge.png",
+			"n8n": "https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-logo.png",
+			Flowise: "https://raw.githubusercontent.com/FlowiseAI/Flowise/main/images/flowise.png",
+			Zapier: "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/zapier.svg",
+			CatBoost: "https://upload.wikimedia.org/wikipedia/commons/c/cc/CatBoostLogo.png",
+			Optuna: "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/optuna.svg",
+			"Featuretools": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			"Airbyte": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/airbyte.svg",
+			"Dagster": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			"Prefect": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/prefect.svg",
+			"LlamaIndex": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/metaai-color.png",
+			"LangGraph": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png",
+			"CrewAI": "https://raw.githubusercontent.com/crewAIInc/crewAI/main/docs/images/crewai_logo.png",
+			"DSPy": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/deepseek-color.png",
+			FLAML: "https://raw.githubusercontent.com/microsoft/FLAML/main/website/static/img/flaml.svg",
+			TPOT: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			"H2O AutoML": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			"mljar-supervised": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			GAMA: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			AutoKeras: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png",
+			"YData": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			"ydata-profiling": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			SHAP: "https://raw.githubusercontent.com/shap/shap/master/docs/artwork/shap_logo.png",
+			AutoViz: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			"D-Tale": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			Sweetviz: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png",
+			Lux: "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
 		};
-		// Use CDN URLs for icons so your site (e.g. GitHub Pages) doesn't serve 80+ image requests.
-		// Local-first would strain your server bandwidth and request limits; CDNs handle this at scale.
-		const iconUrlMap = { ...iconUrlMapCdn };
+		let iconUrlMapLocalWebp = Object.fromEntries(
+			Object.keys(iconUrlMapCdn).map((name) => [name, `../assets/images/icons-webp/${skillIconSlug(name)}.webp`])
+		);
+		let iconUrlMapLocalFallback = Object.fromEntries(
+			Object.keys(iconUrlMapCdn).map((name) => [name, `../assets/images/icons/${skillIconSlug(name)}.svg`])
+		);
+		// Local-first icon loading: webp -> local svg/png fallback (best-effort) -> CDN backup.
+		let iconUrlMap = { ...iconUrlMapLocalWebp };
+
+		async function hydrateIconMapsFromManifest() {
+			try {
+				const res = await fetch('../data/skill_icon_asset_manifest.json', { cache: 'no-store' });
+				if (!res.ok) return;
+				const manifest = await res.json();
+				for (const [name, meta] of Object.entries(manifest)) {
+					if (meta?.cdn) iconUrlMapCdn[name] = meta.cdn;
+					if (meta?.localPreferred) iconUrlMapLocalWebp[name] = meta.localPreferred;
+					if (meta?.localFallback) iconUrlMapLocalFallback[name] = meta.localFallback;
+				}
+				iconUrlMap = { ...iconUrlMapLocalWebp };
+			} catch (_) {
+				// Keep embedded maps if manifest is unavailable.
+			}
+		}
 
 		const skillsData = {
 			"Programming": [
@@ -270,6 +328,12 @@
 				{ name: "Excel", level: 90, iconUrl: iconUrlMap.Excel, color: "#217346" },
 				{ name: "Tableau", level: 75, iconUrl: iconUrlMap.Tableau, color: "#E97627" },
 				{ name: "DAX", level: 70, iconUrl: iconUrlMap.DAX, color: "#F2C811" },
+				{ name: "AutoViz", level: 60, iconUrl: iconUrlMap.AutoViz, color: "#0EA5E9" },
+				{ name: "D-Tale", level: 55, iconUrl: iconUrlMap["D-Tale"], color: "#6366F1" },
+				{ name: "Sweetviz", level: 55, iconUrl: iconUrlMap.Sweetviz, color: "#F59E0B" },
+				{ name: "ydata-profiling", level: 60, iconUrl: iconUrlMap["ydata-profiling"], color: "#10B981" },
+				{ name: "Lux", level: 50, iconUrl: iconUrlMap.Lux, color: "#8B5CF6" },
+				{ name: "YData", level: 55, iconUrl: iconUrlMap["YData"], color: "#0891B2" },
 				{ name: "A/B Testing", level: 70, icon: "fas fa-flask", color: "#4f46e5" },
 				{ name: "Hypothesis Testing", level: 75, icon: "fas fa-check-circle", color: "#4f46e5" },
 				{ name: "Google Analytics", level: 40, iconUrl: iconUrlMap["Google Analytics"], color: "#E37400" },
@@ -284,6 +348,20 @@
 				{ name: "scikit-learn", level: 75, iconUrl: iconUrlMap["scikit-learn"], color: "#F7931E" },
 				{ name: "statsmodels", level: 70, icon: "fas fa-chart-bar", color: "#3776ab" },
 				{ name: "XGBoost", level: 65, iconUrl: iconUrlMap.XGBoost, color: "#FF6B6B" },
+				{ name: "LightGBM", level: 65, iconUrl: iconUrlMap.LightGBM, color: "#9ACD32" },
+				{ name: "PyCaret", level: 60, iconUrl: iconUrlMap.PyCaret, color: "#2563EB" },
+				{ name: "AutoGluon", level: 55, iconUrl: iconUrlMap.AutoGluon, color: "#FF9900" },
+				{ name: "auto-sklearn", level: 55, icon: "fas fa-cogs", color: "#0ea5e9" },
+				{ name: "CatBoost", level: 60, iconUrl: iconUrlMap.CatBoost, color: "#FFCC00" },
+				{ name: "Optuna", level: 60, iconUrl: iconUrlMap.Optuna, color: "#8B5CF6" },
+				{ name: "Featuretools", level: 55, iconUrl: iconUrlMap.Featuretools, color: "#14B8A6" },
+				{ name: "FLAML", level: 60, iconUrl: iconUrlMap.FLAML, color: "#2563EB" },
+				{ name: "TPOT", level: 55, iconUrl: iconUrlMap.TPOT, color: "#16A34A" },
+				{ name: "H2O AutoML", level: 50, iconUrl: iconUrlMap["H2O AutoML"], color: "#0EA5E9" },
+				{ name: "mljar-supervised", level: 55, iconUrl: iconUrlMap["mljar-supervised"], color: "#7C3AED" },
+				{ name: "GAMA", level: 45, iconUrl: iconUrlMap.GAMA, color: "#F97316" },
+				{ name: "AutoKeras", level: 45, iconUrl: iconUrlMap.AutoKeras, color: "#0F766E" },
+				{ name: "SHAP", level: 65, iconUrl: iconUrlMap.SHAP, color: "#DC2626" },
 			],
 			"Advanced DS - DL": [
 				{ name: "PyTorch", level: 60, iconUrl: iconUrlMap.PyTorch, color: "#EE4C2C" },
@@ -296,6 +374,14 @@
 				{ name: "LangChain", level: 60, iconUrl: iconUrlMap.LangChain, color: "#1C3C3C" },
 				{ name: "Hugging Face", level: 55, iconUrl: iconUrlMap["Hugging Face"], color: "#FFD21E" },
 				{ name: "Ollama", level: 60, iconUrl: iconUrlMap.Ollama, color: "#0F766E" },
+				{ name: "Flowise", level: 55, iconUrl: iconUrlMap.Flowise, color: "#22C55E" },
+				{ name: "n8n", level: 60, iconUrl: iconUrlMap["n8n"], color: "#EF4444" },
+				{ name: "Zapier", level: 55, iconUrl: iconUrlMap.Zapier, color: "#FF4F00" },
+				{ name: "AutoGen", level: 50, icon: "fas fa-robot", color: "#6366F1" },
+				{ name: "LlamaIndex", level: 55, iconUrl: iconUrlMap["LlamaIndex"], icon: "fas fa-book", color: "#0F172A" },
+				{ name: "LangGraph", level: 50, iconUrl: iconUrlMap["LangGraph"], icon: "fas fa-project-diagram", color: "#047857" },
+				{ name: "CrewAI", level: 50, iconUrl: iconUrlMap["CrewAI"], icon: "fas fa-users-cog", color: "#2563EB" },
+				{ name: "DSPy", level: 45, iconUrl: iconUrlMap["DSPy"], icon: "fas fa-brain", color: "#9333EA" },
 			],
 			"AI Tools": [
 				{ name: "OpenAI ChatGPT", level: 85, iconUrl: iconUrlMap["OpenAI ChatGPT"], color: "#10A37F" },
@@ -325,6 +411,9 @@
 				{ name: "Apache Airflow", level: 60, iconUrl: iconUrlMap["Apache Airflow"], color: "#017CEE" },
 				{ name: "Azure", level: 50, iconUrl: iconUrlMap["Azure DevOps"], color: "#0078D7" },
 				{ name: "MLflow", level: 50, icon: "fas fa-cubes", color: "#F97316" },
+				{ name: "Airbyte", level: 55, iconUrl: iconUrlMap["Airbyte"], color: "#5B4CFF" },
+				{ name: "Dagster", level: 55, iconUrl: iconUrlMap["Dagster"], color: "#1E293B" },
+				{ name: "Prefect", level: 50, iconUrl: iconUrlMap["Prefect"], color: "#0EA5E9" },
 			],
 			"Tools & Development": [
 				{ name: "Jupyter", level: 80, iconUrl: iconUrlMap.Jupyter, color: "#F37626" },
@@ -410,9 +499,10 @@
 		function renderTechStackIcon(skill) {
 			if (skill.iconUrl) {
 				const cdn = (iconUrlMapCdn && iconUrlMapCdn[skill.name]) || '';
+				const localFallback = (iconUrlMapLocalFallback && iconUrlMapLocalFallback[skill.name]) || '';
 				return `
 					<div class="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex-shrink-0" title="${skill.name.replace(/"/g, '&quot;')}">
-						<img src="${skill.iconUrl}" alt="${skill.name}" class="w-7 h-7 sm:w-8 sm:h-8 object-contain tech-stack-img" data-cdn="${cdn.replace(/"/g, '&quot;')}" onerror="if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn;}else{this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='inline-block';}" />
+						<img src="${skill.iconUrl}" alt="${skill.name}" class="w-7 h-7 sm:w-8 sm:h-8 object-contain tech-stack-img" data-local-fallback="${localFallback.replace(/"/g, '&quot;')}" data-cdn="${cdn.replace(/"/g, '&quot;')}" onerror="if(this.dataset.localFallback && this.src !== this.dataset.localFallback){this.src=this.dataset.localFallback;return;}if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn;}else{this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='inline-block';}" />
 						<i class="${skill.icon || 'fas fa-tag'} text-2xl sm:text-3xl hidden" style="color: ${skill.color}; display: none;" title="${skill.name.replace(/"/g, '&quot;')}"></i>
 					</div>
 				`;
@@ -465,7 +555,8 @@
 				const title = `Filter projects: ${f.label}`;
 				if (f.iconUrl) {
 					const cdn = (iconUrlMapCdn && iconUrlMapCdn[f.key]) ? iconUrlMapCdn[f.key].replace(/"/g, '&quot;') : '';
-					return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><img src="${f.iconUrl}" alt="${f.label}" class="w-6 h-6 sm:w-7 sm:h-7 object-contain" data-cdn="${cdn}" onerror="if(this.dataset.cdn){this.onerror=null;this.src=this.dataset.cdn}; else{this.style.display='none'; var n=this.nextElementSibling; if(n) n.style.display='inline-block'}" /><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl hidden" style="color: ${f.color}; display: none;"></i></a>`;
+					const localFallback = (iconUrlMapLocalFallback && iconUrlMapLocalFallback[f.key]) ? iconUrlMapLocalFallback[f.key].replace(/"/g, '&quot;') : '';
+					return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><img src="${f.iconUrl}" alt="${f.label}" class="w-6 h-6 sm:w-7 sm:h-7 object-contain" data-local-fallback="${localFallback}" data-cdn="${cdn}" onerror="if(this.dataset.localFallback && this.src !== this.dataset.localFallback){this.src=this.dataset.localFallback;return;}if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn}else{this.style.display='none'; var n=this.nextElementSibling; if(n) n.style.display='inline-block'}" /><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl hidden" style="color: ${f.color}; display: none;"></i></a>`;
 				}
 				return `<a href="homepage.html?filter=${encodeURIComponent(f.key)}" class="skill-badge inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg transition-all hover:scale-110 border border-gray-200 dark:border-gray-300 bg-white dark:bg-white hover:border-primary/50" title="${title}"><i class="${f.icon || 'fas fa-tag'} text-lg sm:text-xl" style="color: ${f.color}"></i></a>`;
 			}).join('');
@@ -474,10 +565,11 @@
 		// Render one skill card (shared) – icon, name, % only; no filter link (filter is in section above)
 		function skillCardHtml(skill) {
 			const cdn = (skill.iconUrl && iconUrlMapCdn && iconUrlMapCdn[skill.name]) ? iconUrlMapCdn[skill.name].replace(/"/g, '&quot;') : '';
+			const localFallback = (skill.iconUrl && iconUrlMapLocalFallback && iconUrlMapLocalFallback[skill.name]) ? iconUrlMapLocalFallback[skill.name].replace(/"/g, '&quot;') : '';
 			const iconHtml = skill.iconUrl
 				? `
 					<div class="flex items-center justify-center h-7 w-7 flex-shrink-0">
-						<img src="${skill.iconUrl}" alt="${skill.name}" class="h-7 w-7 object-contain flex-shrink-0" data-cdn="${cdn}" onerror="if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn;}else{this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='inline-block';}" />
+						<img src="${skill.iconUrl}" alt="${skill.name}" class="h-7 w-7 object-contain flex-shrink-0" data-local-fallback="${localFallback}" data-cdn="${cdn}" onerror="if(this.dataset.localFallback && this.src !== this.dataset.localFallback){this.src=this.dataset.localFallback;return;}if(this.dataset.cdn && this.src !== this.dataset.cdn){this.src=this.dataset.cdn;}else{this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='inline-block';}" />
 						<i class="${skill.icon || 'fas fa-tag'} text-2xl flex-shrink-0 hidden" style="color: ${skill.color}; display: none;"></i>
 					</div>
 				`
@@ -568,7 +660,8 @@
 			});
 		}
 
-		document.addEventListener('DOMContentLoaded', () => {
+		document.addEventListener('DOMContentLoaded', async () => {
+			await hydrateIconMapsFromManifest();
 			renderTechStack();
 			renderSkillsBadges();
 			renderSkills();

@@ -1,0 +1,716 @@
+{
+  "Python": {
+    "slug": "python",
+    "localPreferred": "../assets/images/icons-webp/python.webp",
+    "localFallback": "../assets/images/icons/python.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "SQL": {
+    "slug": "sql",
+    "localPreferred": "../assets/images/icons-webp/sql.webp",
+    "localFallback": "../assets/images/icons/sql.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/mysql.png"
+  },
+  "MySQL": {
+    "slug": "mysql",
+    "localPreferred": "../assets/images/icons/mysql.svg",
+    "localFallback": "../assets/images/icons/mysql.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/MySQL.svg"
+  },
+  "MongoDB": {
+    "slug": "mongodb",
+    "localPreferred": "../assets/images/icons/mongodb.svg",
+    "localFallback": "../assets/images/icons/mongodb.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/MongoDB.svg"
+  },
+  "R (learning)": {
+    "slug": "r-learning",
+    "localPreferred": "../assets/images/icons/r-learning.svg",
+    "localFallback": "../assets/images/icons/r-learning.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/r-lang.svg"
+  },
+  "pandas": {
+    "slug": "pandas",
+    "localPreferred": "../assets/images/icons-webp/pandas.webp",
+    "localFallback": "../assets/images/icons/pandas.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/pandas.png"
+  },
+  "NumPy": {
+    "slug": "numpy",
+    "localPreferred": "../assets/images/icons-webp/numpy.webp",
+    "localFallback": "../assets/images/icons/numpy.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/numpy.png"
+  },
+  "scikit-learn": {
+    "slug": "scikit-learn",
+    "localPreferred": "../assets/images/icons/scikit-learn.svg",
+    "localFallback": "../assets/images/icons/scikit-learn.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/scikit-learn.svg"
+  },
+  "XGBoost": {
+    "slug": "xgboost",
+    "localPreferred": "../assets/images/icons-webp/xgboost.webp",
+    "localFallback": "../assets/images/icons/xgboost.png",
+    "cdn": "https://upload.wikimedia.org/wikipedia/commons/6/69/XGBoost_logo.png"
+  },
+  "Matplotlib": {
+    "slug": "matplotlib",
+    "localPreferred": "../assets/images/icons/matplotlib.svg",
+    "localFallback": "../assets/images/icons/matplotlib.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/matplotlib-1.svg"
+  },
+  "Seaborn": {
+    "slug": "seaborn",
+    "localPreferred": "../assets/images/icons/seaborn.svg",
+    "localFallback": "../assets/images/icons/seaborn.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/seaborn-1.svg"
+  },
+  "Plotly": {
+    "slug": "plotly",
+    "localPreferred": "../assets/images/icons/plotly.svg",
+    "localFallback": "../assets/images/icons/plotly.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Ploty.svg"
+  },
+  "DuckDB": {
+    "slug": "duckdb",
+    "localPreferred": "../assets/images/icons/duckdb.svg",
+    "localFallback": "../assets/images/icons/duckdb.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/duckdb-logo.svg"
+  },
+  "Power BI": {
+    "slug": "power-bi",
+    "localPreferred": "../assets/images/icons/power-bi.svg",
+    "localFallback": "../assets/images/icons/power-bi.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/power-bi.svg"
+  },
+  "Tableau": {
+    "slug": "tableau",
+    "localPreferred": "../assets/images/icons/tableau.svg",
+    "localFallback": "../assets/images/icons/tableau.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/tableau-software.svg"
+  },
+  "Apache Superset": {
+    "slug": "apache-superset",
+    "localPreferred": "../assets/images/icons/apache-superset.svg",
+    "localFallback": "../assets/images/icons/apache-superset.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Apache-Subversion.svg"
+  },
+  "Excel": {
+    "slug": "excel",
+    "localPreferred": "../assets/images/icons/excel.svg",
+    "localFallback": "../assets/images/icons/excel.svg",
+    "cdn": "https://cdn.jsdelivr.net/npm/simple-icons@11/icons/microsoftexcel.svg"
+  },
+  "SQL Server": {
+    "slug": "sql-server",
+    "localPreferred": "../assets/images/icons/sql-server.svg",
+    "localFallback": "../assets/images/icons/sql-server.svg",
+    "cdn": "https://cdn.jsdelivr.net/npm/simple-icons@11/icons/microsoftsqlserver.svg"
+  },
+  "HTML": {
+    "slug": "html",
+    "localPreferred": "../assets/images/icons-webp/html.webp",
+    "localFallback": "../assets/images/icons/html.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/html.png"
+  },
+  "CSS": {
+    "slug": "css",
+    "localPreferred": "../assets/images/icons-webp/css.webp",
+    "localFallback": "../assets/images/icons/css.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/css.png"
+  },
+  "JavaScript": {
+    "slug": "javascript",
+    "localPreferred": "../assets/images/icons-webp/javascript.webp",
+    "localFallback": "../assets/images/icons/javascript.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/javascript.png"
+  },
+  "Canva": {
+    "slug": "canva",
+    "localPreferred": "../assets/images/icons/canva.svg",
+    "localFallback": "../assets/images/icons/canva.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Canva.svg"
+  },
+  "Google Analytics": {
+    "slug": "google-analytics",
+    "localPreferred": "../assets/images/icons-webp/google-analytics.webp",
+    "localFallback": "../assets/images/icons/google-analytics.svg",
+    "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google-Analytics-Logo.png/1280px-Google-Analytics-Logo.png?20260117144756"
+  },
+  "Apache Airflow": {
+    "slug": "apache-airflow",
+    "localPreferred": "../assets/images/icons/apache-airflow.svg",
+    "localFallback": "../assets/images/icons/apache-airflow.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Apache-Airflow.svg"
+  },
+  "AWS": {
+    "slug": "aws",
+    "localPreferred": "../assets/images/icons-webp/aws.webp",
+    "localFallback": "../assets/images/icons/aws.png",
+    "cdn": "https://icon.icepanel.io/Technology/png-shadow-512/AWS.png"
+  },
+  "Google Colab": {
+    "slug": "google-colab",
+    "localPreferred": "../assets/images/icons-webp/google-colab.webp",
+    "localFallback": "../assets/images/icons/google-colab.svg",
+    "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Colab_pic.png/1280px-Google_Colab_pic.png?20250705202320"
+  },
+  "Linux": {
+    "slug": "linux",
+    "localPreferred": "../assets/images/icons-webp/linux.webp",
+    "localFallback": "../assets/images/icons/linux.svg",
+    "cdn": "https://icon.icepanel.io/Technology/png-shadow-512/Linux.png"
+  },
+  "Ubuntu": {
+    "slug": "ubuntu",
+    "localPreferred": "../assets/images/icons/ubuntu.svg",
+    "localFallback": "../assets/images/icons/ubuntu.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Ubuntu.svg"
+  },
+  "VS Code": {
+    "slug": "vs-code",
+    "localPreferred": "../assets/images/icons/vs-code.svg",
+    "localFallback": "../assets/images/icons/vs-code.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg"
+  },
+  "Streamlit": {
+    "slug": "streamlit",
+    "localPreferred": "../assets/images/icons-webp/streamlit.webp",
+    "localFallback": "../assets/images/icons/streamlit.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/streamlit.png"
+  },
+  "Git": {
+    "slug": "git",
+    "localPreferred": "../assets/images/icons-webp/git.webp",
+    "localFallback": "../assets/images/icons/git.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/git.png"
+  },
+  "GitHub": {
+    "slug": "github",
+    "localPreferred": "../assets/images/icons-webp/github.webp",
+    "localFallback": "../assets/images/icons/github.png",
+    "cdn": "https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png"
+  },
+  "Jupyter": {
+    "slug": "jupyter",
+    "localPreferred": "../assets/images/icons-webp/jupyter.webp",
+    "localFallback": "../assets/images/icons/jupyter.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/jupyter_notebook.png"
+  },
+  "Anaconda": {
+    "slug": "anaconda",
+    "localPreferred": "../assets/images/icons-webp/anaconda.webp",
+    "localFallback": "../assets/images/icons/anaconda.png",
+    "cdn": "https://img.icons8.com/?size=100&id=F4uMFPZgS0gt&format=png&color=000000"
+  },
+  "Google Cloud": {
+    "slug": "google-cloud",
+    "localPreferred": "../assets/images/icons/google-cloud.svg",
+    "localFallback": "../assets/images/icons/google-cloud.svg",
+    "cdn": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/GCP-Dark.svg"
+  },
+  "Kubernetes": {
+    "slug": "kubernetes",
+    "localPreferred": "../assets/images/icons/kubernetes.svg",
+    "localFallback": "../assets/images/icons/kubernetes.svg",
+    "cdn": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Kubernetes.svg"
+  },
+  "Docker": {
+    "slug": "docker",
+    "localPreferred": "../assets/images/icons-webp/docker.webp",
+    "localFallback": "../assets/images/icons/docker.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/docker.png"
+  },
+  "GitHub Actions": {
+    "slug": "github-actions",
+    "localPreferred": "../assets/images/icons/github-actions.svg",
+    "localFallback": "../assets/images/icons/github-actions.svg",
+    "cdn": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/GithubActions-Dark.svg"
+  },
+  "Azure DevOps": {
+    "slug": "azure-devops",
+    "localPreferred": "../assets/images/icons/azure-devops.svg",
+    "localFallback": "../assets/images/icons/azure-devops.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Azure-Devops.svg"
+  },
+  "Azure Data Factory": {
+    "slug": "azure-data-factory",
+    "localPreferred": "../assets/images/icons/azure-data-factory.svg",
+    "localFallback": "../assets/images/icons/azure-data-factory.svg",
+    "cdn": "https://az-icons.com/export/icons/679e395158754f2aa1194eb8a15ec8ec.svg"
+  },
+  "Figma": {
+    "slug": "figma",
+    "localPreferred": "../assets/images/icons/figma.svg",
+    "localFallback": "../assets/images/icons/figma.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Figma.svg"
+  },
+  "Jira": {
+    "slug": "jira",
+    "localPreferred": "../assets/images/icons-webp/jira.webp",
+    "localFallback": "../assets/images/icons/jira.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
+  },
+  "Atlassian": {
+    "slug": "atlassian",
+    "localPreferred": "../assets/images/icons-webp/atlassian.webp",
+    "localFallback": "../assets/images/icons/atlassian.svg",
+    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/atlassian.svg"
+  },
+  "Hugging Face": {
+    "slug": "hugging-face",
+    "localPreferred": "../assets/images/icons-webp/hugging-face.webp",
+    "localFallback": "../assets/images/icons/hugging-face.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/huggingface-color.png"
+  },
+  "Hadoop": {
+    "slug": "hadoop",
+    "localPreferred": "../assets/images/icons/hadoop.svg",
+    "localFallback": "../assets/images/icons/hadoop.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/hadoop.svg"
+  },
+  "Apache Spark": {
+    "slug": "apache-spark",
+    "localPreferred": "../assets/images/icons/apache-spark.svg",
+    "localFallback": "../assets/images/icons/apache-spark.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Apache-Spark.svg"
+  },
+  "Oracle": {
+    "slug": "oracle",
+    "localPreferred": "../assets/images/icons/oracle.svg",
+    "localFallback": "../assets/images/icons/oracle.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Oracle.svg"
+  },
+  "Notion": {
+    "slug": "notion",
+    "localPreferred": "../assets/images/icons-webp/notion.webp",
+    "localFallback": "../assets/images/icons/notion.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/notion.png"
+  },
+  "PostgreSQL": {
+    "slug": "postgresql",
+    "localPreferred": "../assets/images/icons/postgresql.svg",
+    "localFallback": "../assets/images/icons/postgresql.svg",
+    "cdn": "https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PostgreSQL-Dark.svg"
+  },
+  "PyTorch": {
+    "slug": "pytorch",
+    "localPreferred": "../assets/images/icons/pytorch.svg",
+    "localFallback": "../assets/images/icons/pytorch.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/pytorch-2.svg"
+  },
+  "Markdown": {
+    "slug": "markdown",
+    "localPreferred": "../assets/images/icons/markdown.svg",
+    "localFallback": "../assets/images/icons/markdown.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/markdown.svg"
+  },
+  "TensorFlow": {
+    "slug": "tensorflow",
+    "localPreferred": "../assets/images/icons-webp/tensorflow.webp",
+    "localFallback": "../assets/images/icons/tensorflow.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/TensorFlow.svg"
+  },
+  "LangChain": {
+    "slug": "langchain",
+    "localPreferred": "../assets/images/icons-webp/langchain.webp",
+    "localFallback": "../assets/images/icons/langchain.svg",
+    "cdn": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.78.0/icons/langchain-color.svg"
+  },
+  "OpenCV": {
+    "slug": "opencv",
+    "localPreferred": "../assets/images/icons/opencv.svg",
+    "localFallback": "../assets/images/icons/opencv.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/OpenCV.svg"
+  },
+  "DAX": {
+    "slug": "dax",
+    "localPreferred": "../assets/images/icons/dax.svg",
+    "localFallback": "../assets/images/icons/dax.svg",
+    "cdn": "https://az-icons.com/export/icons/e4e7a2a46c0b319dc5989d4b4977cad1.svg"
+  },
+  "Slack": {
+    "slug": "slack",
+    "localPreferred": "../assets/images/icons/slack.svg",
+    "localFallback": "../assets/images/icons/slack.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Slack.svg"
+  },
+  "Microsoft Teams": {
+    "slug": "microsoft-teams",
+    "localPreferred": "../assets/images/icons-webp/microsoft-teams.webp",
+    "localFallback": "../assets/images/icons/microsoft-teams.svg",
+    "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Teams_Logo_256px.png"
+  },
+  "Zoom": {
+    "slug": "zoom",
+    "localPreferred": "../assets/images/icons/zoom.svg",
+    "localFallback": "../assets/images/icons/zoom.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/zoom-communications-logo.svg"
+  },
+  "Google Meet": {
+    "slug": "google-meet",
+    "localPreferred": "../assets/images/icons/google-meet.svg",
+    "localFallback": "../assets/images/icons/google-meet.svg",
+    "cdn": "https://cdn.prod.website-files.com/6737568a4ac417efeb387e5a/67448915ea26862632edec16_6703e57f71488bfbf3055994_Google_Meet_Logo.svg"
+  },
+  "Gmail": {
+    "slug": "gmail",
+    "localPreferred": "../assets/images/icons-webp/gmail.webp",
+    "localFallback": "../assets/images/icons/gmail.svg",
+    "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/1280px-Gmail_icon_%282020%29.svg.png?20221017173631"
+  },
+  "Google Workspace": {
+    "slug": "google-workspace",
+    "localPreferred": "../assets/images/icons/google-workspace.svg",
+    "localFallback": "../assets/images/icons/google-workspace.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/logo-google-workspace.svg"
+  },
+  "Outlook": {
+    "slug": "outlook",
+    "localPreferred": "../assets/images/icons-webp/outlook.webp",
+    "localFallback": "../assets/images/icons/outlook.svg",
+    "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Outlook_Logo_256px.png"
+  },
+  "Google Calendar": {
+    "slug": "google-calendar",
+    "localPreferred": "../assets/images/icons-webp/google-calendar.webp",
+    "localFallback": "../assets/images/icons/google-calendar.svg",
+    "cdn": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1280px-Google_Calendar_icon_%282020%29.svg.png?20221106121915"
+  },
+  "Trello": {
+    "slug": "trello",
+    "localPreferred": "../assets/images/icons/trello.svg",
+    "localFallback": "../assets/images/icons/trello.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/trello.svg"
+  },
+  "Confluence": {
+    "slug": "confluence",
+    "localPreferred": "../assets/images/icons/confluence.svg",
+    "localFallback": "../assets/images/icons/confluence.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/Confluence.svg"
+  },
+  "Asana": {
+    "slug": "asana",
+    "localPreferred": "../assets/images/icons-webp/asana.webp",
+    "localFallback": "../assets/images/icons/asana.png",
+    "cdn": "https://assets.asana.biz/transform/a7a22837-213c-4d66-8ff6-ec83dbf43641/logo-secondary?io=transform:fill,width:2560&format=webp"
+  },
+  "Monday": {
+    "slug": "monday",
+    "localPreferred": "../assets/images/icons/monday.svg",
+    "localFallback": "../assets/images/icons/monday.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/monday-1.svg"
+  },
+  "Google Docs": {
+    "slug": "google-docs",
+    "localPreferred": "../assets/images/icons-webp/google-docs.webp",
+    "localFallback": "../assets/images/icons/google-docs.svg",
+    "cdn": "https://mailmeteor.com/logos/assets/PNG/Google_Docs_Logo_512px.png"
+  },
+  "OneNote": {
+    "slug": "onenote",
+    "localPreferred": "../assets/images/icons/onenote.svg",
+    "localFallback": "../assets/images/icons/onenote.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/onenote-2.svg"
+  },
+  "Miro": {
+    "slug": "miro",
+    "localPreferred": "../assets/images/icons/miro.svg",
+    "localFallback": "../assets/images/icons/miro.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/miro-2.svg"
+  },
+  "Lucidchart": {
+    "slug": "lucidchart",
+    "localPreferred": "../assets/images/icons/lucidchart.svg",
+    "localFallback": "../assets/images/icons/lucidchart.svg",
+    "cdn": "https://www.vectorlogo.zone/logos/lucidchart/lucidchart-icon.svg"
+  },
+  "Linux Mint": {
+    "slug": "linux-mint",
+    "localPreferred": "../assets/images/icons/linux-mint.svg",
+    "localFallback": "../assets/images/icons/linux-mint.svg",
+    "cdn": "https://cdn.worldvectorlogo.com/logos/linux-mint.svg"
+  },
+  "SharePoint": {
+    "slug": "sharepoint",
+    "localPreferred": "../assets/images/icons-webp/sharepoint.webp",
+    "localFallback": "../assets/images/icons/sharepoint.svg",
+    "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Teams_Logo_256px.png"
+  },
+  "PowerApps": {
+    "slug": "powerapps",
+    "localPreferred": "../assets/images/icons/powerapps.svg",
+    "localFallback": "../assets/images/icons/powerapps.svg",
+    "cdn": "https://az-icons.com/export/icons/80d8079c293d8a4447ade44c7322b65d.svg"
+  },
+  "Fabric": {
+    "slug": "fabric",
+    "localPreferred": "../assets/images/icons-webp/fabric.webp",
+    "localFallback": "../assets/images/icons/fabric.svg",
+    "cdn": "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/fabric.png"
+  },
+  "OpenAI ChatGPT": {
+    "slug": "openai-chatgpt",
+    "localPreferred": "../assets/images/icons-webp/openai-chatgpt.webp",
+    "localFallback": "../assets/images/icons/openai-chatgpt.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/openai.png"
+  },
+  "Google Gemini": {
+    "slug": "google-gemini",
+    "localPreferred": "../assets/images/icons-webp/google-gemini.webp",
+    "localFallback": "../assets/images/icons/google-gemini.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/gemini-color.png"
+  },
+  "Claude": {
+    "slug": "claude",
+    "localPreferred": "../assets/images/icons-webp/claude.webp",
+    "localFallback": "../assets/images/icons/claude.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png"
+  },
+  "Cursor": {
+    "slug": "cursor",
+    "localPreferred": "../assets/images/icons-webp/cursor.webp",
+    "localFallback": "../assets/images/icons/cursor.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/cursor.png"
+  },
+  "Ollama": {
+    "slug": "ollama",
+    "localPreferred": "../assets/images/icons-webp/ollama.webp",
+    "localFallback": "../assets/images/icons/ollama.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/ollama.png"
+  },
+  "DeepSeek": {
+    "slug": "deepseek",
+    "localPreferred": "../assets/images/icons-webp/deepseek.webp",
+    "localFallback": "../assets/images/icons/deepseek.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/deepseek-color.png"
+  },
+  "Perplexity": {
+    "slug": "perplexity",
+    "localPreferred": "../assets/images/icons-webp/perplexity.webp",
+    "localFallback": "../assets/images/icons/perplexity.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/perplexity-color.png"
+  },
+  "Meta AI": {
+    "slug": "meta-ai",
+    "localPreferred": "../assets/images/icons-webp/meta-ai.webp",
+    "localFallback": "../assets/images/icons/meta-ai.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/metaai-color.png"
+  },
+  "Anthropic": {
+    "slug": "anthropic",
+    "localPreferred": "../assets/images/icons-webp/anthropic.webp",
+    "localFallback": "../assets/images/icons/anthropic.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/anthropic.png"
+  },
+  "Qwen": {
+    "slug": "qwen",
+    "localPreferred": "../assets/images/icons-webp/qwen.webp",
+    "localFallback": "../assets/images/icons/qwen.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/qwen-color.png"
+  },
+  "Moonshot": {
+    "slug": "moonshot",
+    "localPreferred": "../assets/images/icons-webp/moonshot.webp",
+    "localFallback": "../assets/images/icons/moonshot.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/moonshot.png"
+  },
+  "Amazon Bedrock": {
+    "slug": "amazon-bedrock",
+    "localPreferred": "../assets/images/icons-webp/amazon-bedrock.webp",
+    "localFallback": "../assets/images/icons/amazon-bedrock.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/bedrock-color.png"
+  },
+  "GitHub Copilot": {
+    "slug": "github-copilot",
+    "localPreferred": "../assets/images/icons-webp/github-copilot.webp",
+    "localFallback": "../assets/images/icons/github-copilot.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/githubcopilot.png"
+  },
+  "Lovable": {
+    "slug": "lovable",
+    "localPreferred": "../assets/images/icons-webp/lovable.webp",
+    "localFallback": "../assets/images/icons/lovable.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/lovable-color.png"
+  },
+  "Make": {
+    "slug": "make",
+    "localPreferred": "../assets/images/icons-webp/make.webp",
+    "localFallback": "../assets/images/icons/make.svg",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
+  },
+  "PyCaret": {
+    "slug": "pycaret",
+    "localPreferred": "../assets/images/icons-webp/pycaret.webp",
+    "localFallback": "../assets/images/icons/pycaret.png",
+    "cdn": "https://raw.githubusercontent.com/pycaret/pycaret/master/docs/images/logo.png"
+  },
+  "AutoGluon": {
+    "slug": "autogluon",
+    "localPreferred": "../assets/images/icons-webp/autogluon.webp",
+    "localFallback": "../assets/images/icons/autogluon.png",
+    "cdn": "https://user-images.githubusercontent.com/16392542/77208906-224aa500-6aba-11ea-96bd-e81806074030.png"
+  },
+  "LightGBM": {
+    "slug": "lightgbm",
+    "localPreferred": "../assets/images/icons-webp/lightgbm.webp",
+    "localFallback": "../assets/images/icons/lightgbm.png",
+    "cdn": "https://raw.githubusercontent.com/lightgbm-org/LightGBM/master/docs/logo/LightGBM_logo_no_text_huge.png"
+  },
+  "n8n": {
+    "slug": "n8n",
+    "localPreferred": "../assets/images/icons-webp/n8n.webp",
+    "localFallback": "../assets/images/icons/n8n.png",
+    "cdn": "https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-logo.png"
+  },
+  "Flowise": {
+    "slug": "flowise",
+    "localPreferred": "../assets/images/icons-webp/flowise.webp",
+    "localFallback": "../assets/images/icons/flowise.png",
+    "cdn": "https://raw.githubusercontent.com/FlowiseAI/Flowise/main/images/flowise.png"
+  },
+  "Zapier": {
+    "slug": "zapier",
+    "localPreferred": "../assets/images/icons/zapier.svg",
+    "localFallback": "../assets/images/icons/zapier.svg",
+    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/zapier.svg"
+  },
+  "CatBoost": {
+    "slug": "catboost",
+    "localPreferred": "../assets/images/icons-webp/catboost.webp",
+    "localFallback": "../assets/images/icons/catboost.png",
+    "cdn": "https://upload.wikimedia.org/wikipedia/commons/c/cc/CatBoostLogo.png"
+  },
+  "Optuna": {
+    "slug": "optuna",
+    "localPreferred": "../assets/images/icons/optuna.svg",
+    "localFallback": "../assets/images/icons/optuna.svg",
+    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/optuna.svg"
+  },
+  "Featuretools": {
+    "slug": "featuretools",
+    "localPreferred": "../assets/images/icons-webp/featuretools.webp",
+    "localFallback": "../assets/images/icons/featuretools.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "Airbyte": {
+    "slug": "airbyte",
+    "localPreferred": "../assets/images/icons/airbyte.svg",
+    "localFallback": "../assets/images/icons/airbyte.svg",
+    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/airbyte.svg"
+  },
+  "Dagster": {
+    "slug": "dagster",
+    "localPreferred": "../assets/images/icons-webp/dagster.webp",
+    "localFallback": "../assets/images/icons/dagster.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "Prefect": {
+    "slug": "prefect",
+    "localPreferred": "../assets/images/icons/prefect.svg",
+    "localFallback": "../assets/images/icons/prefect.svg",
+    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/prefect.svg"
+  },
+  "LlamaIndex": {
+    "slug": "llamaindex",
+    "localPreferred": "../assets/images/icons-webp/llamaindex.webp",
+    "localFallback": "../assets/images/icons/llamaindex.png",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/metaai-color.png"
+  },
+  "LangGraph": {
+    "slug": "langgraph",
+    "localPreferred": "../assets/images/icons-webp/langgraph.webp",
+    "localFallback": "../assets/images/icons/langgraph.png",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/make-color.png"
+  },
+  "CrewAI": {
+    "slug": "crewai",
+    "localPreferred": "../assets/images/icons-webp/crewai.webp",
+    "localFallback": "../assets/images/icons/crewai.png",
+    "cdn": "https://raw.githubusercontent.com/crewAIInc/crewAI/main/docs/images/crewai_logo.png"
+  },
+  "DSPy": {
+    "slug": "dspy",
+    "localPreferred": "../assets/images/icons-webp/dspy.webp",
+    "localFallback": "../assets/images/icons/dspy.png",
+    "cdn": "https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/deepseek-color.png"
+  },
+  "FLAML": {
+    "slug": "flaml",
+    "localPreferred": "../assets/images/icons/flaml.svg",
+    "localFallback": "../assets/images/icons/flaml.svg",
+    "cdn": "https://raw.githubusercontent.com/microsoft/FLAML/main/website/static/img/flaml.svg"
+  },
+  "TPOT": {
+    "slug": "tpot",
+    "localPreferred": "../assets/images/icons-webp/tpot.webp",
+    "localFallback": "../assets/images/icons/tpot.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "H2O AutoML": {
+    "slug": "h2o-automl",
+    "localPreferred": "../assets/images/icons-webp/h2o-automl.webp",
+    "localFallback": "../assets/images/icons/h2o-automl.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "mljar-supervised": {
+    "slug": "mljar-supervised",
+    "localPreferred": "../assets/images/icons-webp/mljar-supervised.webp",
+    "localFallback": "../assets/images/icons/mljar-supervised.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "GAMA": {
+    "slug": "gama",
+    "localPreferred": "../assets/images/icons-webp/gama.webp",
+    "localFallback": "../assets/images/icons/gama.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "AutoKeras": {
+    "slug": "autokeras",
+    "localPreferred": "../assets/images/icons-webp/autokeras.webp",
+    "localFallback": "../assets/images/icons/autokeras.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png"
+  },
+  "YData": {
+    "slug": "ydata",
+    "localPreferred": "../assets/images/icons-webp/ydata.webp",
+    "localFallback": "../assets/images/icons/ydata.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "ydata-profiling": {
+    "slug": "ydata-profiling",
+    "localPreferred": "../assets/images/icons-webp/ydata-profiling.webp",
+    "localFallback": "../assets/images/icons/ydata-profiling.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "SHAP": {
+    "slug": "shap",
+    "localPreferred": "../assets/images/icons-webp/shap.webp",
+    "localFallback": "../assets/images/icons/shap.png",
+    "cdn": "https://raw.githubusercontent.com/shap/shap/master/docs/artwork/shap_logo.png"
+  },
+  "AutoViz": {
+    "slug": "autoviz",
+    "localPreferred": "../assets/images/icons-webp/autoviz.webp",
+    "localFallback": "../assets/images/icons/autoviz.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "D-Tale": {
+    "slug": "d-tale",
+    "localPreferred": "../assets/images/icons-webp/d-tale.webp",
+    "localFallback": "../assets/images/icons/d-tale.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "Sweetviz": {
+    "slug": "sweetviz",
+    "localPreferred": "../assets/images/icons-webp/sweetviz.webp",
+    "localFallback": "../assets/images/icons/sweetviz.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  },
+  "Lux": {
+    "slug": "lux",
+    "localPreferred": "../assets/images/icons-webp/lux.webp",
+    "localFallback": "../assets/images/icons/lux.png",
+    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+  }
+}
