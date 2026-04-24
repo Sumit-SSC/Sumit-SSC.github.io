@@ -79,9 +79,9 @@
   },
   "Power BI": {
     "slug": "power-bi",
-    "localPreferred": "../assets/images/icons/power-bi.svg",
+    "localPreferred": "../assets/images/icons-webp/power-bi.webp",
     "localFallback": "../assets/images/icons/power-bi.svg",
-    "cdn": "https://cdn.worldvectorlogo.com/logos/power-bi.svg"
+    "cdn": "https://debruyn.dev/2024/all-microsoft-fabric-icons-for-diagramming/power_bi.png"
   },
   "Tableau": {
     "slug": "tableau",
@@ -97,9 +97,15 @@
   },
   "Excel": {
     "slug": "excel",
-    "localPreferred": "../assets/images/icons/excel.svg",
+    "localPreferred": "../assets/images/icons-webp/excel.webp",
     "localFallback": "../assets/images/icons/excel.svg",
-    "cdn": "https://cdn.jsdelivr.net/npm/simple-icons@11/icons/microsoftexcel.svg"
+    "cdn": "https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Excel_Logo_256px.png"
+  },
+  "Polars": {
+    "slug": "polars",
+    "localPreferred": "../assets/images/icons/polars.svg",
+    "localFallback": "../assets/images/icons/polars.svg",
+    "cdn": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/polars.svg"
   },
   "SQL Server": {
     "slug": "sql-server",
@@ -322,6 +328,12 @@
     "localPreferred": "../assets/images/icons/opencv.svg",
     "localFallback": "../assets/images/icons/opencv.svg",
     "cdn": "https://icon.icepanel.io/Technology/svg/OpenCV.svg"
+  },
+  "FastAPI": {
+    "slug": "fastapi",
+    "localPreferred": "../assets/images/icons/fastapi.svg",
+    "localFallback": "../assets/images/icons/fastapi.svg",
+    "cdn": "https://icon.icepanel.io/Technology/svg/FastAPI.svg"
   },
   "DAX": {
     "slug": "dax",
@@ -591,7 +603,7 @@
     "slug": "featuretools",
     "localPreferred": "../assets/images/icons-webp/featuretools.webp",
     "localFallback": "../assets/images/icons/featuretools.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://avatars.githubusercontent.com/u/17783564?s=200&v=4"
   },
   "Airbyte": {
     "slug": "airbyte",
@@ -645,25 +657,25 @@
     "slug": "tpot",
     "localPreferred": "../assets/images/icons-webp/tpot.webp",
     "localFallback": "../assets/images/icons/tpot.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://raw.githubusercontent.com/EpistasisLab/tpot/master/images/tpot-logo.jpg"
   },
   "H2O AutoML": {
     "slug": "h2o-automl",
     "localPreferred": "../assets/images/icons-webp/h2o-automl.webp",
-    "localFallback": "../assets/images/icons/h2o-automl.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "localFallback": "../assets/images/icons/h2o-automl.svg",
+    "cdn": "https://www.h2o.ai/wp-content/uploads/2023/01/h2o-logo.svg"
   },
   "mljar-supervised": {
     "slug": "mljar-supervised",
     "localPreferred": "../assets/images/icons-webp/mljar-supervised.webp",
     "localFallback": "../assets/images/icons/mljar-supervised.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://raw.githubusercontent.com/mljar/mljar-examples/master/media/AutoML_white.png"
   },
   "GAMA": {
     "slug": "gama",
     "localPreferred": "../assets/images/icons-webp/gama.webp",
     "localFallback": "../assets/images/icons/gama.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://raw.githubusercontent.com/openml-labs/gama/master/images/logos/Logo-With-Grey-Name-Transparent.png"
   },
   "AutoKeras": {
     "slug": "autokeras",
@@ -675,13 +687,13 @@
     "slug": "ydata",
     "localPreferred": "../assets/images/icons-webp/ydata.webp",
     "localFallback": "../assets/images/icons/ydata.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://avatars.githubusercontent.com/u/101373851?s=200&v=4"
   },
   "ydata-profiling": {
     "slug": "ydata-profiling",
     "localPreferred": "../assets/images/icons-webp/ydata-profiling.webp",
     "localFallback": "../assets/images/icons/ydata-profiling.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://avatars.githubusercontent.com/u/101373851?s=200&v=4"
   },
   "SHAP": {
     "slug": "shap",
@@ -693,24 +705,24 @@
     "slug": "autoviz",
     "localPreferred": "../assets/images/icons-webp/autoviz.webp",
     "localFallback": "../assets/images/icons/autoviz.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://raw.githubusercontent.com/AutoViML/AutoViz/master/images/logo.png"
   },
   "D-Tale": {
     "slug": "d-tale",
     "localPreferred": "../assets/images/icons-webp/d-tale.webp",
     "localFallback": "../assets/images/icons/d-tale.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://raw.githubusercontent.com/aschonfeld/dtale-media/master/images/Title.png"
   },
   "Sweetviz": {
     "slug": "sweetviz",
     "localPreferred": "../assets/images/icons-webp/sweetviz.webp",
     "localFallback": "../assets/images/icons/sweetviz.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://avatars.githubusercontent.com/u/15643079?v=4"
   },
   "Lux": {
     "slug": "lux",
     "localPreferred": "../assets/images/icons-webp/lux.webp",
     "localFallback": "../assets/images/icons/lux.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png"
+    "cdn": "https://raw.githubusercontent.com/lux-org/lux-resources/master/readme_img/logo.png"
   }
 }
