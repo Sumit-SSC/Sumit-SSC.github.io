@@ -4645,9 +4645,14 @@ button.hover\\:bg-accent:hover {
 
 .project-list-row .list-row-inner {
   display: grid;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 58% 42%;
   gap: 24px;
-  align-items: center;
+  align-items: stretch;
+}
+
+/* Keep the media column dominant even when row order flips */
+.project-list-row.is-reverse .list-row-inner {
+  grid-template-columns: 42% 58%;
 }
 
 .project-list-row.is-reverse .list-media {
@@ -4660,8 +4665,8 @@ button.hover\\:bg-accent:hover {
 
 .list-image {
   width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
+  height: 100%;
+  min-height: 280px;
   object-fit: cover;
   border-radius: 12px;
 }
@@ -4669,6 +4674,7 @@ button.hover\\:bg-accent:hover {
 .list-media {
   position: relative;
   overflow: hidden;
+  min-height: 280px;
 }
 
 .list-hover-overlay {
@@ -4886,8 +4892,65 @@ button.hover\\:bg-accent:hover {
 
 .featured-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.featured-actions .featured-btn-view {
+  min-width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0 14px;
+}
+
+.featured-actions .project-link-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-muted);
+  background: var(--bg-secondary);
+  color: var(--text-secondary) !important;
+}
+
+.featured-actions .project-link-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.featured-actions .project-link-icon:not(.disabled).is-github:hover {
+  color: #111827 !important;
+}
+
+.featured-actions .project-link-icon:not(.disabled).is-streamlit:hover {
+  color: #ff4b4b !important;
+}
+
+.featured-actions .project-link-icon:not(.disabled).is-notebook:hover {
+  color: #f97316 !important;
+}
+
+.featured-actions .project-link-icon:not(.disabled).is-demo:hover {
+  color: var(--accent-primary) !important;
+}
+
+.featured-actions .project-link-icon.disabled {
+  opacity: 0.38;
+  background: color-mix(in srgb, var(--bg-secondary) 85%, #9ca3af);
+  color: #9ca3af !important;
+  border-style: dashed;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .featured-link {
@@ -5011,6 +5074,11 @@ button.hover\\:bg-accent:hover {
 
   .featured-title {
     font-size: 1.05rem;
+  }
+
+  .featured-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 

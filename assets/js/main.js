@@ -1043,20 +1043,22 @@ function createFeaturedHeroCard(project) {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`,
     link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
+  const notebookUrl = project.notebook_url || project.colab_url || '';
   const actionButtons = [
-    { label: 'View Project', url: `${getBasePath()}project.html?id=${project.id}`, primary: true },
-    { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
-    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
-    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
-    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
-    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
-    { label: 'Video', url: project.video_url, icon: actionIcons.video }
-  ].filter(btn => btn.url).map(btn => {
-    if (btn.primary) {
-      return `<a href="${btn.url}" class="btn-primary">View Project</a>`;
-    }
-    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
-  }).join('');
+    `<a href="${getBasePath()}project.html?id=${project.id}" class="btn-primary featured-btn-view">View Project</a>`,
+    project.github_url
+      ? `<a href="${project.github_url}" target="_blank" class="project-link-icon is-github" aria-label="GitHub" title="GitHub">${actionIcons.github}</a>`
+      : `<span class="project-link-icon disabled" aria-label="GitHub unavailable" title="GitHub unavailable">${actionIcons.github}</span>`,
+    project.streamlit_url
+      ? `<a href="${project.streamlit_url}" target="_blank" class="project-link-icon is-streamlit" aria-label="Streamlit" title="Streamlit">${actionIcons.streamlit}</a>`
+      : `<span class="project-link-icon disabled" aria-label="Streamlit unavailable" title="Streamlit unavailable">${actionIcons.streamlit}</span>`,
+    notebookUrl
+      ? `<a href="${notebookUrl}" target="_blank" class="project-link-icon is-notebook" aria-label="Notebook" title="Notebook">${actionIcons.notebook}</a>`
+      : `<span class="project-link-icon disabled" aria-label="Notebook unavailable" title="Notebook unavailable">${actionIcons.notebook}</span>`,
+    project.demo_url
+      ? `<a href="${project.demo_url}" target="_blank" class="project-link-icon is-demo" aria-label="Demo" title="Demo">${actionIcons.demo}</a>`
+      : `<span class="project-link-icon disabled" aria-label="Demo unavailable" title="Demo unavailable">${actionIcons.demo}</span>`
+  ].join('');
 
   const overlayButtons = `
     <a href="${getBasePath()}project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">
@@ -1115,20 +1117,22 @@ function createFeaturedHalfCard(project) {
     video: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 5h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm16 3 4-2v12l-4-2V8z"/></svg>`,
     link: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 13a5 5 0 007.54.54l1.92-1.92a3 3 0 00-4.24-4.24l-1.06 1.06M14 11a5 5 0 00-7.54-.54l-1.92 1.92a3 3 0 004.24 4.24l1.06-1.06"/></svg>`
   };
+  const notebookUrl = project.notebook_url || project.colab_url || '';
   const actionButtons = [
-    { label: 'View Project', url: `${getBasePath()}project.html?id=${project.id}`, primary: true },
-    { label: 'GitHub', url: project.github_url, icon: actionIcons.github },
-    { label: 'Demo', url: project.demo_url, icon: actionIcons.demo },
-    { label: 'Streamlit', url: project.streamlit_url, icon: actionIcons.streamlit },
-    { label: 'Power BI', url: project.powerbi_url, icon: actionIcons.powerbi },
-    { label: 'Slides', url: project.slides_url, icon: actionIcons.slides },
-    { label: 'Video', url: project.video_url, icon: actionIcons.video }
-  ].filter(btn => btn.url).map(btn => {
-    if (btn.primary) {
-      return `<a href="${btn.url}" class="btn-primary">View Project</a>`;
-    }
-    return `<a href="${btn.url}" target="_blank" class="project-link-icon" aria-label="${btn.label}" title="${btn.label}">${btn.icon}</a>`;
-  }).join('');
+    `<a href="${getBasePath()}project.html?id=${project.id}" class="btn-primary featured-btn-view">View Project</a>`,
+    project.github_url
+      ? `<a href="${project.github_url}" target="_blank" class="project-link-icon is-github" aria-label="GitHub" title="GitHub">${actionIcons.github}</a>`
+      : `<span class="project-link-icon disabled" aria-label="GitHub unavailable" title="GitHub unavailable">${actionIcons.github}</span>`,
+    project.streamlit_url
+      ? `<a href="${project.streamlit_url}" target="_blank" class="project-link-icon is-streamlit" aria-label="Streamlit" title="Streamlit">${actionIcons.streamlit}</a>`
+      : `<span class="project-link-icon disabled" aria-label="Streamlit unavailable" title="Streamlit unavailable">${actionIcons.streamlit}</span>`,
+    notebookUrl
+      ? `<a href="${notebookUrl}" target="_blank" class="project-link-icon is-notebook" aria-label="Notebook" title="Notebook">${actionIcons.notebook}</a>`
+      : `<span class="project-link-icon disabled" aria-label="Notebook unavailable" title="Notebook unavailable">${actionIcons.notebook}</span>`,
+    project.demo_url
+      ? `<a href="${project.demo_url}" target="_blank" class="project-link-icon is-demo" aria-label="Demo" title="Demo">${actionIcons.demo}</a>`
+      : `<span class="project-link-icon disabled" aria-label="Demo unavailable" title="Demo unavailable">${actionIcons.demo}</span>`
+  ].join('');
 
   const overlayButtons = `
     <a href="${getBasePath()}project.html?id=${project.id}" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 shadow-lg">

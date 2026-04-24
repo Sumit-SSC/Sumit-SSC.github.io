@@ -561,7 +561,13 @@
     "slug": "autogluon",
     "localPreferred": "../assets/images/icons-webp/autogluon.webp",
     "localFallback": "../assets/images/icons/autogluon.png",
-    "cdn": "https://user-images.githubusercontent.com/16392542/77208906-224aa500-6aba-11ea-96bd-e81806074030.png"
+    "cdn": "https://images.contentstack.io/v3/assets/bltb654d1b96a72ddc4/blta1f3b647f74ec619/6323b4e427a8dd5d8cd3c286/autogluon-logo.png"
+  },
+  "auto-sklearn": {
+    "slug": "auto-sklearn",
+    "localPreferred": "../assets/images/icons-webp/auto-sklearn.webp",
+    "localFallback": "../assets/images/icons/auto-sklearn.png",
+    "cdn": "https://images.contentstack.io/v3/assets/bltb654d1b96a72ddc4/blt8415955b696c286a/6323b4e4772abb3a42ec478f/auto-sklearn_logo.png"
   },
   "LightGBM": {
     "slug": "lightgbm",
@@ -603,7 +609,7 @@
     "slug": "featuretools",
     "localPreferred": "../assets/images/icons-webp/featuretools.webp",
     "localFallback": "../assets/images/icons/featuretools.png",
-    "cdn": "https://github.com/Featuretools.png"
+    "cdn": "https://docs.featuretools.com/en/latest/_images/featuretools_nav2.svg"
   },
   "Airbyte": {
     "slug": "airbyte",
@@ -657,25 +663,37 @@
     "slug": "tpot",
     "localPreferred": "../assets/images/icons-webp/tpot.webp",
     "localFallback": "../assets/images/icons/tpot.png",
-    "cdn": "https://raw.githubusercontent.com/EpistasisLab/tpot/master/images/tpot-logo.jpg"
+    "cdn": "https://images.contentstack.io/v3/assets/bltb654d1b96a72ddc4/blt32f022be13cb7cef/6323b4e42343d638c6940093/tpot-logo.png"
   },
   "H2O AutoML": {
     "slug": "h2o-automl",
-    "localPreferred": "../assets/images/icons/h2o-automl.svg",
-    "localFallback": "../assets/images/icons/h2o-automl.svg",
-    "cdn": "https://www.h2o.ai/wp-content/uploads/2023/01/h2o-logo.svg"
+    "localPreferred": "../assets/images/icons-webp/h2o-automl.webp",
+    "localFallback": "../assets/images/icons/h2o-automl.png",
+    "cdn": "https://images.contentstack.io/v3/assets/bltb654d1b96a72ddc4/blt84ef4e339077d030/6323b4e47a3ff86d11d8ba01/h2o-automl-logo.png"
   },
   "mljar-supervised": {
     "slug": "mljar-supervised",
     "localPreferred": "../assets/images/icons-webp/mljar-supervised.webp",
     "localFallback": "../assets/images/icons/mljar-supervised.png",
-    "cdn": "https://raw.githubusercontent.com/mljar/mljar-examples/master/media/AutoML_white.png"
+    "cdn": "https://avatars.githubusercontent.com/u/20522384?s=200&v=4"
   },
   "GAMA": {
     "slug": "gama",
     "localPreferred": "../assets/images/icons-webp/gama.webp",
     "localFallback": "../assets/images/icons/gama.png",
-    "cdn": "https://raw.githubusercontent.com/openml-labs/gama/master/images/logos/Logo-With-Grey-Name-Transparent.png"
+    "cdn": "https://pgijsbers.github.io/gama/master/_static/Logo-on-white-text-on-transparent.png"
+  },
+  "Google AutoML": {
+    "slug": "google-automl",
+    "localPreferred": "../assets/images/icons-webp/google-automl.webp",
+    "localFallback": "../assets/images/icons/google-automl.png",
+    "cdn": "https://images.contentstack.io/v3/assets/bltb654d1b96a72ddc4/blt3653923c98a83ea3/6323b4e44c470a60a9fa1e5a/google-cloud-automl-logo.png"
+  },
+  "MLBox": {
+    "slug": "mlbox",
+    "localPreferred": "../assets/images/icons-webp/mlbox.webp",
+    "localFallback": "../assets/images/icons/mlbox.png",
+    "cdn": "https://images.contentstack.io/v3/assets/bltb654d1b96a72ddc4/blted62f4cfcb14a5dc/6323b4e49a6b39638424b370/mlbox-logo.png"
   },
   "AutoKeras": {
     "slug": "autokeras",
@@ -683,17 +701,11 @@
     "localFallback": "../assets/images/icons/autokeras.png",
     "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png"
   },
-  "YData": {
-    "slug": "ydata",
-    "localPreferred": "../assets/images/icons-webp/ydata.webp",
-    "localFallback": "../assets/images/icons/ydata.png",
-    "cdn": "https://github.com/ydataai.png"
-  },
   "ydata-profiling": {
     "slug": "ydata-profiling",
     "localPreferred": "../assets/images/icons-webp/ydata-profiling.webp",
     "localFallback": "../assets/images/icons/ydata-profiling.png",
-    "cdn": "https://github.com/ydataai.png"
+    "cdn": "https://assets.ydata.ai/oss/ydata-profiling_red.png"
   },
   "SHAP": {
     "slug": "shap",
@@ -717,12 +729,12 @@
     "slug": "sweetviz",
     "localPreferred": "../assets/images/icons-webp/sweetviz.webp",
     "localFallback": "../assets/images/icons/sweetviz.png",
-    "cdn": "https://github.com/fbdesignpro.png"
+    "cdn": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhMmqaQAuOJ37R1H46dU2Wj4K_K5yuyt5t6g&s"
   },
   "Lux": {
     "slug": "lux",
     "localPreferred": "../assets/images/icons-webp/lux.webp",
     "localFallback": "../assets/images/icons/lux.png",
-    "cdn": "https://raw.githubusercontent.com/lux-org/lux-resources/master/readme_img/logo.png"
+    "cdn": "https://miro.medium.com/v2/resize:fit:1100/format:webp/1*Z9ou6nD0MJi36moo0-Z6xg.png"
   }
 }
