@@ -349,13 +349,16 @@ function initTheme() {
 
   // Avoid duplicating controls if initTheme() runs more than once
   const existingControls = document.getElementById('theme-controls');
+  const themeToggleMarkup = (theme) => {
+    if (theme === 'dark') {
+      return '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark mode';
+    }
+    return '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light mode';
+  };
   if (existingControls) {
     const existingToggleBtn = existingControls.querySelector('button');
     if (existingToggleBtn) {
-      existingToggleBtn.innerHTML =
-        window.currentTheme === 'dark'
-          ? '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light'
-          : '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark';
+      existingToggleBtn.innerHTML = themeToggleMarkup(window.currentTheme);
     }
 
     const existingColorBtn = existingControls.querySelector('.theme-color-swatch');
@@ -372,11 +375,11 @@ function initTheme() {
     const toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
     toggleBtn.className = 'px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors';
-    toggleBtn.innerHTML = initial === 'dark' ? '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light' : '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark';
+    toggleBtn.innerHTML = themeToggleMarkup(initial);
     toggleBtn.title = 'Toggle Dark/Light Mode';
     toggleBtn.addEventListener('click', () => {
       window.toggleTheme();
-      toggleBtn.innerHTML = window.currentTheme === 'dark' ? '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Light' : '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> Dark';
+      toggleBtn.innerHTML = themeToggleMarkup(window.currentTheme);
     });
 
     const colorBtn = document.createElement('button');
@@ -431,10 +434,10 @@ function initTheme() {
     const toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
     toggleBtn.className = 'px-2 py-1 rounded-md border border-gray-300 hover:bg-gray-100 text-xs font-medium transition-colors';
-    toggleBtn.textContent = initial === 'dark' ? 'Light' : 'Dark';
+    toggleBtn.textContent = initial === 'dark' ? 'Dark mode' : 'Light mode';
     toggleBtn.addEventListener('click', () => {
       window.toggleTheme();
-      toggleBtn.textContent = window.currentTheme === 'dark' ? 'Light' : 'Dark';
+      toggleBtn.textContent = window.currentTheme === 'dark' ? 'Dark mode' : 'Light mode';
     });
 
     const colorBtn = document.createElement('button');

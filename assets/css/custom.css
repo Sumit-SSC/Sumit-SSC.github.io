@@ -350,95 +350,7 @@ body.homepage-body #section-tabs {
 	transform: translateY(-5px);
 }
 
-/* Skills page dark mode: force white/light background on sections and cards so icons stay visible */
-html.dark .skills-page .skills-icons-box,
-html.dark .skills-page .skill-card,
-html.dark .skills-page .skill-category > div.rounded-xl,
-body.dark-theme .skills-page .skills-icons-box,
-body.dark-theme .skills-page .skill-card,
-body.dark-theme .skills-page .skill-category > div.rounded-xl {
-	background-color: #ffffff !important;
-}
-html.dark .skills-page .skills-icons-box,
-html.dark .skills-page .skill-category > div.rounded-xl,
-body.dark-theme .skills-page .skills-icons-box,
-body.dark-theme .skills-page .skill-category > div.rounded-xl {
-	border-color: #e5e7eb !important;
-}
-html.dark .skills-page #skills-tools > .rounded-xl,
-body.dark-theme .skills-page #skills-tools > .rounded-xl {
-	background-color: #ffffff !important;
-	border-color: #e5e7eb !important;
-}
-html.dark .skills-page #skills-tools > .rounded-xl > .p-6,
-body.dark-theme .skills-page #skills-tools > .rounded-xl > .p-6 {
-	background-color: #ffffff !important;
-	border-color: #e5e7eb !important;
-}
-
-/* Skills page dark mode: text on white must be dark for readability */
-html.dark .skills-page .skills-icons-box h1,
-html.dark .skills-page .skills-icons-box h2,
-html.dark .skills-page .skills-icons-box h3,
-html.dark .skills-page .skills-icons-box p,
-html.dark .skills-page .skills-icons-box span,
-html.dark .skills-page .skills-icons-box label,
-body.dark-theme .skills-page .skills-icons-box h1,
-body.dark-theme .skills-page .skills-icons-box h2,
-body.dark-theme .skills-page .skills-icons-box h3,
-body.dark-theme .skills-page .skills-icons-box p,
-body.dark-theme .skills-page .skills-icons-box span,
-body.dark-theme .skills-page .skills-icons-box label,
-html.dark .skills-page .skill-card h1,
-html.dark .skills-page .skill-card h2,
-html.dark .skills-page .skill-card h3,
-html.dark .skills-page .skill-card p,
-html.dark .skills-page .skill-card span,
-html.dark .skills-page .skill-card a,
-body.dark-theme .skills-page .skill-card h1,
-body.dark-theme .skills-page .skill-card h2,
-body.dark-theme .skills-page .skill-card h3,
-body.dark-theme .skills-page .skill-card p,
-body.dark-theme .skills-page .skill-card span,
-body.dark-theme .skills-page .skill-card a,
-html.dark .skills-page .skill-category > div.rounded-xl h1,
-html.dark .skills-page .skill-category > div.rounded-xl h2,
-html.dark .skills-page .skill-category > div.rounded-xl h3,
-html.dark .skills-page .skill-category > div.rounded-xl p,
-html.dark .skills-page .skill-category > div.rounded-xl span,
-html.dark .skills-page .skill-category > div.rounded-xl a,
-body.dark-theme .skills-page .skill-category > div.rounded-xl h1,
-body.dark-theme .skills-page .skill-category > div.rounded-xl h2,
-body.dark-theme .skills-page .skill-category > div.rounded-xl h3,
-body.dark-theme .skills-page .skill-category > div.rounded-xl p,
-body.dark-theme .skills-page .skill-category > div.rounded-xl span,
-body.dark-theme .skills-page .skill-category > div.rounded-xl a,
-html.dark .skills-page #skills-tools > .rounded-xl h1,
-html.dark .skills-page #skills-tools > .rounded-xl h2,
-html.dark .skills-page #skills-tools > .rounded-xl h3,
-html.dark .skills-page #skills-tools > .rounded-xl p,
-html.dark .skills-page #skills-tools > .rounded-xl span,
-body.dark-theme .skills-page #skills-tools > .rounded-xl h1,
-body.dark-theme .skills-page #skills-tools > .rounded-xl h2,
-body.dark-theme .skills-page #skills-tools > .rounded-xl h3,
-body.dark-theme .skills-page #skills-tools > .rounded-xl p,
-body.dark-theme .skills-page #skills-tools > .rounded-xl span {
-	color: #1f2937 !important;
-}
-html.dark-theme .skills-page .skills-icons-box h1,
-html.dark-theme .skills-page .skills-icons-box h2,
-html.dark-theme .skills-page .skills-icons-box h3,
-html.dark-theme .skills-page .skills-icons-box p,
-html.dark-theme .skills-page .skill-card h1,
-html.dark-theme .skills-page .skill-card h2,
-html.dark-theme .skills-page .skill-card h3,
-html.dark-theme .skills-page .skill-card p,
-html.dark-theme .skills-page .skill-category > div.rounded-xl h1,
-html.dark-theme .skills-page .skill-category > div.rounded-xl h2,
-html.dark-theme .skills-page .skill-category > div.rounded-xl h3,
-html.dark-theme .skills-page .skill-category > div.rounded-xl p {
-	color: #1f2937 !important;
-}
+/* Skills page: keep theme colors controlled by Tailwind utility classes. */
 
 /* Clickable tool tags in project cards */
 .project-card a[href*="filter"],
@@ -526,171 +438,12 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Light mode text colors (default, can be overridden by theme) */
-html:not(.dark-theme) h1,
-html:not(.dark-theme) h2,
-html:not(.dark-theme) h3,
-html:not(.dark-theme) h4,
-html:not(.dark-theme) h5,
-html:not(.dark-theme) h6,
-html:not(.dark-theme) .text-gray-800,
-html:not(.dark-theme) .text-gray-900 {
-  color: #1f2937;
-}
-
-html:not(.dark-theme) p,
-html:not(.dark-theme) .text-gray-600,
-html:not(.dark-theme) .text-gray-700,
-html:not(.dark-theme) body {
-  color: #374151;
-}
-
 /* Theme settings (loaded from data/site-theme.json) */
 html body {
   font-family: var(--site-font-family, Inter, system-ui, sans-serif);
   font-size: var(--site-base-font-size, 16px);
 }
-
-html:not(.dark-theme) .text-gray-400,
-html:not(.dark-theme) .text-gray-500 {
-  color: #6b7280;
-}
-
-/* Global dark theme */
-.dark-theme body {
-  background-color: #020617;
-  color: #e5e7eb;
-}
-
-/* Light mode text colors (default, can be overridden by theme) */
-body:not(.dark-theme) h1,
-body:not(.dark-theme) h2,
-body:not(.dark-theme) h3,
-body:not(.dark-theme) h4,
-body:not(.dark-theme) h5,
-body:not(.dark-theme) h6,
-body:not(.dark-theme) .text-gray-800,
-body:not(.dark-theme) .text-gray-900 {
-  color: #1f2937;
-}
-
-body:not(.dark-theme) p,
-body:not(.dark-theme) .text-gray-600,
-body:not(.dark-theme) .text-gray-700 {
-  color: #374151;
-}
-
-body:not(.dark-theme) .text-gray-400,
-body:not(.dark-theme) .text-gray-500 {
-  color: #6b7280;
-}
-
-/* Theme text rules: readable, but respect text-white/text-primary */
-html:not(.dark-theme) body {
-  color: #111827 !important;
-}
-
-html:not(.dark-theme) h1:not(.text-white):not(.text-primary),
-html:not(.dark-theme) h2:not(.text-white):not(.text-primary),
-html:not(.dark-theme) h3:not(.text-white):not(.text-primary),
-html:not(.dark-theme) h4:not(.text-white):not(.text-primary),
-html:not(.dark-theme) h5:not(.text-white):not(.text-primary),
-html:not(.dark-theme) h6:not(.text-white):not(.text-primary),
-html:not(.dark-theme) p:not(.text-white):not(.text-primary),
-html:not(.dark-theme) span:not(.text-white):not(.text-primary),
-html:not(.dark-theme) li:not(.text-white):not(.text-primary),
-html:not(.dark-theme) label:not(.text-white):not(.text-primary),
-html:not(.dark-theme) a:not(.text-white):not(.text-primary),
-html:not(.dark-theme) button:not(.text-white):not(.text-primary),
-html:not(.dark-theme) input:not(.text-white):not(.text-primary),
-html:not(.dark-theme) textarea:not(.text-white):not(.text-primary),
-html:not(.dark-theme) select:not(.text-white):not(.text-primary) {
-  color: #111827 !important;
-}
-
-html:not(.dark-theme) a:not(.text-white):not(.text-primary):hover {
-  color: #0f172a !important;
-}
-
-html:not(.dark-theme) .text-gray-400,
-html:not(.dark-theme) .text-gray-500 {
-  color: #6b7280 !important;
-}
-
-html:not(.dark-theme) .text-gray-100,
-html:not(.dark-theme) .text-gray-200,
-html:not(.dark-theme) .text-gray-300 {
-  color: #111827 !important;
-}
-
-/* Preserve white text on dark/primary surfaces in light mode */
-html:not(.dark-theme) .text-white,
-html:not(.dark-theme) a.text-white,
-html:not(.dark-theme) button.text-white,
-html:not(.dark-theme) .bg-primary,
-html:not(.dark-theme) .bg-accent,
-html:not(.dark-theme) .btn-primary {
-  color: #ffffff !important;
-}
-
-/* Homepage header links in light mode */
-html:not(.dark-theme) #nav a {
-  color: #111827 !important;
-}
-
-html:not(.dark-theme) #nav a.text-primary {
-  color: var(--color-primary) !important;
-}
-
-html:not(.dark-theme) #nav a:hover {
-  color: #0f172a !important;
-}
-
-html:not(.dark-theme) .text-white:hover,
-html:not(.dark-theme) a.text-white:hover,
-html:not(.dark-theme) button.text-white:hover,
-html:not(.dark-theme) .bg-primary:hover,
-html:not(.dark-theme) .bg-accent:hover,
-html:not(.dark-theme) .btn-primary:hover {
-  color: #ffffff !important;
-}
-
-html.dark-theme body {
-  color: #e5e7eb !important;
-}
-
-html.dark-theme h1:not(.text-white):not(.text-primary),
-html.dark-theme h2:not(.text-white):not(.text-primary),
-html.dark-theme h3:not(.text-white):not(.text-primary),
-html.dark-theme h4:not(.text-white):not(.text-primary),
-html.dark-theme h5:not(.text-white):not(.text-primary),
-html.dark-theme h6:not(.text-white):not(.text-primary),
-html.dark-theme p:not(.text-white):not(.text-primary),
-html.dark-theme span:not(.text-white):not(.text-primary),
-html.dark-theme li:not(.text-white):not(.text-primary),
-html.dark-theme label:not(.text-white):not(.text-primary),
-html.dark-theme a:not(.text-white):not(.text-primary),
-html.dark-theme button:not(.text-white):not(.text-primary),
-html.dark-theme input:not(.text-white):not(.text-primary),
-html.dark-theme textarea:not(.text-white):not(.text-primary),
-html.dark-theme select:not(.text-white):not(.text-primary) {
-  color: #e5e7eb !important;
-}
-
-html.dark-theme a:not(.text-white):not(.text-primary):hover {
-  color: #f9fafb !important;
-}
-
-html.dark-theme .text-gray-400,
-html.dark-theme .text-gray-500 {
-  color: #9ca3af !important;
-}
-
-html.dark-theme .text-gray-100,
-html.dark-theme .text-gray-200,
-html.dark-theme .text-gray-300 {
-  color: #e5e7eb !important;
-}
+/* Theme text is handled via utility classes; keep only minimal fixes below. */
 
 /* Ensure theme controls stay visible in dark mode */
 html.dark-theme #theme-controls button {
@@ -713,48 +466,6 @@ html.dark-theme .bg-primary:hover,
 html.dark-theme .bg-accent:hover,
 html.dark-theme .btn-primary:hover {
   color: #ffffff !important;
-}
-
-.dark-theme header,
-.dark-theme nav.bg-white,
-.dark-theme .bg-white {
-  background-color: #020617 !important;
-  color: #e5e7eb;
-}
-
-.dark-theme .bg-gray-50 {
-  background-color: #020617 !important;
-}
-
-.dark-theme .bg-gray-100 {
-  background-color: #020617 !important;
-}
-
-.dark-theme .bg-gray-800 {
-  background-color: #020617 !important;
-}
-
-.dark-theme .text-gray-800,
-.dark-theme .text-gray-900,
-.dark-theme h1,
-.dark-theme h2,
-.dark-theme h3,
-.dark-theme h4,
-.dark-theme h5,
-.dark-theme h6 {
-  color: #f9fafb !important;
-}
-
-.dark-theme .text-gray-600,
-.dark-theme .text-gray-700,
-.dark-theme p,
-.dark-theme body {
-  color: #e5e7eb !important;
-}
-
-.dark-theme .text-gray-400,
-.dark-theme .text-gray-500 {
-  color: #9ca3af !important;
 }
 
 /* Media & embed wrappers
@@ -863,8 +574,7 @@ html.dark-theme .btn-primary:hover {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
-.dark-theme .embed-modal-content,
-html.dark-theme .embed-modal-content {
+.dark-theme .embed-modal-content {
   background: #1e293b;
 }
 
@@ -878,8 +588,7 @@ html.dark-theme .embed-modal-content {
   border-bottom: 1px solid rgba(229, 231, 235, 0.5);
 }
 
-.dark-theme .embed-modal-header,
-html.dark-theme .embed-modal-header {
+.dark-theme .embed-modal-header {
   color: #e5e7eb;
   background: rgba(15, 23, 42, 0.95);
   border-bottom-color: rgba(71, 85, 105, 0.5);
@@ -909,13 +618,11 @@ html.dark-theme .embed-modal-header {
   color: #4f46e5;
 }
 
-.dark-theme .embed-modal-open-link,
-html.dark-theme .embed-modal-open-link {
+.dark-theme .embed-modal-open-link {
   color: #a5b4fc;
 }
 
-.dark-theme .embed-modal-open-link:hover,
-html.dark-theme .embed-modal-open-link:hover {
+.dark-theme .embed-modal-open-link:hover {
   color: #c4b5fd;
 }
 
@@ -934,13 +641,11 @@ html.dark-theme .embed-modal-open-link:hover {
   color: #374151;
 }
 
-.dark-theme .embed-modal-close,
-html.dark-theme .embed-modal-close {
+.dark-theme .embed-modal-close {
   color: #9ca3af;
 }
 
-.dark-theme .embed-modal-close:hover,
-html.dark-theme .embed-modal-close:hover {
+.dark-theme .embed-modal-close:hover {
   color: #e5e7eb;
 }
 
@@ -950,8 +655,7 @@ html.dark-theme .embed-modal-close:hover {
   background: #f9fafb;
 }
 
-.dark-theme .embed-modal-body,
-html.dark-theme .embed-modal-body {
+.dark-theme .embed-modal-body {
   background: #0f172a;
 }
 
@@ -988,8 +692,7 @@ html.dark-theme .embed-modal-body {
   color: #475569;
 }
 
-.dark-theme .artifact-container-header,
-html.dark-theme .artifact-container-header {
+.dark-theme .artifact-container-header {
   color: #9ca3af;
 }
 
@@ -1030,15 +733,13 @@ body:not(.dark-theme) .artifact-container-header {
   color: #0f172a;
 }
 
-.dark-theme .artifact-button,
-html.dark-theme .artifact-button {
+.dark-theme .artifact-button {
   border-color: #1f2937;
   background-color: #111827;
   color: #e5e7eb;
 }
 
-.dark-theme .artifact-button--ghost,
-html.dark-theme .artifact-button--ghost {
+.dark-theme .artifact-button--ghost {
   background-color: transparent;
   color: #e5e7eb;
   border-color: #374151;
@@ -1068,9 +769,7 @@ body:not(.dark-theme) .artifact-button:not(.artifact-button--primary) {
 }
 
 .dark-theme .artifact-button[disabled],
-.dark-theme .artifact-button[aria-disabled="true"],
-html.dark-theme .artifact-button[disabled],
-html.dark-theme .artifact-button[aria-disabled="true"] {
+.dark-theme .artifact-button[aria-disabled="true"] {
   opacity: 0.4;
   color: #6b7280;
 }
@@ -1124,29 +823,8 @@ html.dark-theme .artifact-button[aria-disabled="true"] {
   padding-inline: 0.75rem;
 }
 
-/* Final theme overrides (force readable text in dark mode) */
-html.dark-theme,
-html.dark-theme body {
-  color: #e5e7eb !important;
-}
-
-html.dark-theme h1,
-html.dark-theme h2,
-html.dark-theme h3,
-html.dark-theme h4,
-html.dark-theme h5,
-html.dark-theme h6,
-html.dark-theme p,
-html.dark-theme span,
-html.dark-theme li,
-html.dark-theme label,
-html.dark-theme a,
-html.dark-theme button,
-html.dark-theme input,
-html.dark-theme textarea,
-html.dark-theme select {
-  color: #e5e7eb !important;
-}
+/* Removed global html.dark-theme text forcing block.
+   Theme colors should come from component-level utilities. */
 
 /* List view styling to differentiate from cards */
 .project-list-card {
@@ -1205,39 +883,7 @@ html.dark-theme select {
   }
 }
 
-/* Theme-aware link colors in dark mode */
-.dark-theme a:not(.text-primary):not(.hover\:text-primary) {
-  color: #a5b4fc;
-}
-
-.dark-theme a:not(.text-primary):not(.hover\:text-primary):hover {
-  color: #c4b5fd;
-}
-
-.dark-theme .bg-white {
-  background-color: #1e293b !important;
-  color: #e5e7eb;
-}
-
-.dark-theme .bg-gray-50 {
-  background-color: #0f172a !important;
-}
-
-.dark-theme .bg-gray-100 {
-  background-color: #1e293b !important;
-}
-
-.dark-theme .border-gray-300 {
-  border-color: #475569 !important;
-}
-
-.dark-theme .text-gray-700 {
-  color: #cbd5e1 !important;
-}
-
-.dark-theme .text-gray-500 {
-  color: #94a3b8 !important;
-}
+/* Theme-specific utility colors are handled by page-level Tailwind classes. */
 
 .dark-theme .shadow-lg {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3) !important;
@@ -1245,31 +891,6 @@ html.dark-theme select {
 
 .dark-theme .about-section::before {
   background: rgba(0, 0, 0, 0.75) !important;
-}
-
-/* About page header - ensure text is visible in dark theme */
-.dark-theme #header,
-.dark-theme header {
-  background: rgba(17, 24, 39, 0.95) !important; /* Dark gray background */
-}
-
-.dark-theme #header h1,
-.dark-theme header h1,
-.dark-theme #header a,
-.dark-theme header a,
-.dark-theme #header li a,
-.dark-theme header li a {
-  color: #e5e7eb !important; /* Light gray text */
-}
-
-.dark-theme #header a:hover,
-.dark-theme header a:hover {
-  color: var(--accent-primary) !important; /* Accent color on hover */
-}
-
-/* Contact page header - ensure visibility in dark theme */
-.dark-theme header.bg-white {
-  background: rgba(17, 24, 39, 0.95) !important;
 }
 
 /* Contact page form - ensure inputs are visible in dark theme */
@@ -1281,11 +902,6 @@ html.dark-theme select {
 
 .dark-theme .form-input::placeholder {
   color: #9ca3af !important;
-}
-
-/* Contact page form labels - ensure visibility */
-.dark-theme label {
-  color: #e5e7eb !important;
 }
 
 /* Form status message (contact + any form) - readable in both modes */
@@ -2550,275 +2166,8 @@ body:not(.dark-theme) .gallery-caption {
 /* Button styles - Light/Dark mode based, NO theme color interference */
 /* Light mode: Dark buttons with white text */
 /* Primary buttons - override theme colors, use light/dark mode colors */
-body:not(.dark-theme) .btn-primary,
-body:not(.dark-theme) button.bg-primary,
-body:not(.dark-theme) a.bg-primary,
-body:not(.dark-theme) .bg-primary.text-white,
-body:not(.dark-theme) button[class*="bg-primary"],
-body:not(.dark-theme) a[class*="bg-primary"],
-body:not(.dark-theme) button[type="submit"],
-body:not(.dark-theme) button[type="button"].bg-primary,
-body:not(.dark-theme) a.button.bg-primary,
-html[data-color-theme] body:not(.dark-theme) .btn-primary,
-html[data-color-theme] body:not(.dark-theme) button.bg-primary,
-html[data-color-theme] body:not(.dark-theme) a.bg-primary,
-html[data-color-theme] body:not(.dark-theme) button[class*="bg-primary"],
-html[data-color-theme] body:not(.dark-theme) a[class*="bg-primary"] {
-  background: var(--button-bg) !important;
-  color: var(--button-text) !important;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 700 !important;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-}
-
-body:not(.dark-theme) .btn-primary:hover,
-body:not(.dark-theme) button.bg-primary:hover,
-body:not(.dark-theme) a.bg-primary:hover,
-body:not(.dark-theme) .bg-primary.text-white:hover,
-body:not(.dark-theme) button[class*="bg-primary"]:hover,
-body:not(.dark-theme) a[class*="bg-primary"]:hover,
-body:not(.dark-theme) button[type="submit"]:hover {
-  background: var(--color-accent, var(--button-bg)) !important;
-  color: var(--button-text) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Dark mode: Lighter buttons with dark text - override theme colors */
-.dark-theme .btn-primary,
-.dark-theme button.bg-primary,
-.dark-theme a.bg-primary,
-.dark-theme .bg-primary.text-white,
-.dark-theme button[class*="bg-primary"],
-.dark-theme a[class*="bg-primary"],
-.dark-theme button[type="submit"],
-.dark-theme button[type="button"].bg-primary,
-.dark-theme a.button.bg-primary,
-html[data-color-theme] .dark-theme .btn-primary,
-html[data-color-theme] .dark-theme button.bg-primary,
-html[data-color-theme] .dark-theme a.bg-primary,
-html[data-color-theme] .dark-theme button[class*="bg-primary"],
-html[data-color-theme] .dark-theme a[class*="bg-primary"] {
-  background: var(--color-primary) !important;
-  color: #ffffff !important;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 700 !important;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.dark-theme .btn-primary:hover,
-.dark-theme button.bg-primary:hover,
-.dark-theme a.bg-primary:hover,
-.dark-theme .bg-primary.text-white:hover,
-.dark-theme button[class*="bg-primary"]:hover,
-.dark-theme a[class*="bg-primary"]:hover,
-.dark-theme button[type="submit"]:hover {
-  background: var(--color-accent) !important;
-  color: #ffffff !important;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
-}
-
-/* View toggle buttons - ensure visibility */
-.view-toggle-btn,
-#view-card,
-#view-list,
-button.view-toggle-btn {
-  font-weight: 600 !important;
-  color: #374151 !important;
-  background-color: transparent !important;
-  border: 1px solid #d1d5db !important;
-}
-
-.view-toggle-btn.active,
-#view-card.active,
-#view-list.active,
-.view-toggle-btn.bg-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  border-color: #667eea !important;
-}
-
-.dark-theme .view-toggle-btn:not(.active),
-.dark-theme #view-card:not(.active),
-.dark-theme #view-list:not(.active) {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-/* Pagination buttons - ensure visibility */
-#pagination a,
-#pagination button,
-#pagination span {
-  font-weight: 600 !important;
-  color: #374151 !important;
-  background-color: #ffffff !important;
-  border: 1px solid #d1d5db !important;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-}
-
-#pagination a:hover,
-#pagination button:hover {
-  background-color: #f3f4f6 !important;
-  color: #1f2937 !important;
-  font-weight: 700 !important;
-}
-
-#pagination span.bg-primary,
-#pagination .bg-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  border-color: #667eea !important;
-}
-
-.dark-theme #pagination a,
-.dark-theme #pagination button,
-.dark-theme #pagination span:not(.bg-primary) {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  font-weight: 600 !important;
-}
-
-.dark-theme #pagination a:hover,
-.dark-theme #pagination button:hover {
-  background-color: rgba(255, 255, 255, 0.2) !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* Light mode - regular buttons and text should be dark and BOLD */
-body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn),
-body:not(.dark-theme) a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
-body:not(.dark-theme) .text-gray-800,
-body:not(.dark-theme) .text-gray-900 {
-  color: #1f2937 !important;
-  font-weight: 600 !important; /* Make buttons bold */
-}
-
-body:not(.dark-theme) button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn):hover {
-  color: #111827 !important;
-  font-weight: 700 !important; /* Even bolder on hover */
-}
-
-/* Buttons with border-primary and text-primary - ensure high contrast */
-body:not(.dark-theme) button.border-primary.text-primary,
-body:not(.dark-theme) a.border-primary.text-primary {
-  color: #1f2937 !important; /* Dark text for visibility */
-  border-color: #1f2937 !important; /* Dark border */
-  font-weight: 700 !important;
-  background-color: transparent !important;
-}
-
-body:not(.dark-theme) button.border-primary.text-primary:hover,
-body:not(.dark-theme) a.border-primary.text-primary:hover {
-  background-color: #1f2937 !important; /* Dark background on hover */
-  color: #ffffff !important; /* White text on hover */
-  border-color: #1f2937 !important;
-}
-
-body:not(.dark-theme) .text-gray-600,
-body:not(.dark-theme) .text-gray-700 {
-  color: #374151 !important;
-}
-
-/* Dark mode - regular buttons and text should be light and BOLD */
-.dark-theme button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn):not(.theme-color-swatch),
-.dark-theme a.button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more),
-.dark-theme .text-gray-800,
-.dark-theme .text-gray-900,
-.dark-theme h1,
-.dark-theme h2,
-.dark-theme h3,
-.dark-theme h4,
-.dark-theme h5,
-.dark-theme h6 {
-  color: #f9fafb !important;
-  font-weight: 600 !important; /* Make buttons bold */
-}
-
-.dark-theme button:not(.bg-primary):not(.btn-primary):not(.text-white):not(.more):not(.view-toggle-btn):not(.theme-color-swatch):hover {
-  color: #ffffff !important;
-  font-weight: 700 !important; /* Even bolder on hover */
-}
-
-/* Buttons with border-primary and text-primary in dark mode - ensure high contrast */
-.dark-theme button.border-primary.text-primary,
-.dark-theme a.border-primary.text-primary {
-  color: #f3f4f6 !important; /* Light text for visibility */
-  border-color: #f3f4f6 !important; /* Light border */
-  font-weight: 700 !important;
-  background-color: transparent !important;
-}
-
-.dark-theme button.border-primary.text-primary:hover,
-.dark-theme a.border-primary.text-primary:hover {
-  background-color: #f3f4f6 !important; /* Light background on hover */
-  color: #111827 !important; /* Dark text on hover */
-  border-color: #f3f4f6 !important;
-}
-
-.dark-theme .text-gray-600,
-.dark-theme .text-gray-700,
-.dark-theme p,
-.dark-theme body {
-  color: #e5e7eb !important;
-}
-
-.dark-theme .text-gray-400,
-.dark-theme .text-gray-500 {
-  color: #9ca3af !important;
-}
-
-/* Additional button visibility rules - catch all buttons with theme colors */
-body:not(.dark-theme) button[class*="primary"]:not(.more):not(.view-toggle-btn),
-body:not(.dark-theme) a[class*="primary"]:not(.more) {
-  color: #ffffff !important;
-  font-weight: 700 !important;
-}
-
-.dark-theme button[class*="primary"]:not(.more):not(.view-toggle-btn):not(.theme-color-swatch),
-.dark-theme a[class*="primary"]:not(.more) {
-  color: #ffffff !important;
-  font-weight: 700 !important;
-}
-
-/* Ensure all buttons have visible text regardless of theme */
-button:not(.more):not(.view-toggle-btn),
-a.button:not(.more),
-button[type="button"]:not(.more):not(.view-toggle-btn),
-button[type="submit"]:not(.more),
-a[role="button"]:not(.more) {
-  font-weight: 600 !important;
-}
-
-body:not(.dark-theme) button:not(.more):not(.view-toggle-btn):not(.bg-primary):not(.btn-primary),
-body:not(.dark-theme) a.button:not(.more):not(.bg-primary):not(.btn-primary) {
-  color: #1f2937 !important;
-}
-
-.dark-theme button:not(.more):not(.view-toggle-btn):not(.bg-primary):not(.btn-primary),
-.dark-theme a.button:not(.more):not(.bg-primary):not(.btn-primary) {
-  color: #f9fafb !important;
-}
+/* Removed legacy global button/pagination/text override block.
+   Utility classes and scoped component styles are the source of truth. */
 
 /* Form styles */
 .form-input {
@@ -3640,100 +2989,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Navigation bars - ensure visibility in both themes */
-.dark-theme nav.bg-white,
-.dark-theme header.bg-white {
-  background-color: #111827 !important;
-  border-color: #374151 !important;
-}
-
-/* All text elements - ensure visibility (map Tailwind grays to tokens in dark mode) */
-.dark-theme .text-gray-800,
-.dark-theme .text-gray-900,
-.dark-theme h1,
-.dark-theme h2,
-.dark-theme h3,
-.dark-theme h4,
-.dark-theme h5,
-.dark-theme h6 {
-  color: var(--text-primary-dark) !important;
-}
-
-.dark-theme .text-gray-600,
-.dark-theme .text-gray-700,
-.dark-theme p {
-  color: var(--text-secondary-dark) !important;
-}
-
-.dark-theme .text-gray-400,
-.dark-theme .text-gray-500 {
-  color: var(--text-secondary-dark) !important;
-}
-
-/* Links - ensure visibility */
-.dark-theme a:not(.text-primary):not(.text-white):not(.hover\:text-primary) {
-  color: #a5b4fc !important;
-}
-
-.dark-theme a:not(.text-primary):not(.text-white):not(.hover\:text-primary):hover {
-  color: #c4b5fd !important;
-}
-
-/* Backgrounds - ensure proper contrast (map to surface tokens) */
-.dark-theme .bg-white {
-  background-color: var(--surface-dark) !important;
-}
-
-.dark-theme .bg-gray-50 {
-  background-color: var(--bg-dark) !important;
-}
-
-.dark-theme .bg-gray-100 {
-  background-color: var(--surface-dark) !important;
-}
-
-.dark-theme .bg-gray-200 {
-  background-color: #334155 !important;
-}
-
-/* Override for skills tech stack box: keep headings pure black on white card in dark mode */
-.dark-theme .skills-icons-box {
-  background-color: #ffffff !important;
-}
-.dark-theme .skills-icons-box h1,
-.dark-theme .skills-icons-box h2,
-.dark-theme .skills-icons-box h3 {
-  color: #000000 !important; /* pure black for maximum contrast on white */
-}
-
-/* Borders - ensure visibility */
-.dark-theme .border-gray-200,
-.dark-theme .border-gray-300 {
-  border-color: #475569 !important;
-}
-
-.dark-theme .border-gray-700 {
-  border-color: #64748b !important;
-}
-
-/* Cards and panels - ensure visibility */
-.dark-theme .skill-card,
-.dark-theme .project-card,
-.dark-theme .resume-panel {
-  background-color: #1e293b !important;
-  border-color: #475569 !important;
-}
-
-/* Buttons - ensure visibility */
-.dark-theme button:not(.btn-primary):not(.text-white):not(.more):not(.theme-color-swatch) {
-  color: #e5e7eb !important;
-  background-color: #334155 !important;
-}
-
-.dark-theme button:not(.btn-primary):not(.text-white):not(.more):not(.theme-color-swatch):hover {
-  background-color: #475569 !important;
-  color: #ffffff !important;
-}
+/* Global dark-mode utility overrides removed.
+   Tailwind `dark:` classes should control per-component colors. */
 
 /* View toggle buttons */
 .dark-theme .view-toggle-btn:not(.active) {
@@ -3776,29 +3033,12 @@ html {
   border-color: #475569 !important;
 }
 
-.dark-theme .project-card-modern h3,
-.dark-theme .project-card-modern p {
-  color: #e5e7eb !important;
-}
-
 /* Skills page - skill bars */
 .dark-theme .skill-bar-container .bg-gray-200 {
   background-color: #334155 !important;
 }
 
-/* Contact page form elements */
-.dark-theme .form-input,
-.dark-theme input,
-.dark-theme textarea {
-  background-color: rgba(30, 41, 59, 0.8) !important;
-  color: #e5e7eb !important;
-  border-color: rgba(71, 85, 105, 0.5) !important;
-}
-
-/* Ensure nothing is hidden */
-.dark-theme * {
-  visibility: visible !important;
-}
+/* Removed legacy global form and wildcard dark overrides. */
 
 /* Image embedded text - ensure contrast */
 .dark-theme img[alt*="text"],
@@ -4040,102 +3280,13 @@ body:not(.landing) select {
   border-color: var(--border-muted) !important;
 }
 
-/* Global light mode text color enforcement (non-landing pages) */
-body:not(.dark-theme):not(.landing),
-body:not(.dark-theme) body:not(.landing),
-body:not(.dark-theme) body:not(.landing) h1,
-body:not(.dark-theme) body:not(.landing) h2,
-body:not(.dark-theme) body:not(.landing) h3,
-body:not(.dark-theme) body:not(.landing) h4,
-body:not(.dark-theme) body:not(.landing) h5,
-body:not(.dark-theme) body:not(.landing) h6,
-body:not(.dark-theme) body:not(.landing) p,
-body:not(.dark-theme) body:not(.landing) span,
-body:not(.dark-theme) body:not(.landing) li,
-body:not(.dark-theme) body:not(.landing) label,
-body:not(.dark-theme) body:not(.landing) a,
-body:not(.dark-theme) body:not(.landing) div {
-  color: var(--text-primary) !important;
-}
+/* Removed broad body-level text forcing for non-landing pages.
+   These rules were overriding intended component-specific text colors. */
 
-/* Global dark mode text color enforcement (non-landing pages) */
-.dark-theme body:not(.landing),
-.dark-theme body:not(.landing) h1,
-.dark-theme body:not(.landing) h2,
-.dark-theme body:not(.landing) h3,
-.dark-theme body:not(.landing) h4,
-.dark-theme body:not(.landing) h5,
-.dark-theme body:not(.landing) h6,
-.dark-theme body:not(.landing) p,
-.dark-theme body:not(.landing) span,
-.dark-theme body:not(.landing) li,
-.dark-theme body:not(.landing) label,
-.dark-theme body:not(.landing) a,
-.dark-theme body:not(.landing) div {
-  color: var(--text-primary) !important;
-}
+/* Removed global header/nav text remapping overrides to prevent conflicts
+   with per-page Tailwind utility classes. */
 
-/* Ensure header/nav text is visible in light mode */
-body:not(.dark-theme) header a:not(.text-white):not(.text-primary),
-body:not(.dark-theme) nav a:not(.text-white):not(.text-primary) {
-  color: var(--text-primary) !important;
-}
-
-body:not(.dark-theme) header .text-gray-600,
-body:not(.dark-theme) nav .text-gray-600,
-body:not(.dark-theme) header .text-gray-700,
-body:not(.dark-theme) nav .text-gray-700 {
-  color: var(--text-primary) !important;
-}
-
-/* Light mode: prevent white utility text in headers/nav */
-body:not(.dark-theme) header .text-white,
-body:not(.dark-theme) nav .text-white,
-body:not(.dark-theme) footer .text-white {
-  color: var(--text-primary) !important;
-}
-
-body:not(.dark-theme) header .text-white\/70,
-body:not(.dark-theme) nav .text-white\/70,
-body:not(.dark-theme) footer .text-white\/70,
-body:not(.dark-theme) header .text-white\/80,
-body:not(.dark-theme) nav .text-white\/80,
-body:not(.dark-theme) footer .text-white\/80,
-body:not(.dark-theme) header .text-white\/60,
-body:not(.dark-theme) nav .text-white\/60,
-body:not(.dark-theme) footer .text-white\/60 {
-  color: var(--text-secondary) !important;
-}
-
-/* Dark mode: normalize gray text in headers/nav */
-.dark-theme header .text-gray-900,
-.dark-theme nav .text-gray-900,
-.dark-theme header .text-gray-800,
-.dark-theme nav .text-gray-800 {
-  color: var(--text-primary) !important;
-}
-
-.dark-theme header .text-gray-700,
-.dark-theme nav .text-gray-700,
-.dark-theme header .text-gray-600,
-.dark-theme nav .text-gray-600 {
-  color: var(--text-secondary) !important;
-}
-
-/* Dark mode: force readable text for common elements */
-.dark-theme body:not(.landing),
-.dark-theme body:not(.landing) h1,
-.dark-theme body:not(.landing) h2,
-.dark-theme body:not(.landing) h3,
-.dark-theme body:not(.landing) h4,
-.dark-theme body:not(.landing) h5,
-.dark-theme body:not(.landing) h6,
-.dark-theme body:not(.landing) p,
-.dark-theme body:not(.landing) span,
-.dark-theme body:not(.landing) li,
-.dark-theme body:not(.landing) label {
-  color: var(--text-primary) !important;
-}
+/* Removed duplicate dark-mode global text forcing block. */
 
 /* Journey timeline curved line + dots */
 .journey-line {
