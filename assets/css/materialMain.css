@@ -647,6 +647,10 @@ input, select, textarea {
 		.image:before {
 			pointer-events: none;
 			background-image: url("../images/overlay.png");
+			background-image: image-set(
+				url("../optimized-images/overlay.webp") type("image/webp"),
+				url("../images/overlay.png") type("image/png")
+			);
 			background-color: rgba(19, 21, 25, 0.5);
 			border-radius: 4px;
 			content: '';
@@ -1159,6 +1163,10 @@ input, select, textarea {
 			-ms-transition: -ms-transform 0.325s ease-in-out, -ms-filter 0.325s ease-in-out;
 			transition: transform 0.325s ease-in-out, filter 0.325s ease-in-out;
 			background-image: url("../images/dim_bg.jpg");
+			background-image: image-set(
+				url("../optimized-images/dim_bg.webp") type("image/webp"),
+				url("../images/dim_bg.jpg") type("image/jpeg")
+			);
 			background-position: center;
 			background-size: cover;
 			background-repeat: no-repeat;

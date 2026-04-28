@@ -938,6 +938,10 @@ html.dark-theme #filtered-projects .bg-white a {
 /* Homepage body - static background image for entire page */
 body.homepage-body {
   background-image: url("../images/com.jpg");
+  background-image: image-set(
+    url("../optimized-images/com.webp") type("image/webp"),
+    url("../images/com.jpg") type("image/jpeg")
+  );
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -3482,6 +3486,10 @@ body:not(.landing) select {
   width: 32px;
   height: 32px;
   background-image: url('../images/hourglass.png');
+  background-image: image-set(
+    url("../optimized-images/hourglass.webp") type("image/webp"),
+    url("../images/hourglass.png") type("image/png")
+  );
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

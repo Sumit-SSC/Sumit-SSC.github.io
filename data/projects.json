@@ -139,9 +139,9 @@
     "tools": ["Python", "pandas", "scikit-learn", "XGBoost", "Streamlit"],
     "category": "Machine Learning",
     "date": "2024",
-    "thumbnail": "assets/images/projects/used-car-price.png",
+    "thumbnail": "assets/images/project-snaps/used_car_price.png",
     "images": [
-      "assets/images/projects/used-car-price.png"
+      "assets/images/project-snaps/used_car_price.png"
     ],
     "video_url": "https://youtu.be/dQw4w9WgXcQ",
     "streamlit_url": "https://sumit-ml-capstone-project.streamlit.app/",
@@ -168,9 +168,9 @@
     "tools": ["SQL", "Python", "pandas", "XGBoost", "Power BI"],
     "category": "Decision Science",
     "date": "2024",
-    "thumbnail": "assets/images/projects/customer-churn.png",
+    "thumbnail": "assets/images/projects/churn-retention-analytics/01.jpg",
     "images": [
-      "assets/images/projects/customer-churn.png"
+      "assets/images/projects/churn-retention-analytics/01.jpg"
     ],
     "video_url": "",
     "streamlit_url": "",

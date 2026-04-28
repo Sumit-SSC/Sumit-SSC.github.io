@@ -697,9 +697,9 @@
   },
   "AutoKeras": {
     "slug": "autokeras",
-    "localPreferred": "../assets/images/icons-webp/autokeras.webp",
-    "localFallback": "../assets/images/icons/autokeras.png",
-    "cdn": "https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tensorflow.png"
+    "localPreferred": "../assets/images/icons/autokeras.svg",
+    "localFallback": "../assets/images/icons/autokeras.svg",
+    "cdn": "https://autokeras.com/img/row_red.svg"
   },
   "ydata-profiling": {
     "slug": "ydata-profiling",

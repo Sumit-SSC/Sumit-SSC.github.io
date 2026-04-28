@@ -1771,7 +1771,15 @@ function renderProject(project, caseStudy, contentFromFile) {
   const impactText = getImpactPreview(project);
   const ogTitle = `${project.title} | Sumit S. Chaure`;
   const ogDesc = truncateText(impactText || descriptionText, 170);
-  const ogImage = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
+  // Prefer a larger "hero" style image for previews (avoid using the low-res thumbnail on detail pages).
+  const preferredPreviewImage =
+    project.og_image ||
+    project.hero_image ||
+    project.banner ||
+    (Array.isArray(project.images) && project.images.length ? project.images[0] : '') ||
+    project.thumbnail ||
+    'assets/images/thumbs/01.jpg';
+  const ogImage = resolveAssetUrl(project, preferredPreviewImage);
   setMetaContent('meta[name="description"]', descriptionText || ogDesc);
   setMetaContent('meta[property="og:title"]', ogTitle);
   setMetaContent('meta[property="og:description"]', ogDesc);

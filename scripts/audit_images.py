@@ -64,7 +64,6 @@ def iter_source_files() -> list[Path]:
         "*.html",
         "assets/css/**/*.css",
         "archive/legacy/**/*.html",
-        "docs/**/*.md",
     ]
     files: list[Path] = []
     for pat in patterns:
