@@ -1,6 +1,6 @@
 const ADMIN_API_BASE = (window.__ADMIN_CONFIG__ && window.__ADMIN_CONFIG__.apiBase)
   ? window.__ADMIN_CONFIG__.apiBase
-  : "https://portfolio-admin-api.YOUR_SUBDOMAIN.workers.dev";
+  : "https://admin-api.sumit.indevs.in";
 
 const THEME_TOKENS = {
   textSize: ["sm", "base", "lg", "xl"],

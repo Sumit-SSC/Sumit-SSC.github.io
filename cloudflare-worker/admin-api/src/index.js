@@ -19,11 +19,11 @@
       }
 
       try {
-        // Optional redirect: allow `admin.sumit.indevs.in` to route to the admin UI,
+        // Optional redirect: allow dedicated admin hosts to route to the admin UI,
         // without requiring GitHub Pages to serve that hostname.
-        // This only works if Cloudflare routes `admin.sumit.indevs.in/*` to this Worker.
-        if (host === "admin.sumit.indevs.in") {
-          const target = env.ADMIN_UI_REDIRECT || "https://sumit.indevs.in/admin/index.html";
+        // This only works if Cloudflare routes these hosts to this Worker.
+        if (host === "admin.sumit.indevs.in" || host === "event.sumit.indevs.in") {
+          const target = env.ADMIN_UI_REDIRECT || "https://event.sumit.indevs.in/admin/index.html";
           const headers = new Headers();
           headers.set("Location", target);
           return new Response(null, { status: 302, headers });
@@ -422,7 +422,7 @@
     if (firstAllowedOrigin) {
       return `${firstAllowedOrigin}/admin/index.html`;
     }
-    return "https://sumit.indevs.in/admin/index.html";
+    return "https://event.sumit.indevs.in/admin/index.html";
   }
 
   const BACKUPS_DIR = "data/_admin_backups";

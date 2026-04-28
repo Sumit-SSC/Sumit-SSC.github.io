@@ -4,7 +4,7 @@ compatibility_date = "2026-04-01"
 
 [vars]
 ALLOWED_GITHUB_USERS = "Sumit-SC"
-ALLOWED_ORIGINS = "https://sumit.indevs.in,https://www.sumit.indevs.in,https://admin.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000,http://127.0.0.1:5501,http://localhost:5501"
+ALLOWED_ORIGINS = "https://event.sumit.indevs.in,https://sumit.indevs.in,https://www.sumit.indevs.in,https://admin.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000,http://127.0.0.1:5501,http://localhost:5501"
 # Must match GitHub Pages source branch. Set the same in Cloudflare Worker → Variables (Worker does not read this file when you paste code in the dashboard).
 CONTENT_BASE_BRANCH = "feature/cf-admin-editor-foundation"
 # Draft commits land here; override in Cloudflare if you rename the branch.
@@ -12,7 +12,7 @@ CONTENT_DRAFT_BRANCH = "content/drafts"
 GITHUB_REPO_OWNER = "Sumit-SC"
 GITHUB_REPO_NAME = "Sumit-SC.github.io"
 GITHUB_OAUTH_SCOPES = "read:user"
-ADMIN_SUCCESS_REDIRECT = "https://sumit.indevs.in/admin/index.html"
+ADMIN_SUCCESS_REDIRECT = "https://event.sumit.indevs.in/admin/index.html"
 
 # Add secrets with:
 # wrangler secret put GITHUB_CLIENT_ID

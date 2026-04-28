@@ -114,7 +114,7 @@
   </style>
   <script>
     window.__ADMIN_APP__ = {
-      siteOrigin: "https://sumit.indevs.in",
+      siteOrigin: window.location.origin,
       apiBase: "https://admin-api.sumit.indevs.in",
       pagesPrefix: "/pages/"
     };
@@ -197,7 +197,17 @@
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="about">About</button>
       </div>
       <div id="sidebar-record-lists">
-        <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">New page</p>
+        <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Create content</p>
+        <div class="mb-3 rounded-lg border border-slate-700 bg-slate-800/60 p-2 space-y-2">
+          <select id="new-record-kind" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs">
+            <option value="projects">Project</option>
+            <option value="caseStudies">Case study</option>
+          </select>
+          <input id="new-record-title" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs" placeholder="Title (e.g. Market Mix Modeling)" />
+          <input id="new-record-slug" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs" placeholder="Slug (optional, auto from title)" />
+          <p id="new-record-slug-hint" class="text-[10px] text-slate-400">Slug preview: -</p>
+          <button id="btn-create-record" type="button" class="w-full px-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium shadow-sm">Create draft</button>
+        </div>
         <button id="btn-new-project" type="button" class="w-full mb-3 px-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium shadow-sm">＋ New project</button>
         <p class="text-[10px] text-slate-500 mb-1">Projects</p>
         <ul id="admin-sortable-projects" class="space-y-1 mb-4"></ul>

@@ -1,6 +1,6 @@
 # Editor + Cloudflare Architecture (Phase Plan)
 
-This document is the implementation baseline for a secure `/dev` editor on top of a static site.
+This document is the implementation baseline for a secure `/admin` editor on top of a static site.
 
 ## Why this architecture
 
@@ -11,7 +11,7 @@ This document is the implementation baseline for a secure `/dev` editor on top o
 
 ## Core stack
 
-- Frontend: `dev/index.html` + `assets/js/admin-editor.js` (Editor.js + token controls)
+- Frontend: `admin/index.html` + `admin/editor.html` + `assets/js/admin-app.js`
 - Backend: `cloudflare-worker/admin-api` (OAuth/session/content write/upload)
 - Content source of truth: `data/*.json` and `data/*/*.html`
 - Deploy/build: GitHub Actions (validate + optional regenerate)

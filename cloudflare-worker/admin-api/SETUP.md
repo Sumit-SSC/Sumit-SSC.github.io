@@ -11,7 +11,7 @@ Use this folder as your copy-paste/deploy source for Cloudflare Worker admin API
 
 In GitHub -> Settings -> Developer settings -> OAuth Apps:
 
-- Homepage URL: `https://sumit.indevs.in`
+- Homepage URL: `https://event.sumit.indevs.in`
 - Authorization callback URL:
   - `https://admin-api.sumit.indevs.in/api/admin/auth/github/callback`
 
@@ -36,12 +36,12 @@ Notes:
 Update if needed:
 
 - `ALLOWED_GITHUB_USERS="Sumit-SC"`
-- `ALLOWED_ORIGINS="https://sumit.indevs.in,https://www.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000"`
+- `ALLOWED_ORIGINS="https://event.sumit.indevs.in,https://sumit.indevs.in,https://www.sumit.indevs.in,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000"`
 - `GITHUB_REPO_OWNER="Sumit-SC"`
 - `GITHUB_REPO_NAME="Sumit-SC.github.io"`
 - `CONTENT_BASE_BRANCH="feature/cf-admin-editor-foundation"`
 - `CONTENT_DRAFT_BRANCH="content/drafts"`
-- `ADMIN_SUCCESS_REDIRECT="https://sumit.indevs.in/dev/index.html"`
+- `ADMIN_SUCCESS_REDIRECT="https://event.sumit.indevs.in/admin/index.html"`
 
 ## 4) Deploy Worker
 
@@ -51,20 +51,22 @@ wrangler deploy
 
 ## 5) Update editor API base
 
-In `dev/index.html` set:
+In `admin/editor.html` set:
 
 ```js
-window.__ADMIN_CONFIG__ = {
-  apiBase: "https://admin-api.sumit.indevs.in"
+window.__ADMIN_APP__ = {
+  siteOrigin: window.location.origin,
+  apiBase: "https://admin-api.sumit.indevs.in",
+  pagesPrefix: "/pages/"
 };
 ```
 
 ## 6) Test flow
 
-1. Open `/dev/index.html`
+1. Open `/admin/index.html` or `/admin/editor.html`
 2. Click `Login (GitHub)`
 3. Check session
-4. Load target + slug (for projects/caseStudies use an existing `id`)
+4. Open a target from sidebar (or create from Create content form)
 5. Save Draft
 6. Upload image via `Upload Image (WebP)` button
 7. Confirm updates in `content/drafts` branch on GitHub

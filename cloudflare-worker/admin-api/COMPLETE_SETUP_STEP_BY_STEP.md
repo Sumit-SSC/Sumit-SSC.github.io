@@ -2,7 +2,7 @@
 
 This guide is the full end-to-end setup for your editor backend using:
 
-- Site domain: `https://sumit.indevs.in`
+- Site domain: `https://event.sumit.indevs.in`
 - Admin API domain: `https://admin-api.sumit.indevs.in`
 - Worker code: `cloudflare-worker/admin-api/src/index.js`
 
@@ -75,14 +75,14 @@ Worker -> **Settings** -> **Variables** -> **Environment Variables**
 Add:
 
 - `ALLOWED_GITHUB_USERS` = `Sumit-SC`
-- `ALLOWED_ORIGINS` = include at least: `https://sumit.indevs.in,https://www.sumit.indevs.in,https://admin.sumit.indevs.in` (plus localhost origins if you test locally — see `wrangler.toml`)
+- `ALLOWED_ORIGINS` = include at least: `https://event.sumit.indevs.in,https://sumit.indevs.in,https://www.sumit.indevs.in,https://admin.sumit.indevs.in` (plus localhost origins if you test locally — see `wrangler.toml`)
 - `CONTENT_BASE_BRANCH` = **your GitHub Pages source branch** (example: `feature/cf-admin-editor-foundation`).  
   **Required:** the Worker code no longer guesses a default; if this is missing, read/save will error. Change only this variable when you switch Pages branch—no code change needed.
 - `CONTENT_DRAFT_BRANCH` = `content/drafts`
 - `GITHUB_REPO_OWNER` = `Sumit-SC`
 - `GITHUB_REPO_NAME` = `Sumit-SC.github.io`
 - `GITHUB_OAUTH_SCOPES` = `read:user`
-- `ADMIN_SUCCESS_REDIRECT` = `https://sumit.indevs.in/admin/index.html` (where users return after GitHub OAuth)
+- `ADMIN_SUCCESS_REDIRECT` = `https://event.sumit.indevs.in/admin/index.html` (where users return after GitHub OAuth)
 
 Save changes.
 
@@ -95,7 +95,7 @@ GitHub -> **Settings** -> **Developer settings** -> **OAuth Apps** -> **New OAut
 Set:
 
 - **Application name**: `Portfolio Admin Editor` (or any name)
-- **Homepage URL**: `https://sumit.indevs.in`
+- **Homepage URL**: `https://event.sumit.indevs.in`
 - **Authorization callback URL**:
   - `https://admin-api.sumit.indevs.in/api/admin/auth/github/callback`
 
@@ -178,7 +178,7 @@ Push/deploy this frontend change to your site branch.
 After Worker is deployed and secrets/vars are set:
 
 1. Add `https://admin.sumit.indevs.in` to **`ALLOWED_ORIGINS`** (see `wrangler.toml`) and redeploy the Worker if needed.
-2. Open **`https://sumit.indevs.in/admin/index.html`** (or **`https://admin.sumit.indevs.in/`** after you add a DNS `admin` record to GitHub Pages).
+2. Open **`https://event.sumit.indevs.in/admin/index.html`** (or **`https://admin.sumit.indevs.in/`** if you keep that optional host).
 3. Use **Login** in the ribbon, then pick pages from the sidebar and edit in the right-hand inspector (titles + Editor.js). The center panel is a live iframe; you do not type `?admin_edit=1` yourself.
 
 See `docs/ADMIN_WORKSPACE.md` and `docs/PHASE_A_VISUAL_EDIT.md`.

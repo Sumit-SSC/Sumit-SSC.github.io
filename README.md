@@ -106,8 +106,8 @@ Test in any modern browser (Chrome, Edge, Firefox, Safari); everything is plain 
 
 ---
 
-## Dev editor scaffold
+## Admin editor workspace
 
-- Initial editor route is available at `dev/index.html`.
-- This is a foundation scaffold for the Cloudflare Worker-backed secure editor flow.
-- Before production use, finish OAuth/session/content-write implementation from `docs/EDITOR_TODO.md`.
+- Primary editor routes are `admin/index.html` and `admin/editor.html`.
+- The workspace is backed by Cloudflare Worker admin API (`admin-api.sumit.indevs.in`) for OAuth/session/save/publish.
+- Keep `docs/ADMIN_WORKSPACE.md` and `cloudflare-worker/admin-api/SETUP.md` as the canonical setup references.

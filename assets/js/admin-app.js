@@ -4,7 +4,7 @@
  */
 (function () {
   const cfg = window.__ADMIN_APP__ || {};
-  const SITE = (cfg.siteOrigin || "https://sumit.indevs.in").replace(/\/$/, "");
+  const SITE = (cfg.siteOrigin || window.location.origin || "https://sumit.indevs.in").replace(/\/$/, "");
   const API = (cfg.apiBase || "https://admin-api.sumit.indevs.in").replace(/\/$/, "");
   const PAGES = cfg.pagesPrefix || "/pages/";
 
@@ -1219,7 +1219,8 @@
     if (pSource) pSource.classList.toggle("hidden", !state.sourceMode || !(isHome || isRecord || isSettings));
     const showBlocksChrome = ((isHome && state.homeTab === "json") || isRecord) && !state.sourceMode;
     if (ribBlocksToolbar) ribBlocksToolbar.classList.toggle("hidden", !showBlocksChrome);
-    if (sideLists) sideLists.classList.toggle("hidden", state.kind === "dashboard" || isEditingRoute());
+    // Keep record lists visible while editing so navigation never feels "stuck".
+    if (sideLists) sideLists.classList.toggle("hidden", state.kind === "dashboard");
     const dhp = el("draft-history-panel");
     if (dhp) dhp.classList.toggle("hidden", !((isHome && state.homeTab === "json") || isRecord));
     const rrh = el("record-html-hint");
@@ -1904,6 +1905,17 @@
     return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   }
 
+  function updateNewRecordSlugHint() {
+    const titleEl = el("new-record-title");
+    const slugEl = el("new-record-slug");
+    const hintEl = el("new-record-slug-hint");
+    if (!hintEl) return;
+    const title = (titleEl?.value || "").trim();
+    const slugRaw = (slugEl?.value || "").trim();
+    const computed = cleanSlug(slugRaw || title);
+    hintEl.textContent = computed ? `Slug preview: ${computed}` : "Slug preview: -";
+  }
+
   function newRecordTemplate(kind, title, slug) {
     const isCase = kind === "caseStudies";
     return {
@@ -1952,16 +1964,16 @@
     };
   }
 
-  async function createNewRecord(kind) {
+  async function createNewRecord(kind, opts = {}) {
     const s = await apiSession();
     if (!s.ok) {
       setStatus("Login first.");
       return;
     }
     const label = kind === "projects" ? "project" : "case study";
-    const title = (window.prompt(`Title for your new ${label} (shown on the site):`) || "").trim();
+    const title = (opts.title || window.prompt(`Title for your new ${label} (shown on the site):`) || "").trim();
     if (!title) return;
-    const slugInput = (window.prompt(`URL slug (optional, e.g. my-analytics-project). Leave blank to derive from title:`) || "").trim();
+    const slugInput = (opts.slugInput || "").trim();
     const slug = cleanSlug(slugInput || title);
     if (!slug) {
       setStatus("Invalid slug.");
@@ -1990,6 +2002,11 @@
     buildSidebarLists(projects, cases);
     await applyRoute();
     setStatus(`Draft created for ${label}: ${slug}.`);
+    const titleEl = el("new-record-title");
+    const slugEl = el("new-record-slug");
+    if (titleEl) titleEl.value = "";
+    if (slugEl) slugEl.value = "";
+    updateNewRecordSlugHint();
   }
 
   function setHomeTabStyle(which) {
@@ -2091,6 +2108,20 @@
   el("btn-save-ui")?.addEventListener("click", saveHomeUi);
   el("btn-new-project")?.addEventListener("click", () => createNewRecord("projects"));
   el("btn-new-case")?.addEventListener("click", () => createNewRecord("caseStudies"));
+  el("new-record-title")?.addEventListener("input", updateNewRecordSlugHint);
+  el("new-record-slug")?.addEventListener("input", updateNewRecordSlugHint);
+  el("new-record-kind")?.addEventListener("change", updateNewRecordSlugHint);
+  el("btn-create-record")?.addEventListener("click", async () => {
+    const kind = el("new-record-kind")?.value === "caseStudies" ? "caseStudies" : "projects";
+    const title = (el("new-record-title")?.value || "").trim();
+    const slugInput = (el("new-record-slug")?.value || "").trim();
+    if (!title) {
+      setStatus("Enter a title to create a draft.");
+      return;
+    }
+    await createNewRecord(kind, { title, slugInput });
+  });
+  updateNewRecordSlugHint();
 
   async function apiPublish(target) {
     const res = await fetch(`${API}/api/admin/content/publish`, {
