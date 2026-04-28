@@ -378,6 +378,8 @@
       }
     }
 
+    const traffic = await getCloudflareTrafficLast24h(env);
+
     return json({
       ok: true,
       generatedAtUtc: new Date().toISOString(),
@@ -388,13 +390,85 @@
       },
       deploy: {
         baseBranch,
+        draftBranch: env.CONTENT_DRAFT_BRANCH || "content/drafts",
         lastCommit
       },
-      traffic: {
-        cfLast24h: null,
-        note: "Cloudflare traffic analytics API not configured yet."
-      }
+      traffic
     });
+  }
+
+  async function getCloudflareTrafficLast24h(env) {
+    const apiToken = env.CF_ANALYTICS_API_TOKEN;
+    const accountTag = env.CF_ACCOUNT_ID;
+    const zoneTag = env.CF_ZONE_ID || env.CF_ZONE_TAG;
+    if (!apiToken || !accountTag || !zoneTag) {
+      return {
+        cfLast24h: null,
+        note: "Cloudflare analytics not configured. Set CF_ANALYTICS_API_TOKEN, CF_ACCOUNT_ID, and CF_ZONE_ID."
+      };
+    }
+
+    const now = Date.now();
+    const since = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+    const until = new Date(now).toISOString();
+
+    const query = `
+      query GetZoneTraffic($accountTag: String!, $zoneTag: String!, $since: Time!, $until: Time!) {
+        viewer {
+          accounts(filter: { accountTag: $accountTag }) {
+            zones(filter: { zoneTag: $zoneTag }) {
+              httpRequests1hGroups(
+                limit: 24
+                filter: { datetime_geq: $since, datetime_lt: $until }
+              ) {
+                sum {
+                  requests
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    try {
+      const res = await fetch("https://api.cloudflare.com/client/v4/graphql", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${apiToken}`
+        },
+        body: JSON.stringify({
+          query,
+          variables: { accountTag, zoneTag, since, until }
+        })
+      });
+
+      if (!res.ok) {
+        return {
+          cfLast24h: null,
+          note: `Cloudflare analytics HTTP ${res.status}`
+        };
+      }
+
+      const body = await res.json();
+      if (Array.isArray(body?.errors) && body.errors.length) {
+        return {
+          cfLast24h: null,
+          note: `Cloudflare analytics error: ${body.errors[0]?.message || "unknown"}`
+        };
+      }
+
+      const groups =
+        body?.data?.viewer?.accounts?.[0]?.zones?.[0]?.httpRequests1hGroups || [];
+      const cfLast24h = groups.reduce((sum, row) => sum + Number(row?.sum?.requests || 0), 0);
+      return { cfLast24h, note: null };
+    } catch (error) {
+      return {
+        cfLast24h: null,
+        note: `Cloudflare analytics fetch failed: ${error?.message || "unknown"}`
+      };
+    }
   }
 
   function isUserAllowed(login, allowListRaw) {

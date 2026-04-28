@@ -15,9 +15,27 @@
     </header>
 
     <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
+      <h2 class="text-sm font-semibold mb-2">Preflight checks</h2>
+      <div class="grid md:grid-cols-4 gap-2 text-xs mb-3">
+        <div class="rounded border border-slate-700 px-2 py-1">API: <span id="check-api" class="text-slate-200">Checking…</span></div>
+        <div class="rounded border border-slate-700 px-2 py-1">Gate: <span id="check-gate" class="text-slate-200">Checking…</span></div>
+        <div class="rounded border border-slate-700 px-2 py-1">Session: <span id="check-session" class="text-slate-200">Checking…</span></div>
+        <div class="rounded border border-slate-700 px-2 py-1">Stats: <span id="check-stats" class="text-slate-200">Checking…</span></div>
+      </div>
+    </section>
+
+    <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
       <h2 class="text-sm font-semibold mb-2">Session</h2>
       <p id="home-session" class="text-sm text-slate-300">Checking session…</p>
       <p id="home-server-time" class="text-xs text-slate-400 mt-1"></p>
+      <div class="mt-2 grid md:grid-cols-2 gap-2 text-xs">
+        <div class="rounded border border-slate-700 px-2 py-1">
+          API status: <span id="api-health" class="text-slate-200">Checking…</span>
+        </div>
+        <div class="rounded border border-slate-700 px-2 py-1">
+          Admin gate: <span id="gate-status" class="text-slate-200">Checking…</span>
+        </div>
+      </div>
       <div class="mt-3 flex flex-wrap gap-2">
         <button id="btn-unlock" class="rounded bg-indigo-700 hover:bg-indigo-600 px-3 py-2 text-sm">Unlock Admin</button>
         <button id="btn-login" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Login</button>
@@ -40,6 +58,15 @@
         <div class="rounded border border-slate-700 p-3 md:col-span-2">
           <p class="text-slate-400 text-xs">Last repo update (IST)</p>
           <p id="stat-last-update" class="text-slate-100">-</p>
+          <p id="stat-last-message" class="text-xs text-slate-400 mt-1">-</p>
+        </div>
+        <div class="rounded border border-slate-700 p-3">
+          <p class="text-slate-400 text-xs">Base branch</p>
+          <p id="stat-base-branch" class="text-slate-100">-</p>
+        </div>
+        <div class="rounded border border-slate-700 p-3">
+          <p class="text-slate-400 text-xs">Draft branch</p>
+          <p id="stat-draft-branch" class="text-slate-100">-</p>
         </div>
         <div class="rounded border border-slate-700 p-3 md:col-span-2">
           <p class="text-slate-400 text-xs">Cloudflare traffic</p>
@@ -51,16 +78,29 @@
     <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
       <h2 class="text-sm font-semibold mb-2">Workspace</h2>
       <p class="text-sm text-slate-300">Open the full editor workspace (dashboard + page lists + preview + block/text editor).</p>
-      <div class="mt-3">
+      <div class="mt-3 flex flex-wrap gap-2">
         <a href="./editor.html" class="inline-block rounded bg-indigo-700 hover:bg-indigo-600 px-4 py-2 text-sm font-semibold">Open Studio</a>
+        <a href="https://sumit.indevs.in" target="_blank" rel="noopener noreferrer" class="inline-block rounded bg-slate-700 hover:bg-slate-600 px-4 py-2 text-sm">Open Live Site</a>
+        <a href="https://admin-api.sumit.indevs.in/api/admin/health" target="_blank" rel="noopener noreferrer" class="inline-block rounded bg-slate-700 hover:bg-slate-600 px-4 py-2 text-sm">API Health JSON</a>
+      </div>
+    </section>
+
+    <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <h2 class="text-sm font-semibold">Recent editor commits</h2>
+        <button id="btn-refresh-commits" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-1.5 text-xs">Refresh commits</button>
+      </div>
+      <p class="text-xs text-slate-400 mb-2">Latest draft-branch commits for homepage, projects, and case studies.</p>
+      <div id="recent-commits" class="space-y-2 text-sm">
+        <p class="text-slate-400">Loading commit history…</p>
       </div>
     </section>
 
     <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4">
       <h2 class="text-sm font-semibold mb-2">Quick links</h2>
       <div class="flex flex-wrap gap-2 text-sm">
-        <a class="rounded bg-slate-800 hover:bg-slate-700 px-3 py-1.5" href="https://event.sumit.indevs.in/admin/index.html">Admin home URL</a>
-        <a class="rounded bg-slate-800 hover:bg-slate-700 px-3 py-1.5" href="https://event.sumit.indevs.in/admin/editor.html">Editor URL</a>
+        <a class="rounded bg-slate-800 hover:bg-slate-700 px-3 py-1.5" href="https://admin.sumit.indevs.in/admin/index.html">Admin home URL</a>
+        <a class="rounded bg-slate-800 hover:bg-slate-700 px-3 py-1.5" href="https://admin.sumit.indevs.in/admin/editor.html">Editor URL</a>
       </div>
     </section>
   </main>
@@ -80,21 +120,56 @@
         if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
         return `${(n / (1024 * 1024)).toFixed(2)} MB`;
       }
+      function setCheck(id, ok, detailOk = "OK", detailFail = "Issue") {
+        const node = el(id);
+        if (!node) return;
+        node.textContent = ok ? detailOk : detailFail;
+        node.className = ok ? "text-emerald-300" : "text-rose-300";
+      }
+      function fmtIst(iso) {
+        if (!iso) return "-";
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso;
+        return d.toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        });
+      }
+      async function refreshHealth() {
+        try {
+          const r = await fetch(`${API}/api/admin/health`, { credentials: "include" });
+          el("api-health").textContent = r.ok ? "Healthy" : `HTTP ${r.status}`;
+          setCheck("check-api", r.ok, "Healthy", `HTTP ${r.status}`);
+        } catch (e) {
+          el("api-health").textContent = `Error: ${String(e && e.message ? e.message : e)}`;
+          setCheck("check-api", false, "Healthy", "Offline");
+        }
+      }
       async function refreshSession() {
         try {
           const res = await fetch(`${API}/api/admin/session`, { credentials: "include" });
           const s = await res.json();
           el("home-session").textContent = s.ok ? `Signed in as ${loginName(s) || "unknown"} (${s.role || "admin"})` : "Not signed in";
           el("home-server-time").textContent = s.serverTimeIst ? `Server IST: ${s.serverTimeIst}` : "";
+          setCheck("check-session", !!s.ok, "Signed in", "Not signed in");
         } catch (e) {
           el("home-session").textContent = "Session check failed";
           el("home-server-time").textContent = String(e && e.message ? e.message : e);
+          setCheck("check-session", false, "Signed in", "Failed");
         }
       }
 
       async function ensureGate() {
         try {
           const g = await fetch(`${API}/api/admin/gate/status`, { credentials: "include" }).then((r) => r.json());
+          el("gate-status").textContent = !g.ok ? "Unknown" : (!g.required ? "Disabled" : (g.verified ? "Verified" : "Locked"));
+          setCheck("check-gate", !!g.ok && (!g.required || g.verified), !g.required ? "Disabled" : "Verified", "Locked");
           if (!g.ok || !g.required || g.verified) return true;
           for (let i = 0; i < 3; i += 1) {
             const pwd = window.prompt("Enter admin password:");
@@ -110,6 +185,7 @@
           el("home-session").textContent = "Admin password required before login/session.";
           return false;
         } catch {
+          setCheck("check-gate", false, "Verified", "Unknown");
           return false;
         }
       }
@@ -119,15 +195,64 @@
           const d = await fetch(`${API}/api/admin/stats`, { credentials: "include" }).then((r) => r.json());
           if (!d.ok) {
             el("stat-last-update").textContent = d.error || "Stats unavailable";
+            el("stat-last-message").textContent = "-";
+            setCheck("check-stats", false, "Loaded", "Unavailable");
             return;
           }
           el("stat-html-count").textContent = String(d.pages?.htmlCount ?? "-");
           el("stat-html-size").textContent = fmtBytes(d.pages?.totalHtmlBytes || 0);
           const lc = d.deploy?.lastCommit;
           el("stat-last-update").textContent = lc ? `${lc.atIst || "-"} (${(lc.sha || "").slice(0, 7)})` : "-";
+          el("stat-last-message").textContent = lc?.message || "-";
+          el("stat-base-branch").textContent = d.deploy?.baseBranch || "-";
+          el("stat-draft-branch").textContent = d.deploy?.draftBranch || "content/drafts";
           el("stat-traffic").textContent = d.traffic?.cfLast24h != null ? String(d.traffic.cfLast24h) : (d.traffic?.note || "Not configured");
+          setCheck("check-stats", true, "Loaded", "Unavailable");
         } catch (e) {
           el("stat-last-update").textContent = String(e && e.message ? e.message : e);
+          el("stat-last-message").textContent = "-";
+          setCheck("check-stats", false, "Loaded", "Error");
+        }
+      }
+
+      async function refreshRecentCommits() {
+        const root = el("recent-commits");
+        const targets = [
+          { id: "homepage", label: "Homepage" },
+          { id: "projects", label: "Projects" },
+          { id: "caseStudies", label: "Case studies" }
+        ];
+        root.innerHTML = "<p class=\"text-slate-400\">Loading commit history…</p>";
+        try {
+          const rows = [];
+          for (const t of targets) {
+            const res = await fetch(`${API}/api/admin/content/commits?target=${encodeURIComponent(t.id)}&per_page=3`, { credentials: "include" });
+            const data = await res.json();
+            if (!data.ok || !Array.isArray(data.commits)) continue;
+            for (const c of data.commits) {
+              rows.push({
+                target: t.label,
+                shortSha: c.shortSha || String(c.sha || "").slice(0, 7),
+                message: c.message || "(no message)",
+                date: c.date || "",
+                author: c.author || ""
+              });
+            }
+          }
+          rows.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          const top = rows.slice(0, 8);
+          if (!top.length) {
+            root.innerHTML = "<p class=\"text-slate-400\">No recent editor commits found yet.</p>";
+            return;
+          }
+          root.innerHTML = top.map((r) => (
+            `<div class="rounded border border-slate-700 p-2">
+              <p class="text-slate-200">${r.message}</p>
+              <p class="text-xs text-slate-400 mt-1">${r.target} • ${r.shortSha} • ${r.author || "unknown"} • ${fmtIst(r.date)}</p>
+            </div>`
+          )).join("");
+        } catch (e) {
+          root.innerHTML = `<p class="text-rose-300">Commit history unavailable: ${String(e && e.message ? e.message : e)}</p>`;
         }
       }
 
@@ -151,10 +276,19 @@
         const ok = await ensureGate();
         if (!ok) return;
         await refreshSession();
+        await refreshHealth();
         await refreshStats();
+        await refreshRecentCommits();
       });
+      el("btn-refresh-commits").addEventListener("click", async () => {
+        const ok = await ensureGate();
+        if (!ok) return;
+        await refreshRecentCommits();
+      });
+      refreshHealth();
       refreshSession();
       refreshStats();
+      refreshRecentCommits();
     })();
   </script>
 </body>

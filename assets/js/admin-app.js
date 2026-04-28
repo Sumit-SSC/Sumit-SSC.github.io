@@ -1414,6 +1414,13 @@
     }
   }
 
+  function isLongHtmlRecordEditorData(editorData) {
+    const blocks = Array.isArray(editorData?.blocks) ? editorData.blocks : [];
+    const codeBlock = blocks.find((b) => b.type === "code");
+    const code = String(codeBlock?.data?.code || "");
+    return code.length > 120 && (looksLikeHtml(code) || /Original HTML|content file|Record HTML/i.test(code));
+  }
+
   async function loadRecordEditor(target, slug, source = "auto", ref = "") {
     const label = el("record-label");
     if (label) label.textContent = `${target === "projects" ? "Project" : "Case study"} · ${slug}`;
@@ -1454,10 +1461,22 @@
       return;
     }
     setRecordAuthBanner(false, "");
-    await mountEditor("admin-editor-holder", data.editorData || getDefaultEditorData());
+    const nextEditorData = data.editorData || getDefaultEditorData();
+    await mountEditor("admin-editor-holder", nextEditorData);
     state.draftDirty = false;
     setAutosaveStateLabel("Auto-save: on", "ok");
-    updateRecordHtmlHint(data.editorData || getDefaultEditorData());
+    updateRecordHtmlHint(nextEditorData);
+    if (isLongHtmlRecordEditorData(nextEditorData)) {
+      const sourceSel = el("source-format");
+      if (sourceSel) sourceSel.value = "record-html";
+      if (!state.sourceMode) {
+        state.sourceMode = true;
+        showPanels();
+        await openSourceMode();
+        setStatus("Loaded full page HTML in Text mode for line-by-line editing.");
+        return;
+      }
+    }
     setStatus("Loaded — Save draft, then Publish to live to update the public site.");
   }
 
@@ -1788,6 +1807,35 @@
     el("btn-source-reload")?.addEventListener("click", async () => {
       await openSourceMode();
     });
+    el("source-format")?.addEventListener("change", async () => {
+      if (!state.sourceMode) return;
+      await openSourceMode();
+    });
+    el("btn-source-main-html")?.addEventListener("click", async () => {
+      await setSourceFormatAndReload("record-html");
+    });
+    el("btn-source-record-json")?.addEventListener("click", async () => {
+      await setSourceFormatAndReload("record-json");
+    });
+    el("btn-source-whole-file")?.addEventListener("click", async () => {
+      await setSourceFormatAndReload("file");
+    });
+    el("btn-source-format-doc")?.addEventListener("click", async () => {
+      if (!state.sourceMode) {
+        await openSourceMode();
+      }
+      if (!monacoEditor || !window.monaco) {
+        setStatus("Text editor not ready for formatting yet.");
+        return;
+      }
+      const action = monacoEditor.getAction("editor.action.formatDocument");
+      if (!action) {
+        setStatus("Formatter unavailable for current mode.");
+        return;
+      }
+      await action.run();
+      setStatus("Formatted current document.");
+    });
 
     document.querySelectorAll(".rib-ins").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -2035,8 +2083,15 @@
       opt.disabled = !show;
     });
 
-    if (isRecord && sel.value === "homepage-text") sel.value = "auto";
+    if (isRecord && (sel.value === "homepage-text" || sel.value === "auto")) sel.value = "record-html";
     if (isHomeContent && (sel.value === "record-html" || sel.value === "record-json")) sel.value = "homepage-text";
+  }
+
+  async function setSourceFormatAndReload(nextValue) {
+    const sel = el("source-format");
+    if (!sel) return;
+    sel.value = nextValue;
+    await openSourceMode();
   }
 
   function wireInspectorTabs() {

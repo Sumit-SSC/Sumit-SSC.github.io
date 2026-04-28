@@ -13,9 +13,13 @@ GITHUB_REPO_OWNER = "Sumit-SC"
 GITHUB_REPO_NAME = "Sumit-SC.github.io"
 GITHUB_OAUTH_SCOPES = "read:user"
 ADMIN_SUCCESS_REDIRECT = "https://event.sumit.indevs.in/admin/index.html"
+# Optional Cloudflare analytics (for dashboard traffic card)
+# CF_ACCOUNT_ID = "<cloudflare-account-id>"
+# CF_ZONE_ID = "<zone-id-for-sumit.indevs.in>"
 
 # Add secrets with:
 # wrangler secret put GITHUB_CLIENT_ID
 # wrangler secret put GITHUB_CLIENT_SECRET
 # wrangler secret put GITHUB_TOKEN_FOR_CONTENT_WRITES
 # wrangler secret put SESSION_SIGNING_KEY
+# wrangler secret put CF_ANALYTICS_API_TOKEN
