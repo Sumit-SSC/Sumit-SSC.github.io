@@ -25,20 +25,22 @@
   let blockNavSortable = null;
 
   const state = {
-    kind: "dashboard",
+    kind: "projects-home",
     target: "homepage",
     slug: "",
     homeTab: "json",
     editWorkspace: false,
     compactListsOnSelect: true,
-    centerPreviewMode: "live",
-    sourceMode: true,
+    sidebarManagerOpen: false,
+    centerPreviewMode: "draft",
+    sourceMode: false,
     draftDirty: false
   };
   let monacoEditor = null;
   let monacoReady = null;
   let sourceDoc = { target: "", slug: "", mode: "file", language: "json" };
   const LS_SOURCE_PREFS = "admin_source_prefs_v1";
+  const LS_SIMPLE_MODE = "admin_simple_mode_v1";
   const localDraftRecords = {
     projects: [],
     caseStudies: []
@@ -47,6 +49,22 @@
   let cachedSiteCases = [];
 
   const el = (id) => document.getElementById(id);
+
+  function getSimpleModePref() {
+    try {
+      const raw = localStorage.getItem(LS_SIMPLE_MODE);
+      if (raw == null) return true;
+      return raw !== "0";
+    } catch (_) {
+      return true;
+    }
+  }
+
+  function setSimpleModePref(on) {
+    try {
+      localStorage.setItem(LS_SIMPLE_MODE, on ? "1" : "0");
+    } catch (_) {}
+  }
 
   function getSourcePrefs() {
     try {
@@ -276,6 +294,46 @@
     if (dash) dash.textContent = sess && sess.ok ? `GitHub: ${login || "unknown"} | role: ${role}` : "Not signed in. Click Login.";
   }
 
+  function applySimpleModeUi() {
+    const more = el("rib-more");
+    const pill = el("rib-simple-pill");
+    const toggle = el("rib-toggle-simple-mode");
+    const on = getSimpleModePref();
+    if (more) {
+      more.classList.toggle("hidden", on);
+      if (on && typeof more.removeAttribute === "function") more.removeAttribute("open");
+    }
+    if (pill) pill.classList.toggle("hidden", !on);
+    if (toggle) toggle.textContent = `Simple mode: ${on ? "on" : "off"}`;
+    if (on && state.sourceMode) {
+      closeSourceMode();
+      applyRoute();
+    }
+    if (on && state.kind !== "projects-home" && state.kind !== "project" && state.kind !== "caseStudy") {
+      state.kind = "projects-home";
+      state.homeTab = "json";
+      highlightNav();
+      applyRoute();
+    }
+    applySidebarManagerUi();
+  }
+
+  function applySidebarManagerUi() {
+    const simple = getSimpleModePref();
+    const toggle = el("sidebar-manager-toggle");
+    const lists = el("sidebar-record-lists");
+    const quickRoutes = new Set(["projects-home"]);
+    document.querySelectorAll(".nav-item").forEach((btn) => {
+      const route = btn.getAttribute("data-route") || "";
+      btn.classList.toggle("hidden", simple && !quickRoutes.has(route));
+    });
+    if (toggle) {
+      toggle.classList.toggle("hidden", !simple);
+      toggle.textContent = state.sidebarManagerOpen ? "Hide page manager" : "Open page manager";
+    }
+    if (lists) lists.classList.toggle("hidden", simple && !state.sidebarManagerOpen);
+  }
+
   function getSessionLogin(sessionData) {
     const u = sessionData && sessionData.user;
     if (!u) return "";
@@ -377,11 +435,7 @@
       if (b.type === "list") {
         const items = b.data.items;
         if (Array.isArray(items)) {
-          const fixed = items.map((it) => {
-            if (typeof it === "string") return it;
-            if (it && typeof it.content === "string") return it.content;
-            return String(it || "");
-          });
+          const fixed = items.map((it) => normalizeListItemText(it));
           blocks.push({ type: "list", data: { ...b.data, style: b.data.style || "unordered", items: fixed } });
           continue;
         }
@@ -401,6 +455,17 @@
       .replace(/<[^>]*>/g, " ")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function normalizeListItemText(item) {
+    if (typeof item === "string") return item;
+    if (item && typeof item.content === "string") return item.content;
+    if (item && typeof item.text === "string") return item.text;
+    if (item && typeof item === "object") {
+      const nested = item.content || item.text || item.value || "";
+      if (typeof nested === "string") return nested;
+    }
+    return String(item || "");
   }
 
   function looksLikeHtml(s) {
@@ -582,7 +647,7 @@
         const cls = tag === "ol" ? "list-decimal" : "list-disc";
         out.push(
           `<div data-block-index="${i}" data-block-type="list" class="preview-block mb-5 cursor-pointer font-serif text-gray-800 pl-4"><${tag} class="${cls} space-y-2">${items
-            .map((it) => `<li>${escHtml(typeof it === "string" ? it : String(it || ""))}</li>`)
+            .map((it) => `<li>${escHtml(normalizeListItemText(it))}</li>`)
             .join("")}</${tag}></div>`
         );
       } else if (b?.type === "image") {
@@ -1050,7 +1115,7 @@
         const items = Array.isArray(data.items) ? data.items : [];
         const ordered = data.style === "ordered";
         items.forEach((item, idx) => {
-          const txt = stripHtml(typeof item === "string" ? item : String(item || "")).trim();
+          const txt = stripHtml(normalizeListItemText(item)).trim();
           if (txt) lines.push(ordered ? `${idx + 1}. ${txt}` : `- ${txt}`);
         });
         lines.push("");
@@ -1155,7 +1220,15 @@
     }
     state.sourceMode = true;
     showPanels();
-    await ensureMonaco();
+    try {
+      await ensureMonaco();
+    } catch (_) {
+      state.sourceMode = false;
+      showPanels();
+      setStatus("Advanced text editor failed to load. Switched to simple Blocks editor.");
+      await applyRoute();
+      return;
+    }
     const holder = el("source-editor-holder");
     if (!holder) return;
     const effectiveMode = req.mode === "auto" ? resolveAutoSourceMode(req) : req.mode;
@@ -1209,13 +1282,13 @@
       window.monaco.editor.setTheme(prefs.theme);
     }
     syncSourcePrefsUi();
-    setStatus(`Text editor ready (${sourceDoc.mode}). Edit, Save draft, then Publish.`);
+    setStatus(`Advanced editor ready (${sourceDoc.mode}). Edit, Save draft, then Publish.`);
   }
 
   function closeSourceMode() {
     state.sourceMode = false;
     showPanels();
-    setStatus("Block editor mode. Switch back to Text for raw content editing.");
+    setStatus("Simple Blocks mode.");
   }
 
   function setIframe(path, bustCache = false) {
@@ -1510,13 +1583,8 @@
     if (isLongHtmlRecordEditorData(nextEditorData)) {
       const sourceSel = el("source-format");
       if (sourceSel) sourceSel.value = "record-html";
-      if (!state.sourceMode) {
-        state.sourceMode = true;
-        showPanels();
-        await openSourceMode();
-        setStatus("Loaded full page HTML in Text mode for line-by-line editing.");
-        return;
-      }
+      setStatus("Loaded in simple Blocks mode. Use Text only for advanced HTML editing.");
+      return;
     }
     setStatus("Loaded — Save draft, then Publish to live to update the public site.");
   }
@@ -1638,7 +1706,7 @@
 
   async function ribPreview() {
     if (state.sourceMode) {
-      setStatus("Text mode active: use center preview toggles, or switch to Blocks for visual preview.");
+      setStatus("Advanced mode active: use center preview toggles, or switch to Blocks for visual preview.");
       return;
     }
     if ((state.kind === "projects-home" && state.homeTab === "json") || state.kind === "project" || state.kind === "caseStudy") {
@@ -1837,6 +1905,14 @@
       updateSessionUi(d);
       setStatus(d.ok ? `Session: ${login || "ok"}` : "No session");
     });
+    el("rib-toggle-simple-mode")?.addEventListener("click", () => {
+      const next = !getSimpleModePref();
+      setSimpleModePref(next);
+      applySimpleModeUi();
+      setStatus(next ? "Simple mode enabled." : "Simple mode disabled. Advanced tools available.");
+      const accountMenu = document.querySelector("details.rib-account");
+      if (accountMenu && typeof accountMenu.removeAttribute === "function") accountMenu.removeAttribute("open");
+    });
     el("rib-refresh")?.addEventListener("click", () => {
       const f = el("admin-preview");
       if (f && f.src) f.src = f.src;
@@ -1855,6 +1931,13 @@
     });
     el("btn-mode-source")?.addEventListener("click", async () => {
       await openSourceMode();
+    });
+    el("rib-open-advanced")?.addEventListener("click", async () => {
+      setSimpleModePref(false);
+      applySimpleModeUi();
+      await openSourceMode();
+      const more = el("rib-more");
+      if (more && typeof more.removeAttribute === "function") more.removeAttribute("open");
     });
     el("btn-source-reload")?.addEventListener("click", async () => {
       await openSourceMode();
@@ -2253,6 +2336,10 @@
     compact?.addEventListener("change", () => {
       state.compactListsOnSelect = !!compact.checked;
       buildSidebarLists(cachedSiteProjects, cachedSiteCases);
+    });
+    el("sidebar-manager-toggle")?.addEventListener("click", () => {
+      state.sidebarManagerOpen = !state.sidebarManagerOpen;
+      applySidebarManagerUi();
     });
   }
 
@@ -2766,6 +2853,7 @@
     wireNav();
     wireWorkspacePrefs();
     wireKeyboardShortcuts();
+    applySimpleModeUi();
     syncSourcePrefsUi();
     setStatus("Loading site index…");
     try {
