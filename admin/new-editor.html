@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New Admin Editor</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --primary: #4f46e5;
+      --good: #059669;
+      --warn: #b45309;
+      --bad: #b91c1c;
+    }
+    body.theme-dark {
+      --bg: #0b1220;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --primary: #6366f1;
+      --good: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      min-height: 100vh;
+      gap: 12px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .left {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 10px;
+      min-height: 0;
+    }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    button, select, input, textarea {
+      font: inherit;
+      color: inherit;
+    }
+    button, select, input {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    button.primary { background: var(--primary); color: #fff; border-color: transparent; }
+    button.good { background: var(--good); color: #fff; border-color: transparent; }
+    button.bad { background: var(--bad); color: #fff; border-color: transparent; }
+    button.warn { background: var(--warn); color: #fff; border-color: transparent; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    textarea {
+      width: 100%;
+      min-height: 360px;
+      resize: vertical;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      box-sizing: border-box;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .small { font-size: 12px; color: var(--muted); }
+    .status { font-size: 13px; color: var(--muted); min-height: 18px; }
+    .commit-list { max-height: 260px; overflow: auto; display: grid; gap: 6px; }
+    .commit-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 12px;
+    }
+    .badge { padding: 2px 6px; border-radius: 999px; font-size: 11px; border: 1px solid var(--line); }
+    .b-healthy { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
+    .b-broken { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
+    .b-needs { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+    iframe {
+      width: 100%;
+      height: calc(100vh - 26px);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      iframe { height: 60vh; }
+    }
+  </style>
+</head>
+<body class="theme-light">
+  <div class="app">
+    <section class="left">
+      <div class="panel">
+        <div class="row">
+          <strong>New JSON Editor</strong>
+          <button id="btn-theme" type="button">Dark mode</button>
+        </div>
+        <p class="small">Simple, JSON-first editor. Save draft -> Publish -> Open live.</p>
+        <div id="status" class="status"></div>
+      </div>
+
+      <div class="panel">
+        <div class="row">
+          <input id="gate-password" type="password" placeholder="Admin password" />
+          <button id="btn-unlock" type="button">Unlock</button>
+          <button id="btn-login" type="button" class="primary">Login GitHub</button>
+          <button id="btn-logout" type="button">Logout</button>
+        </div>
+        <p id="session-line" class="small">Session: checking...</p>
+      </div>
+
+      <div class="panel" style="display:grid; gap:10px; min-height:0;">
+        <div class="row">
+          <label for="target">Data file</label>
+          <select id="target">
+            <option value="homepage">homepage-content.json</option>
+            <option value="homepageUi">homepage-ui.json</option>
+            <option value="projects">projects.json</option>
+            <option value="caseStudies">case_studies.json</option>
+          </select>
+          <button id="btn-load" type="button">Load</button>
+        </div>
+        <textarea id="json-editor" spellcheck="false"></textarea>
+        <div class="row">
+          <button id="btn-save" type="button" class="good">Save draft</button>
+          <button id="btn-publish" type="button" class="primary">Publish live</button>
+          <button id="btn-open-live" type="button">Open live</button>
+          <label class="small"><input id="autosave" type="checkbox" checked /> Autosave</label>
+        </div>
+        <div class="row">
+          <select id="backup-select"></select>
+          <button id="btn-refresh-backups" type="button">Refresh backups</button>
+          <button id="btn-restore" type="button" class="warn">Restore backup</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="row">
+          <strong>Commit health</strong>
+          <button id="btn-refresh-commits" type="button">Refresh commits</button>
+          <button id="btn-mark-all-healthy" type="button" class="good">Mark listed healthy</button>
+        </div>
+        <div id="commit-list" class="commit-list"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <iframe id="live-preview" title="Live preview"></iframe>
+    </section>
+  </div>
+  <script src="./new-editor.js?v=20260504-01"></script>
+</body>
+</html>
