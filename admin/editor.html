@@ -198,6 +198,7 @@
       <div class="space-y-2 mb-4">
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="dashboard">Dashboard</button>
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="projects-home">Homepage</button>
+        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="data-files">Data files</button>
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="settings">Theme</button>
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="case-archive">Case archive</button>
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="about">About</button>
@@ -355,6 +356,10 @@
       <div id="panel-source" class="hidden flex-1 min-h-0 flex flex-col">
         <div class="p-3 border-b border-slate-800 flex flex-wrap items-center gap-2 text-xs">
           <span class="text-slate-500 font-medium">Advanced editor</span>
+          <button id="btn-data-homepage-content" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">homepage-content.json</button>
+          <button id="btn-data-homepage-ui" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">homepage-ui.json</button>
+          <button id="btn-data-projects" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">projects.json</button>
+          <button id="btn-data-cases" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">case_studies.json</button>
           <select id="source-format" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Advanced only: choose exactly what raw content to edit">
             <option value="auto">Auto (recommended)</option>
             <option value="homepage-text">Homepage plain text</option>
@@ -427,6 +432,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260504-04"></script>
+  <script src="../assets/js/admin-app.js?v=20260504-05"></script>
 </body>
 </html>

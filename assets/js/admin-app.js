@@ -29,6 +29,7 @@
     target: "homepage",
     slug: "",
     homeTab: "json",
+    dataFileTarget: "homepage",
     editWorkspace: false,
     compactListsOnSelect: true,
     sidebarManagerOpen: false,
@@ -203,6 +204,7 @@
     if (state.kind === "project") return "projects";
     if (state.kind === "caseStudy") return "caseStudies";
     if (state.kind === "projects-home") return state.homeTab === "json" ? "homepage" : "homepageUi";
+    if (state.kind === "data-files") return state.dataFileTarget || "homepage";
     if (state.kind === "settings" || state.kind === "dashboard") return "siteTheme";
     return null;
   }
@@ -309,7 +311,7 @@
       closeSourceMode();
       applyRoute();
     }
-    if (on && state.kind !== "projects-home" && state.kind !== "project" && state.kind !== "caseStudy") {
+    if (on && state.kind !== "projects-home" && state.kind !== "project" && state.kind !== "caseStudy" && state.kind !== "data-files") {
       state.kind = "projects-home";
       state.homeTab = "json";
       highlightNav();
@@ -322,7 +324,7 @@
     const simple = getSimpleModePref();
     const toggle = el("sidebar-manager-toggle");
     const lists = el("sidebar-record-lists");
-    const quickRoutes = new Set(["projects-home"]);
+    const quickRoutes = new Set(["projects-home", "data-files"]);
     document.querySelectorAll(".nav-item").forEach((btn) => {
       const route = btn.getAttribute("data-route") || "";
       btn.classList.toggle("hidden", simple && !quickRoutes.has(route));
@@ -1077,13 +1079,17 @@
       if (state.homeTab === "titles") return { target: "homepageUi", slug: "", mode: "file", language: "json" };
       return { target: "homepage", slug: "", mode: pickerMode || "homepage-text", language: "markdown" };
     }
+    if (state.kind === "data-files") {
+      const target = state.dataFileTarget || "homepage";
+      return { target, slug: "", mode: "file", language: "json" };
+    }
     if (state.kind === "settings") return { target: "siteTheme", slug: "", mode: pickerMode || "file", language: "json" };
     return null;
   }
 
   function resolveAutoSourceMode(req) {
     if (!req) return "file";
-    if (req.target === "projects" || req.target === "caseStudies") return "record-html";
+    if (req.target === "projects" || req.target === "caseStudies") return "record-json";
     if (req.target === "homepage") return "homepage-text";
     return "file";
   }
@@ -1380,6 +1386,18 @@
           await loadHomepageJsonEditor();
           await refreshDraftCommits();
         }
+        return;
+      }
+
+      if (state.kind === "data-files") {
+        setIframe(`${PAGES}homepage.html`.replace(/^\//, ""));
+        if (!state.sourceMode) {
+          state.sourceMode = true;
+          showPanels();
+        }
+        await openSourceMode();
+        await refreshDraftCommits();
+        setStatus(`Editing JSON file target: ${state.dataFileTarget}`);
         return;
       }
 
@@ -1733,6 +1751,11 @@
     }
     if (state.kind === "project" || state.kind === "caseStudy") {
       await loadRecordEditor(state.target, state.slug);
+      return;
+    }
+    if (state.kind === "data-files") {
+      state.sourceMode = true;
+      await openSourceMode();
     }
   }
 
@@ -1765,6 +1788,7 @@
       const on =
         (r === "dashboard" && state.kind === "dashboard") ||
         (r === "projects-home" && state.kind === "projects-home") ||
+        (r === "data-files" && state.kind === "data-files") ||
         (r === "settings" && state.kind === "settings") ||
         (r === "case-archive" && state.kind === "case-archive") ||
         (r === "about" && state.kind === "about");
@@ -1954,6 +1978,38 @@
     });
     el("btn-source-whole-file")?.addEventListener("click", async () => {
       await setSourceFormatAndReload("file");
+    });
+    el("btn-data-homepage-content")?.addEventListener("click", async () => {
+      state.kind = "data-files";
+      state.dataFileTarget = "homepage";
+      state.sourceMode = true;
+      highlightNav();
+      syncSourceFormatOptions();
+      await applyRoute();
+    });
+    el("btn-data-homepage-ui")?.addEventListener("click", async () => {
+      state.kind = "data-files";
+      state.dataFileTarget = "homepageUi";
+      state.sourceMode = true;
+      highlightNav();
+      syncSourceFormatOptions();
+      await applyRoute();
+    });
+    el("btn-data-projects")?.addEventListener("click", async () => {
+      state.kind = "data-files";
+      state.dataFileTarget = "projects";
+      state.sourceMode = true;
+      highlightNav();
+      syncSourceFormatOptions();
+      await applyRoute();
+    });
+    el("btn-data-cases")?.addEventListener("click", async () => {
+      state.kind = "data-files";
+      state.dataFileTarget = "caseStudies";
+      state.sourceMode = true;
+      highlightNav();
+      syncSourceFormatOptions();
+      await applyRoute();
     });
     el("btn-source-format-doc")?.addEventListener("click", async () => {
       if (!state.sourceMode) {
@@ -2239,18 +2295,21 @@
     const options = Array.from(sel.options || []);
     const isRecord = state.kind === "project" || state.kind === "caseStudy";
     const isHomeContent = state.kind === "projects-home" && state.homeTab === "json";
+    const isDataFiles = state.kind === "data-files";
 
     options.forEach((opt) => {
       const value = opt.value;
       let show = value === "auto" || value === "file";
       if (value === "record-html" || value === "record-json") show = isRecord;
       if (value === "homepage-text") show = isHomeContent;
+      if (isDataFiles) show = value === "file";
       opt.hidden = !show;
       opt.disabled = !show;
     });
 
-    if (isRecord && (sel.value === "homepage-text" || sel.value === "auto")) sel.value = "record-html";
+    if (isRecord && (sel.value === "homepage-text" || sel.value === "auto")) sel.value = "record-json";
     if (isHomeContent && (sel.value === "record-html" || sel.value === "record-json")) sel.value = "homepage-text";
+    if (isDataFiles && sel.value !== "file") sel.value = "file";
   }
 
   async function setSourceFormatAndReload(nextValue) {
@@ -2292,6 +2351,17 @@
         state.slug = "";
         state.homeTab = "json";
         setHomeTabStyle("json");
+        highlightNav();
+        syncSourceFormatOptions();
+        applyRoute();
+      });
+    });
+    document.querySelectorAll('.nav-item[data-route="data-files"]').forEach((b) => {
+      b.addEventListener("click", () => {
+        state.kind = "data-files";
+        state.slug = "";
+        state.dataFileTarget = "homepage";
+        state.sourceMode = true;
         highlightNav();
         syncSourceFormatOptions();
         applyRoute();
