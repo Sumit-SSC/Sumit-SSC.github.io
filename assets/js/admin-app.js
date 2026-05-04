@@ -39,9 +39,11 @@
   };
   let monacoEditor = null;
   let monacoReady = null;
+  let sourceFallbackActive = false;
   let sourceDoc = { target: "", slug: "", mode: "file", language: "json" };
   const LS_SOURCE_PREFS = "admin_source_prefs_v1";
   const LS_SIMPLE_MODE = "admin_simple_mode_v1";
+  const LS_EDITOR_THEME = "admin_editor_theme_v1";
   const localDraftRecords = {
     projects: [],
     caseStudies: []
@@ -64,6 +66,21 @@
   function setSimpleModePref(on) {
     try {
       localStorage.setItem(LS_SIMPLE_MODE, on ? "1" : "0");
+    } catch (_) {}
+  }
+
+  function getEditorThemePref() {
+    try {
+      const raw = localStorage.getItem(LS_EDITOR_THEME);
+      return raw === "dark" ? "dark" : "light";
+    } catch (_) {
+      return "light";
+    }
+  }
+
+  function setEditorThemePref(theme) {
+    try {
+      localStorage.setItem(LS_EDITOR_THEME, theme === "dark" ? "dark" : "light");
     } catch (_) {}
   }
 
@@ -294,6 +311,20 @@
     const dash = el("dash-session-detail");
     if (top) top.textContent = sess && sess.ok ? `Signed in: ${login || "unknown"} · role: ${role}` : "Not signed in";
     if (dash) dash.textContent = sess && sess.ok ? `GitHub: ${login || "unknown"} | role: ${role}` : "Not signed in. Click Login.";
+  }
+
+  function applyEditorThemeUi() {
+    const theme = getEditorThemePref();
+    const body = document.body;
+    const btn = el("rib-theme-toggle");
+    if (body) {
+      body.classList.toggle("theme-dark", theme === "dark");
+      body.classList.toggle("theme-light", theme !== "dark");
+    }
+    if (btn) btn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+    if (window.monaco && monacoEditor) {
+      window.monaco.editor.setTheme(theme === "dark" ? "vs-dark" : "vs");
+    }
   }
 
   function applySimpleModeUi() {
@@ -1226,16 +1257,8 @@
     }
     state.sourceMode = true;
     showPanels();
-    try {
-      await ensureMonaco();
-    } catch (_) {
-      state.sourceMode = false;
-      showPanels();
-      setStatus("Advanced text editor failed to load. Switched to simple Blocks editor.");
-      await applyRoute();
-      return;
-    }
     const holder = el("source-editor-holder");
+    const fallback = el("source-editor-fallback");
     if (!holder) return;
     const effectiveMode = req.mode === "auto" ? resolveAutoSourceMode(req) : req.mode;
     let textValue = "";
@@ -1264,31 +1287,47 @@
       textValue = data.text || "";
       language = sourceDoc.language;
     }
-    if (!monacoEditor) {
-      const prefs = getSourcePrefs();
-      monacoEditor = window.monaco.editor.create(holder, {
-        value: textValue,
-        language,
-        theme: prefs.theme,
-        automaticLayout: true,
-        minimap: { enabled: false },
-        wordWrap: prefs.wordWrap,
-        smoothScrolling: true,
-        fontSize: prefs.fontSize
-      });
-    } else {
-      const model = monacoEditor.getModel();
-      if (model) window.monaco.editor.setModelLanguage(model, language);
-      monacoEditor.setValue(textValue);
-      const prefs = getSourcePrefs();
-      monacoEditor.updateOptions({
-        wordWrap: prefs.wordWrap,
-        fontSize: prefs.fontSize
-      });
-      window.monaco.editor.setTheme(prefs.theme);
+    try {
+      await ensureMonaco();
+      sourceFallbackActive = false;
+      if (fallback) fallback.classList.add("hidden");
+      if (holder) holder.classList.remove("hidden");
+      if (!monacoEditor) {
+        const prefs = getSourcePrefs();
+        monacoEditor = window.monaco.editor.create(holder, {
+          value: textValue,
+          language,
+          theme: getEditorThemePref() === "dark" ? "vs-dark" : "vs",
+          automaticLayout: true,
+          minimap: { enabled: false },
+          wordWrap: prefs.wordWrap,
+          smoothScrolling: true,
+          fontSize: prefs.fontSize
+        });
+      } else {
+        const model = monacoEditor.getModel();
+        if (model) window.monaco.editor.setModelLanguage(model, language);
+        monacoEditor.setValue(textValue);
+        const prefs = getSourcePrefs();
+        monacoEditor.updateOptions({
+          wordWrap: prefs.wordWrap,
+          fontSize: prefs.fontSize
+        });
+        window.monaco.editor.setTheme(getEditorThemePref() === "dark" ? "vs-dark" : "vs");
+      }
+    } catch (_) {
+      sourceFallbackActive = true;
+      if (holder) holder.classList.add("hidden");
+      if (fallback) {
+        fallback.value = textValue;
+        fallback.classList.remove("hidden");
+      }
+      setStatus("Advanced editor fallback active. JSON still loaded and editable.");
     }
     syncSourcePrefsUi();
-    setStatus(`Advanced editor ready (${sourceDoc.mode}). Edit, Save draft, then Publish.`);
+    if (!sourceFallbackActive) {
+      setStatus(`Advanced editor ready (${sourceDoc.mode}). Edit, Save draft, then Publish.`);
+    }
   }
 
   function closeSourceMode() {
@@ -1609,12 +1648,13 @@
 
   async function ribSave() {
     if (state.sourceMode) {
-      if (!monacoEditor) {
+      const rawText = sourceFallbackActive ? (el("source-editor-fallback")?.value || "") : monacoEditor?.getValue?.();
+      if (rawText == null) {
         setStatus("Source editor not ready.");
         return;
       }
       if (isVirtualHomepageTextMode(sourceDoc.target, sourceDoc.mode)) {
-        const editorData = plainTextToHomepageEditorData(monacoEditor.getValue());
+        const editorData = plainTextToHomepageEditorData(rawText);
         const out = await saveContentWrite("homepage", "", editorData);
         if (!out.ok) {
           setStatus(out.error || "Save failed");
@@ -1631,7 +1671,7 @@
         await ribLoad();
         return;
       }
-      const out = await saveRawSource(sourceDoc.target, sourceDoc.slug, sourceDoc.mode, monacoEditor.getValue());
+      const out = await saveRawSource(sourceDoc.target, sourceDoc.slug, sourceDoc.mode, rawText);
       if (!out.ok) {
         setStatus(out.error || "Source save failed");
         toast(out.error || "Save failed", "error");
@@ -1937,6 +1977,12 @@
       const accountMenu = document.querySelector("details.rib-account");
       if (accountMenu && typeof accountMenu.removeAttribute === "function") accountMenu.removeAttribute("open");
     });
+    el("rib-theme-toggle")?.addEventListener("click", () => {
+      const next = getEditorThemePref() === "dark" ? "light" : "dark";
+      setEditorThemePref(next);
+      applyEditorThemeUi();
+      setStatus(next === "dark" ? "Dark mode enabled." : "Light mode enabled.");
+    });
     el("rib-refresh")?.addEventListener("click", () => {
       const f = el("admin-preview");
       if (f && f.src) f.src = f.src;
@@ -2014,6 +2060,10 @@
     el("btn-source-format-doc")?.addEventListener("click", async () => {
       if (!state.sourceMode) {
         await openSourceMode();
+      }
+      if (sourceFallbackActive) {
+        setStatus("Formatter is unavailable in fallback editor.");
+        return;
       }
       if (!monacoEditor || !window.monaco) {
         setStatus("Text editor not ready for formatting yet.");
@@ -2923,6 +2973,7 @@
     wireNav();
     wireWorkspacePrefs();
     wireKeyboardShortcuts();
+    applyEditorThemeUi();
     applySimpleModeUi();
     syncSourcePrefsUi();
     setStatus("Loading site index…");

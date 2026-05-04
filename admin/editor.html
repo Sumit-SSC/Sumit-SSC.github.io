@@ -106,6 +106,33 @@
     .admin-editor-canvas .ce-settings__button {
       display: none !important;
     }
+    body.theme-dark {
+      background: #0b1220;
+      color: #e2e8f0;
+    }
+    body.theme-dark header,
+    body.theme-dark #workspace-main > aside,
+    body.theme-dark #workspace-inspector {
+      background: #111827 !important;
+      border-color: #1f2937 !important;
+    }
+    body.theme-dark #workspace-preview-pane {
+      background: #0f172a !important;
+    }
+    body.theme-dark #rib-preview,
+    body.theme-dark #rib-open-live,
+    body.theme-dark #rib-load,
+    body.theme-dark #rib-edit-workspace,
+    body.theme-dark #rib-theme-toggle {
+      background: #1f2937 !important;
+      color: #e5e7eb !important;
+      border-color: #374151 !important;
+    }
+    body.theme-dark #source-editor-fallback {
+      background: #0b1220 !important;
+      color: #e5e7eb !important;
+      border-top: 1px solid #1f2937;
+    }
     #center-draft-preview.medium-draft-preview { background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); }
     .medium-draft-inner { max-width: 42rem; margin: 0 auto; padding-bottom: 3rem; }
     .medium-draft-inner .preview-block:first-child { margin-top: 0.5rem; }
@@ -150,6 +177,7 @@
           <button id="rib-toggle-simple-mode" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Simple mode: on</button>
         </div>
       </details>
+      <button id="rib-theme-toggle" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-[11px]" title="Toggle light/dark workspace theme">Dark mode</button>
 
       <details id="rib-more" class="rounded-lg border border-slate-300/80 bg-white/80 max-w-full">
         <summary class="px-2.5 py-1 text-[11px] text-slate-600 cursor-pointer hover:text-slate-900 select-none list-none">More</summary>
@@ -390,6 +418,7 @@
         </div>
         <p class="px-3 py-1 text-[11px] text-amber-300/90 border-b border-slate-800">Advanced mode edits raw text/HTML/JSON. For normal editing, switch back to <strong class="text-amber-100">Blocks</strong>.</p>
         <div id="source-editor-holder" class="flex-1 min-h-0"></div>
+        <textarea id="source-editor-fallback" class="hidden flex-1 min-h-0 w-full bg-white text-slate-900 border-0 outline-none resize-none p-3 font-mono text-xs leading-6"></textarea>
       </div>
       <div id="panel-static" class="hidden p-3 text-sm text-slate-400">Static page preview.</div>
       <div id="panel-settings" class="hidden p-3 space-y-2 overflow-y-auto">
@@ -432,6 +461,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260504-05"></script>
+  <script src="../assets/js/admin-app.js?v=20260504-06"></script>
 </body>
 </html>
