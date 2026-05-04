@@ -93,28 +93,56 @@
     }
   };
 
+  function parseCommaList(raw) {
+    return String(raw || "")
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+
+  /**
+   * CORS allow-list. Exact match on ALLOWED_ORIGINS, plus optional suffix match on
+   * ALLOW_ORIGIN_SUFFIX (comma-separated), e.g. ".sumit.indevs.in" so every https
+   * admin GitHub Pages host works without listing each subdomain in the dashboard.
+   */
   function getAllowedOrigin(request, env) {
-    const origin = request.headers.get("origin") || "";
-    const allowlist = (env.ALLOWED_ORIGINS || "").split(",").map((v) => v.trim()).filter(Boolean);
+    const origin = (request.headers.get("origin") || "").trim();
+    const allowlist = parseCommaList(env.ALLOWED_ORIGINS);
     if (!origin) {
       // No Origin (curl, same-origin Worker tests): use first allowlist entry so we never send * with credentials.
       return allowlist[0] || "*";
     }
     if (!allowlist.length) return origin;
-    return allowlist.includes(origin) ? origin : "null";
+    if (allowlist.includes(origin)) return origin;
+    const suffixes = parseCommaList(env.ALLOW_ORIGIN_SUFFIX);
+    if (suffixes.length && /^https:/i.test(origin)) {
+      try {
+        const host = new URL(origin).hostname.toLowerCase();
+        for (const suf of suffixes) {
+          const s = suf.toLowerCase().startsWith(".") ? suf.toLowerCase() : `.${suf.toLowerCase()}`;
+          const bare = s.slice(1);
+          if (host === bare || host.endsWith(s)) return origin;
+        }
+      } catch (_) {
+        /* ignore */
+      }
+    }
+    // Disallowed: do not echo Origin and do not send the literal "null" (breaks credentialed fetches).
+    return "";
   }
 
   function withCors(request, env, response) {
     const allowedOrigin = getAllowedOrigin(request, env);
     // Response.redirect() and some Responses use immutable headers; copy then extend.
     const headers = new Headers(response.headers);
-    headers.set("access-control-allow-origin", allowedOrigin);
+    if (allowedOrigin && allowedOrigin !== "*") {
+      headers.set("access-control-allow-origin", allowedOrigin);
+      headers.set("access-control-allow-credentials", "true");
+    } else if (allowedOrigin === "*") {
+      headers.set("access-control-allow-origin", "*");
+    }
     headers.set("access-control-allow-methods", "GET,POST,OPTIONS");
     headers.set("access-control-allow-headers", "content-type,authorization");
-    // Browsers forbid Access-Control-Allow-Origin: * together with Access-Control-Allow-Credentials: true
-    if (allowedOrigin !== "*" && allowedOrigin !== "null") {
-      headers.set("access-control-allow-credentials", "true");
-    }
     headers.set("vary", "origin");
     return new Response(response.body, {
       status: response.status,

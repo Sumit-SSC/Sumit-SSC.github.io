@@ -38,12 +38,45 @@
   let monacoEditor = null;
   let monacoReady = null;
   let sourceDoc = { target: "", slug: "", mode: "file", language: "json" };
+  const LS_SOURCE_PREFS = "admin_source_prefs_v1";
   const localDraftRecords = {
     projects: [],
     caseStudies: []
   };
+  let cachedSiteProjects = [];
+  let cachedSiteCases = [];
 
   const el = (id) => document.getElementById(id);
+
+  function getSourcePrefs() {
+    try {
+      const raw = localStorage.getItem(LS_SOURCE_PREFS);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return {
+        theme: parsed.theme === "vs" ? "vs" : "vs-dark",
+        wordWrap: parsed.wordWrap === "off" ? "off" : "on",
+        fontSize: [12, 13, 14, 15, 16].includes(Number(parsed.fontSize)) ? Number(parsed.fontSize) : 13
+      };
+    } catch (_) {
+      return { theme: "vs-dark", wordWrap: "on", fontSize: 13 };
+    }
+  }
+
+  function saveSourcePrefs(next) {
+    try {
+      localStorage.setItem(LS_SOURCE_PREFS, JSON.stringify(next));
+    } catch (_) {}
+  }
+
+  function syncSourcePrefsUi() {
+    const prefs = getSourcePrefs();
+    const themeSel = el("source-theme");
+    const wrapSel = el("source-wrap");
+    const sizeSel = el("source-font-size");
+    if (themeSel) themeSel.value = prefs.theme;
+    if (wrapSel) wrapSel.value = prefs.wordWrap;
+    if (sizeSel) sizeSel.value = String(prefs.fontSize);
+  }
 
   /** Last branch label from save/publish (draft branch name when known). */
   let lastBranchHint = "";
@@ -1153,21 +1186,29 @@
       language = sourceDoc.language;
     }
     if (!monacoEditor) {
+      const prefs = getSourcePrefs();
       monacoEditor = window.monaco.editor.create(holder, {
         value: textValue,
         language,
-        theme: "vs-dark",
+        theme: prefs.theme,
         automaticLayout: true,
         minimap: { enabled: false },
-        wordWrap: "on",
+        wordWrap: prefs.wordWrap,
         smoothScrolling: true,
-        fontSize: 13
+        fontSize: prefs.fontSize
       });
     } else {
       const model = monacoEditor.getModel();
       if (model) window.monaco.editor.setModelLanguage(model, language);
       monacoEditor.setValue(textValue);
+      const prefs = getSourcePrefs();
+      monacoEditor.updateOptions({
+        wordWrap: prefs.wordWrap,
+        fontSize: prefs.fontSize
+      });
+      window.monaco.editor.setTheme(prefs.theme);
     }
+    syncSourcePrefsUi();
     setStatus(`Text editor ready (${sourceDoc.mode}). Edit, Save draft, then Publish.`);
   }
 
@@ -1705,16 +1746,27 @@
   }
 
   function buildSidebarLists(projects, cases) {
+    if (Array.isArray(projects)) cachedSiteProjects = projects;
+    if (Array.isArray(cases)) cachedSiteCases = cases;
     const pu = el("admin-sortable-projects");
     const cu = el("admin-sortable-cases");
-    const mergedProjects = [...(localDraftRecords.projects || []), ...(projects || []).filter((p) => !localDraftRecords.projects.some((lp) => lp.id === p.id))];
-    const mergedCases = [...(localDraftRecords.caseStudies || []), ...(cases || []).filter((c) => !localDraftRecords.caseStudies.some((lc) => lc.id === c.id))];
+    const baseProjects = Array.isArray(projects) ? projects : cachedSiteProjects;
+    const baseCases = Array.isArray(cases) ? cases : cachedSiteCases;
+    const mergedProjects = [...(localDraftRecords.projects || []), ...(baseProjects || []).filter((p) => !localDraftRecords.projects.some((lp) => lp.id === p.id))];
+    const mergedCases = [...(localDraftRecords.caseStudies || []), ...(baseCases || []).filter((c) => !localDraftRecords.caseStudies.some((lc) => lc.id === c.id))];
+    const q = String(el("sidebar-search")?.value || "").trim().toLowerCase();
+    const projectPool = q
+      ? mergedProjects.filter((p) => String(p?.title || p?.id || "").toLowerCase().includes(q) || String(p?.id || "").toLowerCase().includes(q))
+      : mergedProjects;
+    const casePool = q
+      ? mergedCases.filter((c) => String(c?.title || c?.id || "").toLowerCase().includes(q) || String(c?.id || "").toLowerCase().includes(q))
+      : mergedCases;
     const visibleProjects = state.compactListsOnSelect && state.kind === "project"
-      ? (mergedProjects || []).filter((p) => p.id === state.slug)
-      : (mergedProjects || []);
+      ? (projectPool || []).filter((p) => p.id === state.slug)
+      : (projectPool || []);
     const visibleCases = state.compactListsOnSelect && state.kind === "caseStudy"
-      ? (mergedCases || []).filter((c) => c.id === state.slug)
-      : (mergedCases || []);
+      ? (casePool || []).filter((c) => c.id === state.slug)
+      : (casePool || []);
     if (pu) {
       pu.innerHTML = "";
       visibleProjects.forEach((p) => {
@@ -1835,6 +1887,37 @@
       }
       await action.run();
       setStatus("Formatted current document.");
+    });
+    el("source-theme")?.addEventListener("change", () => {
+      const prefs = getSourcePrefs();
+      const next = { ...prefs, theme: el("source-theme")?.value === "vs" ? "vs" : "vs-dark" };
+      saveSourcePrefs(next);
+      if (window.monaco) window.monaco.editor.setTheme(next.theme);
+    });
+    el("source-wrap")?.addEventListener("change", () => {
+      const prefs = getSourcePrefs();
+      const next = { ...prefs, wordWrap: el("source-wrap")?.value === "off" ? "off" : "on" };
+      saveSourcePrefs(next);
+      monacoEditor?.updateOptions({ wordWrap: next.wordWrap });
+    });
+    el("source-font-size")?.addEventListener("change", () => {
+      const prefs = getSourcePrefs();
+      const raw = Number(el("source-font-size")?.value || 13);
+      const nextSize = [12, 13, 14, 15, 16].includes(raw) ? raw : 13;
+      const next = { ...prefs, fontSize: nextSize };
+      saveSourcePrefs(next);
+      monacoEditor?.updateOptions({ fontSize: nextSize });
+    });
+    el("rib-shortcuts")?.addEventListener("click", () => {
+      el("shortcut-modal-backdrop")?.classList.remove("hidden");
+    });
+    el("btn-close-shortcuts")?.addEventListener("click", () => {
+      el("shortcut-modal-backdrop")?.classList.add("hidden");
+    });
+    el("shortcut-modal-backdrop")?.addEventListener("click", (evt) => {
+      if (evt.target && evt.target.id === "shortcut-modal-backdrop") {
+        el("shortcut-modal-backdrop")?.classList.add("hidden");
+      }
     });
 
     document.querySelectorAll(".rib-ins").forEach((btn) => {
@@ -2157,6 +2240,55 @@
         syncSourceFormatOptions();
         applyRoute();
       });
+    });
+  }
+
+  function wireWorkspacePrefs() {
+    const search = el("sidebar-search");
+    search?.addEventListener("input", () => {
+      buildSidebarLists(cachedSiteProjects, cachedSiteCases);
+    });
+    const compact = el("toggle-compact-lists");
+    if (compact) compact.checked = !!state.compactListsOnSelect;
+    compact?.addEventListener("change", () => {
+      state.compactListsOnSelect = !!compact.checked;
+      buildSidebarLists(cachedSiteProjects, cachedSiteCases);
+    });
+  }
+
+  function wireKeyboardShortcuts() {
+    document.addEventListener("keydown", async (evt) => {
+      const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+      const mod = isMac ? evt.metaKey : evt.ctrlKey;
+      if (!mod) {
+        if (evt.key === "Escape") el("shortcut-modal-backdrop")?.classList.add("hidden");
+        return;
+      }
+      const key = String(evt.key || "").toLowerCase();
+      if (key === "s" && !evt.shiftKey) {
+        evt.preventDefault();
+        await ribSave();
+        return;
+      }
+      if (key === "p" && evt.shiftKey) {
+        evt.preventDefault();
+        await ribPublish();
+        return;
+      }
+      if (key === "l" && evt.shiftKey) {
+        evt.preventDefault();
+        await ribLoad();
+        return;
+      }
+      if (key === "e" && evt.shiftKey) {
+        evt.preventDefault();
+        if (state.sourceMode) {
+          closeSourceMode();
+          await applyRoute();
+        } else {
+          await openSourceMode();
+        }
+      }
     });
   }
 
@@ -2632,6 +2764,9 @@
     wireRibbon();
     wireInspectorTabs();
     wireNav();
+    wireWorkspacePrefs();
+    wireKeyboardShortcuts();
+    syncSourcePrefsUi();
     setStatus("Loading site index…");
     try {
       const projects = await fetchJson("data/projects.json");

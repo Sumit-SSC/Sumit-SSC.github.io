@@ -111,6 +111,7 @@
     .medium-draft-inner .preview-block:first-child { margin-top: 0.5rem; }
     details.rib-account > summary { list-style: none; }
     details.rib-account > summary::-webkit-details-marker { display: none; }
+    #shortcut-modal-backdrop { backdrop-filter: blur(2px); }
   </style>
   <script>
     window.__ADMIN_APP__ = {
@@ -154,6 +155,7 @@
         <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-2 border-t border-slate-200/80">
           <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Preview</button>
           <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Reload</button>
+          <button id="rib-shortcuts" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Shortcuts</button>
           <details id="rib-blocks-toolbar" class="hidden rounded-lg border border-slate-300/80 bg-white max-w-full">
             <summary class="px-2.5 py-1 text-[11px] text-slate-500 cursor-pointer hover:text-slate-700 select-none list-none">Blocks</summary>
             <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-1 border-t border-slate-200/80">
@@ -197,6 +199,13 @@
         <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="about">About</button>
       </div>
       <div id="sidebar-record-lists">
+        <div class="mb-3 space-y-2">
+          <input id="sidebar-search" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs" placeholder="Search projects/case studies..." />
+          <label class="flex items-center gap-2 text-[11px] text-slate-500">
+            <input id="toggle-compact-lists" type="checkbox" class="accent-indigo-600" checked />
+            Compact list for selected item
+          </label>
+        </div>
         <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Create content</p>
         <div class="mb-3 rounded-lg border border-slate-700 bg-slate-800/60 p-2 space-y-2">
           <select id="new-record-kind" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs">
@@ -354,6 +363,21 @@
           <button id="btn-source-whole-file" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Whole file</button>
           <button id="btn-source-format-doc" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Format</button>
           <button id="btn-source-reload" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Reload</button>
+          <select id="source-theme" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Editor theme">
+            <option value="vs-dark">Dark</option>
+            <option value="vs">Light</option>
+          </select>
+          <select id="source-wrap" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Line wrap">
+            <option value="on">Wrap on</option>
+            <option value="off">Wrap off</option>
+          </select>
+          <select id="source-font-size" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Font size">
+            <option value="12">12px</option>
+            <option value="13" selected>13px</option>
+            <option value="14">14px</option>
+            <option value="15">15px</option>
+            <option value="16">16px</option>
+          </select>
         </div>
         <div id="source-editor-holder" class="flex-1 min-h-0"></div>
       </div>
@@ -373,6 +397,21 @@
     </aside>
   </div>
   <div id="ui-toast" class="hidden fixed right-4 bottom-4 z-[200] rounded-lg border border-slate-700 bg-slate-900/95 px-3 py-2 text-xs text-slate-100 shadow-2xl"></div>
+  <div id="shortcut-modal-backdrop" class="hidden fixed inset-0 z-[250] bg-black/40 p-4">
+    <div class="max-w-lg mx-auto mt-10 rounded-xl border border-slate-700 bg-slate-900 text-slate-100 p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-sm font-semibold">Editor shortcuts</h3>
+        <button id="btn-close-shortcuts" type="button" class="rounded bg-slate-800 hover:bg-slate-700 px-2 py-1 text-xs">Close</button>
+      </div>
+      <ul class="text-xs space-y-1 text-slate-300">
+        <li><strong>Ctrl/Cmd + S</strong> — Save draft</li>
+        <li><strong>Ctrl/Cmd + Shift + P</strong> — Publish</li>
+        <li><strong>Ctrl/Cmd + Shift + L</strong> — Reload current editor data</li>
+        <li><strong>Ctrl/Cmd + Shift + E</strong> — Toggle Text/Blocks mode</li>
+        <li><strong>Esc</strong> — Close this shortcuts modal</li>
+      </ul>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7"></script>
@@ -383,6 +422,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260428-01"></script>
+  <script src="../assets/js/admin-app.js?v=20260429-01"></script>
 </body>
 </html>

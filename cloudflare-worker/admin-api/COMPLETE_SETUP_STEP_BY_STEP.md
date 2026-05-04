@@ -66,6 +66,12 @@ Use this if you want the admin workspace at **`https://admin.sumit.indevs.in/`**
 
 Full checklist: **`docs/ADMIN_WORKSPACE.md`** (Cloudflare + GitHub + Worker `ALLOWED_ORIGINS`).
 
+**Troubleshooting: admin dashboard buttons do nothing**
+
+- The admin home page loads logic from **`admin/admin-home.js`** (not inline script). If that file 404s after deploy, buttons will not work — confirm both files are on the branch GitHub Pages serves.
+- If your zone uses a **Content-Security-Policy** that blocks `unsafe-inline` only, external `admin-home.js` is still allowed as long as `script-src` includes `'self'` (same origin as the admin HTML).
+- In DevTools → **Console**, run `window.__PORTFOLIO_ADMIN_HOME_LOADED` — if `true`, the script booted; if `undefined`, the script did not load (path/CSP/network).
+
 ---
 
 ## 3) Add Worker environment variables (non-secret)
@@ -76,13 +82,16 @@ Add:
 
 - `ALLOWED_GITHUB_USERS` = `Sumit-SC`
 - `ALLOWED_ORIGINS` = include at least: `https://event.sumit.indevs.in,https://sumit.indevs.in,https://www.sumit.indevs.in,https://admin.sumit.indevs.in` (plus localhost origins if you test locally — see `wrangler.toml`)
+- `ALLOW_ORIGIN_SUFFIX` (optional but recommended) = `.sumit.indevs.in` — allows **any** `https://*.sumit.indevs.in` admin UI origin for credentialed CORS without listing every subdomain in `ALLOWED_ORIGINS`. If unlock or login “does nothing” in the browser, your origin was probably missing from `ALLOWED_ORIGINS`; add it or set this suffix variable in the Worker.
 - `CONTENT_BASE_BRANCH` = **your GitHub Pages source branch** (example: `feature/cf-admin-editor-foundation`).  
   **Required:** the Worker code no longer guesses a default; if this is missing, read/save will error. Change only this variable when you switch Pages branch—no code change needed.
 - `CONTENT_DRAFT_BRANCH` = `content/drafts`
 - `GITHUB_REPO_OWNER` = `Sumit-SC`
 - `GITHUB_REPO_NAME` = `Sumit-SC.github.io`
 - `GITHUB_OAUTH_SCOPES` = `read:user`
-- `ADMIN_SUCCESS_REDIRECT` = `https://event.sumit.indevs.in/admin/index.html` (where users return after GitHub OAuth)
+- `ADMIN_SUCCESS_REDIRECT` = where the browser lands after GitHub OAuth (must be under an allowed CORS origin). Examples:
+  - `https://event.sumit.indevs.in/admin/editor.html` (legacy host)
+  - `https://admin.sumit.indevs.in/admin/editor.html` if you mainly use the **`admin`** subdomain
 
 Save changes.
 

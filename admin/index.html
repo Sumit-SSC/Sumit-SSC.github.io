@@ -12,6 +12,7 @@
     <header class="mb-6">
       <h1 class="text-2xl font-bold">Portfolio Studio</h1>
       <p class="text-sm text-slate-400 mt-1">Dashboard-first content studio. Use the editor workspace below for all page/content edits.</p>
+      <p id="admin-js-error" class="hidden mt-3 text-sm text-rose-300 bg-rose-950/50 border border-rose-800 rounded-lg px-3 py-2" role="alert"></p>
     </header>
 
     <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
@@ -26,6 +27,7 @@
 
     <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
       <h2 class="text-sm font-semibold mb-2">Session</h2>
+      <p id="gate-help" class="text-xs text-amber-200/90 bg-amber-950/40 border border-amber-800/50 rounded-lg px-3 py-2 mb-3 hidden"></p>
       <p id="home-session" class="text-sm text-slate-300">Checking session…</p>
       <p id="home-server-time" class="text-xs text-slate-400 mt-1"></p>
       <div class="mt-2 grid md:grid-cols-2 gap-2 text-xs">
@@ -36,11 +38,18 @@
           Admin gate: <span id="gate-status" class="text-slate-200">Checking…</span>
         </div>
       </div>
+      <div class="mt-4 space-y-2">
+        <label for="admin-gate-password" class="block text-xs font-medium text-slate-400">Site admin password (from Worker <code class="text-slate-500">ADMIN_PANEL_PASSWORD</code>)</label>
+        <div class="flex flex-wrap items-end gap-2">
+          <input id="admin-gate-password" type="password" autocomplete="current-password" placeholder="Enter password" class="flex-1 min-w-[200px] rounded border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <button type="button" id="btn-unlock" class="rounded bg-indigo-700 hover:bg-indigo-600 px-3 py-2 text-sm font-medium">Unlock</button>
+        </div>
+        <p class="text-[11px] text-slate-500">Step 1: unlock with this password. Step 2: <strong class="text-slate-400">Login with GitHub</strong> (enabled after unlock).</p>
+      </div>
       <div class="mt-3 flex flex-wrap gap-2">
-        <button id="btn-unlock" class="rounded bg-indigo-700 hover:bg-indigo-600 px-3 py-2 text-sm">Unlock Admin</button>
-        <button id="btn-login" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Login</button>
-        <button id="btn-logout" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Logout</button>
-        <button id="btn-refresh-session" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Refresh session</button>
+        <button type="button" id="btn-login" class="rounded px-3 py-2 text-sm font-medium bg-slate-800 text-slate-500 cursor-not-allowed" disabled title="Unlock with the site password first">Login with GitHub</button>
+        <button type="button" id="btn-logout" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Logout</button>
+        <button type="button" id="btn-refresh-session" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-2 text-sm">Refresh session</button>
       </div>
     </section>
 
@@ -88,7 +97,7 @@
     <section class="rounded-xl border border-slate-700 bg-slate-900/70 p-4 mb-4">
       <div class="flex items-center justify-between gap-2 mb-2">
         <h2 class="text-sm font-semibold">Recent editor commits</h2>
-        <button id="btn-refresh-commits" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-1.5 text-xs">Refresh commits</button>
+        <button type="button" id="btn-refresh-commits" class="rounded bg-slate-700 hover:bg-slate-600 px-3 py-1.5 text-xs">Refresh commits</button>
       </div>
       <p class="text-xs text-slate-400 mb-2">Latest draft-branch commits for homepage, projects, and case studies.</p>
       <div id="recent-commits" class="space-y-2 text-sm">
@@ -105,191 +114,6 @@
     </section>
   </main>
 
-  <script>
-    (function () {
-      const API = "https://admin-api.sumit.indevs.in";
-      const el = (id) => document.getElementById(id);
-      function loginName(sess) {
-        if (!sess || !sess.user) return "";
-        if (typeof sess.user === "string") return sess.user;
-        return sess.user.login || "";
-      }
-      function fmtBytes(v) {
-        const n = Number(v || 0);
-        if (n < 1024) return `${n} B`;
-        if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
-        return `${(n / (1024 * 1024)).toFixed(2)} MB`;
-      }
-      function setCheck(id, ok, detailOk = "OK", detailFail = "Issue") {
-        const node = el(id);
-        if (!node) return;
-        node.textContent = ok ? detailOk : detailFail;
-        node.className = ok ? "text-emerald-300" : "text-rose-300";
-      }
-      function fmtIst(iso) {
-        if (!iso) return "-";
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) return iso;
-        return d.toLocaleString("en-IN", {
-          timeZone: "Asia/Kolkata",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false
-        });
-      }
-      async function refreshHealth() {
-        try {
-          const r = await fetch(`${API}/api/admin/health`, { credentials: "include" });
-          el("api-health").textContent = r.ok ? "Healthy" : `HTTP ${r.status}`;
-          setCheck("check-api", r.ok, "Healthy", `HTTP ${r.status}`);
-        } catch (e) {
-          el("api-health").textContent = `Error: ${String(e && e.message ? e.message : e)}`;
-          setCheck("check-api", false, "Healthy", "Offline");
-        }
-      }
-      async function refreshSession() {
-        try {
-          const res = await fetch(`${API}/api/admin/session`, { credentials: "include" });
-          const s = await res.json();
-          el("home-session").textContent = s.ok ? `Signed in as ${loginName(s) || "unknown"} (${s.role || "admin"})` : "Not signed in";
-          el("home-server-time").textContent = s.serverTimeIst ? `Server IST: ${s.serverTimeIst}` : "";
-          setCheck("check-session", !!s.ok, "Signed in", "Not signed in");
-        } catch (e) {
-          el("home-session").textContent = "Session check failed";
-          el("home-server-time").textContent = String(e && e.message ? e.message : e);
-          setCheck("check-session", false, "Signed in", "Failed");
-        }
-      }
-
-      async function ensureGate() {
-        try {
-          const g = await fetch(`${API}/api/admin/gate/status`, { credentials: "include" }).then((r) => r.json());
-          el("gate-status").textContent = !g.ok ? "Unknown" : (!g.required ? "Disabled" : (g.verified ? "Verified" : "Locked"));
-          setCheck("check-gate", !!g.ok && (!g.required || g.verified), !g.required ? "Disabled" : "Verified", "Locked");
-          if (!g.ok || !g.required || g.verified) return true;
-          for (let i = 0; i < 3; i += 1) {
-            const pwd = window.prompt("Enter admin password:");
-            if (!pwd) break;
-            const out = await fetch(`${API}/api/admin/gate/verify`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-              body: JSON.stringify({ password: pwd })
-            }).then((r) => r.json());
-            if (out.ok) return true;
-          }
-          el("home-session").textContent = "Admin password required before login/session.";
-          return false;
-        } catch {
-          setCheck("check-gate", false, "Verified", "Unknown");
-          return false;
-        }
-      }
-
-      async function refreshStats() {
-        try {
-          const d = await fetch(`${API}/api/admin/stats`, { credentials: "include" }).then((r) => r.json());
-          if (!d.ok) {
-            el("stat-last-update").textContent = d.error || "Stats unavailable";
-            el("stat-last-message").textContent = "-";
-            setCheck("check-stats", false, "Loaded", "Unavailable");
-            return;
-          }
-          el("stat-html-count").textContent = String(d.pages?.htmlCount ?? "-");
-          el("stat-html-size").textContent = fmtBytes(d.pages?.totalHtmlBytes || 0);
-          const lc = d.deploy?.lastCommit;
-          el("stat-last-update").textContent = lc ? `${lc.atIst || "-"} (${(lc.sha || "").slice(0, 7)})` : "-";
-          el("stat-last-message").textContent = lc?.message || "-";
-          el("stat-base-branch").textContent = d.deploy?.baseBranch || "-";
-          el("stat-draft-branch").textContent = d.deploy?.draftBranch || "content/drafts";
-          el("stat-traffic").textContent = d.traffic?.cfLast24h != null ? String(d.traffic.cfLast24h) : (d.traffic?.note || "Not configured");
-          setCheck("check-stats", true, "Loaded", "Unavailable");
-        } catch (e) {
-          el("stat-last-update").textContent = String(e && e.message ? e.message : e);
-          el("stat-last-message").textContent = "-";
-          setCheck("check-stats", false, "Loaded", "Error");
-        }
-      }
-
-      async function refreshRecentCommits() {
-        const root = el("recent-commits");
-        const targets = [
-          { id: "homepage", label: "Homepage" },
-          { id: "projects", label: "Projects" },
-          { id: "caseStudies", label: "Case studies" }
-        ];
-        root.innerHTML = "<p class=\"text-slate-400\">Loading commit history…</p>";
-        try {
-          const rows = [];
-          for (const t of targets) {
-            const res = await fetch(`${API}/api/admin/content/commits?target=${encodeURIComponent(t.id)}&per_page=3`, { credentials: "include" });
-            const data = await res.json();
-            if (!data.ok || !Array.isArray(data.commits)) continue;
-            for (const c of data.commits) {
-              rows.push({
-                target: t.label,
-                shortSha: c.shortSha || String(c.sha || "").slice(0, 7),
-                message: c.message || "(no message)",
-                date: c.date || "",
-                author: c.author || ""
-              });
-            }
-          }
-          rows.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          const top = rows.slice(0, 8);
-          if (!top.length) {
-            root.innerHTML = "<p class=\"text-slate-400\">No recent editor commits found yet.</p>";
-            return;
-          }
-          root.innerHTML = top.map((r) => (
-            `<div class="rounded border border-slate-700 p-2">
-              <p class="text-slate-200">${r.message}</p>
-              <p class="text-xs text-slate-400 mt-1">${r.target} • ${r.shortSha} • ${r.author || "unknown"} • ${fmtIst(r.date)}</p>
-            </div>`
-          )).join("");
-        } catch (e) {
-          root.innerHTML = `<p class="text-rose-300">Commit history unavailable: ${String(e && e.message ? e.message : e)}</p>`;
-        }
-      }
-
-      el("btn-unlock").addEventListener("click", async () => {
-        const ok = await ensureGate();
-        if (ok) {
-          await refreshSession();
-          await refreshStats();
-        }
-      });
-      el("btn-login").addEventListener("click", async () => {
-        const ok = await ensureGate();
-        if (!ok) return;
-        window.location.href = `${API}/api/admin/auth/github/start`;
-      });
-      el("btn-logout").addEventListener("click", async () => {
-        await fetch(`${API}/api/admin/auth/logout`, { credentials: "include" }).catch(() => {});
-        await refreshSession();
-      });
-      el("btn-refresh-session").addEventListener("click", async () => {
-        const ok = await ensureGate();
-        if (!ok) return;
-        await refreshSession();
-        await refreshHealth();
-        await refreshStats();
-        await refreshRecentCommits();
-      });
-      el("btn-refresh-commits").addEventListener("click", async () => {
-        const ok = await ensureGate();
-        if (!ok) return;
-        await refreshRecentCommits();
-      });
-      refreshHealth();
-      refreshSession();
-      refreshStats();
-      refreshRecentCommits();
-    })();
-  </script>
+  <script src="./admin-home.js" defer></script>
 </body>
 </html>
