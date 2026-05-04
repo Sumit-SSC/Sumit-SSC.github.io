@@ -1287,6 +1287,19 @@
       textValue = data.text || "";
       language = sourceDoc.language;
     }
+    if (state.kind === "data-files") {
+      // Data files should always be editable, even without Monaco.
+      sourceFallbackActive = true;
+      if (holder) holder.classList.add("hidden");
+      const fallbackOnly = el("source-editor-fallback");
+      if (fallbackOnly) {
+        fallbackOnly.value = textValue;
+        fallbackOnly.classList.remove("hidden");
+      }
+      syncSourcePrefsUi();
+      setStatus(`JSON loaded: ${sourceDoc.target}. Edit, Save draft, then Publish.`);
+      return;
+    }
     try {
       await ensureMonaco();
       sourceFallbackActive = false;
@@ -1434,6 +1447,8 @@
           state.sourceMode = true;
           showPanels();
         }
+        const sel = el("source-format");
+        if (sel) sel.value = "file";
         await openSourceMode();
         await refreshDraftCommits();
         setStatus(`Editing JSON file target: ${state.dataFileTarget}`);
