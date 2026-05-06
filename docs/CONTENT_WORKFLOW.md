@@ -78,6 +78,25 @@ So in JSON/HTML you keep:
 
 ---
 
+## Fast project entry template (copy/paste)
+
+Use `data/project-entry-template.json` as the baseline for new items in `data/projects.json`.
+
+Editing flow for quickest updates:
+
+1. Copy one object from `data/project-entry-template.json`.
+2. Paste into `data/projects.json` array.
+3. Update only these first:
+   - `id`, `title`, `short_description`, `category`, `date`
+   - `thumbnail`, `images[]`
+   - one of `github_url` / `demo_url`
+4. Keep heavy media links optional:
+   - `video_url`, `powerbi_embed_url`, `streamlit_url`, `slide_pdf_path`
+
+Note: project detail page now uses **tap-to-load** for PDF/video/Power BI/Streamlit embeds, so adding those links is safe for mobile performance.
+
+---
+
 ## Add / edit a case study (the safe checklist)
 
 1. **Update index metadata** in `data/case_studies.json`

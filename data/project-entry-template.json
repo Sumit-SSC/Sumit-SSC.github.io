@@ -1,0 +1,30 @@
+{
+  "project_template": {
+    "id": "my-project-slug",
+    "title": "My Project Title",
+    "short_description": "One-line summary of the project outcome.",
+    "full_description": "Overview paragraph for the project detail page.",
+    "problem_statement": "What problem this project solves.",
+    "approach": "Method, stack, and implementation approach.",
+    "insights": "Key outcomes, impact, and measurable results.",
+    "media_notes": "Optional extra notes for artifacts or demos.",
+    "category": "Analytics",
+    "tools": ["SQL", "Python", "Power BI"],
+    "date": "2026",
+    "featured": false,
+    "thumbnail": "assets/images/thumbs/my-project.jpg",
+    "images": [
+      "assets/images/projects/my-project-slug/01.jpg",
+      "assets/images/projects/my-project-slug/02.jpg"
+    ],
+    "content_path": "data/projects/my-project-slug.html",
+    "github_url": "",
+    "demo_url": "",
+    "video_url": "",
+    "streamlit_url": "",
+    "powerbi_embed_url": "",
+    "pbix_download_path": "",
+    "slide_pdf_path": "",
+    "notebook_url": ""
+  }
+}
