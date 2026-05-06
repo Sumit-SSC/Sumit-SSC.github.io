@@ -3723,6 +3723,20 @@ html.dark-theme .lightdash-journey__year-header-label,
   .lightdash-journey__axis {
     display: none !important;
   }
+  /* Keep content beside the curve with explicit gap; avoid overlap. */
+  .lightdash-journey__row {
+    grid-template-columns: minmax(0, 4fr) 88px minmax(0, 6fr) !important;
+    gap: 0 0.95rem !important;
+  }
+  .lightdash-journey__row:has(.lightdash-journey__right .lightdash-journey__media) {
+    grid-template-columns: minmax(0, 6fr) 88px minmax(0, 4fr) !important;
+  }
+  .lightdash-journey__left {
+    padding-right: clamp(1rem, 2.8vw, 2.4rem) !important;
+  }
+  .lightdash-journey__right {
+    padding-left: clamp(1rem, 2.8vw, 2.4rem) !important;
+  }
   .lightdash-journey::before {
     content: "";
     position: absolute;
@@ -3742,11 +3756,8 @@ html.dark-theme .lightdash-journey__year-header-label,
   .dark .lightdash-journey::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 1000' preserveAspectRatio='none'%3E%3Cpath d='M110 0 C 26 95, 194 190, 110 285 C 26 380, 194 475, 110 570 C 26 665, 194 760, 110 855 C 78 905, 78 950, 110 1000' fill='none' stroke='rgba(129,140,248,0.74)' stroke-width='2.5' stroke-dasharray='8 8' stroke-linecap='round'/%3E%3C/svg%3E");
   }
-  .lightdash-journey__row:nth-of-type(odd) .lightdash-journey__node {
-    transform: translateX(-16px);
-  }
-  .lightdash-journey__row:nth-of-type(even) .lightdash-journey__node {
-    transform: translateX(16px);
+  .lightdash-journey__row .lightdash-journey__node {
+    transform: none;
   }
 }
 
@@ -5061,4 +5072,50 @@ html.dark-theme .site-nav-panel {
   #resume-container button {
     min-height: 40px;
   }
+}
+
+/* Skills page explicit theme parity fixes (undo flattened global mapping). */
+.skills-page .skills-icons-box,
+.skills-page .skill-card {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+html.dark-theme .skills-page .skills-icons-box,
+html.dark-theme .skills-page .skill-card,
+.dark-theme .skills-page .skills-icons-box,
+.dark-theme .skills-page .skill-card {
+  background: #111827 !important;
+  border-color: #334155 !important;
+}
+
+.skills-page h1,
+.skills-page h2,
+.skills-page h3 {
+  color: #111827 !important;
+}
+
+html.dark-theme .skills-page h1,
+html.dark-theme .skills-page h2,
+html.dark-theme .skills-page h3,
+.dark-theme .skills-page h1,
+.dark-theme .skills-page h2,
+.dark-theme .skills-page h3 {
+  color: #f8fafc !important;
+}
+
+/* Make logos readable in dark mode where original assets are dark-on-transparent. */
+html.dark-theme .skills-page .skills-icon-grid > div,
+.dark-theme .skills-page .skills-icon-grid > div {
+  background: rgba(248, 250, 252, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.65rem;
+  padding: 0.35rem;
+}
+
+html.dark-theme .skills-page .tech-stack-img,
+html.dark-theme .skills-page #skills-container img,
+.dark-theme .skills-page .tech-stack-img,
+.dark-theme .skills-page #skills-container img {
+  filter: drop-shadow(0 0 0.35rem rgba(15, 23, 42, 0.2));
 }
