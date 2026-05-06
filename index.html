@@ -10,11 +10,21 @@
 			(function () {
 				var h = location.hostname || "";
 				var p = location.pathname || "";
+				var qs = location.search || "";
+				var hash = location.hash || "";
+				var params = new URLSearchParams(qs);
 				/* Canonical admin UI lives on the main Pages host (same repo). GitHub must serve this
 				   page for admin.sumit.indevs.in — if you see 404, add that host in Pages settings or
 				   use a Cloudflare redirect (see docs/ADMIN_WORKSPACE.md). */
 				if (h === "admin.sumit.indevs.in" && (p === "/" || p === "" || p === "/index.html")) {
 					location.replace("https://sumit.indevs.in/admin/index.html");
+					return;
+				}
+				/* Performance-first default:
+				   serve the main portfolio page directly.
+				   Keep landing accessible with ?landing=1 for manual/demo use. */
+				if ((p === "/" || p === "" || p === "/index.html") && params.get("landing") !== "1") {
+					location.replace("pages/homepage.html" + qs + hash);
 				}
 			})();
 		</script>

@@ -1205,7 +1205,7 @@ function createFeaturedHeroCard(project) {
       <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
         <picture>
           <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
-          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy" decoding="async">
+          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="eager" fetchpriority="high" decoding="async">
         </picture>
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">

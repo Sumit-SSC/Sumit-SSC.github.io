@@ -24,6 +24,7 @@
     burger.className = 'site-nav-burger';
     burger.setAttribute('aria-label', 'Open menu');
     burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-controls', 'site-nav-panel');
     burger.innerHTML =
       '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>';
 
@@ -55,7 +56,14 @@
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
       backdrop.classList.toggle('is-open', open);
       panel.classList.toggle('is-open', open);
+      document.body.classList.toggle('site-nav-open', open);
       document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        var firstLink = panel.querySelector('a');
+        if (firstLink) firstLink.focus();
+      } else {
+        burger.focus();
+      }
     }
 
     burger.addEventListener('click', function () {
@@ -66,6 +74,13 @@
 
     backdrop.addEventListener('click', function () {
       setOpen(false);
+    });
+
+    panel.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('a')) {
+        setOpen(false);
+      }
     });
 
     document.addEventListener('keydown', function (e) {
