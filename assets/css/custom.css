@@ -4824,6 +4824,33 @@ html.dark-theme .giscus-disclosure-hint {
   flex-shrink: 0;
 }
 
+.site-nav-quick {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  margin-right: 0.45rem;
+}
+
+.site-nav-quick-link {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(255, 255, 255, 0.95);
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+html.dark-theme .site-nav-quick-link {
+  background: rgba(15, 23, 42, 0.95);
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
 html.dark-theme .site-nav-burger {
   background: var(--surface-dark, #111827);
   color: #e5e7eb;
@@ -4896,6 +4923,10 @@ html.dark-theme .site-nav-panel {
 }
 
 @media (max-width: 767px) {
+  #nav.nav-single-line .site-nav-quick {
+    display: inline-flex;
+  }
+
   #nav.nav-single-line .site-nav-burger {
     display: inline-flex;
   }
@@ -4913,7 +4944,7 @@ html.dark-theme .site-nav-panel {
   }
 
   #nav.nav-single-line .nav-brand {
-    max-width: calc(100vw - 6.5rem);
+    max-width: calc(100vw - 16rem);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -4986,6 +5017,32 @@ html.dark-theme .site-nav-panel {
     grid-template-columns: 1fr !important;
     gap: 1rem;
   }
+
+  .featured-card,
+  .featured-card.featured-hero,
+  .featured-card.featured-half {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+
+  .featured-media,
+  .featured-card.featured-hero .featured-media {
+    min-height: 210px !important;
+    max-height: 260px;
+  }
+
+  .featured-summary {
+    -webkit-line-clamp: 3;
+  }
+
+  .featured-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .featured-actions .featured-btn-view {
+    min-width: 126px;
+  }
 }
 
 /* Stage 3 micro-pass: mobile readability polish (about/project/resume) */
@@ -5014,6 +5071,23 @@ html.dark-theme .site-nav-panel {
   .about-page .lightdash-journey {
     padding-left: 0.35rem;
     padding-right: 0.35rem;
+  }
+
+  .about-page .lightdash-journey__node,
+  .about-page .lightdash-journey__axis {
+    display: none !important;
+  }
+
+  .about-page .lightdash-journey__row {
+    grid-template-columns: 1fr !important;
+    margin-bottom: 1.6rem;
+  }
+
+  .about-page .lightdash-journey__left,
+  .about-page .lightdash-journey__right {
+    grid-column: 1 !important;
+    padding: 0 !important;
+    align-items: stretch !important;
   }
 
   .about-page .lightdash-journey__card {
