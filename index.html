@@ -111,7 +111,7 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/indexMain.js"></script>
-			<script src="assets/js/analytics.js"></script>
+			<script src="assets/js/analytics.js?v=20260506-analytics-fix-2"></script>
 			<script>
 				initAnalyticsTracking({
 					site: "portfolio",
@@ -141,16 +141,6 @@
 							if (!navigated) window.location.href = 'pages/homepage.html';
 						}, DELAY_AFTER_ARROW_MS);
 					}, PRELOAD_DELAY_MS + ARROW_TRANSITION_MS);
-				});
-			</script>
-
-		<!-- Analytics: portfolio landing -->
-			<script src="assets/js/analytics.js"></script>
-			<script>
-				initAnalyticsTracking({
-					site: "portfolio",
-					baseEvent: "portfolio",
-					endpoint: "https://stats.colab.indevs.in/collect"
 				});
 			</script>
 

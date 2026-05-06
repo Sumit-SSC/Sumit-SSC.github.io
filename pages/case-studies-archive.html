@@ -20,9 +20,10 @@
 	</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../assets/css/custom.css" />
-	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
+	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" media="print" onload="this.media='all'" />
+	<noscript><link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" /></noscript>
 	<link rel="icon" type="image/svg+xml" href="../assets/images/arrow.svg" />
 	<script src="../assets/js/site-theme.js"></script>
 	<style>
@@ -77,7 +78,8 @@
 				<div class="text-sm text-gray-500 dark:text-gray-400">Archive</div>
 			</div>
 
-			<div id="case-studies-grid" class="case-studies-grid" data-tier="archive"></div>
+			<div id="case-studies-grid" class="case-studies-grid" data-tier="archive" data-pagination-target="case-studies-archive-pagination"></div>
+			<footer id="case-studies-archive-pagination" class="flex justify-center items-center gap-4 py-8" aria-label="Archive pages"></footer>
 		</div>
 	</main>
 
@@ -87,6 +89,7 @@
 		</div>
 	</footer>
 
+	<script src="../assets/js/site-nav-mobile.js" defer></script>
 	<script src="../assets/js/main.js"></script>
 	<script src="../assets/js/admin-embed-bootstrap.js"></script>
 </body>

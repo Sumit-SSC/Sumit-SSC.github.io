@@ -29,16 +29,17 @@
 	</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../assets/css/custom.css" />
-	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
+	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" media="print" onload="this.media='all'" />
+	<noscript><link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" /></noscript>
 		<link rel="icon" type="image/svg+xml" href="../assets/images/arrow.svg" />
 	<script src="../assets/js/site-theme.js"></script>
 	<style>
 		body { font-family: 'Inter', sans-serif; }
 	</style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased">
+<body class="project-detail-page bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased">
 	<!-- Scroll Progress Bar -->
 	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
 
@@ -85,40 +86,51 @@
 	<section id="project-hero" class="bg-gradient-to-br from-primary via-accent to-purple-900 text-white"></section>
 
 	<!-- Main Content -->
-	<main class="py-12">
+	<main class="project-article-main py-8 sm:py-12">
 		<div class="container mx-auto px-4 sm:px-6">
 			<!-- Mobile TOC dropdown -->
 			<div class="mb-6 lg:hidden">
-				<label for="project-toc-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jump to section</label>
+				<label for="project-toc-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">On this page</label>
 				<select id="project-toc-select" class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
 					<option value="">Select a section…</option>
 				</select>
 			</div>
 
-			<div class="grid gap-8 project-layout-grid">
-				<!-- Left Navigation Panel (Medium-style, desktop only) -->
-				<aside id="project-nav" class="hidden lg:block sticky top-28 self-start">
-					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-						<h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Table of Contents</h3>
-						<nav id="toc-nav" class="space-y-2">
-							<!-- TOC will be generated dynamically -->
+			<div class="grid gap-6 lg:gap-8 project-layout-grid">
+				<!-- Left rail (desktop): TOC + tools/artifacts stacked -->
+				<aside id="project-rail" class="hidden lg:block self-start">
+					<div id="project-rail-sticky" class="space-y-4">
+						<nav id="project-nav" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-5">
+							<h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3">Table of Contents</h3>
+							<div id="toc-nav" class="space-y-1.5">
+								<!-- TOC will be generated dynamically -->
+							</div>
 						</nav>
+						<div id="project-side">
+							<!-- Tools and Links will be here -->
+						</div>
 					</div>
 				</aside>
-				
+
 				<!-- Main Content -->
-				<div id="project-main" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8"></div>
-				
-				<!-- Right Sidebar (desktop), moves below content on mobile -->
-				<aside id="project-side" class="lg:sticky lg:top-28 lg:self-start">
-					<!-- Tools and Links will be here -->
-				</aside>
+				<div id="project-main" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-5 sm:p-6 lg:p-7"></div>
+
+				<!-- Mobile tools/artifacts (rendered from same JS, hidden on desktop) -->
+				<aside id="project-side-mobile" class="lg:hidden"></aside>
 			</div>
-			
-			<!-- Giscus Comments Section -->
-			<div id="giscus-container" class="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-				<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Comments & Discussion</h2>
-				<div id="giscus-root"></div>
+
+			<!-- Discussion: collapsed by default (loads Giscus only after open — saves mobile bandwidth) -->
+			<div id="article-discussion" class="article-discussion scroll-mt-28 mt-10 lg:mt-12">
+				<details class="giscus-disclosure" id="giscus-disclosure">
+					<summary class="giscus-disclosure-summary">
+						<span class="giscus-disclosure-kicker">Discussion</span>
+						<span class="giscus-disclosure-title">Join the conversation</span>
+						<span class="giscus-disclosure-hint">Thoughts or questions? Opens GitHub Discussions (loaded when you expand).</span>
+					</summary>
+					<div class="giscus-disclosure-body">
+						<div id="giscus-root" class="giscus-root-mount"></div>
+					</div>
+				</details>
 			</div>
 		</div>
 	</main>
@@ -147,9 +159,10 @@
 		</div>
 	</footer>
 
+	<script src="../assets/js/site-nav-mobile.js" defer></script>
 	<script src="../assets/js/main.js"></script>
 	<script src="../assets/js/admin-embed-bootstrap.js"></script>
-	<script src="../assets/js/analytics.js"></script>
+	<script src="../assets/js/analytics.js?v=20260506-analytics-fix-2"></script>
 	<script>
 		initAnalyticsTracking({
 			site: "portfolio",
@@ -157,97 +170,72 @@
 			endpoint: "https://events.colab.indevs.in/api/events"
 		});
 	</script>
-	<!-- Giscus Comments -->
+	<!-- Giscus: lazy-load when disclosure opens (scroll progress handled in main.js) -->
 	<script>
-		// Initialize Giscus with dynamic project ID and theme
-		function initGiscus() {
-			const urlParams = new URLSearchParams(window.location.search);
-			const projectId = urlParams.get('id') || 'general';
-			
-			// Get current theme
-			const isDark = document.documentElement.classList.contains('dark-theme');
-			const theme = isDark ? 'dark' : 'light';
-			
-			// Create Giscus script dynamically
-			const giscusScript = document.createElement('script');
-			giscusScript.src = 'https://giscus.app/client.js';
-			giscusScript.setAttribute('data-repo', 'Sumit-SC/Sumit-SC.github.io');
-			giscusScript.setAttribute('data-repo-id', 'R_kgDOLETHwQ'); // Replace with your repo-id
-			giscusScript.setAttribute('data-category', 'Project-Comments');
-			giscusScript.setAttribute('data-category-id', 'DIC_kwDOLETHwc4C0QcF'); // Replace with your category-id
-			giscusScript.setAttribute('data-mapping', 'specific');
-			giscusScript.setAttribute('data-term', `project→${projectId}`);
-			giscusScript.setAttribute('data-strict', '0');
-			giscusScript.setAttribute('data-reactions-enabled', '1');
-			giscusScript.setAttribute('data-emit-metadata', '0');
-			giscusScript.setAttribute('data-input-position', 'bottom');
-			giscusScript.setAttribute('data-theme', theme);
-			giscusScript.setAttribute('data-lang', 'en');
-			giscusScript.setAttribute('data-loading', 'lazy');
-			giscusScript.crossOrigin = 'anonymous';
-			giscusScript.async = true;
-			
-			// Append to giscus-root container
-			const container = document.getElementById('giscus-root');
-			if (container) {
-				container.appendChild(giscusScript);
+		(function () {
+			var giscusMounted = false;
+
+			function getGiscusTheme() {
+				return document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light';
 			}
-			
-			// Store reference for theme updates
-			window.giscusConfig = {
-				repo: 'Sumit-SC/Sumit-SC.github.io',
-				repoId: 'R_kgDOLETHwQ',
-				category: 'Project-Comments',
-				categoryId: 'DIC_kwDOLETHwc4C0QcF',
-				projectId: projectId
-			};
-		}
-		
-		// Update Giscus theme when site theme changes
-		function updateGiscusTheme() {
-			const isDark = document.documentElement.classList.contains('dark-theme');
-			const theme = isDark ? 'dark' : 'light';
-			
-			// Find Giscus iframe and send theme update message
-			const giscusFrame = document.querySelector('iframe[src*="giscus.app"]');
-			if (giscusFrame && giscusFrame.contentWindow) {
-				const message = {
-					type: 'set-theme',
-					theme: theme
-				};
-				giscusFrame.contentWindow.postMessage(message, 'https://giscus.app');
+
+			function mountGiscus() {
+				if (giscusMounted) return;
+				giscusMounted = true;
+				var urlParams = new URLSearchParams(window.location.search);
+				var projectId = urlParams.get('id') || 'general';
+				var theme = getGiscusTheme();
+				var giscusScript = document.createElement('script');
+				giscusScript.src = 'https://giscus.app/client.js';
+				giscusScript.setAttribute('data-repo', 'Sumit-SC/Sumit-SC.github.io');
+				giscusScript.setAttribute('data-repo-id', 'R_kgDOLETHwQ');
+				giscusScript.setAttribute('data-category', 'Project-Comments');
+				giscusScript.setAttribute('data-category-id', 'DIC_kwDOLETHwc4C0QcF');
+				giscusScript.setAttribute('data-mapping', 'specific');
+				giscusScript.setAttribute('data-term', 'project→' + projectId);
+				giscusScript.setAttribute('data-strict', '0');
+				giscusScript.setAttribute('data-reactions-enabled', '1');
+				giscusScript.setAttribute('data-emit-metadata', '0');
+				giscusScript.setAttribute('data-input-position', 'bottom');
+				giscusScript.setAttribute('data-theme', theme);
+				giscusScript.setAttribute('data-lang', 'en');
+				giscusScript.setAttribute('data-loading', 'lazy');
+				giscusScript.crossOrigin = 'anonymous';
+				giscusScript.async = true;
+				var container = document.getElementById('giscus-root');
+				if (container) container.appendChild(giscusScript);
 			}
-		}
-		
-		// Initialize on page load
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', initGiscus);
-		} else {
-			initGiscus();
-		}
-		
-		// Watch for theme changes
-		const observer = new MutationObserver(() => {
-			updateGiscusTheme();
-		});
-		observer.observe(document.documentElement, { 
-			attributes: true, 
-			attributeFilter: ['class'] 
-		});
-		
-		// Also listen for theme toggle events
-		window.addEventListener('theme-changed', updateGiscusTheme);
-		
-		// Scroll progress bar
-		window.addEventListener('scroll', () => {
-			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-			const scrolled = (winScroll / height) * 100;
-			const progressBar = document.getElementById('scroll-progress');
-			if (progressBar) {
-				progressBar.style.width = scrolled + '%';
+
+			function updateGiscusTheme() {
+				var giscusFrame = document.querySelector('iframe[src*="giscus.app"]');
+				if (giscusFrame && giscusFrame.contentWindow) {
+					giscusFrame.contentWindow.postMessage(
+						{ type: 'set-theme', theme: getGiscusTheme() },
+						'https://giscus.app'
+					);
+				}
 			}
-		});
+
+			function bind() {
+				var disclosure = document.getElementById('giscus-disclosure');
+				if (disclosure) {
+					disclosure.addEventListener('toggle', function () {
+						if (disclosure.open) mountGiscus();
+					});
+				}
+				new MutationObserver(updateGiscusTheme).observe(document.documentElement, {
+					attributes: true,
+					attributeFilter: ['class']
+				});
+				window.addEventListener('theme-changed', updateGiscusTheme);
+			}
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', bind);
+			} else {
+				bind();
+			}
+		})();
 	</script>
 </body>
 </html>

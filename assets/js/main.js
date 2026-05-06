@@ -28,6 +28,29 @@ const FEATURED_ORDER = [
 const FIRST_PAGE_COUNT = 6;
 const REST_PAGE_COUNT = 6;
 
+/** Viewport ≤767px: shorter grids (featured strip stays separate; grid = non-featured only). */
+function isNarrowPortfolioViewport() {
+  return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+}
+
+function getProjectsGridPageSize() {
+  if (isNarrowPortfolioViewport()) {
+    return { first: 2, rest: 5 };
+  }
+  return { first: FIRST_PAGE_COUNT, rest: REST_PAGE_COUNT };
+}
+
+function getFilteredListPageSize() {
+  if (isNarrowPortfolioViewport()) {
+    return { first: 5, rest: 5 };
+  }
+  return { first: FIRST_PAGE_COUNT, rest: REST_PAGE_COUNT };
+}
+
+function getCaseStudiesPageSize() {
+  return isNarrowPortfolioViewport() ? 5 : 9;
+}
+
 // Grouped project filters: one URL param matches any of these tools
 const FILTER_GROUPS = {
   'Python': ['Python'],
@@ -300,6 +323,41 @@ async function init() {
   initScrollProgress();
   initTapRipple();
   initHomepageSectionTabs();
+
+  let portfolioResizeTimer;
+  window.addEventListener(
+    'resize',
+    () => {
+      clearTimeout(portfolioResizeTimer);
+      portfolioResizeTimer = setTimeout(() => {
+        if (document.getElementById('projects-grid')) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const page = parseInt(urlParams.get('page') || '1', 10) || 1;
+          loadDashboardProjects('projects-grid', page);
+        }
+        if (document.getElementById('case-studies-grid')) {
+          renderCaseStudiesSection();
+        }
+      }, 220);
+    },
+    { passive: true }
+  );
+
+  window.addEventListener('popstate', () => {
+    if (document.getElementById('projects-grid')) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const page = parseInt(urlParams.get('page') || '1', 10) || 1;
+      loadDashboardProjects('projects-grid', page);
+      const featuredSection = document.getElementById('featured-projects-section');
+      const activeFilter = urlParams.get('filter');
+      if (featuredSection) {
+        featuredSection.style.display = page > 1 || activeFilter ? 'none' : '';
+      }
+    }
+    if (document.getElementById('case-studies-grid')) {
+      renderCaseStudiesSection();
+    }
+  });
   
   // Force theme color application after DOM is ready
   setTimeout(() => {
@@ -590,7 +648,7 @@ function applyViewMode(mode) {
   // Re-render projects with new view mode
   const urlParams = new URLSearchParams(window.location.search);
   const page = parseInt(urlParams.get('page')) || 1;
-  loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
+  loadDashboardProjects("projects-grid", page);
 }
 
 function updateViewButtons(activeMode) {
@@ -681,7 +739,7 @@ function routePage() {
       featuredSection.style.display = (page > 1 || activeFilter) ? 'none' : '';
     }
     
-    loadDashboardProjects("projects-grid", page, FIRST_PAGE_COUNT, REST_PAGE_COUNT);
+    loadDashboardProjects("projects-grid", page);
     renderFeaturedSection(); // Featured layout (hero + halves)
     initViewModeToggle(); // Initialize view mode toggle
     initViewSwitcher(); // Toggle between Projects content and Case Studies content (same page)
@@ -773,12 +831,18 @@ function initScrollProgress() {
   const progressBar = document.getElementById('scroll-progress');
   if (!progressBar) return;
 
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    progressBar.style.width = scrolled + '%';
-  });
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      progressBar.style.width = scrolled + '%';
+      ticking = false;
+    });
+  }, { passive: true });
 }
 
 /* ---------- TAP / CLICK RIPPLE ANIMATION ---------- */
@@ -925,9 +989,13 @@ async function renderCaseStudiesSection() {
   const grid = document.getElementById('case-studies-grid');
   if (!grid) return;
 
+  const paginationId = grid.dataset.paginationTarget || 'case-studies-pagination';
+  const paginationEl = document.getElementById(paginationId);
+
   const caseStudies = await loadCaseStudies();
   if (!caseStudies.length) {
     grid.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-12">Case studies will appear here. Edit <code>data/case_studies.json</code> to add or reorder.</p>';
+    if (paginationEl) paginationEl.innerHTML = '';
     return;
   }
 
@@ -937,10 +1005,74 @@ async function renderCaseStudiesSection() {
 
   if (!filtered.length) {
     grid.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-12">No case studies in this section yet.</p>';
+    if (paginationEl) paginationEl.innerHTML = '';
     return;
   }
 
-  grid.innerHTML = filtered.map(cs => createCaseStudyCard(cs)).join('');
+  const pageSize = getCaseStudiesPageSize();
+  const urlParams = new URLSearchParams(window.location.search);
+  let csPage = parseInt(urlParams.get('cspage') || '1', 10) || 1;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  if (csPage > totalPages) csPage = totalPages;
+  if (csPage < 1) csPage = 1;
+
+  const start = (csPage - 1) * pageSize;
+  const pageItems = filtered.slice(start, start + pageSize);
+
+  grid.innerHTML = pageItems.map(cs => createCaseStudyCard(cs)).join('');
+  renderCaseStudyPagination(filtered.length, csPage, pageSize, paginationEl);
+}
+
+function renderCaseStudyPagination(total, currentPage, pageSize, container) {
+  if (!container) return;
+
+  const totalPages = total <= pageSize ? 1 : Math.ceil(total / pageSize);
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const isArchive = /case-studies-archive/i.test(window.location.pathname || '');
+
+  const buildUrl = (p) => {
+    const params = new URLSearchParams(window.location.search);
+    if (p <= 1) params.delete('cspage');
+    else params.set('cspage', String(p));
+    if (!isArchive) params.set('view', 'case-studies');
+    const qs = params.toString();
+    const base = isArchive ? 'case-studies-archive.html' : 'homepage.html';
+    return qs ? `${base}?${qs}` : base;
+  };
+
+  let html = '';
+  if (currentPage > 1) {
+    html += `<a href="${buildUrl(currentPage - 1)}" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold text-sm text-gray-800 dark:text-gray-100">Prev</a>`;
+  }
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === currentPage) {
+      html += `<span class="px-4 py-2 bg-primary text-white rounded-lg font-bold text-sm">${i}</span>`;
+    } else {
+      html += `<a href="${buildUrl(i)}" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold text-sm text-gray-800 dark:text-gray-100">${i}</a>`;
+    }
+  }
+  if (currentPage < totalPages) {
+    html += `<a href="${buildUrl(currentPage + 1)}" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold text-sm text-gray-800 dark:text-gray-100">Next</a>`;
+  }
+
+  container.innerHTML = `<div class="flex flex-wrap justify-center items-center gap-2">${html}</div>`;
+
+  container.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = new URL(link.href, window.location.origin);
+      window.history.pushState({}, '', url.pathname + url.search + url.hash);
+      renderCaseStudiesSection();
+      const grid = document.getElementById('case-studies-grid');
+      if (grid && typeof grid.scrollIntoView === 'function') {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
 }
 
 function createCaseStudyCard(caseStudy) {
@@ -959,7 +1091,7 @@ function createCaseStudyCard(caseStudy) {
         <div class="case-study-card-image">
           <picture>
             <source srcset="${getOptimizedImagePath(caseStudy.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
-            <img src="${thumbnailUrl}" alt="${caseStudy.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+            <img src="${thumbnailUrl}" alt="${caseStudy.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy" decoding="async">
           </picture>
           <span class="case-study-card-read-time">${readMins} min read</span>
         </div>
@@ -1073,7 +1205,7 @@ function createFeaturedHeroCard(project) {
       <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
         <picture>
           <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
-          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy" decoding="async">
         </picture>
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
@@ -1147,7 +1279,7 @@ function createFeaturedHalfCard(project) {
       <a href="${getBasePath()}project.html?id=${project.id}" class="featured-media">
         <picture>
           <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
-          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy">
+          <img src="${thumbnailUrl}" alt="${project.title}" onerror="this.onerror=null; this.src='${fallbackImage}';" loading="lazy" decoding="async">
         </picture>
         <div class="featured-hover-overlay">
           <div class="featured-hover-inner">
@@ -1190,11 +1322,13 @@ function createFeaturedEmptySlot() {
 }
 
 /* ---------- DASHBOARD PROJECTS LOADING ---------- */
-async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIRST_PAGE_COUNT, restPageCount = REST_PAGE_COUNT) {
+async function loadDashboardProjects(containerId, page = 1) {
   const el = document.getElementById(containerId);
   if (!el) return;
 
   const projects = await loadProjects();
+  const pSize = getProjectsGridPageSize();
+  const fps = getFilteredListPageSize();
 
   // Optional filter from URL (?filter=Python)
   const urlParams = new URLSearchParams(window.location.search);
@@ -1206,8 +1340,12 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
   const nonFeatured = projects.filter(p => !p.featured);
   let list = [];
   let totalCount = 0;
+  let pageFirst = pSize.first;
+  let pageRest = pSize.rest;
 
   if (activeFilter) {
+    pageFirst = fps.first;
+    pageRest = fps.rest;
     const groupTools = FILTER_GROUPS[activeFilter];
     let filterTools = [];
 
@@ -1264,18 +1402,16 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
     }
 
     totalCount = list.length;
-    const { start, end } = getPaginationSlice(totalCount, page, firstPageCount, restPageCount);
+    const { start, end } = getPaginationSlice(totalCount, page, fps.first, fps.rest);
     list = list.slice(start, end);
   } else if (page === 1) {
-    const firstPageNonFeaturedCount = Math.max(firstPageCount - featured.length, 0);
-    list = [...featured, ...nonFeatured.slice(0, firstPageNonFeaturedCount)];
-    totalCount = featured.length + nonFeatured.length;
+    // Non-featured only in grid (featured appear in the hero strip above — no duplicates).
+    list = nonFeatured.slice(0, pSize.first);
+    totalCount = nonFeatured.length;
   } else {
-    const firstPageNonFeaturedCount = Math.max(firstPageCount - featured.length, 0);
-    const start = firstPageNonFeaturedCount + (page - 2) * restPageCount;
-    const end = start + restPageCount;
-    list = nonFeatured.slice(start, end);
-    totalCount = featured.length + nonFeatured.length;
+    const start = pSize.first + (page - 2) * pSize.rest;
+    list = nonFeatured.slice(start, start + pSize.rest);
+    totalCount = nonFeatured.length;
   }
 
   const slice = list;
@@ -1300,7 +1436,7 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
 
   if (!slice.length) {
     el.innerHTML = '<p class="text-gray-500 text-center py-8">No projects or case studies found for this filter.</p>';
-    renderPagination(totalCount, page, firstPageCount, restPageCount);
+    renderPagination(totalCount, page, pageFirst, pageRest);
     return;
   }
 
@@ -1323,7 +1459,7 @@ async function loadDashboardProjects(containerId, page = 1, firstPageCount = FIR
     el.innerHTML = slice.map(createDashboardProjectCard).join('');
   }
   
-  renderPagination(totalCount, page, firstPageCount, restPageCount);
+  renderPagination(totalCount, page, pageFirst, pageRest);
 }
 
 function getOrderedFeaturedProjects(projects) {
@@ -1407,7 +1543,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
         <a href="${detailUrl}" class="block">
           <picture>
             <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
-            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+            <img src="${thumbnailUrl}" alt="${project.title}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy" decoding="async">
           </picture>
         </a>
         <div class="card-hover-overlay absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -1522,7 +1658,7 @@ function createDashboardProjectList(project, index = 0) {
           <a href="${detailUrl}" class="block">
             <picture>
               <source srcset="${getOptimizedImagePath(project.thumbnail || 'assets/images/thumbs/01.jpg')}" type="image/webp">
-              <img src="${thumbnailUrl}" alt="${project.title}" class="list-image" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy">
+              <img src="${thumbnailUrl}" alt="${project.title}" class="list-image" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='${project.title} - Image not available';" loading="lazy" decoding="async">
             </picture>
           </a>
           <div class="list-hover-overlay">
@@ -1607,7 +1743,7 @@ function renderPagination(total, currentPage, firstPageCount, restPageCount) {
       e.preventDefault();
       const url = new URL(link.href);
       const page = parseInt(url.searchParams.get('page') || '1');
-      loadDashboardProjects('projects-grid', page, firstPageCount, restPageCount);
+      loadDashboardProjects('projects-grid', page);
       const activeFilter = url.searchParams.get('filter');
       const featuredSection = document.getElementById('featured-projects-section');
       if (featuredSection) {
@@ -1876,35 +2012,51 @@ function renderProject(project, caseStudy, contentFromFile) {
   const tocNav = document.getElementById("toc-nav");
   const tocSelect = document.getElementById("project-toc-select");
   if (tocNav) {
-    tocNav.innerHTML = sections.map(s => 
-      `<a href="#${s.id}" class="block text-sm text-gray-600 hover:text-primary transition-colors py-1 toc-link" data-section="${s.id}">${s.title}</a>`
-    ).join('');
-    
+    const tocLinks = sections
+      .map(
+        (s) =>
+          `<a href="#${s.id}" class="block text-sm text-gray-600 dark:text-gray-300 hover:text-primary transition-colors py-1 toc-link" data-section="${s.id}">${s.title}</a>`
+      )
+      .join('');
+    const discussionLink = `
+      <a href="#article-discussion" class="block text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors py-2.5 mt-2 border-t border-gray-200 dark:border-gray-600 toc-link toc-discussion-link" data-section="article-discussion">
+        Join the conversation
+      </a>`;
+    tocNav.innerHTML = tocLinks + discussionLink;
+
     // Add scroll spy for TOC
     initTOCScrollSpy();
   }
 
   // Populate mobile TOC select
   if (tocSelect) {
-    tocSelect.innerHTML = `<option value="">Select a section…</option>` + 
-      sections.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
-    tocSelect.addEventListener('change', () => {
+    tocSelect.innerHTML =
+      `<option value="">Select a section…</option>` +
+      sections.map((s) => `<option value="${s.id}">${s.title}</option>`).join('') +
+      `<option value="article-discussion">Join the conversation</option>`;
+    tocSelect.onchange = () => {
       const id = tocSelect.value;
       if (!id) return;
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (id === 'article-discussion') {
+        const d = document.getElementById('giscus-disclosure');
+        if (d && !d.open) d.open = true;
       }
-    });
+      const targetEl = document.getElementById(id);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
   }
 
+  const sideHtml = `
+    ${toolsBlock(project.tools, project.id)}
+    ${linksBlock(project)}
+  `;
   const side = document.getElementById("project-side");
-  if (side) {
-    side.innerHTML = `
-      ${toolsBlock(project.tools, project.id)}
-      ${linksBlock(project)}
-    `;
-    
+  if (side) side.innerHTML = sideHtml;
+  const sideMobile = document.getElementById("project-side-mobile");
+  if (sideMobile) sideMobile.innerHTML = sideHtml;
+  if (side || sideMobile) {
     // Make tools clickable
     initClickableTools();
   }
@@ -1912,6 +2064,13 @@ function renderProject(project, caseStudy, contentFromFile) {
   if (caseStudy && caseStudy.case_study_path) {
     loadCaseStudyIntoProject(project, caseStudy);
   }
+
+  document.querySelectorAll('a[href="#article-discussion"]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const d = document.getElementById('giscus-disclosure');
+      if (d && !d.open) d.open = true;
+    });
+  });
 }
 
 async function loadCaseStudyIntoProject(project, caseStudy) {
@@ -2176,9 +2335,12 @@ function notebookEmbed(url) {
 function pdfEmbed(path, project = null) {
   const resolvedPath = project ? resolveAssetUrl(project, path) : path;
   return `
-    <div class="media-container">
+    <div class="media-container media-container--pdf">
+      <div class="embed-pdf-toolbar">
+        <a href="${resolvedPath}" target="_blank" rel="noopener noreferrer" class="embed-open-full">Open PDF in new tab</a>
+      </div>
       <div class="embed-container embed-pdf">
-        <iframe src="${resolvedPath}" width="100%" height="100%" frameborder="0" loading="lazy"></iframe>
+        <iframe src="${resolvedPath}" title="PDF document" width="100%" height="100%" frameborder="0" loading="lazy"></iframe>
       </div>
     </div>
   `;
@@ -2266,7 +2428,7 @@ function galleryBlock(images, project = null) {
                 <div class="gallery-slide-inner">
                   <picture>
                     <source srcset="${optimized}" type="image/webp">
-                    <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="lazy">
+                    <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="lazy" decoding="async">
                   </picture>
                   <figcaption class="gallery-caption">
                     <span class="gallery-caption-index">${position}/${total}</span>

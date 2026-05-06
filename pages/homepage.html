@@ -29,9 +29,10 @@
 	</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../assets/css/custom.css" />
-	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
+	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" media="print" onload="this.media='all'" />
+	<noscript><link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" /></noscript>
 	<link rel="icon" type="image/svg+xml" href="../assets/images/arrow.svg" />
 	<script src="../assets/js/site-theme.js"></script>
 	<style>
@@ -188,7 +189,8 @@
 		<!-- Case Studies view (replaces projects content when toggled) -->
 		<div id="case-studies-view" class="hidden">
 			<p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">Long-form analytics and data science write-ups: methodology, results, and 2026+ perspectives on data-rich domains, AI-ML integration, and decision science.</p>
-			<div id="case-studies-grid" class="case-studies-grid" data-tier="featured"></div>
+			<div id="case-studies-grid" class="case-studies-grid" data-tier="featured" data-pagination-target="case-studies-pagination"></div>
+			<footer id="case-studies-pagination" class="case-studies-pagination flex justify-center items-center gap-4 py-6" aria-label="Case study pages"></footer>
 		</div>
 	</main>
 
@@ -251,12 +253,9 @@
 			.then(function (d) { window.__HOMEPAGE_CONTENT__ = d && typeof d === 'object' ? d : {}; })
 			.catch(function () { window.__HOMEPAGE_CONTENT__ = {}; });
 	</script>
-	<script src="../assets/js/jquery.min.js"></script>
-	<script src="../assets/js/jquery.scrolly.min.js"></script>
-	<script src="../assets/js/main.js?v=20260403-home-2"></script>
-	<script src="../assets/js/admin-embed-bootstrap.js"></script>
-	<script src="../assets/js/admin-visual-phase-a.js"></script>
-	<script src="../assets/js/analytics.js"></script>
+	<script src="../assets/js/main.js?v=20260506-portfolio-mobile-2" defer></script>
+	<script src="../assets/js/admin-embed-bootstrap.js" defer></script>
+	<script src="../assets/js/analytics.js?v=20260506-analytics-fix-2"></script>
 	<script>
 		initAnalyticsTracking({
 			site: "portfolio",
@@ -264,35 +263,37 @@
 			endpoint: "https://events.colab.indevs.in/api/events"
 		});
 	</script>
+	<script src="../assets/js/site-nav-mobile.js" defer></script>
 	<script>
-		// Hide intro on scroll (smooth fade)
+		(function () {
+			const params = new URLSearchParams(window.location.search || '');
+			if (params.get('admin_embed') !== '1') return;
+			const s = document.createElement('script');
+			s.src = '../assets/js/admin-visual-phase-a.js';
+			s.defer = true;
+			document.head.appendChild(s);
+		})();
+
+		// Hide intro on scroll (smooth fade) — only when intro exists
 		const intro = document.getElementById('intro');
 		let lastScroll = 0;
+		if (intro) {
+			window.addEventListener('scroll', () => {
+				const currentScroll = window.pageYOffset;
+				const introHeight = intro.offsetHeight || 1;
+				if (currentScroll > introHeight * 0.7) {
+					intro.style.opacity = '0';
+					intro.style.pointerEvents = 'none';
+				} else {
+					const opacity = 1 - (currentScroll / (introHeight * 0.7));
+					intro.style.opacity = opacity;
+					intro.style.pointerEvents = 'auto';
+				}
+				lastScroll = currentScroll;
+			}, { passive: true });
+		}
 
-		window.addEventListener('scroll', () => {
-			const currentScroll = window.pageYOffset;
-			const introHeight = intro.offsetHeight;
-			
-			if (currentScroll > introHeight * 0.7) {
-				intro.style.opacity = '0';
-				intro.style.pointerEvents = 'none';
-			} else {
-				const opacity = 1 - (currentScroll / (introHeight * 0.7));
-				intro.style.opacity = opacity;
-				intro.style.pointerEvents = 'auto';
-			}
-			lastScroll = currentScroll;
-		});
-
-		// Scroll progress bar
-		window.addEventListener('scroll', () => {
-			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-			const scrolled = (winScroll / height) * 100;
-			document.getElementById('scroll-progress').style.width = scrolled + '%';
-		});
-
-		// Smooth scroll for anchor links (but not .scrolly - handled by jQuery scrolly)
+		// Smooth scroll for anchor links (non-.scrolly)
 		document.querySelectorAll('a[href^="#"]:not(.scrolly)').forEach(anchor => {
 			anchor.addEventListener('click', function (e) {
 				e.preventDefault();
@@ -308,7 +309,7 @@
 		if (searchInput) {
 			searchInput.addEventListener('input', () => {
 				const term = searchInput.value.toLowerCase();
-				document.querySelectorAll('#projects-grid article.project-card').forEach(card => {
+				document.querySelectorAll('#projects-grid article').forEach(card => {
 					const text = card.textContent.toLowerCase();
 					card.style.display = text.includes(term) ? '' : 'none';
 				});
@@ -325,33 +326,22 @@
 			}, 100);
 		});
 
-		// Initialize scrolly for smooth scrolling (like index.html)
-		if (typeof jQuery !== 'undefined' && jQuery.fn.scrolly) {
-			jQuery('.scrolly').scrolly({
-				speed: 1500,
-				offset: 80
-			});
-		} else {
-			// Fallback: Use native smooth scroll if jQuery scrolly not available
-			document.querySelectorAll('.scrolly').forEach(function(anchor) {
-				anchor.addEventListener('click', function (e) {
+		// Smooth scroll for .scrolly (no jQuery — faster on mobile)
+		document.querySelectorAll('.scrolly').forEach(function (anchor) {
+			anchor.addEventListener('click', function (e) {
+				const targetId = this.getAttribute('href');
+				if (targetId && targetId.startsWith('#')) {
 					e.preventDefault();
-					const targetId = this.getAttribute('href');
-					if (targetId && targetId.startsWith('#')) {
-						const target = document.querySelector(targetId);
-						if (target) {
-							const headerOffset = 80; // Account for sticky header
-							const elementPosition = target.getBoundingClientRect().top;
-							const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-							window.scrollTo({
-								top: offsetPosition,
-								behavior: 'smooth'
-							});
-						}
+					const target = document.querySelector(targetId);
+					if (target) {
+						const headerOffset = 80;
+						const elementPosition = target.getBoundingClientRect().top;
+						const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+						window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
 					}
-				});
+				}
 			});
-		}
+		});
 		
 		// Make arrow clickable - ensure entire button area (including arrow) is clickable
 		const exploreButton = document.querySelector('.more.scrolly');

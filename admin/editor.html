@@ -3,464 +3,151 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Portfolio Editor</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Content editor · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: "Inter", system-ui, sans-serif; }
-    #admin-preview { min-height: 0; }
-    /* Light, friendly workspace shell */
-    body {
-      background: #eef2ff;
-      color: #1f2937;
-    }
-    header {
-      background: rgba(255, 255, 255, 0.92) !important;
-      border-bottom-color: #e2e8f0 !important;
-    }
-    #workspace-main > aside,
-    #workspace-inspector {
-      background: #f8fafc !important;
-      border-color: #e2e8f0 !important;
-    }
-    #workspace-preview-pane {
-      background: #eef2ff !important;
-    }
-    #rib-status,
-    #rib-session-info,
-    #rib-last-published,
-    #rib-branch-hint {
-      color: #64748b !important;
-    }
-    #mode-segment {
-      background: #e2e8f0 !important;
-      border-color: #cbd5e1 !important;
-    }
-    #mode-segment button {
-      color: #334155 !important;
-    }
-    #mode-segment button.bg-indigo-600 {
-      color: #ffffff !important;
-      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.25);
-    }
-    #rib-save { background: #059669 !important; }
-    #rib-publish { background: #4f46e5 !important; }
-    #rib-preview, #rib-open-live, #rib-load, #rib-edit-workspace {
-      background: #e2e8f0 !important;
-      color: #334155 !important;
-    }
-    #home-onboarding {
-      background: #eff6ff !important;
-      border-color: #bfdbfe !important;
-      color: #334155 !important;
-    }
-    #source-format,
-    #dash-restore-backup,
-    #sel-draft-commits,
-    #theme-default-mode,
-    #theme-default-color,
-    #theme-font-family,
-    #theme-font-size,
-    #fld-featured,
-    #fld-cs {
-      background: #ffffff !important;
-      border-color: #cbd5e1 !important;
-      color: #1f2937 !important;
-    }
-    #panel-source .border-b,
-    #draft-history-panel,
-    #inspector-tabs {
-      border-color: #e2e8f0 !important;
-      background: #f8fafc !important;
-    }
-    #ui-toast {
-      background: #ffffff !important;
-      color: #1f2937 !important;
-      border-color: #cbd5e1 !important;
-    }
-    .ce-block:focus-within { outline: 2px solid rgb(99 102 241 / 0.75); outline-offset: 3px; border-radius: 6px; }
-    .admin-editor-canvas {
-      border-radius: 14px;
-      border: 1px solid rgb(229 231 235);
-      background: #ffffff;
-      padding: 1.5rem 1.5rem 2rem;
-      min-height: 240px;
-      color: rgb(17 24 39);
-    }
-    .admin-editor-canvas .codex-editor { z-index: 1; background: transparent !important; }
-    .admin-editor-canvas .ce-block { margin: 0.15rem 0; }
-    .admin-editor-canvas .ce-paragraph { font-size: 1.0625rem; line-height: 1.75; color: rgb(17 24 39); }
-    .admin-editor-canvas .ce-header { color: rgb(17 24 39); }
-    .admin-editor-canvas .ce-header[data-placeholder]::before { color: rgb(107 114 128); }
-    .admin-editor-canvas .codex-editor__redactor { padding-bottom: 3rem !important; }
-    .admin-editor-canvas .ce-toolbar__plus,
-    .admin-editor-canvas .ce-toolbar__settings-btn {
-      color: rgb(55 65 81) !important;
-      background: rgb(243 244 246) !important;
-      border-radius: 8px !important;
-    }
-    /* Medium-like: hide block settings chrome (settings gear/popover). */
-    .admin-editor-canvas .ce-toolbar__settings-btn,
-    .admin-editor-canvas .ce-toolbar__settings-btn svg,
-    .admin-editor-canvas .ce-popover,
-    .admin-editor-canvas .ce-settings,
-    .admin-editor-canvas .ce-settings__button {
-      display: none !important;
-    }
-    body.theme-dark {
-      background: #0b1220;
-      color: #e2e8f0;
-    }
-    body.theme-dark header,
-    body.theme-dark #workspace-main > aside,
-    body.theme-dark #workspace-inspector {
-      background: #111827 !important;
-      border-color: #1f2937 !important;
-    }
-    body.theme-dark #workspace-preview-pane {
-      background: #0f172a !important;
-    }
-    body.theme-dark #rib-preview,
-    body.theme-dark #rib-open-live,
-    body.theme-dark #rib-load,
-    body.theme-dark #rib-edit-workspace,
-    body.theme-dark #rib-theme-toggle {
-      background: #1f2937 !important;
-      color: #e5e7eb !important;
-      border-color: #374151 !important;
-    }
-    body.theme-dark #source-editor-fallback {
-      background: #0b1220 !important;
-      color: #e5e7eb !important;
-      border-top: 1px solid #1f2937;
-    }
-    #center-draft-preview.medium-draft-preview { background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); }
-    .medium-draft-inner { max-width: 42rem; margin: 0 auto; padding-bottom: 3rem; }
-    .medium-draft-inner .preview-block:first-child { margin-top: 0.5rem; }
-    details.rib-account > summary { list-style: none; }
-    details.rib-account > summary::-webkit-details-marker { display: none; }
-    #shortcut-modal-backdrop { backdrop-filter: blur(2px); }
+    :root { --bg:#f0f2f5; --surface:#fff; --surface-2:#f8f9fb; --text:#1a1d21; --muted:#5c6370; --border:#dce0e6; --accent:#0d6e6e; --accent-hover:#0a5757; --danger:#c03434; --radius:10px; --font:"DM Sans",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace; }
+    body.theme-dark { --bg:#121418; --surface:#1c1f26; --surface-2:#242830; --text:#e8eaed; --muted:#9aa0a8; --border:#343a46; --accent:#3db8b8; --accent-hover:#52cccc; --danger:#f87171; }
+    * { box-sizing: border-box; } body { margin:0; font-family:var(--font); font-size:14px; line-height:1.45; background:var(--bg); color:var(--text); }
+    .layout { display:grid; grid-template-columns:minmax(440px,520px) 1fr; min-height:100vh; } @media (max-width:1100px){ .layout{grid-template-columns:1fr;} }
+    .sidebar{ border-right:1px solid var(--border); background:var(--surface); display:flex; flex-direction:column; max-height:100vh; overflow:hidden; }
+    .sidebar-scroll{ flex:1; overflow-y:auto; padding:16px 18px 24px; display:flex; flex-direction:column; gap:14px; }
+    .preview-col{ background:var(--bg); padding:16px; display:flex; flex-direction:column; min-height:50vh; }
+    .preview-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; font-size:12px; font-weight:600; letter-spacing:.02em; text-transform:uppercase; color:var(--muted); }
+    iframe#live-preview{ flex:1; width:100%; min-height:400px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
+    .card{ background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; }
+    .card h1{ margin:0 0 4px; font-size:17px; font-weight:650; letter-spacing:-.02em; } .card .sub{ margin:0; font-size:12px; color:var(--muted); }
+    .row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; } .row.stack{ flex-direction:column; align-items:stretch; }
+    label{ font-size:12px; font-weight:600; color:var(--muted); display:block; margin-bottom:4px; }
+    input[type="text"],input[type="password"],select,textarea{ width:100%; font:inherit; color:inherit; border:1px solid var(--border); border-radius:8px; padding:8px 10px; background:var(--surface); }
+    textarea{ resize:vertical; min-height:72px; font-family:inherit; } textarea.mono{ font-family:var(--mono); font-size:12px; line-height:1.5; }
+    button{ font:inherit; cursor:pointer; border-radius:8px; padding:8px 12px; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+    button:hover{ filter:brightness(.97);} body.theme-dark button:hover{filter:brightness(1.08);} button.primary{ background:var(--accent); border-color:transparent; color:#fff; font-weight:600;} button.primary:hover{ background:var(--accent-hover); filter:none;}
+    button.danger{ background:var(--danger); border-color:transparent; color:#fff; font-weight:600;} button.ghost{ background:transparent;} button.tiny{ padding:5px 9px; font-size:12px;} button.active{ background:var(--accent); border-color:transparent; color:#fff; font-weight:600;}
+    #status{ font-size:13px; color:var(--muted); min-height:20px; margin-top:6px; }
+    .segmented{ display:flex; gap:4px; flex-wrap:wrap; } .segmented button{ flex:1; min-width:0; white-space:nowrap; }
+    .dev-tools{ border-top:1px dashed var(--border); margin-top:10px; padding-top:10px; display:grid; gap:10px; }
+    .shape-banner{ font-size:12px; padding:8px 10px; border-radius:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); } .shape-banner strong{ color:var(--text);}
+    #panel-blocks .ribbon{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid var(--border); }
+    .blocks-list{ display:grid; gap:10px; max-height:min(52vh,520px); overflow:auto; padding-right:4px; } .block-card{ border:1px solid var(--border); border-radius:8px; background:var(--surface); overflow:hidden; }
+    .block-card.selected{ border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent); }
+    .block-top{ display:flex; align-items:center; gap:8px; padding:6px 10px; background:var(--surface-2); border-bottom:1px solid var(--border); cursor:grab; user-select:none; font-size:11px; color:var(--muted);}
+    .block-top:active{ cursor:grabbing; } .block-top strong{ color:var(--text); font-size:12px; } .block-body{ padding:10px; }
+    .block-editor-plain{ width:100%; min-height:56px; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; line-height:1.5; resize:vertical; }
+    .block-editor-plain:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent);}
+    #panel-records .record-fields,#panel-homepage-ui .ui-fields{ display:grid; gap:12px; } #panel-records h2{ margin:0 0 10px; font-size:14px; font-weight:650;}
+    .checks{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; } .checks label{ display:inline-flex; align-items:center; gap:6px; margin:0; font-weight:500; color:var(--text); cursor:pointer;}
+    #json-editor{ width:100%; min-height:200px; flex:1; font-family:var(--mono); font-size:12px; line-height:1.45; }
+    .hidden{ display:none !important; } .footer-actions{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding-top:4px; }
+    .commit-list{ max-height:200px; overflow:auto; display:grid; gap:8px; font-size:12px; } .commit-item{ border:1px solid var(--border); border-radius:8px; padding:8px 10px; background:var(--surface);}
+    .badge{ padding:2px 8px; border-radius:999px; font-size:11px; border:1px solid var(--border);} .b-healthy{ color:var(--accent); border-color:color-mix(in srgb,var(--accent) 40%,var(--border));}
+    .b-broken{ color:var(--danger); border-color:color-mix(in srgb,var(--danger) 40%,var(--border));} .b-needs{ color:#b45309; border-color:var(--border);} body.theme-dark .b-needs{ color:#fbbf24;}
+    details.history{ font-size:12px; } details.history summary{ cursor:pointer; font-weight:600; color:var(--muted); padding:4px 0;}
   </style>
-  <script>
-    window.__ADMIN_APP__ = {
-      siteOrigin: window.location.origin,
-      apiBase: "https://admin-api.sumit.indevs.in",
-      pagesPrefix: "/pages/"
-    };
-  </script>
 </head>
-<body class="h-screen overflow-hidden">
-  <header class="border-b border-slate-800/90 bg-slate-900/95 backdrop-blur-sm shadow-sm">
-    <div id="rib-auth-banner" class="hidden px-3 py-1.5 text-[11px] border-b border-amber-900/40 bg-amber-950/35 text-amber-100/95">
-      Not signed in — use <strong class="font-medium">Account → Log in</strong> to save drafts and publish to the live site.
-    </div>
-    <div class="px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
-      <div class="flex items-center gap-2 shrink-0">
-        <strong class="text-sm font-semibold tracking-tight text-white">Studio</strong>
-        <div id="mode-segment" class="inline-flex rounded-lg bg-slate-800/90 p-0.5 border border-slate-700/80" title="Simple editing mode">
-          <button id="btn-mode-visual" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors bg-indigo-600 text-white shadow-sm">Blocks</button>
-          <button id="btn-mode-source" type="button" class="hidden px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-slate-200">Advanced</button>
+<body class="theme-light">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-scroll">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div><h1>Content editor</h1><p class="sub">Edit site data, save draft, publish. Preview updates after publish.</p></div>
+            <button id="btn-theme" type="button" class="tiny ghost">Theme</button>
+          </div>
+          <div id="status"></div>
         </div>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-1 rounded-lg bg-emerald-950/25 px-0.5 py-0.5 border border-emerald-900/35" title="Draft stays private until you publish">
-        <button id="rib-save" type="button" class="px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium">Save draft</button>
-        <button id="rib-publish" type="button" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium">Publish</button>
-        <button id="rib-open-live" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-200" title="Opens the real page in a new tab (bypasses cache)">Open live</button>
-      </div>
-
-      <details class="rib-account relative shrink-0 rounded-lg border border-slate-700/70 bg-slate-800/50">
-        <summary class="px-2.5 py-1 rounded-md text-slate-300 text-[11px] cursor-pointer hover:bg-slate-700/80">Account</summary>
-        <div class="absolute left-0 top-full mt-1 z-[100] min-w-[10rem] rounded-lg border border-slate-700 bg-slate-900 py-1 shadow-xl flex flex-col">
-          <button id="rib-login" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Log in</button>
-          <button id="rib-logout" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Log out</button>
-          <button id="rib-session" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Refresh session</button>
-          <button id="rib-toggle-simple-mode" type="button" class="text-left px-3 py-2 text-xs hover:bg-slate-800 text-slate-200">Simple mode: on</button>
+        <div class="card">
+          <label>Access</label>
+          <div class="row">
+            <input id="gate-password" type="password" placeholder="Admin password" style="flex:1;min-width:120px;" />
+            <button id="btn-unlock" type="button" class="tiny">Unlock</button>
+            <button id="btn-login" type="button" class="tiny primary">GitHub</button>
+            <button id="btn-logout" type="button" class="tiny">Out</button>
+          </div>
+          <p id="session-line" class="sub" style="margin-top:8px;">Session…</p>
         </div>
-      </details>
-      <button id="rib-theme-toggle" type="button" class="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-[11px]" title="Toggle light/dark workspace theme">Dark mode</button>
-
-      <details id="rib-more" class="rounded-lg border border-slate-300/80 bg-white/80 max-w-full">
-        <summary class="px-2.5 py-1 text-[11px] text-slate-600 cursor-pointer hover:text-slate-900 select-none list-none">More</summary>
-        <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-2 border-t border-slate-200/80">
-          <button id="rib-preview" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Preview</button>
-          <button id="rib-load" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Reload</button>
-          <button id="rib-open-advanced" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Advanced editor</button>
-          <button id="rib-shortcuts" type="button" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Shortcuts</button>
-          <details id="rib-blocks-toolbar" class="hidden rounded-lg border border-slate-300/80 bg-white max-w-full">
-            <summary class="px-2.5 py-1 text-[11px] text-slate-500 cursor-pointer hover:text-slate-700 select-none list-none">Blocks</summary>
-            <div class="flex flex-wrap items-center gap-1 px-2 pb-2 pt-1 border-t border-slate-200/80">
-              <div id="rib-insert-group" class="flex flex-wrap items-center gap-0.5">
-                <button type="button" data-insert="paragraph" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Paragraph">¶</button>
-                <button type="button" data-insert="header" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Heading">H</button>
-                <button type="button" data-insert="list" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="List">•</button>
-                <button type="button" data-insert="image" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Image">🖼</button>
-                <button type="button" data-insert="code" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Code">&lt;/&gt;</button>
-                <button type="button" data-insert="embed" class="rib-ins px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Embed">↗</button>
-              </div>
-              <span class="text-slate-400 px-0.5">|</span>
-              <div id="rib-block-group" class="flex items-center gap-0.5">
-                <button id="rib-block-up" type="button" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Move up">↑</button>
-                <button id="rib-block-down" type="button" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px]" title="Move down">↓</button>
-                <button id="rib-block-delete" type="button" class="px-2 py-0.5 rounded bg-rose-100 hover:bg-rose-200 text-[11px]" title="Delete">✕</button>
-              </div>
+        <div class="card stack row">
+          <div class="row" style="width:100%;">
+            <div style="flex:1;min-width:140px;">
+              <label for="target">File</label>
+              <select id="target">
+                <option value="homepage">Intro blocks (homepage-content.json)</option>
+                <option value="homepageUi">Section titles (homepage-ui.json)</option>
+                <option value="projects">Projects list (projects.json)</option>
+                <option value="caseStudies">Case studies list (case_studies.json)</option>
+              </select>
             </div>
-          </details>
+            <div style="flex:1;min-width:140px;">
+              <label for="preview-slug">Preview page id</label>
+              <input id="preview-slug" type="text" placeholder="e.g. fraud-intelligence-and-risk-analytics" />
+            </div>
+            <div style="align-self:flex-end;"><button id="btn-load" type="button" class="tiny primary">Reload file</button></div>
+          </div>
+          <div id="target-help" class="sub"></div>
+          <div id="shape-banner" class="shape-banner hidden"></div>
+          <div class="segmented" style="margin-top:8px;">
+            <button id="btn-view-smart" type="button" class="tiny active">Visual editor</button>
+            <button id="btn-toggle-dev" type="button" class="tiny">Show code tools</button>
+          </div>
+          <div id="panel-smart" class="stack row">
+            <div id="panel-blocks">
+              <div class="ribbon">
+                <button id="btn-add-paragraph" type="button" class="tiny">+ Text</button>
+                <button id="btn-add-heading" type="button" class="tiny">+ Heading</button>
+                <button id="btn-add-list" type="button" class="tiny">+ List</button>
+                <span style="flex:1"></span>
+                <button id="btn-dup-block" type="button" class="tiny">Duplicate</button>
+                <button id="btn-del-block" type="button" class="tiny danger">Delete</button>
+                <button id="btn-up-block" type="button" class="tiny">↑</button>
+                <button id="btn-down-block" type="button" class="tiny">↓</button>
+              </div>
+              <div id="blocks-list" class="blocks-list"></div>
+            </div>
+            <div id="panel-records" class="hidden">
+              <label for="record-select">Entry</label>
+              <select id="record-select"></select>
+              <div id="record-fields" class="record-fields"></div>
+            </div>
+            <div id="panel-homepage-ui" class="hidden"><div id="homepage-ui-fields" class="ui-fields"></div></div>
+            <div id="panel-unknown" class="hidden"><p class="sub">This file shape is not supported in Form mode. Use <strong>Raw JSON</strong>.</p></div>
+          </div>
+          <div id="dev-tools" class="dev-tools hidden">
+            <div class="segmented">
+              <button id="btn-view-smart-2" type="button" class="tiny active">Visual editor</button>
+              <button id="btn-view-json" type="button" class="tiny">Raw JSON</button>
+            </div>
+            <textarea id="json-editor" class="mono hidden" spellcheck="false"></textarea>
+            <div class="row" style="margin-top:2px;">
+              <select id="backup-select" style="flex:1;"></select>
+              <button id="btn-refresh-backups" type="button" class="tiny">Backups</button>
+              <button id="btn-restore" type="button" class="tiny danger">Restore</button>
+            </div>
+            <details class="history">
+              <summary>Commit labels (local)</summary>
+              <div class="row" style="margin:8px 0;">
+                <button id="btn-refresh-commits" type="button" class="tiny">Refresh</button>
+                <button id="btn-mark-all-healthy" type="button" class="tiny">Mark all healthy</button>
+              </div>
+              <div id="commit-list" class="commit-list"></div>
+            </details>
+          </div>
+          <div class="footer-actions">
+            <button id="btn-save-publish" type="button" class="primary">Save + Publish</button>
+            <button id="btn-save" type="button">Save draft</button>
+            <button id="btn-publish" type="button">Publish only</button>
+            <button id="btn-open-live" type="button" class="ghost">Open preview URL</button>
+            <label class="checks"><input id="autosave" type="checkbox" checked /> Autosave</label>
+          </div>
         </div>
-      </details>
-
-      <button id="rib-edit-workspace" type="button" class="px-2 py-1 rounded-md bg-slate-800/90 hover:bg-slate-700 hidden shrink-0 text-[11px] text-slate-300" title="Hide site preview — full width editor">Focus</button>
-
-      <span id="rib-session-info" class="ml-auto shrink-0 text-slate-500 text-[10px] max-w-[10rem] truncate hidden sm:inline"></span>
-      <span id="rib-autosave-state" class="shrink-0 text-[10px] text-emerald-400/90">Auto-save: on</span>
-      <span id="rib-simple-pill" class="shrink-0 text-[10px] text-indigo-300/90">Simple mode</span>
-      <span id="rib-branch-hint" class="hidden shrink-0 text-[10px] text-slate-600 max-w-[8rem] truncate"></span>
-      <span id="rib-last-published" class="hidden shrink-0 text-[10px] text-slate-500 max-w-[14rem] truncate" title=""></span>
-      <span id="rib-status" class="flex-1 min-w-[6rem] text-slate-500 text-[10px] max-h-16 overflow-y-auto break-words" title=""></span>
-    </div>
-    <button id="rib-refresh" type="button" class="hidden"></button>
-  </header>
-
-  <div id="workspace-main" class="h-[calc(100vh-44px)] flex min-h-0">
-    <aside class="w-64 border-r border-slate-800 bg-slate-900 overflow-y-auto p-3">
-      <button id="sidebar-manager-toggle" type="button" class="hidden w-full mb-3 px-2 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm font-medium">Open page manager</button>
-      <div class="space-y-2 mb-4">
-        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="dashboard">Dashboard</button>
-        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="projects-home">Homepage</button>
-        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="data-files">Data files</button>
-        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="settings">Theme</button>
-        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="case-archive">Case archive</button>
-        <button class="nav-item w-full text-left px-2 py-1.5 rounded hover:bg-slate-800" data-route="about">About</button>
-      </div>
-      <div id="sidebar-record-lists">
-        <div class="mb-3 space-y-2">
-          <input id="sidebar-search" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs" placeholder="Search projects/case studies..." />
-          <label class="flex items-center gap-2 text-[11px] text-slate-500">
-            <input id="toggle-compact-lists" type="checkbox" class="accent-indigo-600" checked />
-            Compact list for selected item
-          </label>
-        </div>
-        <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Create content</p>
-        <div class="mb-3 rounded-lg border border-slate-700 bg-slate-800/60 p-2 space-y-2">
-          <select id="new-record-kind" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs">
-            <option value="projects">Project</option>
-            <option value="caseStudies">Case study</option>
-          </select>
-          <input id="new-record-title" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs" placeholder="Title (e.g. Market Mix Modeling)" />
-          <input id="new-record-slug" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1.5 text-xs" placeholder="Slug (optional, auto from title)" />
-          <p id="new-record-slug-hint" class="text-[10px] text-slate-400">Slug preview: -</p>
-          <button id="btn-create-record" type="button" class="w-full px-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium shadow-sm">Create draft</button>
-        </div>
-        <button id="btn-new-project" type="button" class="w-full mb-3 px-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium shadow-sm">＋ New project</button>
-        <p class="text-[10px] text-slate-500 mb-1">Projects</p>
-        <ul id="admin-sortable-projects" class="space-y-1 mb-4"></ul>
-        <button id="btn-new-case" type="button" class="w-full mb-3 px-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-medium shadow-sm">＋ New case study</button>
-        <p class="text-[10px] text-slate-500 mb-1">Case studies</p>
-        <ul id="admin-sortable-cases" class="space-y-1 mb-4"></ul>
       </div>
     </aside>
-
-    <div id="workspace-preview-pane" class="flex-1 min-w-0 flex flex-col bg-slate-950">
-      <section id="admin-dashboard-view" class="hidden flex-1 overflow-y-auto p-4">
-        <h2 class="text-xl font-semibold mb-3">Dashboard</h2>
-        <div class="grid grid-cols-2 gap-2 text-sm">
-          <div class="rounded border border-slate-800 p-3">Session <div id="dash-session" class="mt-1"></div></div>
-          <div class="rounded border border-slate-800 p-3">Projects <div id="dash-project-count" class="mt-1"></div></div>
-          <div class="rounded border border-slate-800 p-3">Cases <div id="dash-case-count" class="mt-1"></div></div>
-          <div class="rounded border border-slate-800 p-3">Status <div id="dash-last-status" class="mt-1"></div></div>
-          <div class="rounded border border-slate-800 p-3 col-span-2">IST <div id="dash-server-time" class="mt-1"></div></div>
-        </div>
-        <div class="mt-3 rounded-lg border border-indigo-900/50 bg-indigo-950/25 p-3 text-sm text-slate-200">
-          <strong class="text-indigo-200">Quick start:</strong>
-          Open Homepage, edit in Blocks mode, then Save draft and Publish.
-          <div class="mt-1 text-xs text-indigo-100/80">Tip: use Open live after publish to verify exactly what visitors will see.</div>
-        </div>
-        <div class="mt-3 rounded-lg border border-slate-800 p-3">
-          <div class="flex items-center justify-between gap-2">
-            <strong class="text-sm text-slate-200">Recent publish activity</strong>
-            <button id="btn-dash-refresh-history" type="button" class="text-[11px] text-indigo-400 hover:text-indigo-300">Refresh</button>
-          </div>
-          <ul id="dash-publish-history" class="mt-2 space-y-1 text-xs text-slate-300"></ul>
-        </div>
-        <div class="mt-3 rounded-lg border border-slate-800 p-3">
-          <div class="flex items-center justify-between gap-2">
-            <strong class="text-sm text-slate-200">Restore from backup</strong>
-            <button id="btn-dash-refresh-backups" type="button" class="text-[11px] text-indigo-400 hover:text-indigo-300">Refresh</button>
-          </div>
-          <div class="mt-2 flex gap-2">
-            <select id="dash-restore-backup" class="flex-1 min-w-0 rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]"></select>
-            <button id="btn-dash-restore" type="button" class="shrink-0 rounded-lg bg-rose-700 hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed px-2.5 py-1.5 text-[11px] font-medium" disabled>Restore live</button>
-          </div>
-          <p id="dash-restore-hint" class="mt-1 text-[10px] text-slate-400">Select a backup first.</p>
-          <p class="mt-2 text-[10px] text-slate-500">Every publish saves backup snapshots before overwrite. Pick one and restore to live branch.</p>
-        </div>
-        <p id="dash-session-detail" class="text-sm text-slate-300 mt-3"></p>
-        <button id="btn-open-editor" class="mt-2 px-3 py-1.5 rounded bg-indigo-700 hover:bg-indigo-600">Open editor</button>
-        <div class="hidden">
-          <select id="dash-theme-mode"><option value="system">system</option></select>
-          <select id="dash-theme-color"><option value="theme-custom">theme-custom</option></select>
-          <button id="btn-dash-theme-save"></button>
-          <p id="msg-dash-theme"></p>
-        </div>
-      </section>
-
-      <div id="center-preview-header" class="hidden border-b border-slate-800 px-3 py-2 text-xs flex flex-wrap items-center gap-2 bg-slate-900/50">
-        <strong class="text-slate-300">Preview</strong>
-        <button id="btn-center-draft" type="button" class="px-2 py-1 rounded-md bg-indigo-700 hover:bg-indigo-600">Live editor</button>
-        <button id="btn-center-live" type="button" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700">Live site</button>
-        <span id="center-preview-label" class="text-slate-400"></span>
-      </div>
-      <div id="block-nav-wrap" class="hidden border-b border-slate-800 px-3 py-2">
-        <ul id="block-nav-list" class="grid md:grid-cols-2 gap-1 text-xs"></ul>
-      </div>
-      <div id="center-draft-preview" class="hidden medium-draft-preview flex-1 overflow-auto text-gray-900 p-6 md:p-10"></div>
-      <iframe id="admin-preview" class="flex-1 w-full border-0 bg-white" title="preview" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
-      <div id="preview-bottom-actions" class="hidden" aria-hidden="true">
-        <button id="btn-bottom-insert" type="button" class="hidden"></button>
-        <button id="btn-bottom-delete" type="button" class="hidden"></button>
-        <button id="btn-bottom-up" type="button" class="hidden"></button>
-        <button id="btn-bottom-down" type="button" class="hidden"></button>
-      </div>
-    </div>
-
-    <aside id="workspace-inspector" class="w-[min(100%,460px)] border-l border-slate-800 bg-slate-900 flex flex-col min-h-0">
-      <div id="inspector-tabs" class="p-2 border-b border-slate-800 flex gap-1 text-xs">
-        <button id="tab-titles" type="button" class="px-2 py-1 rounded bg-slate-800">Section titles</button>
-        <button id="tab-json" type="button" class="px-2 py-1 rounded bg-slate-800">Homepage text</button>
-      </div>
-      <div id="draft-history-panel" class="hidden border-b border-slate-800 px-3 py-2 space-y-2 bg-slate-900/80">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-[11px] font-medium text-slate-500">History</span>
-          <button id="btn-refresh-draft-commits" type="button" class="text-[11px] text-indigo-400 hover:text-indigo-300">↻</button>
-        </div>
-        <div class="flex gap-1.5">
-          <select id="sel-draft-commits" class="flex-1 min-w-0 rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]"></select>
-          <button id="btn-load-draft-commit" type="button" class="shrink-0 rounded-lg bg-indigo-700 hover:bg-indigo-600 px-2.5 py-1.5 text-[11px] font-medium">Load</button>
-        </div>
-        <p class="text-[10px] text-slate-600 leading-snug">Older saves of this file. Load, then Save to branch from here.</p>
-      </div>
-      <div id="panel-home-ui" class="hidden p-3 space-y-2 overflow-y-auto">
-        <p id="home-auth-hint" class="hidden text-xs"></p>
-        <p class="text-[11px] text-slate-500">Use the <strong class="text-slate-400">top bar</strong> for Save draft, Publish, and Preview.</p>
-        <input id="fld-featured" class="w-full rounded bg-slate-800 px-2 py-1.5" placeholder="Featured title" />
-        <input id="fld-cs" class="w-full rounded bg-slate-800 px-2 py-1.5" placeholder="Case studies title" />
-        <button id="btn-save-ui" type="button" class="hidden" tabindex="-1" aria-hidden="true">Save draft</button>
-        <button id="btn-publish-home-ui" type="button" class="hidden" tabindex="-1" aria-hidden="true">Publish</button>
-        <p id="msg-home-ui" class="text-xs text-slate-400"></p>
-      </div>
-      <div id="panel-home-json" class="hidden flex-1 min-h-0 flex flex-col">
-        <div id="home-onboarding" class="mx-3 mt-2 mb-1 px-2.5 py-2 rounded-lg border border-slate-700/80 bg-slate-800/40 text-[11px] text-slate-300 leading-relaxed">
-          <span class="font-medium text-slate-200">Steps:</span>
-          1 Edit content in <strong class="text-slate-100">Blocks</strong> · 2 <strong class="text-slate-100">Save draft</strong> (GitHub) · 3 <strong class="text-slate-100">Publish</strong> (live site) · Use <strong class="text-slate-100">Open live</strong> to verify
-        </div>
-        <p id="home-json-auth-hint" class="hidden mx-3 mt-2 px-2 py-1.5 rounded-md border border-amber-700/60 bg-amber-950/40 text-[11px] text-amber-100/95 leading-snug"></p>
-        <div class="px-3 pt-2 flex gap-2 text-xs">
-          <button id="btn-load-draft-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
-          <button id="btn-load-live-home" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
-        </div>
-        <div id="admin-editor-holder-home" class="admin-editor-canvas flex-1 overflow-y-auto mx-3 mb-2"></div>
-        <p class="px-3 text-[11px] text-slate-500 mb-2">When ready, use <strong class="text-slate-400">Publish</strong> in the top bar to push this page to the live site.</p>
-        <button id="btn-publish-home-json" type="button" class="hidden mx-3 mb-3" tabindex="-1" aria-hidden="true">Publish homepage content</button>
-        <div id="draft-preview-home" class="hidden"></div>
-      </div>
-      <div id="panel-editor-record" class="hidden flex-1 min-h-0 flex flex-col">
-        <p id="record-label" class="px-3 pt-3 text-sm font-medium"></p>
-        <p id="record-auth-banner" class="hidden px-3 text-xs text-amber-300"></p>
-        <p id="record-html-hint" class="hidden px-3 text-[11px] text-sky-300/90 leading-snug"></p>
-        <div class="px-3 pt-2 flex gap-2 text-xs">
-          <button id="btn-load-draft-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load saved draft</button>
-          <button id="btn-load-live-record" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700">Load original live</button>
-        </div>
-        <div id="admin-editor-holder" class="admin-editor-canvas flex-1 overflow-y-auto mx-3 mb-2"></div>
-        <div id="draft-preview-record" class="hidden"></div>
-        <div class="hidden">
-          <select id="sel-restore-backup"></select>
-          <button id="btn-refresh-backups"></button>
-          <button id="btn-restore-backup"></button>
-          <select id="img-preset"><option value="inline">inline</option></select>
-          <input id="img-file" type="file" />
-          <button id="btn-upload"></button>
-        </div>
-      </div>
-      <div id="panel-source" class="hidden flex-1 min-h-0 flex flex-col">
-        <div class="p-3 border-b border-slate-800 flex flex-wrap items-center gap-2 text-xs">
-          <span class="text-slate-500 font-medium">Advanced editor</span>
-          <button id="btn-data-homepage-content" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">homepage-content.json</button>
-          <button id="btn-data-homepage-ui" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">homepage-ui.json</button>
-          <button id="btn-data-projects" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">projects.json</button>
-          <button id="btn-data-cases" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">case_studies.json</button>
-          <select id="source-format" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Advanced only: choose exactly what raw content to edit">
-            <option value="auto">Auto (recommended)</option>
-            <option value="homepage-text">Homepage plain text</option>
-            <option value="record-html">Main content (HTML)</option>
-            <option value="record-json">Record data (JSON)</option>
-            <option value="file">Whole file</option>
-          </select>
-          <button id="btn-source-main-html" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Main HTML</button>
-          <button id="btn-source-record-json" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Record JSON</button>
-          <button id="btn-source-whole-file" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Whole file</button>
-          <button id="btn-source-format-doc" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Format</button>
-          <button id="btn-source-reload" type="button" class="rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-1.5 text-[11px]">Reload</button>
-          <select id="source-theme" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Editor theme">
-            <option value="vs-dark">Dark</option>
-            <option value="vs">Light</option>
-          </select>
-          <select id="source-wrap" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Line wrap">
-            <option value="on">Wrap on</option>
-            <option value="off">Wrap off</option>
-          </select>
-          <select id="source-font-size" class="rounded-lg bg-slate-800 border border-slate-700 px-2 py-1.5 text-[11px]" title="Font size">
-            <option value="12">12px</option>
-            <option value="13" selected>13px</option>
-            <option value="14">14px</option>
-            <option value="15">15px</option>
-            <option value="16">16px</option>
-          </select>
-        </div>
-        <p class="px-3 py-1 text-[11px] text-amber-300/90 border-b border-slate-800">Advanced mode edits raw text/HTML/JSON. For normal editing, switch back to <strong class="text-amber-100">Blocks</strong>.</p>
-        <div id="source-editor-holder" class="flex-1 min-h-0"></div>
-        <textarea id="source-editor-fallback" class="hidden flex-1 min-h-0 w-full bg-white text-slate-900 border-0 outline-none resize-none p-3 font-mono text-sm leading-7" spellcheck="false"></textarea>
-      </div>
-      <div id="panel-static" class="hidden p-3 text-sm text-slate-400">Static page preview.</div>
-      <div id="panel-settings" class="hidden p-3 space-y-2 overflow-y-auto">
-        <input id="theme-primary" type="color" class="w-full h-10 rounded bg-slate-800" />
-        <input id="theme-accent" type="color" class="w-full h-10 rounded bg-slate-800" />
-        <input id="theme-font-size" type="number" class="w-full rounded bg-slate-800 px-2 py-1.5" />
-        <input id="theme-font-family" class="w-full rounded bg-slate-800 px-2 py-1.5" />
-        <select id="theme-default-mode" class="w-full rounded bg-slate-800 px-2 py-1.5"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
-        <select id="theme-default-color" class="w-full rounded bg-slate-800 px-2 py-1.5"><option value="theme-custom">Custom</option><option value="theme-indigo">Indigo</option><option value="theme-orange">Orange</option><option value="theme-emerald">Emerald</option><option value="theme-purple">Purple</option></select>
-        <button id="btn-theme-load" class="rounded bg-slate-800 px-2 py-1.5">Load</button>
-        <button id="btn-theme-save" class="rounded bg-emerald-700 px-2 py-1.5">Save draft</button>
-        <button id="btn-theme-publish" class="rounded bg-indigo-700 px-2 py-1.5">Publish</button>
-        <p id="msg-theme" class="text-xs text-slate-400"></p>
-      </div>
-    </aside>
+    <main class="preview-col">
+      <div class="preview-head"><span>Live preview</span><button id="btn-refresh-preview" type="button" class="tiny ghost">Refresh iframe</button></div>
+      <iframe id="live-preview" title="Live preview"></iframe>
+    </main>
   </div>
-  <div id="ui-toast" class="hidden fixed right-4 bottom-4 z-[200] rounded-lg border border-slate-700 bg-slate-900/95 px-3 py-2 text-xs text-slate-100 shadow-2xl"></div>
-  <div id="shortcut-modal-backdrop" class="hidden fixed inset-0 z-[250] bg-black/40 p-4">
-    <div class="max-w-lg mx-auto mt-10 rounded-xl border border-slate-700 bg-slate-900 text-slate-100 p-4">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="text-sm font-semibold">Editor shortcuts</h3>
-        <button id="btn-close-shortcuts" type="button" class="rounded bg-slate-800 hover:bg-slate-700 px-2 py-1 text-xs">Close</button>
-      </div>
-      <ul class="text-xs space-y-1 text-slate-300">
-        <li><strong>Ctrl/Cmd + S</strong> — Save draft</li>
-        <li><strong>Ctrl/Cmd + Shift + P</strong> — Publish</li>
-        <li><strong>Ctrl/Cmd + Shift + L</strong> — Reload current editor data</li>
-        <li><strong>Ctrl/Cmd + Shift + E</strong> — Toggle Text/Blocks mode</li>
-        <li><strong>Esc</strong> — Close this shortcuts modal</li>
-      </ul>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2.0.8/dist/editorjs-list.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@1.6.0/dist/simple-image.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.3/dist/code.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-  <script src="../assets/js/admin-app.js?v=20260504-07"></script>
+  <script src="./new-editor.js?v=20260506-01"></script>
 </body>
 </html>

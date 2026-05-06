@@ -102,7 +102,14 @@
 
   function sendAnalyticsEvent(config, eventName, extra) {
     var debug = isDebug();
-    if (!config.endpoint) {
+    var endpointsToTry = [];
+    if (Array.isArray(config.endpoints) && config.endpoints.length) {
+      endpointsToTry = config.endpoints.filter(Boolean);
+    } else if (config.endpoint) {
+      endpointsToTry = [config.endpoint];
+    }
+
+    if (!endpointsToTry.length) {
       if (debug) console.warn("[Analytics] No endpoint configured, event not sent:", eventName);
       return;
     }
@@ -119,21 +126,16 @@
 
     var body = JSON.stringify(payload);
 
-    // Extract base URL for fallback paths
-    var baseUrl = config.endpoint;
+    // Extract base URL for fallback paths (only best-effort, for the first endpoint).
+    var baseUrl = endpointsToTry[0];
     try {
-      var urlObj = new URL(config.endpoint);
+      var urlObj = new URL(endpointsToTry[0]);
       baseUrl = urlObj.origin;
-    } catch (e) {
-      // If URL parsing fails, use as-is
-    }
+    } catch (e) {}
 
-    // Fallback paths to try (less likely to be blocked)
+    // Fallback paths to try (same host).
     var fallbackPaths = ["/api/events", "/api/track", "/events", "/track", "/ping", "/log"];
-    var endpointsToTry = [config.endpoint];
-    
-    // Add fallbacks if we can extract base URL
-    if (baseUrl !== config.endpoint) {
+    if (baseUrl !== endpointsToTry[0]) {
       for (var i = 0; i < fallbackPaths.length; i++) {
         endpointsToTry.push(baseUrl + fallbackPaths[i]);
       }
@@ -206,15 +208,38 @@
     try {
       var pageLoadMs = Date.now();
       var sessionId = getSessionId();
+      var primaryEndpoint = (options && options.endpoint) || DEFAULT_ENDPOINT || null;
+
+      // Robust fallback:
+      // Your repo historically used BOTH:
+      // - events.colab.indevs.in/api/events
+      // - stats.colab.indevs.in/collect
+      // If one is down, try the other automatically.
+      var fallbackEndpoint = null;
+      if (primaryEndpoint && primaryEndpoint.indexOf("events.colab.indevs.in") !== -1) {
+        fallbackEndpoint = "https://stats.colab.indevs.in/collect";
+      } else if (primaryEndpoint && primaryEndpoint.indexOf("stats.colab.indevs.in") !== -1) {
+        fallbackEndpoint = "https://events.colab.indevs.in/api/events";
+      }
+
+      var endpoints = [];
+      if (Array.isArray(options && options.endpoints) && options.endpoints.length) {
+        endpoints = options.endpoints.filter(Boolean);
+      } else {
+        if (primaryEndpoint) endpoints.push(primaryEndpoint);
+        if (fallbackEndpoint && fallbackEndpoint !== primaryEndpoint) endpoints.push(fallbackEndpoint);
+      }
+
       var cfg = {
         site: (options && options.site) || "analytics-lab",
         baseEvent: (options && options.baseEvent) || "page",
-        endpoint: (options && options.endpoint) || DEFAULT_ENDPOINT || null,
+        endpoint: primaryEndpoint,
+        endpoints: endpoints,
         secret: (options && options.secret) || DEFAULT_SECRET || null,
         sessionId: sessionId
       };
 
-      if (!cfg.endpoint) return;
+      if (!cfg.endpoints || !cfg.endpoints.length) return;
 
       if (isDebug()) console.log("[Analytics] Init:", cfg.baseEvent, "site:", cfg.site, "endpoint:", cfg.endpoint);
 
