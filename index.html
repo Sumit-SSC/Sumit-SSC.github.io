@@ -139,6 +139,10 @@
 				var DELAY_AFTER_ARROW_MS = 3000; // 3 seconds after arrow appears
 
 				window.addEventListener('load', function() {
+					var params = new URLSearchParams(window.location.search || '');
+					// Keep landing stable for audits/manual review.
+					// Root traffic already redirects to /pages/homepage.html unless ?landing=1.
+					if (params.get('landing') === '1') return;
 					var cta = document.querySelector('#banner .more.scrolly');
 					if (!cta) return;
 					var navigated = false;
