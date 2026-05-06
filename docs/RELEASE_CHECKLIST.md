@@ -9,11 +9,10 @@ Use this checklist before pushing portfolio updates live.
 From repo root:
 
 ```powershell
-python scripts/validate_content.py
-python scripts/audit_images.py
+powershell -ExecutionPolicy Bypass -File scripts/release_guardrail.ps1
 ```
 
-Both should pass without critical missing-path errors.
+This runs content validation, image audit, structure checks, and quick git state in one go.
 
 ---
 

@@ -10,6 +10,22 @@ Checks pages and assets for common issues: social buttons in header/footer, proj
 ./scripts/verify_portfolio.ps1
 ```
 
+## release_guardrail.ps1 (one-command pre-release checks)
+
+Runs the most important checks in one pass:
+
+- `python scripts/validate_content.py`
+- `python scripts/audit_images.py`
+- `powershell -ExecutionPolicy Bypass -File scripts/verify_portfolio.ps1`
+- `git status --short`
+- `git log -5 --oneline`
+
+Run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/release_guardrail.ps1
+```
+
 ## download-skill-icons.ps1
 
 Downloads all skill icons from CDN to `assets/images/icons/` so the site can load them **locally**. This gives you:
