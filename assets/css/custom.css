@@ -5178,18 +5178,6 @@ html.dark-theme .site-nav-panel {
     line-height: 1.1;
   }
 
-  @media (max-width: 420px) {
-    #nav.nav-single-line .site-nav-quick a[href="about.html"],
-    #nav.nav-single-line .site-nav-quick a[href="contact.html"] {
-      display: none !important;
-    }
-
-    #nav.nav-single-line .nav-brand {
-      max-width: calc(100vw - 10rem) !important;
-      font-size: 1.65rem !important;
-    }
-  }
-
   .featured-card,
   .featured-card.featured-hero,
   .featured-card.featured-half {
@@ -5205,6 +5193,38 @@ html.dark-theme .site-nav-panel {
 
   .featured-body {
     padding: 14px 16px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  #nav.nav-single-line .site-nav-quick a[href="about.html"],
+  #nav.nav-single-line .site-nav-quick a[href="contact.html"] {
+    display: none !important;
+  }
+
+  #nav.nav-single-line .nav-brand {
+    max-width: calc(100vw - 10rem) !important;
+    font-size: 1.65rem !important;
+  }
+}
+
+/* Keep About journey stable on tablets too (not just phones). */
+@media (max-width: 1023px) {
+  .about-page .lightdash-journey__node,
+  .about-page .lightdash-journey__axis {
+    display: none !important;
+  }
+
+  .about-page .lightdash-journey__row {
+    grid-template-columns: 1fr !important;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-page .lightdash-journey__left,
+  .about-page .lightdash-journey__right {
+    grid-column: 1 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 }
 
@@ -5229,6 +5249,12 @@ html.dark-theme .skills-page .skill-card,
   color: #111827 !important;
 }
 
+.skills-page p,
+.skills-page li,
+.skills-page span:not(.skill-badge):not(.skills-chip) {
+  color: #374151 !important;
+}
+
 html.dark-theme .skills-page h1,
 html.dark-theme .skills-page h2,
 html.dark-theme .skills-page h3,
@@ -5236,6 +5262,15 @@ html.dark-theme .skills-page h3,
 .dark-theme .skills-page h2,
 .dark-theme .skills-page h3 {
   color: #f8fafc !important;
+}
+
+html.dark-theme .skills-page p,
+html.dark-theme .skills-page li,
+html.dark-theme .skills-page span:not(.skill-badge):not(.skills-chip),
+.dark-theme .skills-page p,
+.dark-theme .skills-page li,
+.dark-theme .skills-page span:not(.skill-badge):not(.skills-chip) {
+  color: #cbd5e1 !important;
 }
 
 /* Make logos readable in dark mode where original assets are dark-on-transparent. */
