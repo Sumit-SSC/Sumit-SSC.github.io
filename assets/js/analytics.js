@@ -141,66 +141,65 @@
       }
     }
 
-    // Strategy 1: Try sendBeacon first (often less blocked than fetch)
-    var beaconSent = false;
-    if (navigator.sendBeacon) {
+    function tryBeaconFallback() {
+      if (!navigator.sendBeacon) return false;
       try {
         for (var b = 0; b < endpointsToTry.length; b++) {
           var blob = new Blob([body], { type: "application/json" });
           if (navigator.sendBeacon(endpointsToTry[b], blob)) {
-            beaconSent = true;
-            if (debug) console.log("[Analytics] Sent via sendBeacon:", endpointsToTry[b]);
-            break; // Success
+            if (debug) console.log("[Analytics] Sent via sendBeacon fallback:", endpointsToTry[b]);
+            return true;
           }
         }
-        if (debug && !beaconSent) console.warn("[Analytics] sendBeacon did not accept request, trying fetch");
-      } catch (e) {
-        // sendBeacon failed, continue to fetch fallback
-      }
+      } catch (e) {}
+      return false;
     }
 
-    // Strategy 2: If sendBeacon didn't work, try fetch with multiple endpoints
-    if (!beaconSent) {
-      function tryEndpoint(index) {
-        if (index >= endpointsToTry.length) {
-          if (debug) console.warn("[Analytics] All endpoints failed (blocked or unreachable). Check ad-blockers or network.");
-          return;
+    // Fetch-first is more trustworthy for delivery status than sendBeacon.
+    // Use beacon only as a backup for unload or fetch failures.
+    function tryEndpoint(index) {
+      if (index >= endpointsToTry.length) {
+        var isUnload = /_unload$/.test(eventName);
+        if (isUnload) {
+          tryBeaconFallback();
+        } else if (debug) {
+          console.warn("[Analytics] All endpoints failed (blocked or unreachable).");
         }
-        
-        var endpoint = endpointsToTry[index];
-        var timeoutId = setTimeout(function() {
+        return;
+      }
+
+      var endpoint = endpointsToTry[index];
+      var timeoutId = setTimeout(function() {
+        tryEndpoint(index + 1);
+      }, 2200);
+
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: body,
+        keepalive: true,
+        credentials: "omit"
+      })
+        .then(function (response) {
+          clearTimeout(timeoutId);
+          if (response && response.ok) {
+            if (debug) console.log("[Analytics] Sent via fetch:", endpoint);
+            return;
+          }
+          if (debug) console.warn("[Analytics] fetch failed:", endpoint, response && response.status);
           tryEndpoint(index + 1);
-        }, 2000);
-
-        fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: body,
-          keepalive: true,
-          credentials: "omit"
         })
-          .then(function (response) {
-            clearTimeout(timeoutId);
-            if (response.ok) {
-              if (debug) console.log("[Analytics] Sent via fetch:", endpoint);
-              return;
-            } else {
-              if (debug) console.warn("[Analytics] fetch failed:", endpoint, response.status);
-              tryEndpoint(index + 1);
-            }
-          })
-          .catch(function (err) {
-            clearTimeout(timeoutId);
-            if (debug) console.warn("[Analytics] fetch error:", endpoint, err && err.message);
-            tryEndpoint(index + 1);
-          });
-      }
+        .catch(function (err) {
+          clearTimeout(timeoutId);
+          if (debug) console.warn("[Analytics] fetch error:", endpoint, err && err.message);
+          tryEndpoint(index + 1);
+        });
+    }
 
-      try {
-        tryEndpoint(0);
-      } catch (e) {
-        // Never break the page
-      }
+    try {
+      tryEndpoint(0);
+    } catch (e) {
+      // Never break the page
     }
   }
 

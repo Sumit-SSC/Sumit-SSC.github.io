@@ -3367,8 +3367,8 @@ body:not(.landing) select {
 }
 @media (min-width: 768px) {
   .lightdash-journey {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 2.75rem;
+    padding-right: 2.75rem;
   }
 }
 
@@ -3435,7 +3435,7 @@ body:not(.landing) select {
   }
 }
 
-/* One row per year – force 3-column side-by-side from 640px */
+/* One row per year – keep mobile simple, desktop split */
 .lightdash-journey__row {
   position: relative;
   display: grid;
@@ -3450,8 +3450,8 @@ body:not(.landing) select {
 }
 @media (min-width: 640px) {
   .lightdash-journey__row {
-    grid-template-columns: 1fr 56px 1fr !important;
-    gap: 0 0.5rem !important;
+    grid-template-columns: minmax(0, 4fr) 56px minmax(0, 6fr) !important;
+    gap: 0 0.65rem !important;
     margin-bottom: 3.5rem;
     min-height: 280px;
   }
@@ -3541,7 +3541,7 @@ html.dark-theme .lightdash-journey__year-header-label,
   .lightdash-journey__left {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    padding-right: 1rem;
+    padding-right: clamp(0.8rem, 2.2vw, 2rem);
     display: flex !important;
     flex-direction: column;
     gap: 1.25rem;
@@ -3551,7 +3551,7 @@ html.dark-theme .lightdash-journey__year-header-label,
   .lightdash-journey__right {
     grid-column: 3 !important;
     grid-row: 1 !important;
-    padding-left: 1rem;
+    padding-left: clamp(0.8rem, 2.2vw, 2rem);
     display: flex !important;
     flex-direction: column;
     gap: 1.25rem;
@@ -3572,10 +3572,12 @@ html.dark-theme .lightdash-journey__year-header-label,
 }
 @media (min-width: 640px) {
   .lightdash-journey__card {
-    max-width: 380px;
+    width: min(100%, 560px);
+    max-width: 560px;
   }
   .lightdash-journey__media {
-    max-width: 380px;
+    width: min(100%, 360px);
+    max-width: 360px;
   }
 }
 .dark-theme .lightdash-journey__card {
@@ -3708,12 +3710,44 @@ html.dark-theme .lightdash-journey__year-header-label,
   background: #4f46e5;
 }
 
-/* Always-on timeline layout: keep central axis + 3-column grid at all widths */
-.lightdash-journey__axis {
-  display: block !important;
-}
-.lightdash-journey__row {
-  grid-template-columns: 1fr 56px 1fr !important;
+/* Desktop-only S-curve guide instead of strict center split */
+@media (min-width: 1024px) {
+  .lightdash-journey {
+    --journey-curve-color: rgba(79, 70, 229, 0.58);
+  }
+  .dark-theme .lightdash-journey,
+  html.dark-theme .lightdash-journey,
+  .dark .lightdash-journey {
+    --journey-curve-color: rgba(129, 140, 248, 0.74);
+  }
+  .lightdash-journey__axis {
+    display: none !important;
+  }
+  .lightdash-journey::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 140px;
+    bottom: 0;
+    width: 220px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 1000' preserveAspectRatio='none'%3E%3Cpath d='M110 0 C 26 95, 194 190, 110 285 C 26 380, 194 475, 110 570 C 26 665, 194 760, 110 855 C 78 905, 78 950, 110 1000' fill='none' stroke='rgba(79,70,229,0.58)' stroke-width='2.5' stroke-dasharray='8 8' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+  .dark-theme .lightdash-journey::before,
+  html.dark-theme .lightdash-journey::before,
+  .dark .lightdash-journey::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 1000' preserveAspectRatio='none'%3E%3Cpath d='M110 0 C 26 95, 194 190, 110 285 C 26 380, 194 475, 110 570 C 26 665, 194 760, 110 855 C 78 905, 78 950, 110 1000' fill='none' stroke='rgba(129,140,248,0.74)' stroke-width='2.5' stroke-dasharray='8 8' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .lightdash-journey__row:nth-of-type(odd) .lightdash-journey__node {
+    transform: translateX(-16px);
+  }
+  .lightdash-journey__row:nth-of-type(even) .lightdash-journey__node {
+    transform: translateX(16px);
+  }
 }
 
 /* Scroll-in animation (Lightdash-style: content slides in from side) */

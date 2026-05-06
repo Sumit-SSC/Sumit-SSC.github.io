@@ -2006,6 +2006,8 @@ function renderProject(project, caseStudy, contentFromFile) {
     main.innerHTML = sections.map(s => section(s.title, s.content, s.id, s.isMedia)).join('');
     // Initialize any gallery carousels rendered inside the project content
     initGalleryCarousels();
+    // Heavy embeds (PDF/video) are click-to-load for faster initial rendering.
+    initTapToLoadEmbeds(main);
   }
 
   // Generate TOC
@@ -2255,26 +2257,20 @@ function getOptimizedImagePath(assetPath) {
 }
 
 function streamlitEmbed(url) {
-  return `
-    <div class="embed-container">
-      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${url}?embed=true', 'Streamlit App')">
-        Expand
-      </button>
-      <iframe src="${url}?embed=true" frameborder="0" allowfullscreen loading="lazy"></iframe>
-    </div>
-  `;
+  return tapToLoadEmbedBlock({
+    url: `${url}?embed=true`,
+    title: 'Streamlit App',
+    kind: 'iframe'
+  });
 }
 
 function powerBiBlock(embedUrl, downloadPath, project = null) {
   if (embedUrl) {
-    return `
-      <div class="embed-container">
-        <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Power BI Dashboard')">
-          Expand
-        </button>
-        <iframe src="${embedUrl}" frameborder="0" allowfullscreen loading="lazy"></iframe>
-      </div>
-    `;
+    return tapToLoadEmbedBlock({
+      url: embedUrl,
+      title: 'Power BI Dashboard',
+      kind: 'iframe'
+    });
   } else if (downloadPath) {
     const resolvedUrl = project ? resolveAssetUrl(project, downloadPath) : downloadPath;
     return `
@@ -2293,27 +2289,20 @@ function videoEmbed(url) {
   if (url.includes('youtube.com') || url.includes('youtu.be')) {
     const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
     if (videoId) {
-      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-      return `
-        <div class="embed-container">
-          <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${embedUrl}', 'Video Walkthrough')">
-            Expand
-          </button>
-          <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-        </div>
-      `;
+      const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
+      return tapToLoadEmbedBlock({
+        url: embedUrl,
+        title: 'Video Walkthrough',
+        kind: 'iframe',
+        allow: 'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+      });
     }
   }
-  return `
-    <div class="embed-container">
-      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${url}', 'Video Walkthrough')">
-        Expand
-      </button>
-      <video controls>
-        <source src="${url}" type="video/mp4">
-      </video>
-    </div>
-  `;
+  return tapToLoadEmbedBlock({
+    url,
+    title: 'Video Walkthrough',
+    kind: 'video'
+  });
 }
 
 function notebookEmbed(url) {
@@ -2339,11 +2328,107 @@ function pdfEmbed(path, project = null) {
       <div class="embed-pdf-toolbar">
         <a href="${resolvedPath}" target="_blank" rel="noopener noreferrer" class="embed-open-full">Open PDF in new tab</a>
       </div>
-      <div class="embed-container embed-pdf">
-        <iframe src="${resolvedPath}" title="PDF document" width="100%" height="100%" frameborder="0" loading="lazy"></iframe>
+      ${tapToLoadEmbedBlock({
+        url: resolvedPath,
+        title: 'Slides / PDF',
+        kind: 'iframe',
+        className: 'embed-pdf'
+      })}
+    </div>
+  `;
+}
+
+function tapToLoadEmbedBlock(options) {
+  const cfg = options || {};
+  const url = String(cfg.url || '').trim();
+  const title = String(cfg.title || 'Embedded content');
+  const kind = cfg.kind === 'video' ? 'video' : 'iframe';
+  const allow = String(cfg.allow || '');
+  const className = String(cfg.className || '');
+  if (!url) return '';
+
+  const buttonLabel = kind === 'video' ? 'Tap to load video' : 'Tap to load content';
+  const containerClass = `embed-container embed-tap-load ${className}`.trim();
+
+  return `
+    <div class="${containerClass}"
+      data-tap-load="1"
+      data-kind="${kind}"
+      data-src="${escapeHtml(url)}"
+      data-title="${escapeHtml(title)}"
+      data-allow="${escapeHtml(allow)}">
+      <button class="embed-expand-btn" type="button" onclick="openEmbedModal('${escapeHtml(url)}', '${escapeHtml(title)}')">
+        Expand
+      </button>
+      <div class="h-full min-h-[260px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/70 flex items-center justify-center p-6 text-center">
+        <div class="space-y-3">
+          <p class="text-sm font-semibold text-gray-800 dark:text-gray-100">${buttonLabel}</p>
+          <button type="button" class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-accent transition-colors tap-load-embed-btn">
+            Load now
+          </button>
+          <p class="text-xs text-gray-500 dark:text-gray-300">Keeps page fast on mobile and low bandwidth.</p>
+        </div>
       </div>
     </div>
   `;
+}
+
+function initTapToLoadEmbeds(root) {
+  const scope = root && root.querySelectorAll ? root : document;
+  const blocks = scope.querySelectorAll('.embed-tap-load[data-tap-load="1"]');
+  if (!blocks.length) return;
+
+  blocks.forEach((block) => {
+    if (block.dataset.bound === '1') return;
+    block.dataset.bound = '1';
+
+    const actionBtn = block.querySelector('.tap-load-embed-btn');
+    if (!actionBtn) return;
+
+    actionBtn.addEventListener('click', () => {
+      if (block.dataset.loaded === '1') return;
+      const src = block.dataset.src || '';
+      const kind = block.dataset.kind || 'iframe';
+      const allow = block.dataset.allow || '';
+      const title = block.dataset.title || 'Embedded content';
+      if (!src) return;
+
+      const frameHost = document.createElement('div');
+      frameHost.className = 'h-full w-full';
+
+      if (kind === 'video') {
+        const video = document.createElement('video');
+        video.controls = true;
+        video.preload = 'metadata';
+        video.playsInline = true;
+        video.className = 'w-full h-full rounded-lg';
+        video.setAttribute('aria-label', title);
+
+        const source = document.createElement('source');
+        source.src = src;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        frameHost.appendChild(video);
+      } else {
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.title = title;
+        iframe.width = '100%';
+        iframe.height = '100%';
+        iframe.frameBorder = '0';
+        iframe.loading = 'lazy';
+        iframe.allowFullscreen = true;
+        if (allow) iframe.setAttribute('allow', allow);
+        frameHost.appendChild(iframe);
+      }
+
+      const placeholder = block.querySelector('.tap-load-embed-btn')?.closest('div.h-full');
+      if (placeholder) {
+        placeholder.replaceWith(frameHost);
+      }
+      block.dataset.loaded = '1';
+    });
+  });
 }
 
 // Infer a human-friendly caption from an image file name (fallbacks to project title + view index)
@@ -2396,7 +2481,7 @@ function galleryBlock(images, project = null) {
           <div class="gallery-slide-inner">
             <picture>
               <source srcset="${optimized}" type="image/webp">
-              <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';">
+              <img src="${img}" alt="${alt}" class="w-full rounded-lg shadow-md gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="eager" decoding="async">
             </picture>
             <figcaption class="gallery-caption">
               <span class="gallery-caption-index">1/1</span>
@@ -2428,7 +2513,7 @@ function galleryBlock(images, project = null) {
                 <div class="gallery-slide-inner">
                   <picture>
                     <source srcset="${optimized}" type="image/webp">
-                    <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="lazy" decoding="async">
+                    <img src="${img}" alt="${alt}" class="gallery-item" onerror="this.onerror=null; this.src='${fallbackImage}'; this.alt='Image not available';" loading="${index === 0 ? 'eager' : 'lazy'}" decoding="async">
                   </picture>
                   <figcaption class="gallery-caption">
                     <span class="gallery-caption-index">${position}/${total}</span>

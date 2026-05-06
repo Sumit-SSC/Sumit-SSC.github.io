@@ -703,9 +703,17 @@
 		})();
 
 	</script>
-	<script src="./assets/js/analytics.js"></script>
+	<script src="../assets/js/analytics.js?v=20260506-analytics-fix-3"></script>
 	<script>
-		initAnalyticsTracking({ site: 'analytics-lab', baseEvent: 'playground' });
+		initAnalyticsTracking({
+			site: "analytics-lab",
+			baseEvent: "playground",
+			endpoint: "https://stats.colab.indevs.in/collect",
+			endpoints: [
+				"https://stats.colab.indevs.in/collect",
+				"https://events.colab.indevs.in/api/events"
+			]
+		});
 	</script>
 </body>
 </html>

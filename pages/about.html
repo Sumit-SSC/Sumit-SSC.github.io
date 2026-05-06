@@ -627,7 +627,7 @@
 	<script src="../assets/js/site-nav-mobile.js" defer></script>
 	<script src="../assets/js/main.js"></script>
 	<script src="../assets/js/admin-embed-bootstrap.js"></script>
-	<script src="../assets/js/analytics.js?v=20260506-analytics-fix-2"></script>
+	<script src="../assets/js/analytics.js?v=20260506-analytics-fix-3"></script>
 	<script>
 		initAnalyticsTracking({
 			site: "portfolio",
@@ -725,6 +725,9 @@
 						var img = new Image();
 						img.src = url;
 						img.alt = '';
+						img.loading = 'lazy';
+						img.decoding = 'async';
+						img.fetchPriority = 'low';
 						media.appendChild(img);
 					});
 				}
@@ -770,7 +773,7 @@
 				slides[0].classList.add('is-active');
 
 				// Auto-advance for subtle motion (~1.5–2s per slide, smooth fade)
-				var autoplayDelay = 1600;
+				var autoplayDelay = 2200;
 				var autoplay = setInterval(function() {
 					var next = (current + 1) % slides.length;
 					goTo(next);
@@ -786,6 +789,11 @@
 						goTo(next);
 					}, autoplayDelay);
 				});
+
+				// Avoid unnecessary timer work on narrow/mobile viewports.
+				if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+					clearInterval(autoplay);
+				}
 			});
 		})();
 
