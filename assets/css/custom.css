@@ -4976,3 +4976,89 @@ html.dark-theme .site-nav-panel {
     gap: 1rem;
   }
 }
+
+/* Stage 3 micro-pass: mobile readability polish (about/project/resume) */
+@media (max-width: 767px) {
+  .about-page .about-section .content {
+    max-width: 100%;
+    padding: 1.1rem 1rem;
+  }
+
+  .about-page .about-section h2 {
+    font-size: 1.95rem !important;
+    line-height: 1.15;
+    margin-bottom: 0.85rem;
+  }
+
+  .about-page .about-section h3 {
+    font-size: 1.2rem !important;
+    line-height: 1.35;
+  }
+
+  .about-page .about-section p {
+    font-size: 0.96rem;
+    line-height: 1.7;
+  }
+
+  .about-page .lightdash-journey {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+  }
+
+  .about-page .lightdash-journey__card {
+    padding: 1rem 0.95rem;
+    border-radius: 0.7rem;
+  }
+
+  .about-page .lightdash-journey__title {
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .about-page .lightdash-journey__desc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .project-detail-page .project-article-main {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.6rem !important;
+  }
+
+  .project-detail-page #project-main section {
+    margin-bottom: 1.55rem;
+  }
+
+  .project-detail-page #project-main section h2 {
+    margin-bottom: 0.65rem;
+  }
+
+  .project-detail-page #project-main section p,
+  .project-detail-page #project-main li {
+    font-size: 0.96rem;
+    line-height: 1.72;
+  }
+
+  .project-detail-page #project-main .artifact-button,
+  .project-detail-page #project-main .embed-expand-btn,
+  .project-detail-page #project-main .tap-load-embed-btn {
+    min-height: 42px;
+  }
+
+  .resume-view-panel h3 {
+    font-size: 1.05rem;
+  }
+
+  #actual-resume .bg-gray-100,
+  #portfolio-resume .bg-gray-100,
+  #actual-resume .bg-gray-700,
+  #portfolio-resume .bg-gray-700 {
+    height: 62vh !important;
+    min-height: 420px;
+  }
+
+  #resume-container .tap-ripple-target,
+  #resume-container button {
+    min-height: 40px;
+  }
+}
