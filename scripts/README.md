@@ -94,3 +94,23 @@ python scripts/validate_content.py
 Expected output:
 
 - `[OK] Content validation passed for projects and case studies.`
+
+## new_project_scaffold.py (fast project starter)
+
+Creates:
+
+- `data/projects/<id>.html` section template (`overview/problem/approach/insights/media`)
+- `assets/images/projects/<id>/` folder
+- prints a ready JSON object to paste into `data/projects.json`
+
+Run:
+
+```powershell
+python scripts/new_project_scaffold.py --title "My New Project"
+```
+
+Optional explicit slug:
+
+```powershell
+python scripts/new_project_scaffold.py --id my-new-project --title "My New Project"
+```

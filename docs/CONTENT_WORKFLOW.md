@@ -82,6 +82,12 @@ So in JSON/HTML you keep:
 
 Use `data/project-entry-template.json` as the baseline for new items in `data/projects.json`.
 
+For fastest setup, generate scaffold files with:
+
+```powershell
+python scripts/new_project_scaffold.py --title "My New Project"
+```
+
 Editing flow for quickest updates:
 
 1. Copy one object from `data/project-entry-template.json`.
