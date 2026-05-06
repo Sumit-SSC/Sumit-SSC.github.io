@@ -12,10 +12,10 @@
     "tools": ["SQL", "Python", "Power BI"],
     "date": "2026",
     "featured": false,
-    "thumbnail": "assets/images/thumbs/my-project.jpg",
+    "thumbnail": "assets/images/thumbs/01.jpg",
     "images": [
-      "assets/images/projects/my-project-slug/01.jpg",
-      "assets/images/projects/my-project-slug/02.jpg"
+      "assets/images/projects/ai-governance-workbench/01.jpg",
+      "assets/images/projects/ai-governance-workbench/02.jpg"
     ],
     "content_path": "data/projects/my-project-slug.html",
     "github_url": "",
