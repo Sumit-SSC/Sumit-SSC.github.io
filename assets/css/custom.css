@@ -4285,7 +4285,7 @@ button.hover\\:bg-accent:hover {
 
 @media (max-width: 1024px) {
   .featured-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     max-height: none;
   }
 
@@ -5145,6 +5145,66 @@ html.dark-theme .site-nav-panel {
   #resume-container .tap-ripple-target,
   #resume-container button {
     min-height: 40px;
+  }
+}
+
+/* Consolidated mobile/tablet nav + featured behavior (prevents 767/768 conflict bugs). */
+@media (max-width: 900px) {
+  #nav.nav-single-line .container {
+    overflow-x: visible !important;
+  }
+
+  #nav.nav-single-line .container > div.flex {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.5rem !important;
+  }
+
+  #nav.nav-single-line .site-nav-quick,
+  #nav.nav-single-line .site-nav-burger {
+    display: inline-flex !important;
+  }
+
+  #nav.nav-single-line .site-nav-desktop-cluster {
+    display: none !important;
+  }
+
+  #nav.nav-single-line .nav-brand {
+    max-width: calc(100vw - 16.5rem) !important;
+    font-size: 1.85rem !important;
+    line-height: 1.1;
+  }
+
+  @media (max-width: 420px) {
+    #nav.nav-single-line .site-nav-quick a[href="about.html"],
+    #nav.nav-single-line .site-nav-quick a[href="contact.html"] {
+      display: none !important;
+    }
+
+    #nav.nav-single-line .nav-brand {
+      max-width: calc(100vw - 10rem) !important;
+      font-size: 1.65rem !important;
+    }
+  }
+
+  .featured-card,
+  .featured-card.featured-hero,
+  .featured-card.featured-half {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+
+  .featured-media,
+  .featured-card.featured-hero .featured-media {
+    min-height: 220px !important;
+    max-height: 270px;
+  }
+
+  .featured-body {
+    padding: 14px 16px !important;
   }
 }
 

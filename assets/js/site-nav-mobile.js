@@ -17,7 +17,7 @@
     nav.setAttribute('data-mobile-nav', '1');
     cluster.classList.add('site-nav-desktop-cluster');
 
-    var mq = window.matchMedia('(max-width: 767px)');
+    var mq = window.matchMedia('(max-width: 900px)');
 
     var burger = document.createElement('button');
     burger.type = 'button';
