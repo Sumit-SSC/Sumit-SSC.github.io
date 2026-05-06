@@ -10,21 +10,11 @@
 			(function () {
 				var h = location.hostname || "";
 				var p = location.pathname || "";
-				var qs = location.search || "";
-				var hash = location.hash || "";
-				var params = new URLSearchParams(qs);
 				/* Canonical admin UI lives on the main Pages host (same repo). GitHub must serve this
 				   page for admin.sumit.indevs.in — if you see 404, add that host in Pages settings or
 				   use a Cloudflare redirect (see docs/ADMIN_WORKSPACE.md). */
 				if (h === "admin.sumit.indevs.in" && (p === "/" || p === "" || p === "/index.html")) {
 					location.replace("https://sumit.indevs.in/admin/index.html");
-					return;
-				}
-				/* Performance-first default:
-				   serve the main portfolio page directly.
-				   Keep landing accessible with ?landing=1 for manual/demo use. */
-				if ((p === "/" || p === "" || p === "/index.html") && params.get("landing") !== "1") {
-					location.replace("pages/homepage.html" + qs + hash);
 				}
 			})();
 		</script>
@@ -130,25 +120,23 @@
 				});
 			</script>
 			<script>
-				// Timing: match indexMain.js and index.css so 3s starts AFTER the arrow appears
-				// 1. indexMain.js removes body.is-preload 100ms after load → banner content (and arrow) start animating
-				// 2. #banner .more has transition 0.75s → arrow is fully visible at 100 + 750 = 850ms
-				// 3. Then wait 3s before auto-redirect (so 3s after arrow is visible)
-				var PRELOAD_DELAY_MS = 100;      // same as indexMain.js $body.removeClass('is-preload')
-				var ARROW_TRANSITION_MS = 750;   // #banner .more transition in index.css
-				var DELAY_AFTER_ARROW_MS = 3000; // 3 seconds after arrow appears
+				// Keep landing transition effect:
+				// show index first, then auto-redirect after the arrow animation.
+				var PRELOAD_DELAY_MS = 100;
+				var ARROW_TRANSITION_MS = 750;
+				var DELAY_AFTER_ARROW_MS = 3000;
 
 				window.addEventListener('load', function() {
 					var params = new URLSearchParams(window.location.search || '');
-					// Keep landing stable for audits/manual review.
-					// Root traffic already redirects to /pages/homepage.html unless ?landing=1.
+					// Allow manual/audit mode without redirect.
 					if (params.get('landing') === '1') return;
+
 					var cta = document.querySelector('#banner .more.scrolly');
 					if (!cta) return;
+
 					var navigated = false;
 					cta.addEventListener('click', function() { navigated = true; });
 
-					// Wait for arrow to appear (preload removed + transition), then start 3s countdown
 					setTimeout(function() {
 						if (navigated) return;
 						setTimeout(function() {
@@ -157,6 +145,5 @@
 					}, PRELOAD_DELAY_MS + ARROW_TRANSITION_MS);
 				});
 			</script>
-
 	</body>
 </html>

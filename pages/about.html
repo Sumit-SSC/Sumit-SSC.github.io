@@ -682,28 +682,7 @@
 			}
 		});
 
-		// Update current section on scroll
-		window.addEventListener('scroll', () => {
-			const scrollPos = window.pageYOffset + 200;
-			sections.forEach((section, index) => {
-				const el = document.getElementById(section);
-				if (el) {
-					const top = el.offsetTop;
-					const bottom = top + el.offsetHeight;
-					if (scrollPos >= top && scrollPos < bottom) {
-						currentSectionIndex = index;
-					}
-				}
-			});
-		});
-
-		// Scroll progress bar
-		window.addEventListener('scroll', () => {
-			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-			const scrolled = (winScroll / height) * 100;
-			document.getElementById('scroll-progress').style.width = scrolled + '%';
-		});
+		const scrollProgressEl = document.getElementById('scroll-progress');
 
 		// Lightdash-style journey: scroll-in animation (left/right content)
 		var journeyRows = document.querySelectorAll('.lightdash-journey__row');
@@ -832,27 +811,52 @@
 		// The fixed background creates the "rolling up" effect automatically as you scroll
 		// No additional JavaScript needed - CSS background-attachment: fixed handles it
 		
-		// Optional: Add subtle parallax enhancement for smoother effect
-		window.addEventListener('scroll', () => {
+		// Use one rAF-throttled scroll pipeline for section tracking, progress bar, and parallax.
+		const shouldRunParallax = () => !(window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+		const updateCurrentSectionOnScroll = () => {
+			const scrollPos = window.pageYOffset + 200;
+			sections.forEach((section, index) => {
+				const el = document.getElementById(section);
+				if (!el) return;
+				const top = el.offsetTop;
+				const bottom = top + el.offsetHeight;
+				if (scrollPos >= top && scrollPos < bottom) currentSectionIndex = index;
+			});
+		};
+		const updateScrollProgress = () => {
+			if (!scrollProgressEl) return;
+			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+			const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+			scrollProgressEl.style.width = scrolled + '%';
+		};
+		const runSectionParallax = () => {
+			if (!shouldRunParallax()) return;
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-			
 			aboutSections.forEach((section) => {
 				const rect = section.getBoundingClientRect();
 				const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-				
-				if (isVisible) {
-					// Calculate how much of the section is visible
-					const sectionTop = section.offsetTop;
-					const sectionHeight = section.offsetHeight;
-					const scrollProgress = (scrollTop - sectionTop + window.innerHeight) / (sectionHeight + window.innerHeight);
-					
-					// Subtle parallax effect - background moves slightly
-					// The fixed attachment already creates the main effect
-					const parallaxOffset = scrollProgress * 20; // Small offset for enhancement
-					section.style.backgroundPositionY = `${50 - parallaxOffset}%`;
-				}
+				if (!isVisible) return;
+				const sectionTop = section.offsetTop;
+				const sectionHeight = section.offsetHeight;
+				const scrollProgress = (scrollTop - sectionTop + window.innerHeight) / (sectionHeight + window.innerHeight);
+				const parallaxOffset = scrollProgress * 20;
+				section.style.backgroundPositionY = `${50 - parallaxOffset}%`;
 			});
+		};
+		let scrollTicking = false;
+		const runScrollPipeline = () => {
+			scrollTicking = false;
+			updateCurrentSectionOnScroll();
+			updateScrollProgress();
+			runSectionParallax();
+		};
+		window.addEventListener('scroll', () => {
+			if (scrollTicking) return;
+			scrollTicking = true;
+			window.requestAnimationFrame(runScrollPipeline);
 		}, { passive: true });
+		runScrollPipeline();
 
 		// Initial visibility for first section - make it visible immediately
 		if (aboutSections.length > 0) {
