@@ -181,5 +181,6 @@ Then spot-check:
 
 - Data schema/details: `data/DATA_GUIDE.md`
 - Scripts: `scripts/README.md`
+- Release sign-off: `docs/RELEASE_CHECKLIST.md`
 - Deploy/troubleshooting: `docs/DEPLOYMENT.md`, `docs/TROUBLESHOOTING.md`
 

@@ -76,3 +76,21 @@ Run:
 ```powershell
 python scripts/audit_images.py
 ```
+
+## validate_content.py (pre-deploy content validator)
+
+Checks project/case-study data integrity before push:
+
+- required fields in `data/projects.json` and `data/case_studies.json`
+- duplicate IDs
+- missing local file references (`thumbnail`, `images[]`, `content_path`, `case_study_path`, etc.)
+
+Run:
+
+```powershell
+python scripts/validate_content.py
+```
+
+Expected output:
+
+- `[OK] Content validation passed for projects and case studies.`
