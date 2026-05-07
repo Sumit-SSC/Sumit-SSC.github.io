@@ -9,7 +9,8 @@ This file tracks the current optimization cycle so work can continue in small, t
   - `dffe274` - fixed breakpoint conflicts for nav and featured cards
   - `ec035eb` - stabilized About journey on mobile/tablet and improved Skills contrast
   - `6deb097` - polished project/contact/resume mobile/tablet layout behavior
-- State: active cycle, ready for next patch set
+- Milestone A (portfolio finish track): completed (code implementation)
+- State: milestone completed, QA/iteration cycle remains open for refinements
 
 ## Completed in this cycle
 
@@ -60,3 +61,14 @@ This file tracks the current optimization cycle so work can continue in small, t
 - Keep patch size small and push after each update.
 - Prefer CSS consolidation over adding more competing rules.
 - If a fix needs JS, keep it progressive and lightweight for GitHub Pages hosting.
+
+## Milestone A closure notes
+
+- Delivered:
+  - mobile nav and featured-card breakpoint stabilization
+  - about/skills theme and readability fixes
+  - project/contact/resume mobile readability improvements
+  - update-cycle tracker and memory continuity updates
+- Pending outside Milestone A:
+  - full visual QA sweep on real devices for 360/390/414/768/820/1024
+  - optional deeper CSS dedupe and token normalization pass

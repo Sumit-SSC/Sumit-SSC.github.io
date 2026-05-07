@@ -4472,21 +4472,8 @@ html.dark-theme .case-study-tag {
   animation: contact-gradient-shift 15s ease infinite;
 }
 
-/* Mobile polish: prevent nav clipping on narrow screens */
-@media (max-width: 768px) {
-  #nav.nav-single-line .container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  #nav.nav-single-line .container > div {
-    min-width: max-content;
-  }
-
-  #nav.nav-single-line .nav-brand {
-    font-size: 1rem !important;
-  }
-}
+/* NOTE: legacy mobile nav overflow block removed.
+   New consolidated nav handling lives in the later <=900px block. */
 
 /* Case study UX polish */
 #case-study-toc a {
