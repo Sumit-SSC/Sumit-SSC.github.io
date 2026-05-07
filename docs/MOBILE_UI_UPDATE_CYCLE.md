@@ -9,6 +9,9 @@ This file tracks the current optimization cycle so work can continue in small, t
   - `dffe274` - fixed breakpoint conflicts for nav and featured cards
   - `ec035eb` - stabilized About journey on mobile/tablet and improved Skills contrast
   - `6deb097` - polished project/contact/resume mobile/tablet layout behavior
+  - `6528371` - removed unlinked archived runtime code and legacy homepage link
+  - `58079a9` - deduped repeated mobile CSS block and cleaned migration comments
+  - `5818668` - unified remaining 767/768 breakpoints to 768
 - Milestone A (portfolio finish track): completed (code implementation)
 - State: milestone completed, QA/iteration cycle remains open for refinements
 
@@ -21,6 +24,9 @@ This file tracks the current optimization cycle so work can continue in small, t
 - Reduced mobile layout regressions caused by mixed `767px`/`768px` breakpoint behavior.
 - Improved project detail readability and media/embed behavior on smaller screens.
 - Reduced resume embed panel dominance on small screens.
+- Removed unused archive runtime code not linked to active site paths.
+- Reduced breakpoint drift by unifying key mobile rules to `max-width: 768px`.
+- Removed broad global Tailwind utility remaps that conflicted with intended classes.
 
 ## Next update loop (execute in order)
 
@@ -40,7 +46,7 @@ This file tracks the current optimization cycle so work can continue in small, t
 
 ## Remaining priorities
 
-- Consolidate duplicated old mobile media-query blocks in `assets/css/custom.css`.
+- Consolidate remaining duplicated old mobile media-query blocks in `assets/css/custom.css`.
 - Final pass to align theme tokens across all pages and remove one-off color overrides.
 - Check mobile header icon density on very small phones (`<= 360px`) for no clipping.
 - Validate touch-target sizes for all key actions (minimum ~40px height).

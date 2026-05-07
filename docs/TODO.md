@@ -40,6 +40,7 @@ Run from repo root or after opening the site locally (e.g. `python -m http.serve
 ## 📌 REMAINING (OPTIONAL)
 
 See **`docs/PROJECTS_TODO.md`** for full detail.
+For active rehaul execution plan, see **`docs/REHAUL_MILESTONE_BACKLOG.md`**.
 
 | Task | Priority | Status |
 |------|----------|--------|
@@ -50,5 +51,5 @@ See **`docs/PROJECTS_TODO.md`** for full detail.
 
 ---
 
-**Last updated:** 2026-02  
+**Last updated:** 2026-05  
 **Status:** ✅ Ready for deployment
