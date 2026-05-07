@@ -35,8 +35,6 @@ The `resolveAssetUrl()` function in `assets/js/main.js` automatically converts a
 ## Remaining References
 
 The following files still mention `_backup_old_portfolio` but are documentation/legacy files:
-- `docs/QUICK_FIX_DEV_BRANCH.md` - Documentation only
-- `docs/GITHUB_PAGES_DEV_BRANCH_FIX.md` - Documentation only
 - `docs/TROUBLESHOOTING.md` - Documentation only
 - `docs/COMPONENT_SYSTEM.md` - Documentation only
 - `archive/legacy/about-demo.html` - Legacy demo file (not used)

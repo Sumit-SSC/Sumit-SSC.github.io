@@ -27,7 +27,7 @@ This file tracks assets moved out of active `assets/` into archive folders.
 - Remaining references to moved JS are only in:
   - `archive/legacy/*`
   - `docs/projects-legacy/*`
-  - docs examples (`docs/COMPONENT_SYSTEM.md`, `docs/MIGRATION_EXAMPLE.md`)
+  - docs examples (`docs/COMPONENT_SYSTEM.md`)
 
 ### Next optional cleanup
 - If you no longer need legacy/demo pages, archive `docs/projects-legacy/` too.
