@@ -4619,7 +4619,7 @@ html.dark-theme .project-detail-page #project-main {
   border-color: rgba(148, 163, 184, 0.15);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   #case-study-article {
     padding: 1.15rem 1rem !important;
     font-size: 0.98rem;
@@ -4852,7 +4852,7 @@ html.dark-theme .site-nav-panel {
   border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   #nav.nav-single-line .site-nav-quick {
     display: inline-flex;
   }
@@ -4976,7 +4976,7 @@ html.dark-theme .site-nav-panel {
 }
 
 /* Stage 3 micro-pass: mobile readability polish (about/project/resume) */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .about-page .about-section .content {
     max-width: 100%;
     padding: 1.1rem 1rem;
