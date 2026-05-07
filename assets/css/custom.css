@@ -2963,51 +2963,6 @@ body:not(.dark-theme) .skill-badge-active {
   }
 }
 
-/* Mobile layout refinements for core pages */
-@media (max-width: 768px) {
-  header nav.flex.justify-between.items-center {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  header nav ul.flex {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  header nav .flex.items-center.gap-4,
-  header nav .flex.items-center.gap-6 {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  #project-main {
-    padding: 1.5rem;
-  }
-
-  #project-side,
-  #project-nav {
-    position: static;
-    margin-top: 1.5rem;
-  }
-
-  #resume-container {
-    grid-template-columns: 1fr !important;
-  }
-
-  #resume-container.grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  #actual-resume .bg-gray-100,
-  #portfolio-resume .bg-gray-100,
-  #actual-resume .bg-gray-700,
-  #portfolio-resume .bg-gray-700 {
-    height: 520px !important;
-  }
-}
-
 /* ===================================================
    Comprehensive Theme Fixes - All Pages
    =================================================== */
@@ -3811,21 +3766,9 @@ a:hover {
   color: var(--accent-primary);
 }
 
-.bg-white { background-color: var(--bg-secondary) !important; }
-.bg-gray-50 { background-color: var(--bg-primary) !important; }
-.bg-gray-100 { background-color: var(--bg-secondary) !important; }
-.bg-gray-800 { background-color: var(--bg-secondary) !important; }
-
-.text-gray-900,
-.text-gray-800 { color: var(--text-primary) !important; }
-.text-gray-700,
-.text-gray-600,
-.text-gray-500,
-.text-gray-400 { color: var(--text-secondary) !important; }
-
-.border-gray-200,
-.border-gray-300,
-.border-gray-700 { border-color: var(--border-muted) !important; }
+/* Tailwind migration cleanup:
+   avoid global utility remapping so page-level Tailwind classes can render as intended.
+   Theme overrides should stay scoped to page/theme-specific selectors. */
 
 .text-primary,
 a.text-primary,

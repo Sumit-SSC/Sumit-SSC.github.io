@@ -402,7 +402,7 @@ function initTheme() {
   if (colorIndex < 0) colorIndex = 0;
   const resolvedTheme = themes[colorIndex];
   applyColorTheme(resolvedTheme);
-  // Migrate any legacy stored theme names to the new set
+  // Migrate older stored theme names to the current set
   if (storedTheme !== resolvedTheme) localStorage.setItem('colorTheme', resolvedTheme);
 
   // Avoid duplicating controls if initTheme() runs more than once
@@ -560,7 +560,7 @@ function applyColorTheme(name) {
     'theme-emerald': { primary: '#10B981', accent: '#059669' },
     // purple / conference look
     'theme-purple': { primary: '#667EEA', accent: '#764BA2' },
-    // legacy / fallback keys (still supported if stored in localStorage)
+    // compatibility keys (still supported if stored in localStorage)
     'theme-slate': { primary: '#2563EB', accent: '#0EA5E9' },
     'theme-teal': { primary: '#14B8A6', accent: '#0D9488' },
     'theme-rose': { primary: '#F43F5E', accent: '#E11D48' },
@@ -594,7 +594,7 @@ function updateColorSwatch(el, theme) {
     'theme-orange': '#F97316',
     'theme-emerald': '#10B981',
     'theme-purple': '#667EEA',
-    // legacy/fallback
+    // compatibility
     'theme-slate': '#2563EB',
     'theme-teal': '#14B8A6',
     'theme-rose': '#F43F5E',
