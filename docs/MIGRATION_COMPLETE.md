@@ -37,7 +37,6 @@ The `resolveAssetUrl()` function in `assets/js/main.js` automatically converts a
 The following files still mention `_backup_old_portfolio` but are documentation/legacy files:
 - `docs/TROUBLESHOOTING.md` - Documentation only
 - `docs/COMPONENT_SYSTEM.md` - Documentation only
-- `archive/legacy/about-demo.html` - Legacy demo file (not used)
 
 ## Next Steps
 
