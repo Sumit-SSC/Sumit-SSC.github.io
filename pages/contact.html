@@ -576,39 +576,25 @@
 					});
 
 					// Filtering out HTML,CSS and JS from the top languages
-					const languageWeights = {
-						html: 0.05,
-						css: 0.05,
-						scss: 0.05,
-						javascript: 0.3,
-						typescript: 0.3,
-						python: 1,
-						sql: 1,
-						r: 1,
-						'jupyter notebook': 0.9
-					};
-					languageResponses.forEach(langObj => {
-						Object.entries(langObj).forEach(([lang, bytes]) => {
-							const weight = languageWeights[lang.toLowerCase()] ?? 1;
-							languageCounts[lang] = (languageCounts[lang] || 0) + (bytes * weight);
-						});
-					});
-					const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
-					const hiddenLanguages = [
-						'html',
-						'css',
-						'scss',
-						'less',
-						'javascript',
-						'typescript'
-					];
-					const topLanguages = Object.entries(languageCounts).sort((a, b) => b[1] - a[1]).filter(([lang]) => !hiddenLanguages.includes(lang.toLowerCase())).slice(0, 5).map(([lang, bytes]) => ({
-						lang,
-						key: normalizeLangKey(lang),
-						percent: Math.round((bytes / totalLangs) * 100)
-					}));
-					
-					// const ignoredLanguages = [
+					// const languageWeights = {
+					// 	html: 0.05,
+					// 	css: 0.05,
+					// 	scss: 0.05,
+					// 	javascript: 0.3,
+					// 	typescript: 0.3,
+					// 	python: 1,
+					// 	sql: 1,
+					// 	r: 1,
+					// 	'jupyter notebook': 0.9
+					// };
+					// languageResponses.forEach(langObj => {
+					// 	Object.entries(langObj).forEach(([lang, bytes]) => {
+					// 		const weight = languageWeights[lang.toLowerCase()] ?? 1;
+					// 		languageCounts[lang] = (languageCounts[lang] || 0) + (bytes * weight);
+					// 	});
+					// });
+					// const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
+					// const hiddenLanguages = [
 					// 	'html',
 					// 	'css',
 					// 	'scss',
@@ -616,16 +602,32 @@
 					// 	'javascript',
 					// 	'typescript'
 					// ];
+					// const topLanguages = Object.entries(languageCounts).sort((a, b) => b[1] - a[1]).filter(([lang]) => !hiddenLanguages.includes(lang.toLowerCase())).slice(0, 5).map(([lang, bytes]) => ({
+					// 	lang,
+					// 	key: normalizeLangKey(lang),
+					// 	percent: Math.round((bytes / totalLangs) * 100)
+					// }));
+					
+					const ignoredLanguages = [
+						'html',
+						'css',
+						'scss',
+						'less',
+						'javascript',
+						'typescript'
+					];
 
-					// const topLanguages = Object.entries(languageCounts)
-					// 	.sort((a, b) => b[1] - a[1])
-					// 	.filter(([lang]) => !ignoredLanguages.includes(lang.toLowerCase()))
-					// 	.slice(0, 5)
-					// 	.map(([lang, bytes]) => ({
-					// 		lang,
-					// 		key: normalizeLangKey(lang),
-					// 		percent: Math.round((bytes / totalLangs) * 100)
-					// const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
+					const topLanguages = Object.entries(languageCounts)
+						.sort((a, b) => b[1] - a[1])
+						.filter(([lang]) => !ignoredLanguages.includes(lang.toLowerCase()))
+						.slice(0, 5)
+						.map(([lang, bytes]) => ({
+							lang,
+							key: normalizeLangKey(lang),
+							percent: Math.round((bytes / totalLangs) * 100)
+					const totalLangs = Object.values(languageCounts).reduce((sum, val) => sum + val, 0) || 1;
+
+					// Filtering out HTML from the top languages
 					// const topLanguages = Object.entries(languageCounts)
 					// 	.sort((a, b) => b[1] - a[1])
 					// 	.filter(([lang]) => lang.toLowerCase() !== 'html')
