@@ -93,6 +93,52 @@
 
 	<!-- Main Content -->
 	<main id="main" class="container mx-auto px-6 py-12">
+		<section id="portfolio-intro" class="portfolio-intro mb-10">
+			<div class="portfolio-intro-shell">
+				<div class="portfolio-intro-copy">
+					<p class="portfolio-intro-kicker">Data analytics portfolio</p>
+					<h1 class="portfolio-intro-title">SQL-first analytics, BI, and decision science work built to answer real business questions.</h1>
+					<p class="portfolio-intro-text">
+						I build practical analytics systems across fraud, retention, product, and governance workflows. The focus here is not just modeling or dashboards, but how data gets translated into decisions, experiments, and operating visibility.
+					</p>
+					<div class="portfolio-intro-pills" aria-label="Core strengths">
+						<span class="portfolio-intro-pill">SQL</span>
+						<span class="portfolio-intro-pill">Python</span>
+						<span class="portfolio-intro-pill">Power BI</span>
+						<span class="portfolio-intro-pill">Experimentation</span>
+						<span class="portfolio-intro-pill">Decision Science</span>
+					</div>
+					<div class="portfolio-intro-actions">
+						<a href="#featured-projects-section" class="btn-primary">View Flagship Work</a>
+						<a href="resume.html" class="portfolio-secondary-action">Open Resume</a>
+						<button id="portfolio-case-studies-cta" type="button" class="portfolio-secondary-action">Read Case Studies</button>
+					</div>
+				</div>
+				<aside class="portfolio-intro-proof" aria-label="Portfolio highlights">
+					<div class="portfolio-proof-grid">
+						<div class="portfolio-proof-card">
+							<div class="portfolio-proof-label">Flagship builds</div>
+							<div id="portfolio-proof-projects" class="portfolio-proof-value">4</div>
+							<p class="portfolio-proof-note">Fraud, churn, product analytics, and governance-focused projects.</p>
+						</div>
+						<div class="portfolio-proof-card">
+							<div class="portfolio-proof-label">Long-form studies</div>
+							<div id="portfolio-proof-case-studies" class="portfolio-proof-value">20+</div>
+							<p class="portfolio-proof-note">Industry and practice write-ups that show analytical thinking, not just screenshots.</p>
+						</div>
+						<div class="portfolio-proof-card portfolio-proof-card-wide">
+							<div class="portfolio-proof-label">Hiring snapshot</div>
+							<ul id="portfolio-proof-focus" class="portfolio-proof-list">
+								<li>Decision-ready dashboards and KPI design</li>
+								<li>Analytics workflows from raw data to stakeholder readouts</li>
+								<li>Machine learning where it supports action, not ornament</li>
+							</ul>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</section>
+
 		<!-- View switcher: title + left back (on Case Studies) / right arrow (on Projects) -->
 		<div id="view-switcher" class="flex items-center justify-between gap-4 mb-8">
 			<div id="view-switcher-left" class="w-32 flex-shrink-0 min-h-[2rem]">
@@ -123,6 +169,10 @@
 		<!-- Projects view (Featured + All Projects) -->
 		<div id="projects-view">
 			<section id="featured-projects-section" class="mb-16">
+				<div class="portfolio-section-heading">
+					<p class="portfolio-section-kicker">Flagship portfolio work</p>
+					<p class="portfolio-section-copy">The strongest end-to-end builds come first here: projects that combine data preparation, analytical reasoning, and decision-facing outputs instead of stopping at notebooks or screenshots.</p>
+				</div>
 				<div id="featured-hero-row" class="featured-hero-row"></div>
 				<div id="featured-row-2" class="featured-split-row"></div>
 				<div id="featured-row-3" class="featured-split-row"></div>
@@ -130,8 +180,8 @@
 
 			<section id="all-projects-section" class="mb-12">
 			<h2 class="text-3xl font-bold text-primary mb-2 text-center">All Projects</h2>
-			<p class="text-xs text-gray-500 dark:text-gray-400 text-center mb-6">
-				Browse all projects with improved mobile-first cards and filtering.
+			<p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6 max-w-3xl mx-auto">
+				This section mixes flagship builds with supporting work so interviewers can scan breadth quickly. Use filters when you want to narrow by tooling or jump between built projects and analytical writing.
 			</p>
 			<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
 				<div class="w-full md:w-auto space-y-2">
@@ -175,7 +225,7 @@
 
 		<!-- Case Studies view (replaces projects content when toggled) -->
 		<div id="case-studies-view" class="hidden">
-			<p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">Long-form analytics and data science write-ups: methodology, results, and 2026+ perspectives on data-rich domains, AI-ML integration, and decision science.</p>
+			<p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">Long-form writing lives here separately from built portfolio pieces. These are analytical breakdowns, industry thinking, and decision-science essays meant to show product sense, communication, and problem framing.</p>
 			<div id="case-studies-grid" class="case-studies-grid" data-tier="featured" data-pagination-target="case-studies-pagination"></div>
 			<footer id="case-studies-pagination" class="case-studies-pagination flex justify-center items-center gap-4 py-6" aria-label="Case study pages"></footer>
 		</div>

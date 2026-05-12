@@ -83,6 +83,12 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+function formatCountLabel(count) {
+  if (!Number.isFinite(count)) return '0';
+  if (count >= 100) return `${count}+`;
+  return String(count);
+}
+
 function editorBlocksToHtml(editorContent) {
   const blocks = Array.isArray(editorContent?.blocks) ? editorContent.blocks : [];
   if (!blocks.length) return "";
@@ -741,6 +747,7 @@ function routePage() {
     
     loadDashboardProjects("projects-grid", page);
     renderFeaturedSection(); // Featured layout (hero + halves)
+    renderPortfolioIntro();
     initViewModeToggle(); // Initialize view mode toggle
     initViewSwitcher(); // Toggle between Projects content and Case Studies content (same page)
     initFilterModeControls(); // Type (projects / case studies / both) + sort controls when filter is active
@@ -767,6 +774,50 @@ function routePage() {
   // Story timeline animations
   if (document.querySelectorAll('.story-item').length > 0) {
     initStoryTimeline();
+  }
+}
+
+async function renderPortfolioIntro() {
+  const projectsValue = document.getElementById('portfolio-proof-projects');
+  const caseStudiesValue = document.getElementById('portfolio-proof-case-studies');
+  const focusList = document.getElementById('portfolio-proof-focus');
+  const caseStudiesCta = document.getElementById('portfolio-case-studies-cta');
+
+  if (caseStudiesCta) {
+    caseStudiesCta.onclick = () => {
+      const caseStudiesBtn = document.getElementById('view-go-to-case-studies');
+      if (caseStudiesBtn) {
+        caseStudiesBtn.click();
+        return;
+      }
+      const grid = document.getElementById('case-studies-grid');
+      if (grid && typeof grid.scrollIntoView === 'function') {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+  }
+
+  if (!projectsValue && !caseStudiesValue && !focusList) return;
+
+  const [projects, caseStudies] = await Promise.all([loadProjects(), loadCaseStudies()]);
+  const flagshipCount = getOrderedFeaturedProjects(projects).slice(0, 4).length;
+
+  if (projectsValue) {
+    projectsValue.textContent = formatCountLabel(flagshipCount);
+  }
+
+  if (caseStudiesValue) {
+    const featuredStudies = caseStudies.filter((item) => (item.tier || 'featured') === 'featured').length;
+    caseStudiesValue.textContent = formatCountLabel(featuredStudies);
+  }
+
+  if (focusList) {
+    const focusItems = [
+      'Fraud, retention, product, and decision-system casework',
+      `${projects.length} portfolio entries grounded in SQL, Python, BI, and experimentation`,
+      `${caseStudies.length} thought pieces separating built work from analytical writing`
+    ];
+    focusList.innerHTML = focusItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   }
 }
 
@@ -1081,6 +1132,11 @@ function createCaseStudyCard(caseStudy) {
   const excerpt = (caseStudy.short_description || '').replace(/<[^>]*>/g, '').substring(0, 160);
   const category = caseStudy.category || 'Analytics';
   const readMins = caseStudy.case_study_read_mins != null ? caseStudy.case_study_read_mins : 5;
+  const categoryLower = category.toLowerCase();
+  const caseStudyLabel =
+    categoryLower.includes('practice') ? 'Practice Note' :
+    categoryLower.includes('industry') ? 'Industry Breakdown' :
+    'Case Study';
   const tags = (caseStudy.tools || []).slice(0, 3).map(t =>
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="case-study-tag">${t}</a>`
   ).join('');
@@ -1096,7 +1152,10 @@ function createCaseStudyCard(caseStudy) {
           <span class="case-study-card-read-time">${readMins} min read</span>
         </div>
         <div class="case-study-card-body">
-          <span class="case-study-card-category">${category}</span>
+          <div class="case-study-card-meta">
+            <span class="case-study-card-label">${caseStudyLabel}</span>
+            <span class="case-study-card-category">${category}</span>
+          </div>
           <h3 class="case-study-card-title">${caseStudy.title}</h3>
           <p class="case-study-card-excerpt">${excerpt}${excerpt.length >= 160 ? '…' : ''}</p>
           <div class="case-study-card-tags">${tags}</div>
@@ -1164,6 +1223,7 @@ async function renderFeaturedSection() {
 function createFeaturedHeroCard(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const projectTypeLabel = project.isCaseStudy ? 'Analytical Writing' : 'Built Project';
   const tags = (project.tools || []).slice(0, 4).map(t =>
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
@@ -1220,6 +1280,7 @@ function createFeaturedHeroCard(project) {
         </div>
       </a>
       <div class="featured-body">
+        <span class="portfolio-card-label">${projectTypeLabel}</span>
         <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
         <h3 class="featured-title"><a href="${getBasePath()}project.html?id=${project.id}">${project.title}</a></h3>
         <p class="featured-summary">${project.short_description || ''}</p>
@@ -1238,6 +1299,7 @@ function createFeaturedHeroCard(project) {
 function createFeaturedHalfCard(project) {
   const thumbnailUrl = resolveAssetUrl(project, project.thumbnail || 'assets/images/thumbs/01.jpg');
   const fallbackImage = 'assets/images/thumbs/01.jpg';
+  const projectTypeLabel = project.isCaseStudy ? 'Analytical Writing' : 'Built Project';
   const tags = (project.tools || []).slice(0, 3).map(t =>
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
   ).join('');
@@ -1294,6 +1356,7 @@ function createFeaturedHalfCard(project) {
         </div>
       </a>
       <div class="featured-body">
+        <span class="portfolio-card-label">${projectTypeLabel}</span>
         <div class="featured-meta">${project.category ? `${project.category} • ` : ''}${project.date || ''}</div>
         <h4 class="featured-title"><a href="${getBasePath()}project.html?id=${project.id}">${project.title}</a></h4>
         <p class="featured-summary">${project.short_description || ''}</p>
@@ -1482,6 +1545,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
   const isCaseStudy = project.isCaseStudy === true;
   const detailUrl = isCaseStudy ? `${getBasePath()}case-study.html?id=${project.id}` : `${getBasePath()}project.html?id=${project.id}`;
   const viewLabel = isCaseStudy ? 'View Case Study' : 'View Project';
+  const typeLabel = isCaseStudy ? 'Analytical Writing' : 'Built Project';
   
   const tags = (project.tools || []).slice(0, 4).map(t => 
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer" title="Filter by ${t}">${t}</a>`
@@ -1558,6 +1622,7 @@ function createDashboardProjectCard(project, layoutClass = '') {
       <div class="p-6">
         <div class="flex items-start justify-between mb-3">
           <div class="flex-1">
+            <span class="portfolio-card-label mb-2">${typeLabel}</span>
             ${categoryBadge}
             <a href="${detailUrl}" class="block group-hover:text-primary transition-colors">
               <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight">${project.title}</h3>
@@ -1585,6 +1650,7 @@ function createDashboardProjectList(project, index = 0) {
   const isCaseStudy = project.isCaseStudy === true;
   const detailUrl = isCaseStudy ? `${getBasePath()}case-study.html?id=${project.id}` : `${getBasePath()}project.html?id=${project.id}`;
   const viewLabel = isCaseStudy ? 'View Case Study' : 'View Project';
+  const typeLabel = isCaseStudy ? 'Analytical Writing' : 'Built Project';
   
   const tags = (project.tools || []).slice(0, 4).map(t => 
     `<a href="${getHomeUrl().replace(/\?.*$/, '').replace('#','')}?filter=${encodeURIComponent(t)}" class="list-tag" title="Filter by ${t}">${t}</a>`
@@ -1671,6 +1737,7 @@ function createDashboardProjectList(project, index = 0) {
           </div>
         </div>
         <div class="list-body">
+          <span class="portfolio-card-label">${typeLabel}</span>
           <div class="list-meta">${project.date || ''}</div>
           ${categoryBadge}
           <h3 class="list-title">
