@@ -52,12 +52,57 @@
     document.body.appendChild(backdrop);
     document.body.appendChild(panel);
 
+    function clonePanelLink(source) {
+      var link = document.createElement('a');
+      link.href = source.getAttribute('href') || '#';
+      link.textContent = (source.textContent || source.getAttribute('aria-label') || 'Link').trim();
+      link.className = 'site-nav-panel-link';
+      if (source.getAttribute('aria-current') === 'page' || source.classList.contains('text-primary')) {
+        link.classList.add('is-active');
+      }
+      return link;
+    }
+
     function fillPanel() {
-      panel.innerHTML =
-        '<p class="text-xs font-bold uppercase tracking-wide opacity-70 mb-3" style="margin:0 0 0.75rem">Navigate</p>';
-      var wrap = document.createElement('div');
-      wrap.innerHTML = cluster.innerHTML;
-      panel.appendChild(wrap);
+      panel.innerHTML = '';
+
+      var head = document.createElement('div');
+      head.className = 'site-nav-panel-head';
+      head.innerHTML =
+        '<div><p class="site-nav-panel-kicker">Navigate</p><strong>Menu</strong></div>' +
+        '<button type="button" class="site-nav-panel-close" aria-label="Close menu">' +
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>' +
+        '</button>';
+      panel.appendChild(head);
+
+      var navLinks = document.createElement('nav');
+      navLinks.className = 'site-nav-panel-links';
+      Array.prototype.slice.call(cluster.querySelectorAll('a')).forEach(function (source) {
+        var label = (source.textContent || '').trim();
+        var href = source.getAttribute('href') || '';
+        if (!label || href.indexOf('mailto:') === 0 || /^https?:\/\//i.test(href)) return;
+        navLinks.appendChild(clonePanelLink(source));
+      });
+      panel.appendChild(navLinks);
+
+      var actions = document.createElement('div');
+      actions.className = 'site-nav-panel-actions';
+      actions.innerHTML =
+        '<button type="button" class="site-nav-panel-theme">' +
+        '<span>Toggle theme</span><span class="site-nav-panel-theme-dot" aria-hidden="true"></span>' +
+        '</button>';
+      panel.appendChild(actions);
+
+      var social = document.createElement('div');
+      social.className = 'site-nav-panel-social';
+      Array.prototype.slice.call(cluster.querySelectorAll('a[aria-label]')).forEach(function (source) {
+        var href = source.getAttribute('href') || '';
+        if (href.indexOf('mailto:') !== 0 && !/^https?:\/\//i.test(href)) return;
+        var link = source.cloneNode(true);
+        link.className = 'site-nav-panel-social-link';
+        social.appendChild(link);
+      });
+      if (social.children.length) panel.appendChild(social);
     }
 
     function setOpen(open) {
@@ -99,6 +144,18 @@
 
     panel.addEventListener('click', function (e) {
       var t = e.target;
+      if (t && t.closest && t.closest('.site-nav-panel-close')) {
+        setOpen(false);
+        return;
+      }
+      if (t && t.closest && t.closest('.site-nav-panel-theme')) {
+        if (typeof window.toggleTheme === 'function') {
+          window.toggleTheme();
+        } else {
+          document.documentElement.classList.toggle('dark-theme');
+        }
+        return;
+      }
       if (t && t.closest && t.closest('a')) {
         setOpen(false);
       }

@@ -8,7 +8,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="../assets/css/custom.css" />
+	<link rel="stylesheet" href="../assets/css/custom.css?v=20260520-ui-fix" />
 	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" media="print" onload="this.media='all'" />
 	<noscript><link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" /></noscript>
 	<link rel="icon" type="image/svg+xml" href="../assets/images/arrow.svg" />
@@ -262,8 +262,8 @@
 		</div>
 	</footer>
 
-	<script src="../assets/js/site-nav-mobile.js" defer></script>
-	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/site-nav-mobile.js?v=20260520-ui-fix" defer></script>
+	<script src="../assets/js/main.js?v=20260520-ui-fix"></script>
 	<script>
 		(function() {
 			var sidebar = document.getElementById('playground-sidebar');
@@ -728,6 +728,34 @@
 				if (best.answer) return { answer: best.answer, matched: true };
 				return { answer: null, matched: false };
 			}
+
+			function getDirectReply(query) {
+				var q = (query || '').toLowerCase().replace(/\s+/g, ' ').trim();
+				if (!q) return null;
+				if (/^(hi|hello|hey|hello world|hii|yo|namaste)\b/.test(q)) {
+					return 'Hello. Ask me a programming, analytics, resume, or grammar question and I will keep the answer practical. For example: "explain SQL joins" or "debug this Python error".';
+				}
+				if (/^h+m+$/.test(q.replace(/\s+/g, '')) || /(.)\1{6,}/.test(q)) {
+					return 'I am not sure what you want me to answer from that text. Try asking a complete question, like "what is SQL?" or "explain Python lists".';
+				}
+				if (/^(thanks|thank you|ok|okay|cool|nice)$/.test(q)) {
+					return 'You are welcome. Send the next question whenever you are ready.';
+				}
+				return null;
+			}
+
+			function isWeakModelReply(reply, query) {
+				var text = (reply || '').replace(/\s+/g, ' ').trim();
+				var q = (query || '').replace(/\s+/g, ' ').trim().toLowerCase();
+				var normalized = text.toLowerCase();
+				if (!text || text.length < 18) return true;
+				if (normalized === q) return true;
+				if (/^h+m+$/i.test(text.replace(/\s+/g, ''))) return true;
+				if (/(.)\1{7,}/.test(text)) return true;
+				if (normalized.split(' ').length < 4 && normalized.indexOf('.') === -1) return true;
+				return false;
+			}
+
 			function fetchWikipedia(query) {
 				var q = (query || '').trim();
 				if (!q) return Promise.resolve(null);
@@ -755,6 +783,14 @@
 
 				// Full chatbot (optional): uses chat history for context
 				if (mode === 'model') {
+					var directReply = getDirectReply(text);
+					var faqReply = getReply(text);
+					if (directReply || faqReply.matched) {
+						var immediateReply = directReply || faqReply.answer;
+						addMessage('assistant', immediateReply, { searchQuery: text });
+						if (!isRestoring) pushHistory({ role: 'assistant', text: immediateReply, searchQuery: text });
+						return;
+					}
 					var thinking = addAssistant('Thinking…', text);
 					(function() {
 						runModel(text).then(function(reply) {
@@ -777,6 +813,12 @@
 			});
 
 			function runLight(text) {
+				var directReply = getDirectReply(text);
+				if (directReply) {
+					addMessage('assistant', directReply, { searchQuery: text });
+					if (!isRestoring) pushHistory({ role: 'assistant', text: directReply, searchQuery: text });
+					return;
+				}
 				var faqResult = getReply(text);
 				if (faqResult.matched) {
 					addMessage('assistant', faqResult.answer, { searchQuery: text });
@@ -814,6 +856,13 @@
 				var out = await pipe(prompt, { max_new_tokens: 160, do_sample: false });
 				var generated = (out && out[0] && out[0].generated_text) ? String(out[0].generated_text).trim() : '';
 				if (!generated) return 'Sorry—no response from the model. Try the Google button below.';
+				if (isWeakModelReply(generated, latestUserText)) {
+					var direct = getDirectReply(latestUserText);
+					if (direct) return direct;
+					var faqResult = getReply(latestUserText);
+					if (faqResult.matched) return faqResult.answer;
+					return 'I am not confident in that model response. Try asking with a little more detail, or use the Google search button below for a broader lookup.';
+				}
 				return generated;
 			}
 			inputEl.addEventListener('keydown', function(e) {
