@@ -5,7 +5,10 @@
     "blocks": [
       {
         "type": "header",
-        "data": { "text": "Projects & analytics work", "level": 2 }
+        "data": {
+          "text": "Projects & analytics work",
+          "level": 2
+        }
       },
       {
         "type": "paragraph",
@@ -15,7 +18,10 @@
       },
       {
         "type": "header",
-        "data": { "text": "What visitors see", "level": 3 }
+        "data": {
+          "text": "What visitors see",
+          "level": 3
+        }
       },
       {
         "type": "list",
@@ -32,6 +38,28 @@
         "type": "paragraph",
         "data": {
           "text": "Sign in under Account to load your GitHub draft, save, and publish. Until then you are viewing the public copy from this file."
+        }
+      },
+      {
+        "type": "paragraph",
+        "data": {
+          "text": ""
+        }
+      },
+      {
+        "type": "header",
+        "data": {
+          "text": "Heading",
+          "level": 2
+        }
+      },
+      {
+        "type": "list",
+        "data": {
+          "style": "unordered",
+          "items": [
+            "First point"
+          ]
         }
       }
     ]
