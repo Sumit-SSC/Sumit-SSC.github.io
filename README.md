@@ -12,7 +12,18 @@ Minimal, fast portfolio aimed at **Senior Data Analyst / Decision Scientist / Pr
 
 For detailed technical docs (data model, deployment, migration notes), see `docs/README.md`.
 
-Visit [Mintify](https://github-22.mintlify.app/) Page for Setup guide & docs of the Portfolio Page Setup 
+---
+
+## 🚀 Quick Start
+
+For detailed step-by-step customization, hosting, and layout configurations, please view our full guide.
+
+[Visit Mintlify Page for Setup Guide & Docs]()
+[![Mintlify](https://shields.io)](https://github-22.mintlify.app/)
+
+
+---
+# Visit [Mintify](https://github-22.mintlify.app/) Page for Setup guide & docs of the Portfolio Page Setup 
 
 
 ---
