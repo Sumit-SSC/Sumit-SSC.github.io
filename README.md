@@ -20,18 +20,26 @@ For detailed step-by-step customization, hosting, and layout configurations, ple
 
 <br>
 
+<p align="left">
+  <b>Visit Mintlify Page for Setup Guide & Docs</b>
+</p>
+
 <table>
   <tr>
-    <td bgcolor="#000000" align="center" style="border-radius: 4px; padding: 8px 16px; border: 1px solid #1c1c1e;">
-      <a href="https://github-22.mintlify.app/" target="_blank" style="text-decoration: none; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-        <img src="https://www.mintlify.com/favicon.ico" width="24" height="24" alt="Mintlify Logo" style="vertical-align: middle;" />
-  <b style="color: #18E299; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; margin-left: 4px; vertical-align: middle;"> Visit Mintlify Page for Setup Guide & Docs</b>
-        <span>\nSETUP GUIDE & DOCS</span>
-        <span style="color: #15F4EE; font-weight: 800;">➔</span>
+    <td bgcolor="#000000" align="center" style="border-radius: 6px; padding: 10px 20px; border: 1px solid #1c1c1e;">
+      <a href="https://github-22.mintlify.app/" target="_blank" style="text-decoration: none; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.5px;">
+        <img src="https://www.mintlify.com/favicon.ico" width="16" height="16" style="vertical-align: middle; margin-right: 8px;" alt="Mintlify Logo" />
+        <span style="vertical-align: middle; color: #FFFFFF;">SETUP GUIDE & DOCS</span>
+        <span style="color: #15F4EE; font-weight: 800; margin-left: 8px; vertical-align: middle;">➔</span>
       </a>
     </td>
   </tr>
 </table>
+
+
+---
+# Visit [Mintify](https://github-22.mintlify.app/) Page for Setup guide & docs of the Portfolio Page Setup 
+
 
 ---
 
