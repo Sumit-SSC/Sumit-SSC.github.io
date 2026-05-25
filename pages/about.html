@@ -4,14 +4,16 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>About | Sumit S. Chaure</title>
+	<!-- Tailwind CSS CDN -->
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>
 		tailwind.config = {
+			darkMode: 'class',
 			theme: {
 				extend: {
 					colors: {
 						primary: '#4f46e5',
-						accent: '#0ea5e9',
+						accent: '#0ea5e9'
 					}
 				}
 			}
@@ -19,48 +21,50 @@
 	</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="../assets/css/custom.css" />
-	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" />
-	<link rel="icon" type="image/png" href="../assets/images/placeholder.png" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../assets/css/custom.css?v=20260525-tailwind-cdn-all" />
+	<link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" media="print" onload="this.media='all'" />
+	<noscript><link rel="stylesheet" href="../assets/css/fontawesome-all.min.css" /></noscript>
+	<link rel="icon" type="image/svg+xml" href="../assets/images/arrow.svg" />
+	<script src="../assets/js/site-theme.js"></script>
 	<style>
 		body { font-family: 'Inter', sans-serif; }
+		/* Fluid typography scaling */
+		h1, h2 { line-height: 1.2; letter-spacing: -0.015em; }
+		p { line-height: 1.6; }
 	</style>
 </head>
-<body class="bg-gray-50 about-page">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased about-page">
 	<!-- Scroll Progress Bar -->
 	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
 
 	<!-- Unified Header Navigation -->
-	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line">
-		<div class="container mx-auto px-4 sm:px-6">
-			<div class="flex justify-between items-center py-2.5 gap-3 sm:gap-4 min-w-0">
+	<nav id="nav" class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 nav-single-line shadow-sm dark:shadow-gray-800/20">
+		<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="flex justify-between items-center py-3 sm:py-3.5 gap-2 sm:gap-3 lg:gap-4 min-w-0">
 				<!-- Name / brand -->
-				<a href="../index.html" class="nav-brand text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit S. Chaure</a>
+				<a href="../index.html" class="nav-brand text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-50 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0">Sumit</a>
 				<!-- Global nav -->
-				<div class="flex items-center gap-3 sm:gap-4 flex-shrink-0 ml-auto">
-					<ul class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-						<li><a href="homepage.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Projects</a></li>
-						<li><a href="resume.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Resume</a></li>
-						<li><a href="skills.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Skills</a></li>
-						<li><a href="about.html" class="text-primary font-semibold border-b-2 border-primary pb-1 text-sm whitespace-nowrap">About</a></li>
-						<li><a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Contact</a></li>
-						<li><a href="playground.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors text-sm whitespace-nowrap">Playground</a></li>
+				<div class="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-shrink-0 ml-auto w-full sm:w-auto justify-end">
+					<ul class="hidden md:flex items-center gap-1 lg:gap-4 flex-shrink-0 text-sm lg:text-base">
+						<li><a href="homepage.html" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors px-1.5 whitespace-nowrap">Projects</a></li>
+						<li><a href="resume.html" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors px-1.5 whitespace-nowrap">Resume</a></li>
+						<li><a href="skills.html" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors px-1.5 whitespace-nowrap">Skills</a></li>
+						<li><a href="about.html" class="text-primary font-semibold border-b-2 border-primary pb-1 px-1.5 whitespace-nowrap">About</a></li>
+						<li><a href="contact.html" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors px-1.5 whitespace-nowrap">Contact</a></li>
+						<li><a href="playground.html" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors px-1.5 whitespace-nowrap">Playground</a></li>
 					</ul>
-					<ul class="flex items-center gap-4">
-						<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
+					<ul class="flex items-center gap-3 sm:gap-4 lg:gap-5">
+						<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors flex-shrink-0" aria-label="LinkedIn">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
 						</a></li>
-						<li><a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="GitHub">
+						<li><a href="https://github.com/Sumit-SC" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors flex-shrink-0" aria-label="GitHub">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
 						</a></li>
-						<li><a href="https://www.kaggle.com/mitsu00" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Kaggle">
-							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 0h-4L11 7.8V0H6v24h5v-7.4l6.8 7.4h4.7L15 12.3z"></path></svg>
-						</a></li>
-						<li><a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Medium">
+						<li><a href="https://medium.com/@sumitsc.work" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors flex-shrink-0" aria-label="Medium">
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
 						</a></li>
-						<li><a href="mailto:sumitsc.work@gmail.com" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" aria-label="Email">
+						<li><a href="mailto:sumitsc.work@gmail.com" class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors flex-shrink-0" aria-label="Email">
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
 						</a></li>
 					</ul>
@@ -70,14 +74,14 @@
 	</nav>
 
 	<!-- Intro Section (Full Screen) -->
-	<section id="intro" class="about-section slide-from-center" style="background-image: url('../assets/images/intro.jpg');">
-		<div class="content text-center text-white px-6 max-w-3xl">
-			<h2 class="text-5xl md:text-7xl font-bold mb-6">Hi, I'm Sumit.</h2>
-			<h3 class="text-2xl md:text-4xl mb-8 opacity-90">I turn messy data into clear, practical stories.</h3>
-			<p class="text-lg md:text-xl mb-8 leading-relaxed">
+	<section id="intro" class="about-section slide-from-center min-h-screen flex items-center justify-center" style="background-image: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.35), transparent 55%), radial-gradient(circle at 85% 35%, rgba(14, 165, 233, 0.28), transparent 50%), linear-gradient(135deg, rgba(79, 70, 229, 0.28), rgba(14, 165, 233, 0.18));">
+		<div class="content text-center text-white px-4 sm:px-6 max-w-3xl">
+			<h2 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight">Hi, I'm Sumit.</h2>
+			<h3 class="text-xl sm:text-2xl lg:text-3xl mb-6 sm:mb-8 opacity-90">I turn messy data into clear, practical stories.</h3>
+			<p class="text-base sm:text-lg lg:text-xl mb-6 sm:mb-8 leading-relaxed">
 				Welcome to <strong>my corner of the internet.</strong> I work at the intersection of analytics, product, and business—using SQL, Python, and BI tools to help teams ask better questions and make confident, data-informed decisions.
 			</p>
-			<a href="#one" class="inline-block px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full font-semibold transition-all duration-300 hover:scale-105 border-2 border-white/30 text-white dark:text-white">
+			<a href="#one" class="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full font-semibold transition-all duration-300 hover:scale-105 border-2 border-white/30 text-white dark:text-white text-sm sm:text-base">
 				Learn More
 			</a>
 		</div>
@@ -87,725 +91,5 @@
 		</a>
 	</section>
 
-	<!-- What I Do Section (Right Side) -->
-	<section id="one" class="about-section slide-from-right" style="background-image: url('./assets/images/whatdoido.jpg');">
-		<div class="content text-right max-w-2xl ml-auto">
-			<h2 class="text-4xl md:text-6xl font-bold mb-6">What I Do</h2>
-			<p class="text-lg md:text-xl leading-relaxed">
-				I’m an analytics professional who enjoys moving from raw tables to real outcomes. On most days you’ll find me defining the right metrics, digging through SQL, building Python workflows, and crafting BI dashboards that answer “so what?” for product and business teams. I care a lot about clarity, reproducible analysis, and making data easy to trust and act on.
-			</p>
-		</div>
-		<a href="#two" class="section-arrow">
-			<span class="arrow-icon"></span>
-		</a>
-	</section>
-
-	<!-- Who I Am Section (Left Side) -->
-	<section id="two" class="about-section slide-from-left" style="background-image: url('./assets/images/whoami.jpg');">
-		<div class="content text-left max-w-2xl mr-auto">
-			<h2 class="text-4xl md:text-6xl font-bold mb-6">Who I Am</h2>
-			<p class="text-lg md:text-xl leading-relaxed">
-				I’m <strong><em>Sumit from Pune, India,</em></strong> originally trained as a Mechanical Engineer. Curiosity pulled me toward software, so I completed a PG Diploma in Computer Science and started my career as a software engineer working across backend, databases, and cloud. Along the way I realised the moments I enjoyed most were when numbers explained user behaviour or unlocked a business decision—so I leaned fully into analytics. Today I’m focused on analytics engineering, BI development, and decision science, and I’m actively looking for roles where I can combine technical depth with product thinking.
-			</p>
-		</div>
-		<a href="#work" class="section-arrow">
-			<span class="arrow-icon"></span>
-		</a>
-	</section>
-
-	<!-- Resume & Journey Split Section -->
-	<section id="work" class="bg-white py-20">
-		<div class="container mx-auto px-6">
-			<div class="text-center mb-12">
-				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">Resume & Journey</h2>
-				<p class="text-lg text-gray-600 max-w-2xl mx-auto">
-					See the story behind my profile—skim the resume for the headlines, or follow the journey to understand how I moved from engineering to software to analytics.
-				</p>
-			</div>
-
-			<div class="flex flex-col lg:flex-row gap-8 transition-all duration-500 ease-in-out" id="resume-journey-split">
-				<!-- Resume Panel -->
-				<div id="about-resume-panel" class="flex-1 bg-gray-50 rounded-xl shadow-lg p-6 flex flex-col">
-					<div class="flex items-center justify-between mb-4">
-						<h3 class="text-2xl font-bold text-gray-800">Resume</h3>
-						<div class="flex gap-2 text-sm">
-							<button id="focus-resume" class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors tap-ripple-target">
-								Focus Resume
-							</button>
-							<a href="resume.html" class="px-3 py-1 rounded-full bg-primary text-white hover:bg-accent transition-colors tap-ripple-target">
-								Open Resume Page
-							</a>
-						</div>
-					</div>
-					<p class="text-gray-600 mb-4 text-sm">
-						A concise overview of my skills, experience, and education. View the full interactive version on the Resume page.
-					</p>
-					<div class="bg-gray-100 rounded-lg overflow-hidden flex-1 min-h-[320px]">
-						<embed src="../assets/files/Resume.pdf" type="application/pdf" width="100%" height="100%" class="rounded hidden md:block">
-						<div class="p-4 text-center md:hidden text-gray-500 text-sm">
-							PDF preview is best viewed on larger screens. Use the button above to open the full resume.
-						</div>
-					</div>
-				</div>
-
-				<!-- Journey Panel (compact) -->
-				<div id="about-journey-panel" class="flex-1 bg-gray-50 rounded-xl shadow-lg p-6 flex flex-col max-h-[600px] overflow-y-auto">
-					<div class="flex items-center justify-between mb-4">
-						<h3 class="text-2xl font-bold text-gray-800">My Journey</h3>
-						<button id="focus-journey" class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors text-sm">
-							Focus Journey
-						</button>
-					</div>
-					<p class="text-gray-600 mb-4 text-sm">
-						A quick snapshot of how I went from Mechanical Engineering to software to analytics. Scroll, explore the projects, or jump into the full timeline below.
-					</p>
-
-					<div class="space-y-4 text-sm">
-						<div class="border-l-4 border-primary pl-4">
-							<p class="text-primary font-semibold uppercase tracking-wide text-xs">2024 - Present</p>
-							<p class="font-bold text-gray-800">Data Analyst & ML Practitioner</p>
-							<p class="text-gray-600">Building end-to-end ML pipelines and analytics projects.</p>
-						</div>
-						<div class="border-l-4 border-accent pl-4">
-							<p class="text-accent font-semibold uppercase tracking-wide text-xs">2022 - 2024</p>
-							<p class="font-bold text-gray-800">Software Engineer (IT-CS)</p>
-							<p class="text-gray-600">Worked with programming, databases & cloud; discovered passion for data.</p>
-						</div>
-						<div class="border-l-4 border-primary pl-4">
-							<p class="text-primary font-semibold uppercase tracking-wide text-xs">2021 - 2022</p>
-							<p class="font-bold text-gray-800">PG Diploma in Computer Science</p>
-							<p class="text-gray-600">Transitioned from Mechanical to IT-CS, mastering fundamentals.</p>
-						</div>
-						<div class="border-l-4 border-accent pl-4">
-							<p class="text-accent font-semibold uppercase tracking-wide text-xs">2017 - 2021</p>
-							<p class="font-bold text-gray-800">Mechanical Engineering</p>
-							<p class="text-gray-600 mb-2">Developed strong analytical and problem-solving mindset.</p>
-							<a href="#journey" class="inline-block text-primary hover:underline text-xs font-semibold">View full timeline ↓</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Project Gallery (below split) -->
-			<div class="mt-16">
-				<h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Project Gallery</h3>
-				<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/one.jpg" class="block">
-							<img src="../assets/images/thumbs/01.jpg" alt="Car Price Prediction" class="w-full h-full object-cover">
-						</a>
-					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/02.jpg" class="block">
-							<img src="../assets/images/thumbs/02.jpg" alt="Oil Spill Classification" class="w-full h-full object-cover">
-						</a>
-					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/03.jpg" class="block">
-							<img src="../assets/images/thumbs/03.jpg" alt="Bank Loan Case Study" class="w-full h-full object-cover">
-						</a>
-					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/04.jpg" class="block">
-							<img src="../assets/images/thumbs/04.jpg" alt="Customer Churn Data Analysis" class="w-full h-full object-cover">
-						</a>
-					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/05.jpg" class="block">
-							<img src="../assets/images/thumbs/05.jpg" alt="IMDB Movie Analysis" class="w-full h-full object-cover">
-						</a>
-					</div>
-					<div class="gallery-item overflow-hidden rounded-lg">
-						<a href="../assets/images/fulls/06.jpg" class="block">
-							<img src="../assets/images/thumbs/06.jpg" alt="Impact Of Car Features" class="w-full h-full object-cover">
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Journey: Lightdash "Our story so far" style (central dashed line + year nodes + alternating content) -->
-	<section id="journey" class="min-h-screen bg-gray-100 dark:bg-gray-900 py-20">
-		<div class="container mx-auto px-6">
-			<div class="text-center mb-16">
-				<h2 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-4">My journey so far</h2>
-				<p class="text-lg text-gray-600 dark:text-gray-300">A timeline of my professional and educational journey</p>
-			</div>
-
-			<div class="lightdash-journey max-w-5xl mx-auto relative">
-				<!-- Single prominent hourglass at top (Lightdash-style: only at the beginning) -->
-				<div class="lightdash-journey__start" aria-hidden="true">
-					<img src="../assets/images/hourglass.png" alt="" class="lightdash-journey__start-icon" width="106" height="105">
-				</div>
-				<!-- Central dashed axis (like Lightdash) – starts below the start icon -->
-				<div class="lightdash-journey__axis" aria-hidden="true"></div>
-
-				<!-- Year header: 2014–2018 -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2014 – 2018</div>
-				</div>
-
-				<!-- 2014–2018: Bachelors of Engineering (2 events) -->
-				<!-- Event 1: media left, text right -->
-				<div class="lightdash-journey__row" data-year="2018">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/one.jpg, ../assets/images/fulls/02.jpg">
-							<!-- Demo carousel: engineering / project images -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2014–2018</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2014 – 2018</span>
-							<h3 class="lightdash-journey__title">Bachelors of Engineering – Event 1</h3>
-							<p class="lightdash-journey__desc">Describe the first key story from your Bachelors of Engineering here (college, branch, turning point, etc.).</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 2: text left, media right -->
-				<div class="lightdash-journey__row" data-year="2018">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2014 – 2018</span>
-							<h3 class="lightdash-journey__title">Bachelors of Engineering – Event 2</h3>
-							<p class="lightdash-journey__desc">Use this event for final year projects, internships, or anything else you want to highlight.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2014–2018</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/03.jpg">
-							<!-- Demo static image for event 2 -->
-						</div>
-					</div>
-				</div>
-
-				<!-- Year header: 2020–21 -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2020 – 21</div>
-				</div>
-
-				<!-- 2020–2021: PG-DAC (1 event) -->
-				<div class="lightdash-journey__row" data-year="2021">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/04.jpg, ../assets/images/thumbs/02.jpg">
-							<!-- Demo PG-DAC carousel -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2020–21</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2020 – 2021</span>
-							<h3 class="lightdash-journey__title">PG-DAC</h3>
-							<p class="lightdash-journey__desc">Add details about your PG-DAC journey – institute, technologies, projects, and how it shifted your path.</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Year header: 2021 -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2021</div>
-				</div>
-
-				<!-- 2021: First Job (2 events) -->
-				<!-- Event 1 -->
-				<div class="lightdash-journey__row" data-year="2021">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2021</span>
-							<h3 class="lightdash-journey__title">First Job – Event 1</h3>
-							<p class="lightdash-journey__desc">Describe how you landed your first role – interviews, offers, and the moment you joined.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2021</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/05.jpg">
-							<!-- Demo first job photo -->
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 2 -->
-				<div class="lightdash-journey__row" data-year="2021">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/06.jpg, ../assets/images/thumbs/03.jpg">
-							<!-- Demo carousel for 2021 event 2 -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2021</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2021</span>
-							<h3 class="lightdash-journey__title">First Job – Event 2</h3>
-							<p class="lightdash-journey__desc">Use this to capture responsibilities, tech stack, or a key achievement in your first job.</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Year header: 2023 -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2023</div>
-				</div>
-
-				<!-- 2023: Three events -->
-				<!-- Event 1 (media right, text left) -->
-				<div class="lightdash-journey__row" data-year="2023">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2023</span>
-							<h3 class="lightdash-journey__title">2023 – Event 1</h3>
-							<p class="lightdash-journey__desc">Placeholder – replace with your first major 2023 highlight.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2023</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/01.jpg, ../assets/images/thumbs/02.jpg">
-							<!-- Demo 2023 carousel event 1 -->
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 2 (media left, text right) -->
-          <div class="lightdash-journey__row" data-year="2023">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/03.jpg, ../assets/images/thumbs/04.jpg">
-							<!-- Demo 2023 carousel event 2 -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2023</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2023</span>
-							<h3 class="lightdash-journey__title">2023 – Event 2</h3>
-							<p class="lightdash-journey__desc">Placeholder – use this for another 2023 story (project, role change, etc.).</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 3 (media right, text left) -->
-				<div class="lightdash-journey__row" data-year="2023">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2023</span>
-							<h3 class="lightdash-journey__title">2023 – Event 3</h3>
-							<p class="lightdash-journey__desc">Placeholder – third 2023 event goes here.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2023</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/05.jpg, ../assets/images/thumbs/06.jpg">
-							<!-- Demo 2023 carousel event 3 -->
-						</div>
-					</div>
-				</div>
-
-				<!-- Year header: 2024 -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2024</div>
-				</div>
-
-				<!-- 2024: One event -->
-				<div class="lightdash-journey__row" data-year="2024">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/intro.jpg">
-							<!-- Demo single image for 2024 -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2024</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2024</span>
-							<h3 class="lightdash-journey__title">2024 – Event 1</h3>
-							<p class="lightdash-journey__desc">Use this single event to capture your main 2024 story.</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Year header: 2025 -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2025</div>
-				</div>
-
-				<!-- 2025: Three events -->
-				<!-- Event 1 -->
-				<div class="lightdash-journey__row" data-year="2025">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2025</span>
-							<h3 class="lightdash-journey__title">2025 – Event 1</h3>
-							<p class="lightdash-journey__desc">Placeholder – first 2025 event.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2025</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/02.jpg, ../assets/images/fulls/03.jpg">
-							<!-- Demo 2025 carousel event 1 -->
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 2 -->
-				<div class="lightdash-journey__row" data-year="2025">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/04.jpg">
-							<!-- Demo static image for 2025 event 2 -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2025</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2025</span>
-							<h3 class="lightdash-journey__title">2025 – Event 2</h3>
-							<p class="lightdash-journey__desc">Placeholder – second 2025 event.</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 3 -->
-				<div class="lightdash-journey__row" data-year="2025">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2025</span>
-							<h3 class="lightdash-journey__title">2025 – Event 3</h3>
-							<p class="lightdash-journey__desc">Placeholder – third 2025 event.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2025</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/fulls/05.jpg, ../assets/images/fulls/06.jpg">
-							<!-- Demo 2025 carousel event 3 -->
-						</div>
-					</div>
-				</div>
-
-				<!-- Year header: 2026 – Present -->
-				<div class="lightdash-journey__year-header">
-					<div class="lightdash-journey__year-header-icon" aria-hidden="true"></div>
-					<div class="lightdash-journey__year-header-label">2026 – Present</div>
-				</div>
-
-				<!-- 2026 – current: Job search & upskilling (2 events) -->
-				<!-- Event 1: Job search -->
-				<div class="lightdash-journey__row" data-year="2026">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/01.jpg, ../assets/images/thumbs/02.jpg">
-							<!-- Demo job-search carousel -->
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2026</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2026 – Present</span>
-							<h3 class="lightdash-journey__title">Job search</h3>
-							<p class="lightdash-journey__desc">Describe your ongoing job search – target roles, locations, and what you are focusing on.</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Event 2: Upskilling -->
-				<div class="lightdash-journey__row" data-year="2026">
-					<div class="lightdash-journey__cell lightdash-journey__left lightdash-journey__animate-left">
-						<div class="lightdash-journey__card tap-ripple-target">
-							<span class="lightdash-journey__label">2026 – Present</span>
-							<h3 class="lightdash-journey__title">Upskilling</h3>
-							<p class="lightdash-journey__desc">Use this to talk about courses, projects, and any other ways you are levelling up.</p>
-						</div>
-					</div>
-					<div class="lightdash-journey__node">2026</div>
-					<div class="lightdash-journey__cell lightdash-journey__right lightdash-journey__animate-right">
-						<div class="lightdash-journey__media" data-images="../assets/images/thumbs/03.jpg, ../assets/images/thumbs/04.jpg">
-							<!-- Demo upskilling carousel -->
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Footer -->
-	<footer id="footer" class="bg-gray-800 text-white py-12">
-		<div class="container mx-auto px-6 text-center">
-			<ul class="flex justify-center gap-6 mb-6">
-				<li><a href="https://www.linkedin.com/in/sumitsc/" target="_blank" class="hover:text-primary transition-colors">LinkedIn</a></li>
-				<li><a href="https://github.com/Sumit-SC" target="_blank" class="hover:text-primary transition-colors">GitHub</a></li>
-				<li><a href="https://www.kaggle.com/mitsu00" target="_blank" class="hover:text-primary transition-colors">Kaggle</a></li>
-				<li><a href="https://medium.com/@sumitsc.work" target="_blank" class="hover:text-primary transition-colors">Medium</a></li>
-				<li><a href="mailto:mitsu02@duck.com" class="hover:text-primary transition-colors">Email</a></li>
-			</ul>
-			<p class="text-gray-400">&copy; Sumit S. Chaure | Design: <a href="https://html5up.net/big-picture" target="_blank" rel="noopener noreferrer" class="text-white hover:text-primary transition-colors">HTML5 UP Big Picture</a> · <a href="https://telemetry.indevs.in" target="_blank" rel="noopener noreferrer" class="text-white hover:text-primary transition-colors">Status</a></p>
-		</div>
-	</footer>
-
-	<script src="../assets/js/main.js"></script>
-	<script src="../assets/js/analytics.js"></script>
-	<script>
-		initAnalyticsTracking({
-			site: "portfolio",
-			baseEvent: "portfolio",
-			endpoint: "https://events.colab.indevs.in/api/events"
-		});
-	</script>
-	<script>
-		// Smooth scroll for navigation links
-		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-			anchor.addEventListener('click', function (e) {
-				e.preventDefault();
-				const target = document.querySelector(this.getAttribute('href'));
-				if (target) {
-					const headerOffset = 80;
-					const elementPosition = target.getBoundingClientRect().top;
-					const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-					window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-				}
-			});
-		});
-
-		// Arrow key navigation
-		const sections = ['intro', 'one', 'two', 'work', 'journey'];
-		let currentSectionIndex = 0;
-
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-				e.preventDefault();
-				if (currentSectionIndex < sections.length - 1) {
-					currentSectionIndex++;
-					const target = document.getElementById(sections[currentSectionIndex]);
-					if (target) {
-						const headerOffset = 80;
-						const elementPosition = target.getBoundingClientRect().top;
-						const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-						window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-					}
-				}
-			} else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-				e.preventDefault();
-				if (currentSectionIndex > 0) {
-					currentSectionIndex--;
-					const target = document.getElementById(sections[currentSectionIndex]);
-					if (target) {
-						const headerOffset = 80;
-						const elementPosition = target.getBoundingClientRect().top;
-						const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-						window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-					}
-				}
-			}
-		});
-
-		// Update current section on scroll
-		window.addEventListener('scroll', () => {
-			const scrollPos = window.pageYOffset + 200;
-			sections.forEach((section, index) => {
-				const el = document.getElementById(section);
-				if (el) {
-					const top = el.offsetTop;
-					const bottom = top + el.offsetHeight;
-					if (scrollPos >= top && scrollPos < bottom) {
-						currentSectionIndex = index;
-					}
-				}
-			});
-		});
-
-		// Scroll progress bar
-		window.addEventListener('scroll', () => {
-			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-			const scrolled = (winScroll / height) * 100;
-			document.getElementById('scroll-progress').style.width = scrolled + '%';
-		});
-
-		// Lightdash-style journey: scroll-in animation (left/right content)
-		var journeyRows = document.querySelectorAll('.lightdash-journey__row');
-		var journeyObs = new IntersectionObserver(function(entries) {
-			entries.forEach(function(entry) {
-				if (entry.isIntersecting) entry.target.classList.add('in-view');
-			});
-		}, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
-		journeyRows.forEach(function(row) { journeyObs.observe(row); });
-
-		// Lightweight carousel for journey media – behaves like a video slider when there are multiple images
-		(function initJourneyMediaCarousel() {
-			var mediaBlocks = document.querySelectorAll('.lightdash-journey__media');
-			mediaBlocks.forEach(function(media) {
-				// Optional data-images attribute: comma-separated list of image URLs
-				var dataImages = media.getAttribute('data-images');
-				if (dataImages && !media.querySelector('img')) {
-					dataImages.split(',').map(function(s) { return s.trim(); }).filter(Boolean).forEach(function(url) {
-						var img = new Image();
-						img.src = url;
-						img.alt = '';
-						media.appendChild(img);
-					});
-				}
-
-				var slides = media.querySelectorAll('img');
-				if (!slides || slides.length <= 1) return;
-
-				media.classList.add('lightdash-journey__media--carousel');
-
-				// Create play triangle overlay
-				var playTriangle = document.createElement('div');
-				playTriangle.className = 'lightdash-journey__media--carousel-play';
-				media.appendChild(playTriangle);
-
-				// Create dots for manual navigation
-				var dotsWrap = document.createElement('div');
-				dotsWrap.className = 'lightdash-journey__media-dots';
-
-				var current = 0;
-
-				function goTo(index) {
-					slides[current].classList.remove('is-active');
-					dotsWrap.children[current].classList.remove('is-active');
-					current = index;
-					slides[current].classList.add('is-active');
-					dotsWrap.children[current].classList.add('is-active');
-				}
-
-				slides.forEach(function(_, idx) {
-					var dot = document.createElement('button');
-					dot.type = 'button';
-					dot.className = 'lightdash-journey__media-dot' + (idx === 0 ? ' is-active' : '');
-					dot.addEventListener('click', function(e) {
-						e.preventDefault();
-						goTo(idx);
-					});
-					dotsWrap.appendChild(dot);
-				});
-
-				media.appendChild(dotsWrap);
-
-				// Start with first slide visible
-				slides[0].classList.add('is-active');
-
-				// Auto-advance for subtle motion (~1.5–2s per slide, smooth fade)
-				var autoplayDelay = 1600;
-				var autoplay = setInterval(function() {
-					var next = (current + 1) % slides.length;
-					goTo(next);
-				}, autoplayDelay);
-
-				// Pause on hover, resume on leave so it keeps looping
-				media.addEventListener('mouseenter', function() {
-					clearInterval(autoplay);
-				});
-				media.addEventListener('mouseleave', function() {
-					autoplay = setInterval(function() {
-						var next = (current + 1) % slides.length;
-						goTo(next);
-					}, autoplayDelay);
-				});
-			});
-		})();
-
-		// Big Picture transitions - parallax and fade-in
-		const aboutSections = document.querySelectorAll('.about-section');
-		
-		// Intersection Observer for slide-in animations (Big Picture style)
-		const observerOptions = {
-			root: null,
-			rootMargin: '0px 0px -20% 0px', // Trigger when section is 20% from bottom of viewport
-			threshold: 0.3 // Trigger when 30% of section is visible
-		};
-
-		const sectionObserver = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					// Add visible class to trigger slide-in animation
-					entry.target.classList.add('visible');
-					
-					// Ensure content animates in
-					const content = entry.target.querySelector('.content');
-					if (content) {
-						// Force reflow to ensure animation triggers
-						content.offsetHeight;
-						content.style.transitionDelay = '0.1s';
-					}
-				}
-			});
-		}, observerOptions);
-
-		aboutSections.forEach(section => {
-			sectionObserver.observe(section);
-		});
-
-		// Big Picture style - background-attachment: fixed creates natural parallax
-		// The fixed background creates the "rolling up" effect automatically as you scroll
-		// No additional JavaScript needed - CSS background-attachment: fixed handles it
-		
-		// Optional: Add subtle parallax enhancement for smoother effect
-		window.addEventListener('scroll', () => {
-			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-			
-			aboutSections.forEach((section) => {
-				const rect = section.getBoundingClientRect();
-				const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-				
-				if (isVisible) {
-					// Calculate how much of the section is visible
-					const sectionTop = section.offsetTop;
-					const sectionHeight = section.offsetHeight;
-					const scrollProgress = (scrollTop - sectionTop + window.innerHeight) / (sectionHeight + window.innerHeight);
-					
-					// Subtle parallax effect - background moves slightly
-					// The fixed attachment already creates the main effect
-					const parallaxOffset = scrollProgress * 20; // Small offset for enhancement
-					section.style.backgroundPositionY = `${50 - parallaxOffset}%`;
-				}
-			});
-		}, { passive: true });
-
-		// Initial visibility for first section - make it visible immediately
-		if (aboutSections.length > 0) {
-			const firstSection = aboutSections[0];
-			firstSection.classList.add('visible');
-			
-			// Ensure first section content is visible immediately
-			const firstContent = firstSection.querySelector('.content');
-			if (firstContent) {
-				// Small delay to ensure CSS transition works
-				setTimeout(() => {
-					firstContent.style.opacity = '1';
-					firstContent.style.transform = 'translateX(0) translateY(0)';
-				}, 100);
-			}
-		}
-
-		// Resume/Journey split focus buttons
-		const splitContainer = document.getElementById('resume-journey-split');
-		const resumePanel = document.getElementById('about-resume-panel');
-		const journeyPanel = document.getElementById('about-journey-panel');
-		const focusResumeBtn = document.getElementById('focus-resume');
-		const focusJourneyBtn = document.getElementById('focus-journey');
-
-		if (splitContainer && resumePanel && journeyPanel && focusResumeBtn && focusJourneyBtn) {
-			const setSplit = (mode) => {
-				if (mode === 'resume') {
-					resumePanel.style.flex = '3';
-					journeyPanel.style.flex = '1.5';
-				} else if (mode === 'journey') {
-					resumePanel.style.flex = '1.5';
-					journeyPanel.style.flex = '3';
-				} else {
-					resumePanel.style.flex = '1';
-					journeyPanel.style.flex = '1';
-				}
-			};
-
-			// Default equal split
-			setSplit('equal');
-
-			focusResumeBtn.addEventListener('click', () => setSplit('resume'));
-			focusJourneyBtn.addEventListener('click', () => setSplit('journey'));
-		}
-	</script>
 </body>
 </html>
