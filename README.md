@@ -18,8 +18,29 @@ For detailed technical docs (data model, deployment, migration notes), see `docs
 
 For detailed step-by-step customization, hosting, and layout configurations, please view our full guide.
 
-[Visit Mintlify Page for Setup Guide & Docs]()
-[![Mintlify](https://shields.io)](https://github-22.mintlify.app/)
+<br>
+
+<table>
+  <tr>
+    <td bgcolor="#000000" align="center" style="border-radius: 4px; padding: 8px 16px; border: 1px solid #1c1c1e;">
+      <a href="https://github-22.mintlify.app/" target="_blank" style="text-decoration: none; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <img src="https://jsdelivr.net" width="16" height="16" style="filter: invert(79%) sepia(82%) saturate(985%) hue-rotate(124deg) brightness(101%) contrast(101%);" alt="Mintlify Logo" />
+        <span>SETUP GUIDE & DOCS</span>
+        <span style="color: #15F4EE; font-weight: 800;">➔</span>
+      </a>
+    </td>
+  </tr>
+</table>
+
+## 🚀 Quick Start
+
+For detailed step-by-step customization, hosting, and layout configurations, please view our full guide.
+
+<a href="https://github-22.mintlify.app" target="_blank" style="text-decoration: none;">
+  <img src="https://jsdelivr.net" width="20" height="20" style="vertical-align: middle; filter: invert(79%) sepia(82%) saturate(985%) hue-rotate(124deg) brightness(101%) contrast(101%);" alt="Mintlify Logo" /> 
+  <b style="color: #15F4EE; vertical-align: middle; margin-left: 6px;">Visit Mintlify Page for Setup Guide & Docs</b>
+</a>
+
 
 
 ---
