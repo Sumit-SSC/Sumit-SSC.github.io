@@ -26,7 +26,7 @@ For detailed step-by-step customization, hosting, and layout configurations, ple
       <a href="https://github-22.mintlify.app/" target="_blank" style="text-decoration: none; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
         <img src="https://www.mintlify.com/favicon.ico" width="24" height="24" alt="Mintlify Logo" style="vertical-align: middle;" />
   <b style="color: #18E299; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; margin-left: 4px; vertical-align: middle;"> Visit Mintlify Page for Setup Guide & Docs</b>
-        <span>SETUP GUIDE & DOCS</span>
+        <span>\nSETUP GUIDE & DOCS</span>
         <span style="color: #15F4EE; font-weight: 800;">➔</span>
       </a>
     </td>
