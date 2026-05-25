@@ -36,11 +36,6 @@ For detailed step-by-step customization, hosting, and layout configurations, ple
   </tr>
 </table>
 
-
----
-# Visit [Mintify](https://github-22.mintlify.app/) Page for Setup guide & docs of the Portfolio Page Setup 
-
-
 ---
 
 ## Quick tour
