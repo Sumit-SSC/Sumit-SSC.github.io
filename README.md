@@ -37,7 +37,7 @@ For detailed step-by-step customization, hosting, and layout configurations, ple
 For detailed step-by-step customization, hosting, and layout configurations, please view our full guide.
 
 <a href="https://github-22.mintlify.app" target="_blank" style="text-decoration: none;">
-  <img src="https://jsdelivr.net" width="20" height="20" style="vertical-align: middle; filter: invert(79%) sepia(82%) saturate(985%) hue-rotate(124deg) brightness(101%) contrast(101%);" alt="Mintlify Logo" /> 
+  <img src="https://simpleicons.org/icons/mintlify.svg" width="20" height="20" style="vertical-align: middle; filter: invert(79%) sepia(82%) saturate(985%) hue-rotate(124deg) brightness(101%) contrast(101%);" alt="Mintlify Logo" /> 
   <b style="color: #15F4EE; vertical-align: middle; margin-left: 6px;">Visit Mintlify Page for Setup Guide & Docs</b>
 </a>
 
