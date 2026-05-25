@@ -12,6 +12,9 @@ Minimal, fast portfolio aimed at **Senior Data Analyst / Decision Scientist / Pr
 
 For detailed technical docs (data model, deployment, migration notes), see `docs/README.md`.
 
+Visit [Mintify](https://github-22.mintlify.app/) Page for Setup guide & docs of the Portfolio Page Setup 
+
+
 ---
 
 ## Quick tour
