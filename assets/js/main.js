@@ -806,24 +806,27 @@ function renderHomepageContentSection() {
 }
 
 /* ---------- SCROLL ANIMATIONS ---------- */
-function initScrollAnimations() {
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-  };
+let scrollAnimObserver = null;
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
+function initScrollAnimations(root) {
+  const scope = root && root.querySelectorAll ? root : document;
+  const nodes = scope.querySelectorAll
+    ? scope.querySelectorAll('.animate-on-scroll:not(.animated), .story-item:not(.animated)')
+    : document.querySelectorAll('.animate-on-scroll:not(.animated), .story-item:not(.animated)');
+
+  if (!nodes.length) return;
+
+  if (!scrollAnimObserver) {
+    scrollAnimObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
         entry.target.classList.add('animated');
-      }
-    });
-  }, observerOptions);
+        scrollAnimObserver.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+  }
 
-  document.querySelectorAll('.animate-on-scroll, .story-item').forEach(el => {
-    observer.observe(el);
-  });
+  nodes.forEach((el) => scrollAnimObserver.observe(el));
 }
 
 /* ---------- SCROLL PROGRESS ---------- */
@@ -2008,6 +2011,7 @@ function renderProject(project, caseStudy, contentFromFile) {
     initGalleryCarousels();
     // Heavy embeds (PDF/video) are click-to-load for faster initial rendering.
     initTapToLoadEmbeds(main);
+    initScrollAnimations(main);
   }
 
   // Generate TOC
@@ -2044,9 +2048,7 @@ function renderProject(project, caseStudy, contentFromFile) {
         if (d && !d.open) d.open = true;
       }
       const targetEl = document.getElementById(id);
-      if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      scrollToProjectSection(targetEl);
     };
   }
 
@@ -2138,7 +2140,7 @@ function section(title, content, id = null, isMedia = false) {
   if (!content) return "";
   const sectionId = id || title.toLowerCase().replace(/\s+/g, '-');
   return `
-    <section id="${sectionId}" class="mb-12 scroll-mt-24">
+    <section id="${sectionId}" class="mb-12 scroll-mt-24 animate-on-scroll">
       <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">${title}</h2>
       ${isMedia
         ? `<div class="media-container">${content}</div>`
@@ -2820,44 +2822,63 @@ function initClickableTools() {
 }
 
 // Initialize TOC scroll spy
+let tocScrollSpyBound = false;
+
+function scrollToProjectSection(targetElement) {
+  if (!targetElement) return;
+  const headerOffset = 104;
+  const top = targetElement.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
 function initTOCScrollSpy() {
-  const sections = document.querySelectorAll('section[id]');
+  const sections = Array.from(document.querySelectorAll('#project-main section[id]'));
   const tocLinks = document.querySelectorAll('.toc-link');
   const tocSelect = document.getElementById('project-toc-select');
-  
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (window.pageYOffset >= sectionTop - 200) {
-        current = section.getAttribute('id');
-      }
+  if (!sections.length || !tocLinks.length) return;
+
+  const setActive = (current) => {
+    tocLinks.forEach((link) => {
+      const isActive = link.dataset.section === current;
+      link.classList.toggle('text-primary', isActive);
+      link.classList.toggle('font-semibold', isActive);
+      link.classList.toggle('toc-link-active', isActive);
     });
-    
-    tocLinks.forEach(link => {
-      link.classList.remove('text-primary', 'font-semibold', 'toc-link-active');
-      if (link.dataset.section === current) {
-        link.classList.add('text-primary', 'font-semibold', 'toc-link-active');
-        // Sync mobile dropdown highlight
-        if (tocSelect && tocSelect.value !== current) {
-          tocSelect.value = current;
-        }
-      }
-    });
-  });
-  
-  // Smooth scroll for TOC links
-  tocLinks.forEach(link => {
+    if (tocSelect && current && tocSelect.value !== current) {
+      tocSelect.value = current;
+    }
+  };
+
+  if (!tocScrollSpyBound) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollPos = window.pageYOffset + 140;
+        let current = sections[0] ? sections[0].id : '';
+        sections.forEach((section) => {
+          if (scrollPos >= section.offsetTop) {
+            current = section.id;
+          }
+        });
+        setActive(current);
+        ticking = false;
+      });
+    }, { passive: true });
+    tocScrollSpyBound = true;
+  }
+
+  tocLinks.forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const targetId = link.getAttribute('href');
-      const targetElement = document.querySelector(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      const targetElement = targetId ? document.querySelector(targetId) : null;
+      scrollToProjectSection(targetElement);
     });
   });
+
+  setActive(sections[0].id);
 }
 
 function linksBlock(project) {
