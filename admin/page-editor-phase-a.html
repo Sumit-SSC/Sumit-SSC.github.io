@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Editor - Phase A (Visual Editing)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#4f46e5', accent: '#0ea5e9' } } }
+        };
+    </script>
+    <style>
+        * { -webkit-font-smoothing: antialiased; -webkit-backface-visibility: hidden; }
+        body { --bg: #fff; --surface: #f9fafb; --text: #1f2937; --border: #e5e7eb; --ring: #4f46e5; }
+        body.dark { --bg: #111827; --surface: #1f2937; --text: #f3f4f6; --border: #374151; --ring: #6366f1; }
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+        [data-editable="true"] {
+            position: relative;
+            border: 2px solid var(--ring);
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            background-color: rgba(79, 70, 229, 0.05);
+            cursor: text;
+            outline: none;
+        }
+
+        [data-editable="true"]:hover {
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        [data-editable="true"].editing {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .editable-label {
+            position: absolute;
+            top: -1.5rem;
+            left: 0;
+            background-color: var(--ring);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        [data-editable="true"]:hover .editable-label {
+            opacity: 1;
+        }
+
+        .sidebar { width: 250px; background-color: var(--surface); border-right: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
+        .sidebar-button { display: block; width: 100%; padding: 0.75rem; margin-bottom: 0.5rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.375rem; cursor: pointer; text-align: left; transition: all 0.15s; font-size: 0.875rem; font-weight: 500; }
+        .sidebar-button:hover { border-color: var(--ring); background-color: rgba(79, 70, 229, 0.05); }
+        .sidebar-button.active { border-color: var(--ring); background-color: rgba(79, 70, 229, 0.1); font-weight: 600; }
+
+        .preview-pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .preview-header { padding: 1rem; background-color: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .preview-content { flex: 1; overflow-y: auto; padding: 2rem; background-color: var(--bg); }
+
+        .properties-panel { width: 280px; background-color: var(--surface); border-left: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
+        .property-group { margin-bottom: 1rem; }
+        .property-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .property-value { font-size: 0.875rem; padding: 0.5rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.25rem; word-break: break-word; }
+        .property-input { width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.875rem; }
+
+        @media (max-width: 1024px) {
+            .sidebar, .properties-panel { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900">
+    <div class="flex h-screen flex-col">
+        <div class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-700 dark:bg-slate-800">
+            <h1 class="text-lg font-bold">📄 Page Editor - Phase A (Visual Page Editing)</h1>
+            <div class="flex gap-2">
+                <button onclick="toggleDarkMode()" class="rounded px-3 py-1 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700">🌙</button>
+                <button onclick="saveEdits()" class="rounded bg-primary px-3 py-1 text-sm font-semibold text-white hover:bg-primary/90">💾 Save Edits</button>
+                <button onclick="resetToDefaults()" class="rounded bg-red-600 px-3 py-1 text-sm font-semibold text-white hover:bg-red-700">↺ Reset</button>
+                <button onclick="publishEdits()" class="rounded bg-accent px-3 py-1 text-sm font-semibold text-white hover:bg-accent/90">🚀 Publish</button>
+            </div>
+        </div>
+
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Left: Page selector -->
+            <div class="sidebar">
+                <h2 class="mb-4 text-sm font-bold">Select Page</h2>
+                <button onclick="selectPage('about')" class="sidebar-button active">📖 About</button>
+                <button onclick="selectPage('projects')" class="sidebar-button">🗂️ Projects</button>
+                <button onclick="selectPage('case-study')" class="sidebar-button">📚 Case Studies</button>
+                <button onclick="selectPage('homepage')" class="sidebar-button">🏠 Homepage</button>
+                <button onclick="selectPage('contact')" class="sidebar-button">📧 Contact</button>
+                
+                <div class="mt-6">
+                    <h2 class="mb-3 text-sm font-bold">Editable Regions</h2>
+                    <div id="editable-regions" class="text-sm space-y-1"></div>
+                </div>
+
+                <div class="mt-6">
+                    <h2 class="mb-3 text-sm font-bold">Status</h2>
+                    <p id="status-text" class="text-xs text-slate-500">No changes yet</p>
+                </div>
+            </div>
+
+            <!-- Center: Live preview with inline editing -->
+            <div class="preview-pane">
+                <div class="preview-header">
+                    <span id="page-title">About Page</span>
+                    <span id="edit-mode" class="text-sm text-slate-500">Click any blue region to edit</span>
+                </div>
+                <div id="page-preview" class="preview-content"></div>
+            </div>
+
+            <!-- Right: Properties -->
+            <div class="properties-panel">
+                <h2 class="mb-4 text-sm font-bold">Editing</h2>
+                <div id="properties-content">
+                    <p class="text-sm text-slate-500">Click a region to edit</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageEdits = {};
+        const pages = {
+            about: { title: 'About Page', path: '../pages/about.html' },
+            projects: { title: 'Projects Page', path: '../pages/project.html' },
+            'case-study': { title: 'Case Study Page', path: '../pages/case-study.html' },
+            homepage: { title: 'Homepage', path: '../pages/homepage.html' },
+            contact: { title: 'Contact Page', path: '../pages/contact.html' },
+        };
+
+        let currentPage = 'about';
+        let currentEditableElement = null;
+        let pageContent = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEditsFromStorage();
+            selectPage('about');
+        });
+
+        function selectPage(pageName) {
+            currentPage = pageName;
+            currentEditableElement = null;
+            updateUI();
+            loadPageContent();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.sidebar-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="selectPage('${currentPage}')"]`)?.classList.add('active');
+
+            const page = pages[currentPage];
+            document.getElementById('page-title').textContent = page.title;
+            document.getElementById('properties-content').innerHTML = '<p class="text-sm text-slate-500">Click a region to edit</p>';
+        }
+
+        function loadPageContent() {
+            // Simulate loading page content with editable regions
+            const editableContent = {
+                about: `
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl font-bold mb-6">About Me</h1>
+                        <div data-editable="true" class="mb-6 p-4 text-lg leading-relaxed">
+                            <span class="editable-label">Hero Text</span>
+                            I'm a data-driven professional passionate about turning data into insights and decisions. 
+                            With expertise in analytics, SQL, Python, and machine learning, I help teams make better decisions faster.
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4 text-base leading-relaxed">
+                            <span class="editable-label">Background</span>
+                            My background spans data analytics, business intelligence, and decision science. 
+                            I've built fraud detection systems, product analytics pipelines, and ML models that drive business impact.
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4 text-base leading-relaxed">
+                            <span class="editable-label">Skills</span>
+                            SQL | Python | Streamlit | Power BI | Statistics | Machine Learning | Analytics Engineering
+                        </div>
+                    </div>
+                `,
+                projects: `
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl font-bold mb-6">Projects</h1>
+                        <div data-editable="true" class="mb-6 p-4 text-lg">
+                            <span class="editable-label">Intro</span>
+                            Here are my featured projects demonstrating full-stack data work.
+                        </div>
+                        <div class="grid gap-6">
+                            <div data-editable="true" class="p-4 border border-slate-300 rounded">
+                                <span class="editable-label">Project 1</span>
+                                <h3 class="font-bold mb-2">Fraud Intelligence & Risk Analytics</h3>
+                                <p>Multi-table SQL pipeline with Power BI dashboards and Streamlit investigation consoles.</p>
+                            </div>
+                            <div data-editable="true" class="p-4 border border-slate-300 rounded">
+                                <span class="editable-label">Project 2</span>
+                                <h3 class="font-bold mb-2">E-commerce Product Analytics</h3>
+                                <p>Full analytics pipeline with funnels, cohorts, retention, and A/B test analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                'case-study': `
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl font-bold mb-6">Case Study</h1>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Case Study Title</span>
+                            <h2 class="text-2xl font-bold">Measuring Recommendation Impact Beyond Clicks</h2>
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Problem</span>
+                            How do you design a Netflix-style recommendation system that optimizes for completion and satisfaction, not just clicks?
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Approach</span>
+                            Use multi-metric testing and sequential experiments to measure impact beyond CTR.
+                        </div>
+                    </div>
+                `,
+                homepage: `
+                    <div class="max-w-4xl mx-auto">
+                        <div data-editable="true" class="mb-8 p-6 text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+                            <span class="editable-label">Hero Headline</span>
+                            <h1 class="text-5xl font-bold mb-4">Data-Driven Decision Science</h1>
+                            <p class="text-xl text-slate-700">Analytics, ML & Product Thinking</p>
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Featured Work</span>
+                            <h2 class="text-2xl font-bold mb-4">Featured Projects</h2>
+                            <p>Curated selection of production-grade analytics work.</p>
+                        </div>
+                    </div>
+                `,
+                contact: `
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl font-bold mb-6">Get in Touch</h1>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Contact Intro</span>
+                            Interested in collaborating or discussing data projects? Reach out!
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Email</span>
+                            Email: hello@sumit.dev
+                        </div>
+                        <div data-editable="true" class="mb-6 p-4">
+                            <span class="editable-label">Links</span>
+                            GitHub | LinkedIn | Twitter
+                        </div>
+                    </div>
+                `,
+            };
+
+            const preview = document.getElementById('page-preview');
+            const content = editableContent[currentPage] || '';
+            preview.innerHTML = content;
+
+            // Add edit handlers to all editable regions
+            preview.querySelectorAll('[data-editable="true"]').forEach((el, idx) => {
+                const regionId = `${currentPage}-region-${idx}`;
+                el.setAttribute('data-region-id', regionId);
+                el.onclick = (e) => selectEditableRegion(el, e);
+                el.setAttribute('contenteditable', 'true');
+                el.onblur = () => saveRegionEdit(regionId, el.textContent);
+            });
+
+            updateEditableRegionsList();
+            loadPageEdits();
+        }
+
+        function selectEditableRegion(element, event) {
+            event.stopPropagation();
+            
+            if (currentEditableElement) {
+                currentEditableElement.classList.remove('editing');
+            }
+            
+            currentEditableElement = element;
+            element.classList.add('editing');
+            element.focus();
+
+            const regionId = element.getAttribute('data-region-id');
+            const label = element.querySelector('.editable-label')?.textContent || 'Text';
+            
+            document.getElementById('properties-content').innerHTML = `
+                <div class="property-group">
+                    <label class="property-label">Region: ${label}</label>
+                    <textarea id="region-edit" class="property-input" rows="6" style="font-family: monospace; font-size: 0.8rem;" onchange="saveRegionEdit('${regionId}', this.value)">${element.textContent}</textarea>
+                </div>
+                <div class="property-group">
+                    <button onclick="deleteRegionEdit('${regionId}')" class="w-full rounded bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700">🗑️ Reset to Default</button>
+                </div>
+            `;
+            
+            updateStatus(`Editing: ${label}`);
+        }
+
+        function updateEditableRegionsList() {
+            const list = document.getElementById('editable-regions');
+            list.innerHTML = '';
+            
+            document.querySelectorAll('[data-editable="true"]').forEach((el, idx) => {
+                const label = el.querySelector('.editable-label')?.textContent || `Region ${idx + 1}`;
+                const regionId = el.getAttribute('data-region-id');
+                const item = document.createElement('div');
+                item.className = 'text-xs p-1 bg-slate-100 dark:bg-slate-700 rounded cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600';
+                item.textContent = label;
+                item.onclick = () => {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    selectEditableRegion(el, { stopPropagation: () => {} });
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function saveRegionEdit(regionId, content) {
+            pageEdits[regionId] = content;
+            updateStatus(`✓ Saved: ${regionId}`);
+        }
+
+        function deleteRegionEdit(regionId) {
+            if (confirm('Reset this region to default?')) {
+                delete pageEdits[regionId];
+                loadPageContent();
+                updateStatus(`Reset: ${regionId}`);
+            }
+        }
+
+        function saveEdits() {
+            localStorage.setItem('page-edits', JSON.stringify(pageEdits));
+            updateStatus('✓ All edits saved to draft');
+        }
+
+        function resetToDefaults() {
+            if (confirm('Reset all edits on this page?')) {
+                Object.keys(pageEdits).forEach(key => {
+                    if (key.startsWith(currentPage)) {
+                        delete pageEdits[key];
+                    }
+                });
+                loadPageContent();
+                updateStatus('✓ Page reset to defaults');
+            }
+        }
+
+        function publishEdits() {
+            const data = {
+                publishedAt: new Date().toISOString(),
+                edits: pageEdits
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `page-edits-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            updateStatus('📥 Exported edits');
+        }
+
+        function loadEditsFromStorage() {
+            const saved = localStorage.getItem('page-edits');
+            if (saved) {
+                Object.assign(pageEdits, JSON.parse(saved));
+            }
+        }
+
+        function loadPageEdits() {
+            // Apply any saved edits to the current page
+            document.querySelectorAll('[data-editable="true"]').forEach(el => {
+                const regionId = el.getAttribute('data-region-id');
+                if (pageEdits[regionId]) {
+                    el.textContent = pageEdits[regionId];
+                }
+            });
+        }
+
+        function updateStatus(msg) {
+            document.getElementById('status-text').textContent = msg;
+            setTimeout(() => {
+                if (msg === document.getElementById('status-text').textContent) {
+                    document.getElementById('status-text').textContent = 'Ready';
+                }
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('dark-mode', document.body.classList.contains('dark'));
+        }
+
+        if (localStorage.getItem('dark-mode') === 'true') {
+            document.body.classList.add('dark');
+        }
+    </script>
+</body>
+</html>

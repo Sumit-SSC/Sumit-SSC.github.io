@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Document Editor · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --danger: #ef4444;
+      --success: #10b981;
+      --radius: 8px;
+    }
+    
+    body.dark-mode {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-alt: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      min-height: 100vh;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Header */
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Form Fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="url"],
+    select,
+    textarea {
+      font: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font: inherit;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: var(--surface-alt);
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button.success {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    button.danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+    }
+
+    button.small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Status Messages */
+    .status-message {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .status-message.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .status-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .status-message.info {
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--accent);
+    }
+
+    /* JSON Editor */
+    .json-editor-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    #json-input {
+      flex: 1;
+      min-height: 300px;
+    }
+
+    .json-stats {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      background: var(--surface-alt);
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* File Selector */
+    .file-selector {
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-item {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-alt);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .file-item:hover {
+      background: var(--surface);
+      border-color: var(--accent);
+    }
+
+    .file-item.active {
+      background: var(--surface);
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 2px var(--accent);
+    }
+
+    .file-item-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .file-item-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Preview */
+    .preview-pane {
+      background: var(--surface-alt);
+      border-radius: 6px;
+      padding: 16px;
+      min-height: 200px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .preview-pane code {
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .preview-pane pre {
+      background: var(--surface);
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 8px 0;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Hide/Show */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Loading */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div>
+      <h1>📝 Document Editor</h1>
+      <p style="color: var(--text-muted); margin-top: 4px;">Edit JSON content inline—form + raw JSON</p>
+    </div>
+    <div class="header-controls">
+      <button id="theme-toggle" class="small">🌙 Dark</button>
+      <button id="help-btn" class="small">?</button>
+    </div>
+  </header>
+
+  <!-- Left Panel: File Selection & Form Fields -->
+  <div class="panel">
+    <div>
+      <div class="panel-title">Select Document</div>
+      <div class="panel-subtitle">Choose a JSON file to edit</div>
+    </div>
+
+    <div class="file-selector" id="file-list">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div id="form-fields">
+      <!-- Populated by JS based on selected file -->
+    </div>
+
+    <div class="button-group">
+      <button id="save-btn" class="primary" disabled>💾 Save Draft</button>
+      <button id="reset-btn" class="small" disabled>Reset</button>
+      <button id="export-btn" class="small" disabled>Export</button>
+    </div>
+
+    <div id="status" class="status-message info hidden">Ready</div>
+  </div>
+
+  <!-- Right Panel: JSON Editor & Preview -->
+  <div class="panel">
+    <div>
+      <div class="panel-title">Raw JSON</div>
+      <div class="panel-subtitle">Edit directly or via form above</div>
+    </div>
+
+    <div class="json-editor-wrapper">
+      <textarea id="json-input" placeholder="JSON will load here..."></textarea>
+      <div class="json-stats">
+        <span id="json-size">Size: —</span>
+        <span id="json-status">Valid ✓</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="panel-subtitle">Preview</div>
+    <div class="preview-pane" id="preview">
+      Select a document to begin
+    </div>
+  </div>
+</div>
+
+<script>
+  // State
+  let state = {
+    selectedFile: null,
+    files: {
+      projects: { name: 'Projects', path: 'data/projects.json', data: null },
+      caseStudies: { name: 'Case Studies', path: 'data/case_studies.json', data: null },
+      homepageContent: { name: 'Homepage Content', path: 'data/homepage-content.json', data: null },
+      homepageUi: { name: 'Homepage UI', path: 'data/homepage-ui.json', data: null },
+    },
+    isDirty: false,
+    theme: localStorage.getItem('editor-theme') || 'light',
+  };
+
+  // DOM Elements
+  const fileList = document.getElementById('file-list');
+  const jsonInput = document.getElementById('json-input');
+  const formFields = document.getElementById('form-fields');
+  const preview = document.getElementById('preview');
+  const saveBtn = document.getElementById('save-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const exportBtn = document.getElementById('export-btn');
+  const status = document.getElementById('status');
+  const jsonSize = document.getElementById('json-size');
+  const jsonStatus = document.getElementById('json-status');
+  const themeToggle = document.getElementById('theme-toggle');
+
+  // Initialize Theme
+  function initTheme() {
+    document.body.classList.toggle('dark-mode', state.theme === 'dark');
+    themeToggle.textContent = state.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+  }
+
+  themeToggle.addEventListener('click', () => {
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('editor-theme', state.theme);
+    initTheme();
+  });
+
+  // Render File List
+  function renderFileList() {
+    fileList.innerHTML = Object.entries(state.files).map(([key, file]) => `
+      <div class="file-item ${state.selectedFile === key ? 'active' : ''}" data-file="${key}">
+        <div class="file-item-name">${file.name}</div>
+        <div class="file-item-info">${file.path}</div>
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.file-item').forEach(el => {
+      el.addEventListener('click', () => selectFile(el.dataset.file));
+    });
+  }
+
+  // Select File
+  async function selectFile(key) {
+    state.selectedFile = key;
+    const file = state.files[key];
+
+    try {
+      showStatus('Loading...', 'info');
+      const response = await fetch(file.path);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const data = await response.json();
+      file.data = data;
+
+      jsonInput.value = JSON.stringify(data, null, 2);
+      state.isDirty = false;
+      renderFileList();
+      renderFormFields(key, data);
+      updatePreview(data);
+      updateJsonStats();
+      showStatus(`Loaded: ${file.name}`, 'success');
+    } catch (err) {
+      showStatus(`Error loading file: ${err.message}`, 'error');
+    }
+
+    saveBtn.disabled = false;
+    resetBtn.disabled = false;
+    exportBtn.disabled = false;
+  }
+
+  // Render Dynamic Form Fields
+  function renderFormFields(fileKey, data) {
+    let html = '';
+
+    if (fileKey === 'projects' && Array.isArray(data)) {
+      html = `
+        <div class="form-group">
+          <label>Total Projects</label>
+          <input type="text" value="${data.length}" disabled>
+        </div>
+        <div class="panel-subtitle">Click a project in the preview or edit raw JSON</div>
+      `;
+    } else if (fileKey === 'caseStudies' && Array.isArray(data)) {
+      html = `
+        <div class="form-group">
+          <label>Total Case Studies</label>
+          <input type="text" value="${data.length}" disabled>
+        </div>
+        <div class="panel-subtitle">Click a case study in the preview or edit raw JSON</div>
+      `;
+    } else if (fileKey === 'homepageContent' && data.editor_content) {
+      const blockCount = data.editor_content.blocks?.length || 0;
+      html = `
+        <div class="form-group">
+          <label>Blocks</label>
+          <input type="text" value="${blockCount}" disabled>
+        </div>
+        <div class="form-group">
+          <label>Last Updated</label>
+          <input type="text" value="${new Date(data.updated_at).toLocaleString()}" disabled>
+        </div>
+      `;
+    } else if (fileKey === 'homepageUi' && data.sections) {
+      html = `
+        <div class="form-group">
+          <label>Sections</label>
+          <input type="text" value="${data.sections.length}" disabled>
+        </div>
+      `;
+    } else {
+      html = '<p style="color: var(--text-muted); font-size: 13px;">Edit in raw JSON →</p>';
+    }
+
+    formFields.innerHTML = html;
+  }
+
+  // Update Preview
+  function updatePreview(data) {
+    if (Array.isArray(data)) {
+      const items = data.slice(0, 3).map((item, i) => `
+        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+          <strong>${i + 1}. ${item.title || item.name || 'Item'}</strong>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+            ${item.id || item.short_description?.slice(0, 60) || ''}
+          </div>
+        </div>
+      `).join('');
+      preview.innerHTML = `<div>${items}</div><p style="font-size: 12px; color: var(--text-muted);">... and ${Math.max(0, data.length - 3)} more</p>`;
+    } else {
+      preview.innerHTML = `<pre>${JSON.stringify(data, null, 2).slice(0, 300)}...</pre>`;
+    }
+  }
+
+  // Update JSON Stats
+  function updateJsonStats() {
+    const size = new Blob([jsonInput.value]).size;
+    jsonSize.textContent = `Size: ${(size / 1024).toFixed(1)}KB`;
+
+    try {
+      JSON.parse(jsonInput.value);
+      jsonStatus.textContent = 'Valid ✓';
+      jsonStatus.style.color = 'var(--success)';
+    } catch (e) {
+      jsonStatus.textContent = `Invalid: ${e.message.slice(0, 30)}`;
+      jsonStatus.style.color = 'var(--danger)';
+    }
+  }
+
+  // Track Changes
+  jsonInput.addEventListener('input', () => {
+    state.isDirty = true;
+    updateJsonStats();
+  });
+
+  // Save Draft
+  saveBtn.addEventListener('click', async () => {
+    if (!state.selectedFile) return;
+
+    try {
+      const json = JSON.parse(jsonInput.value);
+      // In a real app, this would POST to a backend endpoint
+      // For now, save to localStorage
+      localStorage.setItem(`draft-${state.selectedFile}`, JSON.stringify(json));
+      state.isDirty = false;
+      showStatus(`✓ Saved draft locally`, 'success');
+    } catch (err) {
+      showStatus(`Cannot save invalid JSON: ${err.message}`, 'error');
+    }
+  });
+
+  // Reset Changes
+  resetBtn.addEventListener('click', () => {
+    if (confirm('Reset to last saved version?')) {
+      jsonInput.value = JSON.stringify(state.files[state.selectedFile].data, null, 2);
+      state.isDirty = false;
+      updateJsonStats();
+      showStatus('Reset to saved version', 'info');
+    }
+  });
+
+  // Export
+  exportBtn.addEventListener('click', () => {
+    try {
+      const json = JSON.parse(jsonInput.value);
+      const filename = `${state.selectedFile}-${new Date().toISOString().slice(0, 10)}.json`;
+      const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      showStatus(`Exported: ${filename}`, 'success');
+    } catch (err) {
+      showStatus(`Export failed: ${err.message}`, 'error');
+    }
+  });
+
+  // Show Status
+  function showStatus(message, type = 'info') {
+    status.textContent = message;
+    status.className = `status-message ${type}`;
+    status.classList.remove('hidden');
+    if (type !== 'error') {
+      setTimeout(() => status.classList.add('hidden'), 4000);
+    }
+  }
+
+  // Initialize
+  renderFileList();
+  initTheme();
+</script>
+
+</body>
+</html>

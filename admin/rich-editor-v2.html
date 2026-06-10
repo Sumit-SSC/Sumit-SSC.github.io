@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🌟 Professional Rich Editor · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --surface-2: #f3f4f6;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    body.dark {
+      --bg: #111827;
+      --surface: #1f2937;
+      --surface-2: #374151;
+      --text: #f3f4f6;
+      --text-muted: #d1d5db;
+      --border: #4b5563;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      gap: 0;
+      height: 100vh;
+    }
+
+    @media (max-width: 1300px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar-left, .sidebar-right { display: none; }
+    }
+
+    /* Sidebars */
+    .sidebar-left, .sidebar-right {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .sidebar-right {
+      border-right: none;
+      border-left: 1px solid var(--border);
+      padding-left: 20px;
+    }
+
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    /* Main Editor */
+    .editor-main {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+    }
+
+    .editor-header {
+      padding: 20px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .header-left h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toolbar-sep { width: 1px; height: 20px; background: var(--border); }
+
+    button {
+      font: inherit;
+      padding: 6px 11px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--surface-2);
+      border-color: var(--text-muted);
+    }
+
+    button.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    button.primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button.danger {
+      color: var(--danger);
+    }
+
+    button.danger:hover {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+    }
+
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Editor Content */
+    .editor-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px 60px;
+      max-width: 900px;
+    }
+
+    .editor-content:focus { outline: none; }
+
+    /* Blocks */
+    .block {
+      position: relative;
+      margin: 0;
+      padding: 6px 8px;
+      margin-left: -8px;
+      margin-right: -8px;
+      border-left: 3px solid transparent;
+      border-radius: 4px;
+      transition: all 0.15s;
+      cursor: text;
+    }
+
+    .block:hover {
+      background: var(--surface-2);
+      border-left-color: var(--accent);
+    }
+
+    .block.selected {
+      background: var(--surface-2);
+      border-left-color: var(--accent);
+    }
+
+    .block.dragging {
+      opacity: 0.6;
+      background: var(--accent);
+      color: white;
+    }
+
+    .block.drag-over {
+      border-top: 3px solid var(--accent);
+      margin-top: 12px;
+    }
+
+    .block-content {
+      outline: none;
+      font-size: 16px;
+      line-height: 1.6;
+      word-break: break-word;
+      min-height: 24px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .block-content:focus { outline: 1px solid var(--accent); }
+
+    .block-content[data-type="h1"] {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 24px 0 12px;
+      line-height: 1.2;
+    }
+
+    .block-content[data-type="h2"] {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 20px 0 10px;
+      line-height: 1.2;
+    }
+
+    .block-content[data-type="h3"] {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      line-height: 1.3;
+    }
+
+    .block-content[data-type="p"] { font-size: 16px; }
+
+    .block-content[data-type="quote"] {
+      padding-left: 16px;
+      border-left: 4px solid var(--accent);
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .block-content[data-type="code"] {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: var(--surface-2);
+      padding: 12px;
+      border-radius: 5px;
+      overflow-x: auto;
+      line-height: 1.5;
+      display: block;
+    }
+
+    .block-content[data-type="ul"], .block-content[data-type="ol"] {
+      margin: 8px 0;
+      padding-left: 24px;
+    }
+
+    /* Drag Handle */
+    .drag-handle {
+      position: absolute;
+      left: -28px;
+      top: 8px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      opacity: 0;
+      transition: opacity 0.15s;
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .block:hover .drag-handle { opacity: 1; }
+    .drag-handle:active { cursor: grabbing; }
+
+    /* Add Block */
+    .add-block-btn {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .block:hover + .add-block-btn,
+    .add-block-btn:hover { opacity: 1; pointer-events: auto; }
+
+    .add-block-btn button {
+      padding: 8px 16px;
+      font-size: 12px;
+      background: var(--surface-2);
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      padding: 10px 16px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Sidebar Items */
+    .file-list, .entry-list, .props-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .file-item, .entry-item, .prop-item {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-item:hover, .entry-item:hover { background: var(--surface-2); border-color: var(--accent); }
+    .file-item.active, .entry-item.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .prop-item {
+      background: var(--surface-2);
+      border: none;
+      padding: 8px 10px;
+    }
+
+    .prop-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Input Fields */
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface-2);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--surface);
+    }
+
+    textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+
+    /* Floating Menu */
+    .floating-menu {
+      position: fixed;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      padding: 4px;
+    }
+
+    .floating-menu.show { display: flex; }
+
+    .floating-menu button {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .floating-menu button:hover { background: var(--surface-2); }
+
+    /* Messages */
+    .message {
+      padding: 10px 12px;
+      border-radius: 5px;
+      font-size: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .message.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .message.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .hidden { display: none !important; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .editor-content { padding: 24px 20px; }
+      .drag-handle { left: -24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar-left">
+    <div class="sidebar-title">📁 Content Type</div>
+    <div class="file-list" id="fileList"></div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+      <button class="primary" id="newEntryBtn" style="width: 100%; margin-bottom: 8px;">➕ New Entry</button>
+      <button id="publishBtn" style="width: 100%; margin-bottom: 8px;">🚀 Publish</button>
+      <button id="exportBtn" style="width: 100%;">📥 Export JSON</button>
+    </div>
+
+    <div id="entryListContainer" class="hidden" style="margin-top: 20px;">
+      <div class="sidebar-title">📄 Entries</div>
+      <div class="entry-list" id="entryList"></div>
+    </div>
+  </div>
+
+  <!-- CENTER: MAIN EDITOR -->
+  <div class="editor-main">
+    <div class="editor-header">
+      <div class="header-left">
+        <h1 id="editorTitle">Select content to edit</h1>
+        <p id="editorSubtitle"></p>
+      </div>
+      <div class="header-controls">
+        <button id="themeBtn" title="Toggle dark mode">🌙</button>
+        <button id="helpBtn" title="Help">?</button>
+      </div>
+    </div>
+
+    <div class="toolbar" id="toolbar">
+      <button onclick="editor.formatBlock('h1')" title="Heading 1">H1</button>
+      <button onclick="editor.formatBlock('h2')" title="Heading 2">H2</button>
+      <button onclick="editor.formatBlock('h3')" title="Heading 3">H3</button>
+      <button onclick="editor.formatBlock('p')" title="Paragraph">P</button>
+      <div class="toolbar-sep"></div>
+      <button onclick="document.execCommand('bold')" title="Bold (Cmd+B)"><strong>B</strong></button>
+      <button onclick="document.execCommand('italic')" title="Italic (Cmd+I)"><em>I</em></button>
+      <button onclick="document.execCommand('underline')" title="Underline (Cmd+U)"><u>U</u></button>
+      <div class="toolbar-sep"></div>
+      <button onclick="editor.formatBlock('ul')" title="Bullet List">• List</button>
+      <button onclick="editor.formatBlock('ol')" title="Numbered List">1. List</button>
+      <button onclick="editor.formatBlock('quote')" title="Quote">" Quote</button>
+      <button onclick="editor.formatBlock('code')" title="Code">{'}'} Code</button>
+      <div class="toolbar-sep"></div>
+      <button id="saveBtn" class="primary" title="Save to draft (Cmd+S)">💾 Save</button>
+    </div>
+
+    <div class="editor-content" id="editorContent" spellcheck="true">
+      <p style="color: var(--text-muted); text-align: center; padding: 40px;">Select a content type to start editing</p>
+    </div>
+
+    <div class="status-bar">
+      <div><span class="status-indicator"></span> <span id="statusText">Ready</span></div>
+      <div id="wordCount">0 words</div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar-right">
+    <div class="sidebar-title">⚙️ Properties</div>
+
+    <div id="properties">
+      <div>
+        <div class="prop-label">Entry ID</div>
+        <div class="prop-item" id="propId">—</div>
+      </div>
+
+      <div>
+        <div class="prop-label">Title</div>
+        <input type="text" id="propTitle" placeholder="Entry title">
+      </div>
+
+      <div>
+        <div class="prop-label">Description</div>
+        <textarea id="propDesc" placeholder="Short description..."></textarea>
+      </div>
+
+      <div style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
+        <button id="deleteBtn" class="danger" style="width: 100%;" title="Delete this entry">🗑️ Delete</button>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 20px;">
+      <div class="sidebar-title">📊 Stats</div>
+      <div class="props-list">
+        <div class="prop-item"><strong id="blockCount">0</strong> blocks</div>
+        <div class="prop-item"><strong id="charCount">0</strong> chars</div>
+        <div class="prop-item"><strong id="timeAgo">Just now</strong> saved</div>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 20px;">
+      <div class="sidebar-title">🎨 Format</div>
+      <div class="props-list">
+        <button onclick="editor.formatBlock('h1')" style="width: 100%; text-align: left;">Heading 1</button>
+        <button onclick="editor.formatBlock('h2')" style="width: 100%; text-align: left;">Heading 2</button>
+        <button onclick="editor.formatBlock('h3')" style="width: 100%; text-align: left;">Heading 3</button>
+        <button onclick="editor.formatBlock('p')" style="width: 100%; text-align: left;">Paragraph</button>
+        <button onclick="editor.formatBlock('quote')" style="width: 100%; text-align: left;">Quote</button>
+        <button onclick="editor.formatBlock('code')" style="width: 100%; text-align: left;">Code Block</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Menu -->
+<div class="floating-menu" id="floatingMenu">
+  <button onclick="editor.formatBlock('h1')">➕ H1</button>
+  <button onclick="editor.formatBlock('p')">➕ Paragraph</button>
+  <button onclick="editor.formatBlock('ul')">➕ List</button>
+  <button onclick="editor.formatBlock('quote')">➕ Quote</button>
+  <button onclick="editor.formatBlock('code')">➕ Code</button>
+</div>
+
+<script>
+// ============================================
+// PROFESSIONAL RICH EDITOR
+// ============================================
+
+const editor = {
+  state: {
+    currentType: null,
+    currentEntry: null,
+    currentData: null,
+    isDirty: false,
+    lastSaved: null,
+    theme: localStorage.getItem('editor-theme') || 'light',
+    draggedBlock: null,
+    files: {
+      projects: { name: 'Projects', path: 'data/projects.json', data: null },
+      'case-studies': { name: 'Case Studies', path: 'data/case_studies.json', data: null },
+      'homepage-content': { name: 'Homepage', path: 'data/homepage-content.json', data: null },
+    }
+  },
+
+  async init() {
+    this.applyTheme();
+    this.bindEvents();
+    this.renderFileList();
+    console.log('✓ Rich Editor initialized');
+  },
+
+  bindEvents() {
+    // Theme
+    document.getElementById('themeBtn').addEventListener('click', () => this.toggleTheme());
+
+    // File selection
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('file-item')) {
+        this.selectContentType(e.target.dataset.type);
+      }
+      if (e.target.classList.contains('entry-item')) {
+        this.selectEntry(e.target.dataset.id);
+      }
+    });
+
+    // Buttons
+    document.getElementById('newEntryBtn').addEventListener('click', () => this.newEntry());
+    document.getElementById('publishBtn').addEventListener('click', () => this.publish());
+    document.getElementById('exportBtn').addEventListener('click', () => this.exportJSON());
+    document.getElementById('saveBtn').addEventListener('click', () => this.save());
+    document.getElementById('deleteBtn').addEventListener('click', () => this.deleteEntry());
+
+    // Properties
+    document.getElementById('propTitle').addEventListener('input', () => this.updateProperty('title'));
+    document.getElementById('propDesc').addEventListener('input', () => this.updateProperty('description'));
+
+    // Editor
+    const editorContent = document.getElementById('editorContent');
+    editorContent.addEventListener('input', () => this.onEditorInput());
+    editorContent.addEventListener('keydown', (e) => this.onKeyDown(e));
+    editorContent.addEventListener('dragstart', (e) => this.onDragStart(e));
+    editorContent.addEventListener('dragover', (e) => this.onDragOver(e));
+    editorContent.addEventListener('drop', (e) => this.onDrop(e));
+    editorContent.addEventListener('dragend', () => this.onDragEnd());
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        this.save();
+      }
+    });
+  },
+
+  renderFileList() {
+    const list = document.getElementById('fileList');
+    list.innerHTML = Object.entries(this.state.files).map(([key, file]) => `
+      <div class="file-item ${this.state.currentType === key ? 'active' : ''}" data-type="${key}">
+        ${key === 'projects' ? '🗂️' : key === 'case-studies' ? '📚' : '🏠'} ${file.name}
+      </div>
+    `).join('');
+  },
+
+  async selectContentType(type) {
+    try {
+      const file = this.state.files[type];
+      const response = await fetch(file.path);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const data = await response.json();
+      file.data = data;
+      
+      this.state.currentType = type;
+      this.state.currentData = data;
+      this.state.currentEntry = null;
+      this.state.isDirty = false;
+      
+      this.renderFileList();
+      this.renderContentList(data);
+      
+      document.getElementById('editorTitle').textContent = file.name;
+      document.getElementById('editorSubtitle').textContent = `${Array.isArray(data) ? data.length : 1} items`;
+      document.getElementById('editorContent').innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Select an entry to edit</p>';
+    } catch (err) {
+      alert(`Error loading: ${err.message}`);
+    }
+  },
+
+  renderContentList(data) {
+    const entryList = document.getElementById('entryList');
+    const container = document.getElementById('entryListContainer');
+
+    if (Array.isArray(data)) {
+      container.classList.remove('hidden');
+      entryList.innerHTML = data.slice(0, 20).map(item => `
+        <div class="entry-item" data-id="${item.id}" title="${item.title || item.id}">
+          ${item.title || item.id}
+        </div>
+      `).join('');
+    } else {
+      container.classList.add('hidden');
+    }
+  },
+
+  selectEntry(id) {
+    if (!Array.isArray(this.state.currentData)) return;
+
+    const entry = this.state.currentData.find(e => e.id === id);
+    if (!entry) return;
+
+    this.state.currentEntry = entry;
+    this.state.isDirty = false;
+    this.state.lastSaved = new Date();
+
+    this.renderEntry(entry);
+    this.updateProperties(entry);
+    this.updateFileList();
+    this.updateStats();
+  },
+
+  renderEntry(entry) {
+    const content = document.getElementById('editorContent');
+    let html = '';
+
+    // Title
+    if (entry.title) {
+      html += `<div class="block" data-type="h1" draggable="true">
+        <div class="drag-handle">⋮</div>
+        <div class="block-content" data-type="h1" contenteditable="true">${this.escapeHtml(entry.title)}</div>
+      </div>`;
+    }
+
+    // Short description
+    if (entry.short_description) {
+      const desc = entry.short_description.replace(/<[^>]*>/g, '');
+      html += `<div class="block" data-type="p" draggable="true">
+        <div class="drag-handle">⋮</div>
+        <div class="block-content" data-type="p" contenteditable="true">${this.escapeHtml(desc.slice(0, 500))}</div>
+      </div>`;
+    }
+
+    // Problem statement
+    if (entry.problem_statement) {
+      const problem = entry.problem_statement.replace(/<[^>]*>/g, '');
+      html += `<div class="block" data-type="h2" draggable="true">
+        <div class="drag-handle">⋮</div>
+        <div class="block-content" data-type="h2" contenteditable="true">Problem</div>
+      </div>`;
+      html += `<div class="block" data-type="p" draggable="true">
+        <div class="drag-handle">⋮</div>
+        <div class="block-content" data-type="p" contenteditable="true">${this.escapeHtml(problem.slice(0, 500))}</div>
+      </div>`;
+    }
+
+    // Approach
+    if (entry.approach) {
+      const approach = entry.approach.replace(/<[^>]*>/g, '');
+      html += `<div class="block" data-type="h2" draggable="true">
+        <div class="drag-handle">⋮</div>
+        <div class="block-content" data-type="h2" contenteditable="true">Approach</div>
+      </div>`;
+      html += `<div class="block" data-type="p" draggable="true">
+        <div class="drag-handle">⋮</div>
+        <div class="block-content" data-type="p" contenteditable="true">${this.escapeHtml(approach.slice(0, 500))}</div>
+      </div>`;
+    }
+
+    html += `<div class="add-block-btn"><button onclick="editor.addBlock()">+ Add Block</button></div>`;
+    content.innerHTML = html;
+    this.attachBlockHandlers();
+  },
+
+  attachBlockHandlers() {
+    const blocks = document.querySelectorAll('.block');
+    blocks.forEach((block, idx) => {
+      block.addEventListener('click', (e) => {
+        if (!e.target.closest('[contenteditable]')) {
+          document.querySelectorAll('.block').forEach(b => b.classList.remove('selected'));
+          block.classList.add('selected');
+        }
+      });
+
+      const content = block.querySelector('[contenteditable]');
+      if (content) {
+        content.addEventListener('blur', () => this.markDirty());
+      }
+    });
+  },
+
+  addBlock() {
+    const content = document.getElementById('editorContent');
+    const addBtn = content.querySelector('.add-block-btn');
+
+    const block = document.createElement('div');
+    block.className = 'block';
+    block.draggable = true;
+    block.innerHTML = `
+      <div class="drag-handle">⋮</div>
+      <div class="block-content" data-type="p" contenteditable="true" autofocus>Type here...</div>
+    `;
+
+    addBtn.parentNode.insertBefore(block, addBtn);
+    this.attachBlockHandlers();
+    block.querySelector('[contenteditable]').focus();
+    this.markDirty();
+  },
+
+  formatBlock(type) {
+    const sel = window.getSelection();
+    if (sel.rangeCount === 0) return;
+
+    const block = sel.anchorNode.closest('.block-content');
+    if (!block) return;
+
+    block.dataset.type = type;
+    this.markDirty();
+  },
+
+  onKeyDown(e) {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      this.addBlock();
+      e.preventDefault();
+    }
+    if (e.key === '/' && e.target.textContent === '/') {
+      e.preventDefault();
+      const menu = document.getElementById('floatingMenu');
+      menu.classList.add('show');
+      menu.style.left = e.pageX + 'px';
+      menu.style.top = e.pageY + 'px';
+    }
+  },
+
+  onDragStart(e) {
+    const block = e.target.closest('.block');
+    if (!block) return;
+    
+    this.state.draggedBlock = block;
+    block.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', block.innerHTML);
+  },
+
+  onDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    const block = e.target.closest('.block');
+    if (block && block !== this.state.draggedBlock) {
+      block.classList.add('drag-over');
+    }
+  },
+
+  onDrop(e) {
+    e.preventDefault();
+    
+    const target = e.target.closest('.block');
+    if (!target || !this.state.draggedBlock || target === this.state.draggedBlock) return;
+
+    const content = document.getElementById('editorContent');
+    if (e.clientY < target.getBoundingClientRect().top + target.getBoundingClientRect().height / 2) {
+      target.parentNode.insertBefore(this.state.draggedBlock, target);
+    } else {
+      target.parentNode.insertBefore(this.state.draggedBlock, target.nextSibling);
+    }
+
+    this.attachBlockHandlers();
+    this.markDirty();
+  },
+
+  onDragEnd() {
+    const blocks = document.querySelectorAll('.block');
+    blocks.forEach(b => {
+      b.classList.remove('dragging', 'drag-over');
+    });
+    this.state.draggedBlock = null;
+  },
+
+  onEditorInput() {
+    this.markDirty();
+    this.updateStats();
+  },
+
+  updateProperty(type) {
+    if (!this.state.currentEntry) return;
+
+    if (type === 'title') {
+      this.state.currentEntry.title = document.getElementById('propTitle').value;
+    } else if (type === 'description') {
+      this.state.currentEntry.short_description = document.getElementById('propDesc').value;
+    }
+    this.markDirty();
+  },
+
+  updateProperties(entry) {
+    document.getElementById('propId').textContent = entry.id || '—';
+    document.getElementById('propTitle').value = entry.title || '';
+    document.getElementById('propDesc').value = entry.short_description || '';
+  },
+
+  updateStats() {
+    const blocks = document.querySelectorAll('.block');
+    const content = document.getElementById('editorContent').innerText;
+    const chars = content.length;
+    const words = content.split(/\s+/).filter(w => w).length;
+
+    document.getElementById('blockCount').textContent = blocks.length;
+    document.getElementById('charCount').textContent = chars;
+
+    if (this.state.lastSaved) {
+      const diff = Date.now() - this.state.lastSaved.getTime();
+      document.getElementById('timeAgo').textContent = diff < 60000 ? 'Just now' : Math.floor(diff / 60000) + 'm ago';
+    }
+  },
+
+  updateFileList() {
+    document.querySelectorAll('.entry-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.id === this.state.currentEntry?.id);
+    });
+  },
+
+  markDirty() {
+    this.state.isDirty = true;
+    document.getElementById('saveBtn').classList.add('primary');
+    document.getElementById('statusText').textContent = '● Unsaved changes';
+  },
+
+  async save() {
+    if (!this.state.currentEntry) return;
+
+    try {
+      const blocks = document.querySelectorAll('.block-content');
+      this.state.currentEntry.title = blocks[0]?.innerText || this.state.currentEntry.title;
+      this.state.currentEntry.short_description = Array.from(blocks).slice(1).map(b => b.innerText).join('\n').slice(0, 500);
+
+      localStorage.setItem(`draft-${this.state.currentType}-${this.state.currentEntry.id}`, JSON.stringify(this.state.currentEntry));
+      
+      this.state.isDirty = false;
+      this.state.lastSaved = new Date();
+      document.getElementById('saveBtn').classList.remove('primary');
+      document.getElementById('statusText').textContent = '✓ Saved to draft';
+      
+      setTimeout(() => { document.getElementById('statusText').textContent = 'Ready'; }, 2000);
+      this.updateStats();
+    } catch (err) {
+      alert(`Save error: ${err.message}`);
+    }
+  },
+
+  async publish() {
+    if (!this.state.currentData) return alert('Select content first');
+
+    try {
+      // In production, this would POST to a backend
+      await this.save();
+      alert(`✓ Ready to publish! Export JSON and commit to GitHub.`);
+    } catch (err) {
+      alert(`Publish error: ${err.message}`);
+    }
+  },
+
+  exportJSON() {
+    if (!this.state.currentData) return;
+
+    const json = JSON.stringify(this.state.currentData, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${this.state.currentType}-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
+  newEntry() {
+    if (!this.state.currentType || !Array.isArray(this.state.currentData)) {
+      return alert('Select a content type first');
+    }
+
+    const newEntry = {
+      id: `entry-${Date.now()}`,
+      title: 'New Entry',
+      short_description: 'Click to edit...',
+      tools: [],
+      featured: false,
+    };
+
+    this.state.currentData.push(newEntry);
+    this.renderContentList(this.state.currentData);
+    this.selectEntry(newEntry.id);
+    this.markDirty();
+  },
+
+  deleteEntry() {
+    if (!this.state.currentEntry || !confirm('Delete this entry?')) return;
+
+    const idx = this.state.currentData.indexOf(this.state.currentEntry);
+    if (idx > -1) {
+      this.state.currentData.splice(idx, 1);
+      localStorage.removeItem(`draft-${this.state.currentType}-${this.state.currentEntry.id}`);
+      this.renderContentList(this.state.currentData);
+      this.state.currentEntry = null;
+      this.markDirty();
+      document.getElementById('editorContent').innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Entry deleted</p>';
+    }
+  },
+
+  escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  },
+
+  toggleTheme() {
+    this.state.theme = this.state.theme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('editor-theme', this.state.theme);
+    this.applyTheme();
+  },
+
+  applyTheme() {
+    document.body.classList.toggle('dark', this.state.theme === 'dark');
+    document.getElementById('themeBtn').textContent = this.state.theme === 'dark' ? '☀️' : '🌙';
+  }
+};
+
+// Initialize on load
+window.addEventListener('DOMContentLoaded', () => editor.init());
+</script>
+
+</body>
+</html>

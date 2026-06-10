@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rich Editor v3 - Phase 5 (Advanced Blocks)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#4f46e5', accent: '#0ea5e9' } } }
+        };
+    </script>
+    <style>
+        * { -webkit-font-smoothing: antialiased; -webkit-backface-visibility: hidden; }
+        body { --bg: #fff; --surface: #f9fafb; --text: #1f2937; --border: #e5e7eb; --ring: #4f46e5; }
+        body.dark { --bg: #111827; --surface: #1f2937; --text: #f3f4f6; --border: #374151; --ring: #6366f1; }
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+        .block { position: relative; margin-bottom: 1rem; padding: 0.5rem; border-radius: 0.375rem; transition: background-color 0.15s; }
+        .block:hover { background-color: var(--surface); }
+        .block.selected { border: 2px solid var(--ring); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
+        .block-content { word-break: break-word; white-space: pre-wrap; outline: none; }
+
+        .block[data-type="h1"] .block-content { font-size: 2rem; font-weight: 700; color: var(--ring); }
+        .block[data-type="h2"] .block-content { font-size: 1.5rem; font-weight: 700; color: var(--ring); }
+        .block[data-type="h3"] .block-content { font-size: 1.25rem; font-weight: 600; }
+        .block[data-type="quote"] .block-content { font-style: italic; padding-left: 1rem; border-left: 4px solid var(--ring); }
+        .block[data-type="code"] .block-content { font-family: monospace; background-color: var(--surface); padding: 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; }
+
+        .columns-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .column { background-color: var(--surface); border: 1px dashed var(--border); border-radius: 0.375rem; padding: 1rem; min-height: 200px; }
+
+        .accordion-item { border: 1px solid var(--border); border-radius: 0.375rem; margin-bottom: 0.5rem; overflow: hidden; }
+        .accordion-header { padding: 1rem; cursor: pointer; font-weight: 600; user-select: none; transition: background-color 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-header:hover { background-color: rgba(79, 70, 229, 0.1); }
+        .accordion-header::after { content: "▼"; font-size: 0.75rem; transition: transform 0.2s; }
+        .accordion-item.collapsed .accordion-header::after { transform: rotate(-90deg); }
+        .accordion-content { padding: 1rem; background-color: var(--bg); max-height: 1000px; overflow: hidden; transition: all 0.2s; }
+        .accordion-item.collapsed .accordion-content { max-height: 0; padding: 0; }
+
+        .embed-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.375rem; }
+        .embed-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 1rem; background-color: var(--surface); border-radius: 0.375rem; margin-bottom: 1rem; border: 1px solid var(--border); }
+        .toolbar-group { display: flex; gap: 0.25rem; border-right: 1px solid var(--border); padding-right: 0.5rem; }
+        .toolbar-group:last-child { border-right: none; }
+        .toolbar button { padding: 0.5rem 0.75rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.15s; }
+        .toolbar button:hover { background-color: var(--ring); color: white; border-color: var(--ring); }
+
+        .sidebar { width: 250px; background-color: var(--surface); border-right: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
+        .sidebar-item { padding: 0.75rem; margin-bottom: 0.5rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.375rem; cursor: pointer; transition: all 0.15s; font-size: 0.875rem; word-break: break-word; }
+        .sidebar-item:hover { border-color: var(--ring); background-color: rgba(79, 70, 229, 0.05); }
+        .sidebar-item.active { border-color: var(--ring); background-color: rgba(79, 70, 229, 0.1); font-weight: 600; }
+
+        .properties-panel { width: 280px; background-color: var(--surface); border-left: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
+        .property-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .property-value { font-size: 0.875rem; padding: 0.5rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.25rem; word-break: break-word; }
+
+        .drag-handle { position: absolute; left: -2rem; top: 0.5rem; padding: 0.25rem 0.5rem; cursor: grab; color: var(--border); font-size: 1.25rem; user-select: none; opacity: 0; transition: opacity 0.2s; }
+        .block:hover .drag-handle { opacity: 1; }
+        .block.dragging { opacity: 0.5; }
+
+        @media (max-width: 1024px) {
+            .sidebar, .properties-panel { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900">
+    <div class="flex h-screen flex-col">
+        <div class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-700 dark:bg-slate-800">
+            <h1 class="text-lg font-bold">📝 Rich Editor v3 - Phase 5 (Advanced Blocks)</h1>
+            <div class="flex gap-2">
+                <button onclick="toggleDarkMode()" class="rounded px-3 py-1 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700">🌙</button>
+                <button onclick="saveToLocalStorage()" class="rounded bg-primary px-3 py-1 text-sm font-semibold text-white hover:bg-primary/90">💾 Save</button>
+                <button onclick="exportJSON()" class="rounded bg-accent px-3 py-1 text-sm font-semibold text-white hover:bg-accent/90">📥 Export</button>
+            </div>
+        </div>
+
+        <div class="flex flex-1 overflow-hidden">
+            <div class="sidebar">
+                <h2 class="mb-3 text-sm font-bold">Content Type</h2>
+                <button onclick="switchContentType('projects')" class="sidebar-item w-full text-left active">🗂️ Projects</button>
+                <button onclick="switchContentType('case-studies')" class="sidebar-item w-full text-left">📚 Case Studies</button>
+                <button onclick="switchContentType('homepage')" class="sidebar-item w-full text-left">🏠 Homepage</button>
+
+                <div class="mt-6">
+                    <h2 class="mb-3 text-sm font-bold">Entries</h2>
+                    <button onclick="createNewEntry()" class="mb-3 w-full rounded bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary/90">➕ New</button>
+                    <div id="entries-list"></div>
+                </div>
+            </div>
+
+            <div class="flex-1 flex flex-col overflow-auto">
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button onclick="formatBlock('h1')">H1</button>
+                        <button onclick="formatBlock('h2')">H2</button>
+                        <button onclick="formatBlock('p')">P</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button onclick="formatText('bold')">B</button>
+                        <button onclick="formatText('italic')">I</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button onclick="formatBlock('quote')">Quote</button>
+                        <button onclick="formatBlock('code')">Code</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button onclick="addBlock('columns')">📊 Columns</button>
+                        <button onclick="addBlock('accordion')">📋 Accordion</button>
+                        <button onclick="addBlock('embed')">📹 Embed</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button onclick="addBlock('p')">+ Block</button>
+                    </div>
+                </div>
+
+                <div id="editor" class="flex-1 overflow-auto p-8"></div>
+            </div>
+
+            <div class="properties-panel">
+                <h2 class="mb-4 text-sm font-bold">Properties</h2>
+                <div id="properties-content">
+                    <p class="text-sm text-slate-500">Select an entry</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentContentType = 'projects';
+        let currentEntry = null;
+        let entries = {};
+        let isDirty = false;
+
+        const blockTemplates = {
+            p: { type: 'p', content: '' },
+            h1: { type: 'h1', content: '' },
+            h2: { type: 'h2', content: '' },
+            quote: { type: 'quote', content: '' },
+            code: { type: 'code', content: '' },
+            columns: { type: 'columns', columns: [{ blocks: [] }, { blocks: [] }] },
+            accordion: { type: 'accordion', title: 'Expand...', content: '', collapsed: true },
+            embed: { type: 'embed', url: '', provider: 'youtube' },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            switchContentType('projects');
+        });
+
+        function switchContentType(type) {
+            currentContentType = type;
+            currentEntry = null;
+            updateEntriesList();
+            clearEditor();
+            updateProperties();
+        }
+
+        function createNewEntry() {
+            const id = `entry-${Date.now()}`;
+            const entry = { id, title: 'Untitled', description: '', blocks: [{ type: 'p', content: '' }] };
+            if (!entries[currentContentType]) entries[currentContentType] = [];
+            entries[currentContentType].push(entry);
+            currentEntry = entry;
+            updateEntriesList();
+            renderEditor();
+            markDirty();
+        }
+
+        function updateEntriesList() {
+            const list = document.getElementById('entries-list');
+            list.innerHTML = '';
+            const contentEntries = entries[currentContentType] || [];
+            contentEntries.forEach(entry => {
+                const item = document.createElement('button');
+                item.className = `sidebar-item w-full text-left ${currentEntry?.id === entry.id ? 'active' : ''}`;
+                item.textContent = entry.title || 'Untitled';
+                item.onclick = () => {
+                    currentEntry = entry;
+                    updateEntriesList();
+                    renderEditor();
+                    updateProperties();
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function renderEditor() {
+            const editor = document.getElementById('editor');
+            editor.innerHTML = '';
+            if (!currentEntry) {
+                editor.innerHTML = '<p class="text-slate-500 text-center py-8">Select or create an entry</p>';
+                return;
+            }
+            const blocks = currentEntry.blocks || [];
+            blocks.forEach((block, index) => {
+                editor.appendChild(createBlockElement(block, index));
+            });
+        }
+
+        function createBlockElement(block, index) {
+            const blockEl = document.createElement('div');
+            blockEl.className = 'block';
+            blockEl.setAttribute('data-type', block.type);
+            blockEl.setAttribute('data-index', index);
+
+            const handle = document.createElement('div');
+            handle.className = 'drag-handle';
+            handle.textContent = '⋮';
+            handle.draggable = true;
+            handle.ondragstart = (e) => { e.dataTransfer.effectAllowed = 'move'; e.target.closest('.block').classList.add('dragging'); };
+            handle.ondrop = (e) => { e.preventDefault(); if (dragIndex !== index) swapBlocks(dragIndex, index); };
+            blockEl.appendChild(handle);
+
+            if (block.type === 'columns') {
+                const grid = document.createElement('div');
+                grid.className = 'columns-grid';
+                block.columns.forEach((col, colIdx) => {
+                    const colEl = document.createElement('div');
+                    colEl.className = 'column';
+                    colEl.innerHTML = `<div class="text-sm font-semibold mb-2">Column ${colIdx + 1}</div>`;
+                    col.blocks.forEach(subBlock => {
+                        colEl.appendChild(createBlockElement(subBlock, `${index}-${colIdx}`));
+                    });
+                    grid.appendChild(colEl);
+                });
+                blockEl.appendChild(grid);
+            } else if (block.type === 'accordion') {
+                const acc = document.createElement('div');
+                acc.className = `accordion-item ${block.collapsed ? 'collapsed' : ''}`;
+                
+                const header = document.createElement('div');
+                header.className = 'accordion-header';
+                header.textContent = block.title;
+                header.onclick = () => {
+                    block.collapsed = !block.collapsed;
+                    acc.classList.toggle('collapsed');
+                    markDirty();
+                };
+                acc.appendChild(header);
+
+                const content = document.createElement('div');
+                content.className = 'block-content accordion-content';
+                content.setAttribute('contenteditable', 'true');
+                content.textContent = block.content;
+                content.onblur = () => { block.content = content.textContent; markDirty(); };
+                acc.appendChild(content);
+                blockEl.appendChild(acc);
+            } else if (block.type === 'embed') {
+                const urlInput = document.createElement('input');
+                urlInput.type = 'text';
+                urlInput.placeholder = 'Paste YouTube URL';
+                urlInput.value = block.url;
+                urlInput.className = 'w-full px-3 py-2 border border-slate-300 rounded text-sm mb-2';
+                urlInput.onchange = () => {
+                    block.url = urlInput.value;
+                    renderEditor();
+                    markDirty();
+                };
+                blockEl.appendChild(urlInput);
+
+                const embedContainer = document.createElement('div');
+                embedContainer.className = 'embed-container';
+                if (block.url) {
+                    const videoId = block.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)?.[1];
+                    if (videoId) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                        iframe.allowFullscreen = true;
+                        embedContainer.appendChild(iframe);
+                    }
+                }
+                blockEl.appendChild(embedContainer);
+            } else {
+                const content = document.createElement('div');
+                content.className = 'block-content';
+                content.setAttribute('contenteditable', 'true');
+                content.textContent = block.content || '';
+                content.onblur = () => { block.content = content.textContent; markDirty(); };
+                blockEl.appendChild(content);
+            }
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '🗑️';
+            deleteBtn.className = 'absolute right-2 top-2 text-xs opacity-0 hover:opacity-100 transition-opacity';
+            deleteBtn.onclick = () => {
+                currentEntry.blocks.splice(index, 1);
+                renderEditor();
+                markDirty();
+            };
+            blockEl.appendChild(deleteBtn);
+
+            return blockEl;
+        }
+
+        let dragIndex = null;
+        function swapBlocks(from, to) {
+            if (from !== null && from !== to) {
+                [currentEntry.blocks[from], currentEntry.blocks[to]] = [currentEntry.blocks[to], currentEntry.blocks[from]];
+                renderEditor();
+                markDirty();
+            }
+        }
+
+        function formatBlock(type) {
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0) {
+                const range = sel.getRangeAt(0);
+                const blockEl = range.commonAncestorContainer.closest('.block');
+                if (blockEl) {
+                    const index = parseInt(blockEl.getAttribute('data-index'));
+                    currentEntry.blocks[index].type = type;
+                    renderEditor();
+                    markDirty();
+                }
+            }
+        }
+
+        function formatText(cmd) { document.execCommand(cmd, false, null); }
+
+        function addBlock(type) {
+            if (!currentEntry) return;
+            currentEntry.blocks.push({ ...blockTemplates[type] });
+            renderEditor();
+            markDirty();
+        }
+
+        function updateProperties() {
+            const panel = document.getElementById('properties-content');
+            if (!currentEntry) {
+                panel.innerHTML = '<p class="text-sm text-slate-500">Select an entry</p>';
+                return;
+            }
+            panel.innerHTML = `
+                <div class="mb-4">
+                    <label class="property-label">Title</label>
+                    <input type="text" value="${currentEntry.title}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm" onchange="currentEntry.title = this.value; updateEntriesList(); markDirty();">
+                </div>
+                <div class="mb-4">
+                    <label class="property-label">Description</label>
+                    <textarea class="w-full px-2 py-1 border border-slate-300 rounded text-sm" rows="3" onchange="currentEntry.description = this.value; markDirty();">${currentEntry.description || ''}</textarea>
+                </div>
+                <button onclick="deleteEntry()" class="w-full rounded bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700">🗑️ Delete</button>
+            `;
+        }
+
+        function deleteEntry() {
+            if (confirm('Delete this entry?')) {
+                entries[currentContentType] = entries[currentContentType].filter(e => e.id !== currentEntry.id);
+                currentEntry = null;
+                updateEntriesList();
+                clearEditor();
+                markDirty();
+            }
+        }
+
+        function markDirty() {
+            isDirty = true;
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('editor-v3-data', JSON.stringify(entries));
+            isDirty = false;
+            alert('✓ Saved to draft');
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('editor-v3-data');
+            entries = saved ? JSON.parse(saved) : { projects: [], 'case-studies': [], homepage: [] };
+        }
+
+        function exportJSON() {
+            const data = {
+                exportedAt: new Date().toISOString(),
+                contentType: currentContentType,
+                entries: entries[currentContentType] || []
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentContentType}-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearEditor() {
+            document.getElementById('editor').innerHTML = '';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('dark-mode', document.body.classList.contains('dark'));
+        }
+
+        if (localStorage.getItem('dark-mode') === 'true') {
+            document.body.classList.add('dark');
+        }
+
+        setInterval(() => { if (isDirty) saveToLocalStorage(); }, 30000);
+    </script>
+</body>
+</html>
