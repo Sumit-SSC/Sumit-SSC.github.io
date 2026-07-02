@@ -5374,3 +5374,31 @@ pre code {
   font-weight: inherit !important;
 }
 
+/* ------------------------------------------------------------------
+   Mobile-only scroll snapping for featured project rows
+   ------------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .featured-split-row {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 16px !important;
+    padding: 8px 16px 20px 16px !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    scrollbar-width: none !important; /* Firefox */
+  }
+  .featured-split-row::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+  }
+  .featured-split-row .featured-card,
+  .featured-split-row .featured-empty {
+    flex: 0 0 85% !important; /* Peek at the next card */
+    scroll-snap-align: start !important;
+    min-height: 280px !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+

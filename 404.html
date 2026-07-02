@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>404 - Page Not Found | Sumit S. Chaure</title>
+	<meta name="description" content="The page you are looking for cannot be found." />
+	
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="assets/css/tailwind-built.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/custom.css" />
+	<link rel="icon" type="image/svg+xml" href="assets/images/arrow.svg" />
+	
+	<style>
+		body {
+			font-family: 'Inter', sans-serif;
+		}
+		.glass-card {
+			background: rgba(255, 255, 255, 0.45);
+			backdrop-filter: blur(16px) saturate(180%);
+			-webkit-backdrop-filter: blur(16px) saturate(180%);
+			border: 1px solid rgba(255, 255, 255, 0.25);
+			box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+		}
+		html.dark-theme .glass-card {
+			background: rgba(30, 41, 59, 0.45);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+		}
+		.blob {
+			filter: blur(80px);
+			opacity: 0.15;
+			mix-blend-mode: multiply;
+		}
+		html.dark-theme .blob {
+			opacity: 0.25;
+			mix-blend-mode: screen;
+		}
+	</style>
+	<!-- Inline theme checking to prevent flicker -->
+	<script>
+		(function() {
+			var currentTheme = localStorage.getItem("theme");
+			var defaults = { defaultMode: "system" };
+			var mode = currentTheme || defaults.defaultMode;
+			var isDark = mode === "dark";
+			if (mode === "system") {
+				isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+			}
+			if (isDark) {
+				document.documentElement.classList.add("dark-theme");
+			} else {
+				document.documentElement.classList.remove("dark-theme");
+			}
+		})();
+	</script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 antialiased overflow-hidden min-h-screen flex items-center justify-center relative">
+	
+	<!-- Background Glowing Blobs -->
+	<div class="absolute inset-0 z-0 overflow-hidden">
+		<div class="blob absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500 animate-pulse" style="animation-duration: 8s;"></div>
+		<div class="blob absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-pink-500 animate-pulse" style="animation-duration: 12s;"></div>
+	</div>
+
+	<!-- Centered Glassmorphic Card -->
+	<div class="relative z-10 w-full max-w-md px-6">
+		<div class="glass-card rounded-3xl p-10 text-center flex flex-col items-center">
+			
+			<!-- Stylized Glowing 404 Text -->
+			<h1 class="text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 drop-shadow-sm select-none">
+				404
+			</h1>
+			
+			<div class="w-12 h-1 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-full my-6"></div>
+			
+			<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+				Page Not Found
+			</h2>
+			
+			<p class="text-sm text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+				The page you are looking for might have been removed, had its name changed, or is temporarily unavailable. Let's get you back on track.
+			</p>
+			
+			<!-- Return Button -->
+			<a href="pages/homepage.html" class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 rounded-xl transition duration-300 ease-in-out transform hover:-translate-y-0.5 shadow-lg hover:shadow-indigo-500/25 dark:hover:shadow-indigo-500/15">
+				<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+				</svg>
+				Return to Portfolio
+			</a>
+			
+		</div>
+	</div>
+
+	<script src="assets/js/site-theme.js"></script>
+</body>
+</html>

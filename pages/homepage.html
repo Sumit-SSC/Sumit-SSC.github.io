@@ -27,6 +27,59 @@
 	</style>
 </head>
 <body class="homepage-body bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased">
+	<!-- Multi-Language Pre-Loader Overlay -->
+	<div id="greeting-preloader" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-50 dark:bg-gray-950 transition-all duration-700 ease-in-out">
+		<div class="text-center">
+			<h1 id="greeting-text" class="text-4xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-opacity duration-300 opacity-0">
+				Hello
+			</h1>
+		</div>
+	</div>
+	<script>
+		(function() {
+			var preloader = document.getElementById('greeting-preloader');
+			if (sessionStorage.getItem('portfolio_visited')) {
+				if (preloader) {
+					preloader.style.display = 'none';
+					preloader.remove();
+				}
+			} else {
+				document.body.style.overflow = 'hidden';
+				var greetings = ["Hello", "Hola", "Namaste", "Bonjour", "Ciao"];
+				var currentIdx = 0;
+				var greetingText = document.getElementById('greeting-text');
+				
+				function showNextGreeting() {
+					if (currentIdx < greetings.length) {
+						if (greetingText) {
+							greetingText.textContent = greetings[currentIdx];
+							greetingText.classList.remove('opacity-0');
+							greetingText.classList.add('opacity-100');
+							
+							setTimeout(function() {
+								greetingText.classList.remove('opacity-100');
+								greetingText.classList.add('opacity-0');
+								currentIdx++;
+								setTimeout(showNextGreeting, 300);
+							}, 600);
+						}
+					} else {
+						if (preloader) {
+							preloader.style.opacity = '0';
+							preloader.style.transform = 'translateY(-100%)';
+							setTimeout(function() {
+								preloader.remove();
+								document.body.style.overflow = '';
+								sessionStorage.setItem('portfolio_visited', 'true');
+							}, 700);
+						}
+					}
+				}
+				setTimeout(showNextGreeting, 100);
+			}
+		})();
+	</script>
+
 	<!-- Scroll Progress Bar -->
 	<div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
 
