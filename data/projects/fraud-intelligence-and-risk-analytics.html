@@ -184,6 +184,47 @@
         and reused across rules and models. Features are normalized (e.g., velocity per card vs. absolute counts) to avoid
         bias toward high‑volume cards.
       </p>
+
+      <!-- Code Snippet: SQL Feature Engineering -->
+      <div class="mt-4 space-y-3">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Velocity Feature Engineering (SQL)</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          This SQL query computes short-window velocity (transaction counts and spend spikes over 10 minutes and 24 hours) to identify rapid spend patterns indicative of card takeover:
+        </p>
+        <pre><code class="language-sql">-- Compute transaction frequency and aggregate spend spikes per card
+WITH transaction_windows AS (
+  SELECT 
+    transaction_id,
+    card_id,
+    amount,
+    created_at,
+    -- Count of transactions in the last 10 minutes
+    COUNT(*) OVER (
+      PARTITION BY card_id 
+      ORDER BY created_at 
+      RANGE BETWEEN INTERVAL '10' MINUTE PRECEDING AND CURRENT ROW
+    ) AS tx_count_10m,
+    -- Sum of spend in the last 24 hours
+    SUM(amount) OVER (
+      PARTITION BY card_id 
+      ORDER BY created_at 
+      RANGE BETWEEN INTERVAL '24' HOUR PRECEDING AND CURRENT ROW
+    ) AS total_spend_24h
+  FROM staging.transactions
+)
+SELECT 
+  tw.transaction_id,
+  tw.card_id,
+  tw.amount,
+  tw.tx_count_10m,
+  tw.total_spend_24h,
+  -- Calculate velocity ratio: current amount vs 24h average hourly spend
+  CASE 
+    WHEN tw.total_spend_24h = 0 THEN 0
+    ELSE tw.amount / (tw.total_spend_24h / 24.0)
+  END AS velocity_spend_ratio
+FROM transaction_windows tw;</code></pre>
+      </div>
       <p class="text-gray-700 dark:text-gray-300">
         <strong>Prioritization logic:</strong> Queues are built by combining multiple risk signals into a composite score.
         The default prioritization weights velocity (40%), merchant risk (30%), and behavioral deviation (30%), but these

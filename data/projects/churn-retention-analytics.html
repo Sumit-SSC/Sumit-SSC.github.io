@@ -174,6 +174,46 @@
         Forest captures non‑linear interactions (e.g., payment issues + support load together create higher risk than either alone)
         that Logistic Regression misses.
       </p>
+
+      <!-- Code Snippet: Random Forest Training & SHAP -->
+      <div class="mt-4 space-y-3">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Model Training &amp; SHAP Explainer (Python)</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          This Python script demonstrates the class-balanced Random Forest classifier setup and SHAP explainer computation:
+        </p>
+        <pre><code class="language-python">from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+import shap
+
+# Step 1: Split dataset into train and test sets
+X = df.drop(columns=['customer_id', 'churn_label'])
+y = df['churn_label']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
+
+# Step 2: Configure Class-Balanced Random Forest
+rf_model = RandomForestClassifier(
+    n_estimators=150,
+    max_depth=10,
+    min_samples_leaf=5,
+    class_weight="balanced",
+    random_state=42,
+    n_jobs=-1
+)
+rf_model.fit(X_train, y_train)
+
+# Step 3: Evaluate model performance
+y_pred_proba = rf_model.predict_proba(X_test)[:, 1]
+auc_score = roc_auc_score(y_test, y_pred_proba)
+print(f"Random Forest Test ROC AUC: {auc_score:.4f}")
+
+# Step 4: Compute SHAP values for explaining predictions
+explainer = shap.TreeExplainer(rf_model)
+shap_values = explainer.shap_values(X_test)
+
+# Plot summary representation
+shap.summary_plot(shap_values[1], X_test, max_display=10)</code></pre>
+      </div>
       <p class="text-gray-700 dark:text-gray-300">
         <strong>SHAP explainability:</strong> SHAP (SHapley Additive exPlanations) values are computed for the Random Forest to show
         global feature importance and per‑customer contributions. Global importance shows that usage decline, payment issues, and

@@ -173,6 +173,44 @@
         is then measured as the share of users in a cohort who return (e.g., make a purchase) in subsequent periods. This allows
         product teams to compare how different cohorts (e.g., signup week, acquisition channel) retain over time.
       </p>
+
+      <!-- Code Snippet: Cohort Retention SQL -->
+      <div class="mt-4 space-y-3">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Cohort Retention Matrix (SQL)</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          This SQL transform computes the user cohort retention matrix by determining first purchase dates and tracing month-by-month repeat orders:
+        </p>
+        <pre><code class="language-sql">-- Step 1: Find user acquisition cohort (first purchase month)
+WITH user_signup AS (
+  SELECT 
+    user_id,
+    DATE_TRUNC('month', MIN(order_date)) AS cohort_month
+  FROM raw.orders
+  GROUP BY user_id
+),
+-- Step 2: Calculate month intervals for repeat transactions
+user_activities AS (
+  SELECT 
+    o.user_id,
+    DATE_TRUNC('month', o.order_date) AS order_month,
+    s.cohort_month,
+    -- Month index: active month - first month
+    DATE_DIFF('month', s.cohort_month, DATE_TRUNC('month', o.order_date)) AS period_month
+  FROM raw.orders o
+  JOIN user_signup s ON o.user_id = s.user_id
+)
+-- Step 3: Pivot count of returning users over relative periods
+SELECT 
+  cohort_month,
+  COUNT(DISTINCT user_id) AS cohort_size,
+  COUNT(DISTINCT CASE WHEN period_month = 0 THEN user_id END) AS month_0,
+  COUNT(DISTINCT CASE WHEN period_month = 1 THEN user_id END) AS month_1,
+  COUNT(DISTINCT CASE WHEN period_month = 2 THEN user_id END) AS month_2,
+  COUNT(DISTINCT CASE WHEN period_month = 3 THEN user_id END) AS month_3
+FROM user_activities
+GROUP BY cohort_month
+ORDER BY cohort_month;</code></pre>
+      </div>
       <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto"><code>Raw Generator → DuckDB Load → SQL Transformations → Analytics Outputs → Power BI / Notebooks</code></pre>
       <p class="text-gray-700 dark:text-gray-300">
         The SQL layer is designed to be reproducible: running the same scripts on the same data produces the same funnel and cohort

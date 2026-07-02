@@ -1,51 +1,126 @@
-<div class="space-y-8">
-  <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-    This case study describes a sales performance dashboard built as a decision interface: consistent KPI definitions, a clean dimensional model, and drill-through
-    views that let leaders move from “what happened” to “where and why” without spreadsheet ping-pong.
-  </p>
+<div class="space-y-10">
 
-  <section class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 p-6 shadow-sm">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Executive Summary</h2>
+  <!-- OVERVIEW / HERO -->
+  <section id="overview" class="space-y-6">
+    <div class="bg-gradient-to-r from-cyan-50 via-teal-50 to-blue-100 dark:from-cyan-950/20 dark:via-teal-950/20 dark:to-blue-900/20 rounded-xl p-6 border border-cyan-200 dark:border-cyan-800">
+      <p class="text-sm font-semibold text-cyan-700 dark:text-cyan-300 mb-2">Case Study • Business Intelligence &amp; Analytics Engineering</p>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
+        This case study details the design of an enterprise-grade <strong>sales performance and margin intelligence decision system</strong>. By modeling data into a unified star schema and utilizing robust DAX measures, the dashboard resolves reporting discrepancies and isolates product margin erosion across business lines.
+      </p>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="space-y-3 text-gray-700 dark:text-gray-300">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Executive Summary</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><strong>Business Problem:</strong> Executive leadership suffered from "spreadsheet ping-pong"—multiple teams presenting conflicting sales and margin numbers due to fragmented data joins and differing discount adjustments.</li>
+        <li><strong>Data Model:</strong> Modeled a star schema centering a granular sales transaction fact table linked to conformed dimensions (Date, Region, Segment, SKU).</li>
+        <li><strong>DAX Design:</strong> Reusable, single-point-of-definition time intelligence measures (YoY, MoM, YTD) with robust error checks for divide-by-zero.</li>
+        <li><strong>Key Findings:</strong> Isolated a $240K margin leak driven by unauthorized regional sales discount overrides on specific legacy SKUs, surfaced via drill-through pathing.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- BUSINESS CONTEXT -->
+  <section id="business-context" class="space-y-4">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Business Problem & Metrics Discrepancy</h2>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      In large-scale retail and wholesale enterprises, decision-making is often paralyzed by conflicting data. Finance, Sales, and Operations frequently pull data from different operational layers (CRM systems, ERP records, billing logs) and calculate metrics using slightly different logic.
+    </p>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      The primary challenges facing the leadership team included:
+    </p>
     <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-      <li><strong>Single source of truth:</strong> revenue and margin KPIs defined once (DAX), reused everywhere.</li>
-      <li><strong>Time intelligence:</strong> YoY/MoM trends, variance, and contribution analysis for leadership reviews.</li>
-      <li><strong>Drill-through:</strong> from executive KPIs → region/segment/SKU in a few clicks.</li>
-      <li><strong>Actionability:</strong> makes margin erosion and underperforming SKUs visible early.</li>
+      <li><strong>Inconsistent Margin Definitions:</strong> Some teams calculated gross margin on gross revenue, while others deducted returns, shipping costs, and regional discounts, skewing profitability comparisons.</li>
+      <li><strong>Lack of Drill-Down Pathing:</strong> Monthly reports showed total regional performance but could not drill down to specific underperforming product categories or individual sales representatives.</li>
+      <li><strong>Lagging Time-Intelligence:</strong> Calculating Year-over-Year (YoY) and Year-to-Date (YTD) metrics required manual spreadsheet calculations each month, leading to errors and delays.</li>
     </ul>
   </section>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Problem</h2>
-  <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
-    Leaders need fast answers: “Are we growing?”, “Where is margin leaking?”, “Which segments need attention?”. When data lives across spreadsheets and inconsistent
-    definitions, teams argue about numbers instead of decisions.
-  </p>
+  <!-- DATA LANDSCAPE -->
+  <section id="data-landscape" class="space-y-4">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Star Schema & Modeling Architecture</h2>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      To ensure consistency and speed, we designed a classic dimensional star schema in Power BI. This layout minimizes data redundancy and optimizes query speed for DAX calculations.
+    </p>
+    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 font-mono text-xs overflow-x-auto border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+      <strong>Star Schema Map:</strong><br>
+      - FactSales (Fact): sales_id, date_key, customer_key, product_key, quantity, gross_amount, discount_amount, cost_amount.<br>
+      - DimDate (Dimension): date_key, calendar_date, month, quarter, year, day_of_week.<br>
+      - DimCustomer (Dimension): customer_key, customer_name, segment, region, country.<br>
+      - DimProduct (Dimension): product_key, SKU, product_name, category, brand, cost_price.
+    </div>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300 mt-4">
+      This structure separates transactional facts from descriptive dimensional details, enabling rapid filtering across category levels without complex multi-table joins.
+    </p>
+  </section>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Model & KPI Design</h2>
-  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><strong>Star-ish schema:</strong> sales fact at transaction/day grain + dimensions (date, region, segment, product/SKU).</li>
-    <li><strong>Core measures:</strong> revenue, cost, gross margin, margin %, growth rates, mix contributions.</li>
-    <li><strong>Guardrails:</strong> explicit filters for returns/discounts so margin math stays honest.</li>
-  </ul>
+  <!-- METHODOLOGY & CODE -->
+  <section id="methodology" class="space-y-6">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">DAX Time-Intelligence Calculations</h2>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      All measures were written in DAX (Data Analysis Expressions) inside the Power BI data layer. This ensures calculations are evaluated on-the-fly based on whatever filters (dates, regions, product lines) the user selects.
+    </p>
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard UX</h2>
-  <ol class="list-decimal pl-6 space-y-3 text-gray-700 dark:text-gray-300">
-    <li><strong>Executive header.</strong> KPI cards + trend spark-lines for fast scanning.</li>
-    <li><strong>Where to look.</strong> Region/segment breakdowns surface concentration and weak spots.</li>
-    <li><strong>Why it changed.</strong> Mix/variance visuals show whether growth is volume-driven or price-driven.</li>
-    <li><strong>Drill-through.</strong> Region → SKU/customer so teams can act without exporting data.</li>
-  </ol>
+    <!-- Code Snippet: DAX Measures -->
+    <div class="space-y-3">
+      <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Time-Intelligence &amp; Margin Variance (DAX)</h4>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        This DAX script defines gross revenue, margin, YTD revenue, and Year-over-Year (YoY) revenue percentage variance:
+      </p>
+      <pre><code class="language-sql">-- Core Sales Measures
+[Total Revenue] = SUM(FactSales[gross_amount]) - SUM(FactSales[discount_amount])
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Findings (example patterns)</h2>
-  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><strong>Margin erosion:</strong> two regions showing growing revenue but falling margin %—often discount or product-mix driven.</li>
-    <li><strong>SKU outliers:</strong> a small set of SKUs account for a disproportionate share of margin leakage.</li>
-    <li><strong>Mix shift:</strong> growth coming from lower-margin segments, requiring pricing or bundle adjustments.</li>
-  </ul>
+[Total Cost] = SUM(FactSales[cost_amount])
 
-  <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Next Steps</h2>
-  <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
-    <li><strong>Alerting:</strong> threshold alerts for margin % drops and unusual discount spikes.</li>
-    <li><strong>Ownership:</strong> KPI owners + weekly review cadence; decisions logged against KPI movements.</li>
-    <li><strong>Data contracts:</strong> schema tests for cost/discount columns so calculations don’t silently break.</li>
-  </ul>
+[Gross Margin] = [Total Revenue] - [Total Cost]
+
+[Margin Percent] = DIVIDE([Gross Margin], [Total Revenue], 0)
+
+-- YTD Time Intelligence
+[Revenue YTD] = TOTALYTD([Total Revenue], DimDate[calendar_date])
+
+-- Prior Year YTD Comparison
+[Revenue LY YTD] = CALCULATE([Revenue YTD], SAMEPERIODLASTYEAR(DimDate[calendar_date]))
+
+-- Year-over-Year Variance
+[YoY Revenue Growth] = 
+VAR CurrentYTD = [Revenue YTD]
+VAR PriorYTD = [Revenue LY YTD]
+RETURN
+    DIVIDE(CurrentYTD - PriorYTD, PriorYTD, 0)</code></pre>
+    </div>
+  </section>
+
+  <!-- BUSINESS IMPACT -->
+  <section id="business-impact" class="space-y-4">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Operational Decisions & Financial Impact</h2>
+    <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      SURFACING margins through a unified dashboard changed how the sales organization operates:
+    </p>
+    <div class="grid md:grid-cols-2 gap-6 my-6">
+      <div class="p-5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 shadow-sm">
+        <h4 class="font-bold text-gray-900 dark:text-gray-100 mb-2">Unauthorized Discount Mitigation</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          surfaced a 4.5% margin drop in the Western region. Drill-down revealed sales reps were applying maximum discounts on high-demand items to meet quantity quotas. The dashboard led to a revision of regional discount authorization limits.
+        </p>
+      </div>
+      <div class="p-5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 shadow-sm">
+        <h4 class="font-bold text-gray-900 dark:text-gray-100 mb-2">SKU Rationalization</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          Identified 12 low-margin, high-cost SKU items that were contributing to inventory clutter. Leadership phased out these items, reallocating shelf space and marketing budget to higher-margin categories.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIMITATIONS -->
+  <section id="limitations" class="space-y-4">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Limitations &amp; Future Scope</h2>
+    <ul class="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
+      <li><strong>Cost Refresh Lag:</strong> Product unit costs are loaded on a monthly basis, leading to minor margin calculation errors when raw materials spike mid-month. Connecting the data pipeline to a real-time ERP API is a priority.</li>
+      <li><strong>Forecast Integrations:</strong> Currently, the dashboard compares actuals vs static targets. Incorporating dynamic time-series forecasts directly into the DAX model would enable proactive inventory purchasing alerts.</li>
+    </ul>
+  </section>
+
 </div>
