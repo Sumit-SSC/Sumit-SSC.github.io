@@ -3213,11 +3213,11 @@ body {
   color: var(--text-primary) !important;
 }
 
-a {
+a:not([class]) {
   color: var(--text-secondary);
 }
 
-a:hover {
+a:not([class]):hover {
   color: var(--accent-primary);
 }
 
@@ -3772,13 +3772,7 @@ html.dark-theme .lightdash-journey__year-header-label,
     grid-template-columns: repeat(5, minmax(44px, 1fr));
   }
 }
-a {
-  color: var(--text-secondary);
-}
-
-a:hover {
-  color: var(--accent-primary);
-}
+/* Scoped unclassed link overrides are managed in the theme consistency section above */
 
 /* Tailwind migration cleanup:
    avoid global utility remapping so page-level Tailwind classes can render as intended.
