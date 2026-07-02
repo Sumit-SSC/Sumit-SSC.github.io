@@ -37,14 +37,14 @@
 		<link rel="stylesheet" href="assets/css/index.css" />
 		<noscript><link rel="stylesheet" href="assets/css/indexNoscript.css" /></noscript>
 		<style>
-			/* Full-screen loading container matching reference site */
+			/* Full-screen loading container matching reference site and theme */
 			.loading-container {
 				position: fixed;
 				top: 0;
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-color: #0b0914; /* Reference dark theme color */
+				background-color: #080b18; /* Dark navy-black from site's primary color family */
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -58,10 +58,26 @@
 			.ref-greeting-text {
 				font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 				font-weight: 700;
-				color: #ffffff;
 				margin: 0;
 				opacity: 0;
 				animation: greeting-fade-in 1s ease-in-out forwards;
+				/* High-contrast gradient matching the primary #3B4CCA and accent #2CB1A6 theme colors */
+				background: linear-gradient(to right, #5a6bf2, #2cb1a6);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+			/* Hold animations on first load during greeting */
+			body.is-preload-overlay *,
+			body.is-preload-overlay *:before,
+			body.is-preload-overlay *:after {
+				-moz-animation: none !important;
+				-webkit-animation: none !important;
+				-ms-animation: none !important;
+				animation: none !important;
+				-moz-transition: none !important;
+				-webkit-transition: none !important;
+				-ms-transition: none !important;
+				transition: none !important;
 			}
 			/* Responsive text sizing from reference */
 			@media (max-width: 350px) {
@@ -100,6 +116,7 @@
 						loader.remove();
 					}
 				} else {
+					document.body.classList.add('is-preload-overlay');
 					document.body.style.overflow = 'hidden';
 					var greetings = ["Hello", "你好", "নমস্কার", "こんにちは", "नमस्कार", "привет", "مرحبا", "Hola"];
 					var currentIdx = 0;
@@ -137,6 +154,8 @@
 							setTimeout(function() {
 								loader.remove();
 								document.body.style.overflow = '';
+								document.body.classList.remove('is-preload-overlay');
+								document.body.classList.remove('is-preload');
 								sessionStorage.setItem('index_visited', 'true');
 								window.dispatchEvent(new Event('preloader_finished'));
 							}, 500);
