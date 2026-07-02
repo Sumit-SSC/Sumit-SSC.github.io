@@ -36,9 +36,116 @@
 		<!-- Use Spectral CSS from assets folder (this page = landing only; projects are at pages/homepage.html) -->
 		<link rel="stylesheet" href="assets/css/index.css" />
 		<noscript><link rel="stylesheet" href="assets/css/indexNoscript.css" /></noscript>
+		<style>
+			/* Full-screen loading container matching reference site */
+			.loading-container {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: #0b0914; /* Reference dark theme color */
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 99999;
+				opacity: 1;
+				transition: opacity 0.5s ease-in-out;
+			}
+			.greeting-text-container {
+				text-align: center;
+			}
+			.ref-greeting-text {
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				font-weight: 700;
+				color: #ffffff;
+				margin: 0;
+				opacity: 0;
+				animation: greeting-fade-in 1s ease-in-out forwards;
+			}
+			/* Responsive text sizing from reference */
+			@media (max-width: 350px) {
+				.ref-greeting-text { font-size: 2rem; }
+			}
+			@media (min-width: 568px) {
+				.ref-greeting-text { font-size: 3rem; }
+			}
+			@media (min-width: 768px) {
+				.ref-greeting-text { font-size: 4rem; }
+			}
+			@media (min-width: 1024px) {
+				.ref-greeting-text { font-size: 5.4rem; }
+			}
+			@keyframes greeting-fade-in {
+				0% { opacity: 0; }
+				100% { opacity: 1; }
+			}
+		</style>
 		<link rel="icon" type="image/svg+xml" href="assets/images/arrow.svg" />
 	</head>
 	<body class="landing is-preload" data-page="spectral-landing">
+		<!-- Multi-Language Pre-Loader Overlay -->
+		<div id="greeting-preloader" class="loading-container">
+			<div class="greeting-text-container">
+				<h1 id="greeting-text" class="ref-greeting-text">Hello</h1>
+			</div>
+		</div>
+		<script>
+			(function() {
+				var loader = document.getElementById('greeting-preloader');
+				var greetingText = document.getElementById('greeting-text');
+				if (sessionStorage.getItem('index_visited')) {
+					if (loader) {
+						loader.style.display = 'none';
+						loader.remove();
+					}
+				} else {
+					document.body.style.overflow = 'hidden';
+					var greetings = ["Hello", "你好", "নমস্কার", "こんにちは", "नमस्कार", "привет", "مرحبا", "Hola"];
+					var currentIdx = 0;
+					
+					function cycleGreetings() {
+						setTimeout(function() {
+							currentIdx = 1;
+							var interval = setInterval(function() {
+								if (currentIdx < greetings.length) {
+									if (greetingText) {
+										greetingText.style.animation = 'none';
+										greetingText.style.opacity = '1';
+										greetingText.textContent = greetings[currentIdx];
+									}
+									currentIdx++;
+								} else {
+									clearInterval(interval);
+									checkCompletionAndHide();
+								}
+							}, 200);
+						}, 1000);
+					}
+					
+					function checkCompletionAndHide() {
+						if (document.readyState === 'complete') {
+							hideLoader();
+						} else {
+							window.addEventListener('load', hideLoader);
+						}
+					}
+					
+					function hideLoader() {
+						if (loader) {
+							loader.style.opacity = '0';
+							setTimeout(function() {
+								loader.remove();
+								document.body.style.overflow = '';
+								sessionStorage.setItem('index_visited', 'true');
+								window.dispatchEvent(new Event('preloader_finished'));
+							}, 500);
+						}
+					}
+					cycleGreetings();
+				}
+			})();
+		</script>
 
 		<!-- Page Wrapper -->
 			<div id="page-wrapper">
@@ -137,12 +244,21 @@
 					var navigated = false;
 					cta.addEventListener('click', function() { navigated = true; });
 
-					setTimeout(function() {
-						if (navigated) return;
+					function startRedirectTimer() {
 						setTimeout(function() {
-							if (!navigated) window.location.href = 'pages/homepage.html';
-						}, DELAY_AFTER_ARROW_MS);
-					}, PRELOAD_DELAY_MS + ARROW_TRANSITION_MS);
+							if (navigated) return;
+							setTimeout(function() {
+								if (!navigated) window.location.href = 'pages/homepage.html';
+							}, DELAY_AFTER_ARROW_MS);
+						}, PRELOAD_DELAY_MS + ARROW_TRANSITION_MS);
+					}
+
+					// If preloader is active, wait for it to finish. Otherwise, start immediately.
+					if (sessionStorage.getItem('index_visited')) {
+						startRedirectTimer();
+					} else {
+						window.addEventListener('preloader_finished', startRedirectTimer);
+					}
 				});
 			</script>
 	</body>
