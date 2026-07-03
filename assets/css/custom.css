@@ -5535,4 +5535,132 @@ body.dark #project-main blockquote {
   opacity: 1 !important;
 }
 
+/* ==========================================
+   Mobile-First App-like Layout Enhancements
+   ========================================== */
+
+/* 1. Resume page PDF card fallback for mobile */
+@media (max-width: 639px) {
+  .resume-mobile-card {
+    display: block !important;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: transparent;
+  }
+}
+
+/* 2. Streamlit and Power BI tall aspect ratio embeds on mobile */
+@media (max-width: 639px) {
+  .embed-container.embed-streamlit,
+  .embed-container.embed-powerbi {
+    padding-top: 0 !important;
+    height: 520px !important;
+  }
+}
+
+/* 3. Lightdash journey timeline left-aligned axis on mobile */
+@media (max-width: 639px) {
+  .lightdash-journey {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  /* Show axis line on the left */
+  .lightdash-journey__axis {
+    display: block !important;
+    position: absolute !important;
+    left: 24px !important;
+    top: 70px !important;
+    bottom: 20px !important;
+    width: 2px !important;
+    margin-left: 0 !important;
+    background: repeating-linear-gradient(
+      to bottom,
+      #4f46e5 0,
+      #4f46e5 6px,
+      transparent 6px,
+      transparent 10px
+    ) !important;
+    z-index: 1 !important;
+  }
+  .dark-theme .lightdash-journey__axis,
+  html.dark-theme .lightdash-journey__axis {
+    background: repeating-linear-gradient(
+      to bottom,
+      #818cf8 0,
+      #818cf8 6px,
+      transparent 6px,
+      transparent 10px
+    ) !important;
+  }
+  /* Rows flex container */
+  .lightdash-journey__row {
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    padding-left: 50px !important;
+    margin-bottom: 2.25rem !important;
+    gap: 0.75rem !important;
+  }
+  /* Reorder card above media */
+  .lightdash-journey__left {
+    order: 2 !important; /* media is second */
+    padding: 0 !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+  .lightdash-journey__right {
+    order: 1 !important; /* card is first */
+    padding: 0 !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+  /* Year node circle on the left line */
+  .lightdash-journey__node {
+    position: absolute !important;
+    left: 8px !important;
+    top: 6px !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    font-size: 0.75rem !important;
+    z-index: 2 !important;
+    margin: 0 !important;
+    border: 2px solid #4f46e5 !important;
+    background: #fff !important;
+    color: #1f2937 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    order: unset !important;
+  }
+  .dark-theme .lightdash-journey__node,
+  html.dark-theme .lightdash-journey__node {
+    background: #1f2937 !important;
+    border-color: #818cf8 !important;
+    color: #fff !important;
+  }
+  /* Clean left accent border on cards */
+  .lightdash-journey__card {
+    border-left: 3px solid #4f46e5 !important;
+    border-radius: 4px 12px 12px 4px !important;
+    padding: 1rem !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .dark-theme .lightdash-journey__card {
+    border-color: #818cf8 !important;
+  }
+  /* Year header alignment */
+  .lightdash-journey__year-header {
+    justify-content: flex-start !important;
+    padding-left: 50px !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .lightdash-journey__year-header-label {
+    font-size: 0.95rem !important;
+  }
+}
+
 

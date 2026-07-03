@@ -10,11 +10,14 @@
 			(function () {
 				var h = location.hostname || "";
 				var p = location.pathname || "";
-				/* Canonical admin UI lives on the main Pages host (same repo). GitHub must serve this
-				   page for admin.sumit.indevs.in — if you see 404, add that host in Pages settings or
-				   use a Cloudflare redirect (see docs/ADMIN_WORKSPACE.md). */
+				/* Canonical admin UI lives on the main Pages host (same repo) */
 				if (h === "admin.sumit.indevs.in" && (p === "/" || p === "" || p === "/index.html")) {
 					location.replace("https://sumit.indevs.in/admin/index.html");
+					return;
+				}
+				// Skip landing preloader if visited in this browser session
+				if (sessionStorage.getItem('index_visited') && !new URLSearchParams(window.location.search).get('landing')) {
+					location.replace("pages/homepage.html");
 				}
 			})();
 		</script>
@@ -248,9 +251,9 @@
 			<script>
 				// Keep landing transition effect:
 				// show index first, then auto-redirect after the arrow animation.
-				var PRELOAD_DELAY_MS = 100;
-				var ARROW_TRANSITION_MS = 750;
-				var DELAY_AFTER_ARROW_MS = 3000;
+				var PRELOAD_DELAY_MS = 50;
+				var ARROW_TRANSITION_MS = 200;
+				var DELAY_AFTER_ARROW_MS = 400; // Snappy redirect!
 
 				window.addEventListener('load', function() {
 					var params = new URLSearchParams(window.location.search || '');
@@ -274,7 +277,7 @@
 
 					// If preloader is active, wait for it to finish. Otherwise, start immediately.
 					if (sessionStorage.getItem('index_visited')) {
-						startRedirectTimer();
+						window.location.href = 'pages/homepage.html';
 					} else {
 						window.addEventListener('preloader_finished', startRedirectTimer);
 					}

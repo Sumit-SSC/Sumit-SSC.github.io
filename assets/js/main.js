@@ -2263,7 +2263,8 @@ function streamlitEmbed(url) {
   return tapToLoadEmbedBlock({
     url: `${url}?embed=true`,
     title: 'Streamlit App',
-    kind: 'iframe'
+    kind: 'iframe',
+    className: 'embed-streamlit'
   });
 }
 
@@ -2272,7 +2273,8 @@ function powerBiBlock(embedUrl, downloadPath, project = null) {
     return tapToLoadEmbedBlock({
       url: embedUrl,
       title: 'Power BI Dashboard',
-      kind: 'iframe'
+      kind: 'iframe',
+      className: 'embed-powerbi'
     });
   } else if (downloadPath) {
     const resolvedUrl = project ? resolveAssetUrl(project, downloadPath) : downloadPath;
