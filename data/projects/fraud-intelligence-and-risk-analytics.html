@@ -2,7 +2,8 @@
 
   <!-- OVERVIEW / HERO + EXECUTIVE SUMMARY -->
   <section id="overview" class="space-y-6">
-    <!-- Hero -->
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Overview</h2>
+      <div class="text-gray-600 dark:text-gray-300 leading-relaxed space-y-4"><!-- Hero -->
     <div class="bg-gradient-to-r from-primary/10 via-accent/10 to-emerald-100 dark:from-primary/20 dark:via-accent/20 dark:to-emerald-900/20 rounded-xl p-6 border border-primary/20">
       <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Project Overview</p>
       <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-200">
@@ -41,8 +42,8 @@
           the design targets a <strong>~25–35% improvement in investigation efficiency</strong> compared with a flat alert list.
         </li>
       </ul>
-    </div>
-  </section>
+    </div></div>
+    </section>
 
   <!-- PROBLEM STATEMENT -->
   <section id="problem" class="space-y-6">
@@ -187,7 +188,7 @@
       <p class="text-gray-700 dark:text-gray-300">
         <strong>Prioritization logic:</strong> Queues are built by combining multiple risk signals into a composite score.
         The default prioritization weights velocity (40%), merchant risk (30%), and behavioral deviation (30%), but these
-        weights can be tuned based on feedback from analysts and historical fraud patterns. High‑value transactions (>$500)
+        weights can be tuned based on feedback from analysts and historical fraud patterns. High‑value transactions (&gt;$500)
         get a boost to ensure large losses are surfaced quickly.
       </p>
       <p class="text-gray-700 dark:text-gray-300">
@@ -253,30 +254,30 @@
       <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">7. Observations &amp; Key Findings</h3>
       <ul class="list-disc pl-6 space-y-3 text-gray-700 dark:text-gray-300">
         <li>
-          <strong>Short‑window velocity is a reliable early warning.</strong><br />
+          <strong>Short‑window velocity is a reliable early warning.</strong><br>
           Observation: cards with ≥5 transactions or unusually high cumulative spend in a 15‑minute window show
-          materially higher fraud rates in the synthetic data.<br />
+          materially higher fraud rates in the synthetic data.<br>
           Why it matters: velocity features are simple to compute, easy to explain to operations, and effective at
           surfacing high‑risk behavior before losses accumulate.
         </li>
         <li>
-          <strong>Merchant risk is highly concentrated.</strong><br />
+          <strong>Merchant risk is highly concentrated.</strong><br>
           Observation: a small cluster of merchants and MCCs contributes a disproportionate share of flagged and
-          confirmed fraud.<br />
+          confirmed fraud.<br>
           Why it matters: targeted contract clauses, monitoring, and periodic reviews on this small set can deliver
           better risk reduction than blanket measures across the portfolio.
         </li>
         <li>
-          <strong>Behavioral deviation is more informative than static profiles.</strong><br />
+          <strong>Behavioral deviation is more informative than static profiles.</strong><br>
           Observation: changes vs. a card’s own history (spend spikes, geography shifts, new MCCs) provide stronger
-          signals than static customer attributes.<br />
+          signals than static customer attributes.<br>
           Why it matters: fraud strategies should emphasize “change‑based” features that adapt with customers, not
           just one‑time KYC or demographic data.
         </li>
         <li>
-          <strong>Queue design directly shapes operational efficiency.</strong><br />
+          <strong>Queue design directly shapes operational efficiency.</strong><br>
           Observation: when the same data is presented as a flat list vs. a prioritized queue with filters and
-          explanations, analysts naturally gravitate to higher‑value cases first.<br />
+          explanations, analysts naturally gravitate to higher‑value cases first.<br>
           Why it matters: even without changing models, reorganizing how alerts are surfaced can yield faster time‑to‑decision
           and fewer wasted investigations.
         </li>
@@ -443,4 +444,3 @@
   </section>
 
 </div>
-
