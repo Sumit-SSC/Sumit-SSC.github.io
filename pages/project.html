@@ -172,25 +172,38 @@
 				var urlParams = new URLSearchParams(window.location.search);
 				var projectId = urlParams.get('id') || 'general';
 				var theme = getGiscusTheme();
-				var giscusScript = document.createElement('script');
-				giscusScript.src = 'https://giscus.app/client.js';
-				giscusScript.setAttribute('data-repo', 'Sumit-SC/Sumit-SC.github.io');
-				giscusScript.setAttribute('data-repo-id', 'R_kgDOLETHwQ');
-				giscusScript.setAttribute('data-category', 'Project-Comments');
-				giscusScript.setAttribute('data-category-id', 'DIC_kwDOLETHwc4C0QcF');
-				giscusScript.setAttribute('data-mapping', 'specific');
-				giscusScript.setAttribute('data-term', 'project→' + projectId);
-				giscusScript.setAttribute('data-strict', '0');
-				giscusScript.setAttribute('data-reactions-enabled', '1');
-				giscusScript.setAttribute('data-emit-metadata', '0');
-				giscusScript.setAttribute('data-input-position', 'bottom');
-				giscusScript.setAttribute('data-theme', theme);
-				giscusScript.setAttribute('data-lang', 'en');
-				giscusScript.setAttribute('data-loading', 'lazy');
-				giscusScript.crossOrigin = 'anonymous';
-				giscusScript.async = true;
-				var container = document.getElementById('giscus-root');
-				if (container) container.appendChild(giscusScript);
+
+				(async function initGiscus() {
+					var repo = 'Sumit-SSC/Sumit-SSC.github.io';
+					if (typeof window.getSiteConfig === 'function') {
+						const config = await window.getSiteConfig();
+						repo = config.repo;
+					}
+
+					var giscusScript = document.createElement('script');
+					giscusScript.src = 'https://giscus.app/client.js';
+					giscusScript.setAttribute('data-repo', repo);
+					giscusScript.setAttribute('data-repo-id', 'R_kgDOLETHwQ');
+					giscusScript.setAttribute('data-category', 'Project-Comments');
+					giscusScript.setAttribute('data-category-id', 'DIC_kwDOLETHwc4C0QcF');
+					giscusScript.setAttribute('data-mapping', 'specific');
+					giscusScript.setAttribute('data-term', 'project→' + projectId);
+					giscusScript.setAttribute('data-strict', '0');
+					giscusScript.setAttribute('data-reactions-enabled', '1');
+					giscusScript.setAttribute('data-emit-metadata', '0');
+					giscusScript.setAttribute('data-input-position', 'bottom');
+					giscusScript.setAttribute('data-theme', theme);
+					giscusScript.setAttribute('data-lang', 'en');
+					giscusScript.setAttribute('data-loading', 'lazy');
+					giscusScript.crossOrigin = 'anonymous';
+					giscusScript.async = true;
+
+					var container = document.getElementById('giscus-root');
+					if (container) {
+						container.innerHTML = '';
+						container.appendChild(giscusScript);
+					}
+				})();
 			}
 
 			function updateGiscusTheme() {

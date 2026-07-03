@@ -41,6 +41,13 @@
         if (pathname === "/api/admin/auth/logout") {
           return withCors(request, env, await logout(request, env));
         }
+        if (pathname === "/api/public/config" && request.method === "GET") {
+          return withCors(request, env, json({
+            ok: true,
+            github_username: env.GITHUB_REPO_OWNER || "Sumit-SSC",
+            github_repo: `${env.GITHUB_REPO_OWNER}/${env.GITHUB_REPO_NAME}` || "Sumit-SSC/Sumit-SSC.github.io"
+          }));
+        }
         if (pathname === "/api/admin/session") {
           return withCors(request, env, await getSessionStatus(request, env));
         }

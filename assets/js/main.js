@@ -3025,3 +3025,45 @@ function initContactForm() {
     }
   });
 }
+
+// Dynamic Global Config fetcher to avoid hardcoding GitHub Usernames
+window.getSiteConfig = async function() {
+  const CACHE_KEY = "site_global_config_cache";
+  const CACHE_TIME_KEY = "site_global_config_cache_time";
+  const CACHE_TTL = 12 * 60 * 60 * 1000; // 12 hours caching
+  
+  const now = Date.now();
+  const cachedData = localStorage.getItem(CACHE_KEY);
+  const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+  
+  if (cachedData && cachedTime && (now - Number(cachedTime) < CACHE_TTL)) {
+    try {
+      return JSON.parse(cachedData);
+    } catch (_) {}
+  }
+  
+  try {
+    const res = await fetch("https://admin-api.sumit.indevs.in/api/public/config");
+    const data = await res.json();
+    if (data && data.ok) {
+      const config = {
+        username: data.github_username || "Sumit-SSC",
+        repo: data.github_repo || "Sumit-SSC/Sumit-SSC.github.io"
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(config));
+      localStorage.setItem(CACHE_TIME_KEY, String(now));
+      return config;
+    }
+  } catch (e) {
+    console.warn("Failed to fetch site config, using fallback.", e);
+  }
+  
+  // Return fallback if fetch fails and no cache exists
+  if (cachedData) {
+    try { return JSON.parse(cachedData); } catch (_) {}
+  }
+  return {
+    username: "Sumit-SSC",
+    repo: "Sumit-SSC/Sumit-SSC.github.io"
+  };
+};
