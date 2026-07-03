@@ -2012,6 +2012,7 @@ function renderProject(project, caseStudy, contentFromFile) {
     // Heavy embeds (PDF/video) are click-to-load for faster initial rendering.
     initTapToLoadEmbeds(main);
     initScrollAnimations(main);
+    initCodeCopyButtons(main);
   }
 
   // Generate TOC
@@ -2430,6 +2431,39 @@ function initTapToLoadEmbeds(root) {
       }
       block.dataset.loaded = '1';
     });
+  });
+}
+
+function initCodeCopyButtons(root) {
+  const scope = root && root.querySelectorAll ? root : document;
+  const preBlocks = scope.querySelectorAll("pre");
+  preBlocks.forEach((pre) => {
+    if (pre.parentNode.classList.contains("code-block-wrapper")) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-block-wrapper";
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "code-copy-btn";
+    btn.textContent = "Copy";
+    wrapper.appendChild(btn);
+
+    btn.onclick = () => {
+      const codeText = pre.querySelector("code")?.textContent || pre.textContent || "";
+      navigator.clipboard.writeText(codeText).then(() => {
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      }).catch((err) => {
+        console.error("Failed to copy code: ", err);
+      });
+    };
   });
 }
 

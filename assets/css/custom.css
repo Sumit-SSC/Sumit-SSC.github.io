@@ -9,9 +9,9 @@
 
 :root {
   /* Brand (accent themes may override primary/accent via JS) */
-  --primary: #3B4CCA;
+  --primary: #4f46e5;
   --secondary: #64748B;
-  --accent: #2CB1A6;
+  --accent: #0d9488;
   --site-font-family: Inter, system-ui, sans-serif;
   --site-base-font-size: 16px;
 
@@ -5487,6 +5487,52 @@ body.dark #project-main code:not(pre code) {
 }
 body.dark #project-main blockquote {
   color: var(--text-secondary-dark) !important;
+}
+
+/* Code block relative wrapper for copy button positioning */
+.code-block-wrapper {
+  position: relative !important;
+  margin: 1.75rem 0 !important;
+}
+
+.code-block-wrapper pre {
+  margin: 0 !important; /* Managed by wrapper */
+}
+
+/* Copy button styles */
+.code-copy-btn {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  background: rgba(30, 41, 59, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #94a3b8 !important; /* Slate 400 */
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  font-family: var(--site-font-family), system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out, background 0.15s, color 0.15s !important;
+  z-index: 10 !important;
+  outline: none !important;
+}
+
+.code-block-wrapper:hover .code-copy-btn {
+  opacity: 1 !important;
+}
+
+.code-copy-btn:hover {
+  background: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.code-copy-btn.copied {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  opacity: 1 !important;
 }
 
 
