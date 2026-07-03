@@ -221,6 +221,7 @@
   blockTools.innerHTML = `
     <button type="button" class="admin-tool-btn move-up" title="Move Up">↑</button>
     <button type="button" class="admin-tool-btn move-down" title="Move Down">↓</button>
+    <button type="button" class="admin-tool-btn cycle-type" title="Cycle Block Type (H2 / H3 / P)">T</button>
     <button type="button" class="admin-tool-btn delete" title="Delete Block">🗑️</button>
     <button type="button" class="admin-tool-btn insert" title="Insert Paragraph Below">+</button>
   `;
@@ -312,7 +313,106 @@
   else if (pathname.includes("/project.html")) targetPageType = "projects";
   else if (pathname.includes("/case-study.html")) targetPageType = "caseStudies";
 
+  // Cycle H2 -> H3 -> P type
+  function cycleElementType() {
+    if (!activeElement) return;
+    var currentTag = activeElement.tagName.toLowerCase();
+    var nextTag = "p";
+    if (currentTag === "p") nextTag = "h2";
+    else if (currentTag === "h2") nextTag = "h3";
+    else if (currentTag === "h3") nextTag = "p";
+
+    var newEl = document.createElement(nextTag);
+    newEl.innerHTML = activeElement.innerHTML;
+
+    // Copy attributes
+    for (var i = 0; i < activeElement.attributes.length; i++) {
+      var attr = activeElement.attributes[i];
+      if (attr.name !== "contenteditable" && attr.name !== "data-inline-editable") {
+        newEl.setAttribute(attr.name, attr.value);
+      }
+    }
+
+    activeElement.parentNode.replaceChild(newEl, activeElement);
+    bindEditableRegion(newEl, newEl.id || "cycled-block-" + Date.now());
+    showToolbar(newEl);
+    newEl.focus();
+    triggerFullContainerSave();
+  }
+
+  // Floating Selection Text Formatting Bubble (Medium-Style)
+  function showFormattingBubble(rect) {
+    var bubble = document.getElementById("admin-format-bubble");
+    if (!bubble) {
+      bubble = document.createElement("div");
+      bubble.id = "admin-format-bubble";
+      bubble.innerHTML = `
+        <button type="button" class="admin-tool-btn bold" title="Bold" style="font-weight:bold !important;">B</button>
+        <button type="button" class="admin-tool-btn italic" title="Italic" style="font-style:italic !important;">I</button>
+        <button type="button" class="admin-tool-btn underline" title="Underline" style="text-decoration:underline !important;">U</button>
+        <button type="button" class="admin-tool-btn link" title="Link">🔗</button>
+        <button type="button" class="admin-tool-btn unlink" title="Unlink">⌧</button>
+      `;
+      document.body.appendChild(bubble);
+
+      bubble.style.position = "absolute";
+      bubble.style.display = "none";
+      bubble.style.gap = "4px";
+      bubble.style.zIndex = "2147483641";
+      bubble.style.background = "#0f172a";
+      bubble.style.border = "1px solid #334155";
+      bubble.style.padding = "4px";
+      bubble.style.borderRadius = "6px";
+      bubble.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+
+      bubble.querySelector(".bold").onclick = function (e) { e.preventDefault(); document.execCommand("bold"); };
+      bubble.querySelector(".italic").onclick = function (e) { e.preventDefault(); document.execCommand("italic"); };
+      bubble.querySelector(".underline").onclick = function (e) { e.preventDefault(); document.execCommand("underline"); };
+      bubble.querySelector(".link").onclick = function (e) {
+        e.preventDefault();
+        var url = prompt("Enter URL link:");
+        if (url) document.execCommand("createLink", false, url);
+      };
+      bubble.querySelector(".unlink").onclick = function (e) { e.preventDefault(); document.execCommand("unlink"); };
+    }
+
+    bubble.style.display = "flex";
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+    var bubbleHeight = bubble.offsetHeight || 32;
+    var bubbleWidth = bubble.offsetWidth || 150;
+
+    var topPos = rect.top + scrollTop - bubbleHeight - 8;
+    var leftPos = rect.left + scrollLeft + (rect.width / 2) - (bubbleWidth / 2);
+
+    bubble.style.top = topPos + "px";
+    bubble.style.left = leftPos + "px";
+  }
+
+  function hideFormattingBubble() {
+    var bubble = document.getElementById("admin-format-bubble");
+    if (bubble) bubble.style.display = "none";
+  }
+
   function initializeEditor() {
+    // Setup selection formatting bubble trigger
+    document.addEventListener("selectionchange", function () {
+      var sel = window.getSelection();
+      if (sel && !sel.isCollapsed && sel.rangeCount > 0) {
+        var range = sel.getRangeAt(0);
+        var node = range.commonAncestorContainer;
+        if (node.nodeType === 3) node = node.parentNode;
+        var editable = node.closest('[data-inline-editable="true"]');
+        if (editable) {
+          var rect = range.getBoundingClientRect();
+          showFormattingBubble(rect);
+          return;
+        }
+      }
+      hideFormattingBubble();
+    });
+
     // Setup toolbar reposition on hover
     document.addEventListener("mouseover", function (e) {
       var editable = e.target.closest('[data-inline-editable="true"]');
@@ -321,7 +421,6 @@
     });
 
     document.addEventListener("mouseleave", function (e) {
-      // Hide if moving completely away from editable elements and toolbar
       if (!e.relatedTarget || (!e.relatedTarget.closest('[data-inline-editable="true"]') && !e.relatedTarget.closest('#admin-block-tools'))) {
         blockTools.style.display = "none";
       }
@@ -330,6 +429,7 @@
     // Setup Block Action Handlers
     blockTools.querySelector(".move-up").onclick = function () { moveActiveBlock(-1); };
     blockTools.querySelector(".move-down").onclick = function () { moveActiveBlock(1); };
+    blockTools.querySelector(".cycle-type").onclick = function () { cycleElementType(); };
     blockTools.querySelector(".delete").onclick = function () { deleteActiveBlock(); };
     blockTools.querySelector(".insert").onclick = function () { insertActiveBlock(); };
 
