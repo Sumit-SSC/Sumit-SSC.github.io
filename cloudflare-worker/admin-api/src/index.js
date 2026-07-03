@@ -581,6 +581,9 @@
     if (target === "siteTheme") return "data/site-theme.json";
     if (target === "about") return "pages/about.html";
     if (target === "resume") return "pages/resume.html";
+    if (target === "contact") return "pages/contact.html";
+    if (target === "playground") return "pages/playground.html";
+    if (target === "index") return "index.html";
     throw new Error("Unsupported target");
   }
 

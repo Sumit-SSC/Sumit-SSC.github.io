@@ -312,6 +312,10 @@
   else if (pathname.includes("/resume.html")) targetPageType = "resume";
   else if (pathname.includes("/project.html")) targetPageType = "projects";
   else if (pathname.includes("/case-study.html")) targetPageType = "caseStudies";
+  else if (pathname.includes("/contact.html")) targetPageType = "contact";
+  else if (pathname.includes("/playground.html")) targetPageType = "playground";
+  else if (pathname.endsWith("/") || pathname.includes("/index.html")) targetPageType = "index";
+  else if (pathname.includes("/homepage.html")) targetPageType = "homepage";
 
   // Cycle H2 -> H3 -> P type
   function cycleElementType() {
@@ -447,18 +451,41 @@
       elements.forEach(function (el, idx) {
         bindEditableRegion(el, "resume-text-" + idx);
       });
+    } else if (targetPageType === "contact") {
+      var elements = document.querySelectorAll("h1, h2, h3, p:not(embed p)");
+      elements.forEach(function (el, idx) {
+        bindEditableRegion(el, "contact-text-" + idx);
+      });
+    } else if (targetPageType === "playground") {
+      var elements = document.querySelectorAll("h1, h2, h3, p:not(embed p)");
+      elements.forEach(function (el, idx) {
+        bindEditableRegion(el, "playground-text-" + idx);
+      });
+    } else if (targetPageType === "index") {
+      var elements = document.querySelectorAll("h1, h2, h3, p:not(embed p)");
+      elements.forEach(function (el, idx) {
+        bindEditableRegion(el, "index-text-" + idx);
+      });
     } else if (targetPageType === "projects" || targetPageType === "caseStudies") {
       // Detail sections load dynamically
-      var containerId = "project-main";
       var observer = new MutationObserver(function () {
-        var root = document.getElementById(containerId);
-        if (!root) return;
-        var sections = root.querySelectorAll("section[id]");
-        sections.forEach(function (sec) {
-          bindEditableRegion(sec, sec.id);
-        });
+        var root = document.getElementById("project-main");
+        if (root) {
+          var sections = root.querySelectorAll("section[id]");
+          sections.forEach(function (sec) {
+            bindEditableRegion(sec, sec.id);
+          });
+        }
+        var heroTitle = document.getElementById("project-hero-title");
+        if (heroTitle) {
+          bindEditableRegion(heroTitle, "project-hero-title");
+        }
+        var heroDesc = document.getElementById("project-hero-desc");
+        if (heroDesc) {
+          bindEditableRegion(heroDesc, "project-hero-desc");
+        }
       });
-      observer.observe(document.getElementById(containerId) || document.body, { childList: true, subtree: true });
+      observer.observe(document.body, { childList: true, subtree: true });
     }
 
     // Dynamic Homepage project card reordering
@@ -505,7 +532,41 @@
     if (!isAuthenticated) return;
     setDockStatus("Saving...", "saving");
 
-    if (targetPageType === "about" || targetPageType === "resume") {
+    // Check if editing project metadata (title/short_description in JSON database)
+    if (elementId === "project-hero-title" || elementId === "project-hero-desc") {
+      if (!pageSlug) return setDockStatus("Missing slug ID", "error");
+      var q = new URLSearchParams({ target: targetPageType, mode: "file" });
+      var out = await apiJson("/api/admin/content/raw?" + q.toString());
+      if (!out.ok) return setDockStatus("Load metadata error", "error");
+
+      var list = [];
+      try {
+        list = JSON.parse(out.text || "[]");
+      } catch (err) {
+        return setDockStatus("JSON parse error", "error");
+      }
+
+      var item = list.find(function(x) { return x.id === pageSlug; });
+      if (item) {
+        // Strip tags for saving plain text to JSON metadata
+        var cleanText = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+        if (elementId === "project-hero-title") item.title = cleanText;
+        if (elementId === "project-hero-desc") item.short_description = cleanText;
+
+        var saveOut = await apiJson("/api/admin/content/raw/save", {
+          method: "POST",
+          body: { target: targetPageType, mode: "file", text: JSON.stringify(list, null, 2) }
+        });
+
+        if (saveOut.ok) setDockStatus(saveOut.unchanged ? "Unchanged" : "Saved title/desc", "saved");
+        else setDockStatus("Save failed", "error");
+      } else {
+        setDockStatus("Project not found in JSON", "error");
+      }
+      return;
+    }
+
+    if (targetPageType === "about" || targetPageType === "resume" || targetPageType === "contact" || targetPageType === "playground" || targetPageType === "index") {
       var q = new URLSearchParams({ target: targetPageType, mode: "file" });
       var out = await apiJson("/api/admin/content/raw?" + q.toString());
       if (!out.ok) return setDockStatus("Load error", "error");
@@ -529,6 +590,30 @@
         var headers = doc.querySelectorAll("h2, h3, p:not(embed p)");
         headers.forEach(function (h, idx) {
           if ("resume-text-" + idx === elementId) {
+            h.innerHTML = html;
+            found = true;
+          }
+        });
+      } else if (targetPageType === "contact") {
+        var headers = doc.querySelectorAll("h1, h2, h3, p:not(embed p)");
+        headers.forEach(function (h, idx) {
+          if ("contact-text-" + idx === elementId) {
+            h.innerHTML = html;
+            found = true;
+          }
+        });
+      } else if (targetPageType === "playground") {
+        var headers = doc.querySelectorAll("h1, h2, h3, p:not(embed p)");
+        headers.forEach(function (h, idx) {
+          if ("playground-text-" + idx === elementId) {
+            h.innerHTML = html;
+            found = true;
+          }
+        });
+      } else if (targetPageType === "index") {
+        var headers = doc.querySelectorAll("h1, h2, h3, p:not(embed p)");
+        headers.forEach(function (h, idx) {
+          if ("index-text-" + idx === elementId) {
             h.innerHTML = html;
             found = true;
           }

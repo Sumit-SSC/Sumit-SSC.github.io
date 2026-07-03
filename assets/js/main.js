@@ -1941,8 +1941,8 @@ function renderProject(project, caseStudy, contentFromFile) {
           <span class="text-white/90">${project.category || "Analytics"}</span>
           ${project.date ? ` • <span class="text-white/80">${project.date}</span>` : ""}
         </div>
-        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">${project.title}</h1>
-        <p class="text-xl text-white/90 max-w-2xl mx-auto mb-8">${project.short_description || ""}</p>
+        <h1 id="project-hero-title" class="text-4xl md:text-6xl font-bold text-white mb-6">${project.title}</h1>
+        <p id="project-hero-desc" class="text-xl text-white/90 max-w-2xl mx-auto mb-8">${project.short_description || ""}</p>
         ${
           outcomeBullets.length
             ? `
