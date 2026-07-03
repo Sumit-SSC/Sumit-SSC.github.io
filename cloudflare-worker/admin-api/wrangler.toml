@@ -14,7 +14,7 @@ CONTENT_DRAFT_BRANCH = "content/drafts"
 GITHUB_REPO_OWNER = "Sumit-SC"
 GITHUB_REPO_NAME = "Sumit-SC.github.io"
 GITHUB_OAUTH_SCOPES = "read:user"
-ADMIN_SUCCESS_REDIRECT = "https://event.sumit.indevs.in/admin/index.html"
+ADMIN_SUCCESS_REDIRECT = "https://admin.sumit.indevs.in/admin/index.html"
 # Optional Cloudflare analytics (for dashboard traffic card)
 # CF_ACCOUNT_ID = "<cloudflare-account-id>"
 # CF_ZONE_ID = "<zone-id-for-sumit.indevs.in>"
