@@ -32,6 +32,10 @@
     blocksList: $("blocks-list"),
     recordSelect: $("record-select"),
     recordFields: $("record-fields"),
+    addRecord: $("btn-add-record"),
+    delRecord: $("btn-del-record"),
+    upRecord: $("btn-up-record"),
+    downRecord: $("btn-down-record"),
     homepageUiFields: $("homepage-ui-fields"),
     addParagraph: $("btn-add-paragraph"),
     addHeading: $("btn-add-heading"),
@@ -281,6 +285,10 @@
       el.recordFields.appendChild(fieldInput("video_url", "Video URL", rec.video_url || ""));
       el.recordFields.appendChild(fieldInput("notebook_url", "Notebook URL", rec.notebook_url || ""));
       el.recordFields.appendChild(fieldInput("powerbi_embed_url", "Power BI embed URL", rec.powerbi_embed_url || ""));
+      el.recordFields.appendChild(fieldInput("pbix_download_path", "PBIX download path", rec.pbix_download_path || ""));
+      el.recordFields.appendChild(fieldInput("slide_pdf_path", "Slide PDF path", rec.slide_pdf_path || ""));
+      el.recordFields.appendChild(fieldInput("medium_url", "Medium URL", rec.medium_url || ""));
+      el.recordFields.appendChild(fieldInput("kaggle_url", "Kaggle URL", rec.kaggle_url || ""));
       el.recordFields.appendChild(fieldCheckbox("featured", "Featured", !!rec.featured));
       el.recordFields.appendChild(fieldCheckbox("show_apps_section", "Show apps section", rec.show_apps_section !== false));
     }
@@ -332,11 +340,20 @@
         rec.case_study_read_mins = Number.isFinite(n) ? n : val;
         return;
       }
+      if (name === "id" && val !== rec.id) {
+        el.previewSlug.value = val;
+      }
       rec[name] = val;
     });
 
     if (!isCase) {
       if (rec.show_apps_section === undefined) rec.show_apps_section = true;
+    }
+
+    // Live update record select labels
+    const opt = el.recordSelect?.options[i];
+    if (opt) {
+      opt.textContent = `${rec.id || "no-id"} — ${rec.title || "(untitled)"}`;
     }
 
     writeRootToEditor(arr);
@@ -610,20 +627,31 @@
     if (docShape === "records") syncRecordFormToJson();
     if (docShape === "homepageUi") syncHomepageUiToJson();
 
-    const target = el.target.value;
-    const text = el.editor.value || "";
-    const out = await apiJson("/api/admin/content/raw/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ target, mode: "file", text })
-    });
-    if (!out.ok) {
-      setStatus(out.error || "Save failed");
+    if (!sessionOk) {
+      setStatus("Draft modified. Login with GitHub to save to branch.");
       return false;
     }
-    setStatus(out.unchanged ? "No file changes to commit." : "Draft saved on GitHub.");
-    await refreshCommits();
-    return true;
+
+    const target = el.target.value;
+    const text = el.editor.value || "";
+    setStatus("Saving draft to GitHub...");
+    try {
+      const out = await apiJson("/api/admin/content/raw/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target, mode: "file", text })
+      });
+      if (!out.ok) {
+        setStatus(out.error || "Save failed");
+        return false;
+      }
+      setStatus(out.unchanged ? "Draft is up to date (no changes)." : "Draft saved on GitHub.");
+      await refreshCommits();
+      return true;
+    } catch (e) {
+      setStatus("Error saving: " + String(e.message || e));
+      return false;
+    }
   }
 
   async function publishLive() {
@@ -753,9 +781,14 @@
   function scheduleAutosave() {
     if (!el.autosave.checked) return;
     clearTimeout(autosaveTimer);
+    if (!sessionOk) {
+      setStatus("Draft modified. Login with GitHub to save to branch.");
+      return;
+    }
+    setStatus("Draft modified (waiting to autosave...)");
     autosaveTimer = setTimeout(() => {
-      if (sessionOk) saveDraft();
-    }, 1600);
+      saveDraft();
+    }, 2500);
   }
 
   function addBlock(type) {
@@ -804,6 +837,289 @@
     scheduleAutosave();
   }
 
+  async function addRecordEntry() {
+    const target = el.target.value;
+    if (target !== "projects" && target !== "caseStudies") {
+      return setStatus("Add record is only valid for Projects or Case Studies.");
+    }
+    
+    setStatus("Creating new entry...");
+    let newItem = null;
+    try {
+      if (target === "projects") {
+        const res = await fetch("/data/project-entry-template.json");
+        if (res.ok) {
+          const t = await res.json();
+          if (t && t.project_template) {
+            newItem = JSON.parse(JSON.stringify(t.project_template));
+          }
+        }
+      } else {
+        const res = await fetch("/data/sample_case_study.json");
+        if (res.ok) {
+          const t = await res.json();
+          newItem = JSON.parse(JSON.stringify(t));
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to fetch template, using fallback", e);
+    }
+
+    if (!newItem) {
+      if (target === "projects") {
+        newItem = {
+          id: "new-project-" + Date.now(),
+          title: "New Project",
+          short_description: "A short description.",
+          full_description: "<p>Overview of the project detail page.</p>",
+          problem_statement: "<p>What problem this project solves.</p>",
+          approach: "<p>Stack and approach.</p>",
+          insights: "<ul><li>Key insight</li></ul>",
+          media_notes: "",
+          category: "Analytics",
+          tools: ["SQL", "Python"],
+          date: new Date().getFullYear().toString(),
+          featured: false,
+          thumbnail: "assets/images/thumbs/01.jpg",
+          images: [],
+          content_path: "data/projects/new-project.html"
+        };
+      } else {
+        newItem = {
+          id: "new-case-study-" + Date.now(),
+          title: "New Case Study",
+          short_description: "Summary of case study.",
+          category: "Industry",
+          case_study_path: "data/case_studies/new-case-study.html",
+          thumbnail: "assets/images/thumbs/01.jpg",
+          tools: ["SQL", "Analytics"],
+          date: new Date().getFullYear().toString(),
+          case_study_read_mins: 10,
+          tier: "normal"
+        };
+      }
+    } else {
+      newItem.id = (target === "projects" ? "new-project-" : "new-case-study-") + Date.now();
+      if (newItem.content_path) newItem.content_path = "data/projects/" + newItem.id + ".html";
+      if (newItem.case_study_path) newItem.case_study_path = "data/case_studies/" + newItem.id + ".html";
+    }
+
+    const parsed = parseJsonSafe(el.editor.value || "[]");
+    if (!parsed.ok || !Array.isArray(parsed.value)) {
+      return setStatus("Failed to parse array in editor.");
+    }
+    const arr = parsed.value;
+    arr.unshift(newItem);
+    writeRootToEditor(arr);
+    
+    el.previewSlug.value = newItem.id;
+    updateShapeUi();
+    setStatus(`Created new entry: ${newItem.id}`);
+    scheduleAutosave();
+  }
+
+  function deleteSelectedRecord() {
+    const target = el.target.value;
+    if (target !== "projects" && target !== "caseStudies") {
+      return setStatus("Delete is only valid for Projects or Case Studies.");
+    }
+    const parsed = parseJsonSafe(el.editor.value || "[]");
+    if (!parsed.ok || !Array.isArray(parsed.value)) {
+      return setStatus("Invalid JSON array.");
+    }
+    const arr = parsed.value;
+    const i = Number(el.recordSelect?.value);
+    if (i < 0 || i >= arr.length) return setStatus("No record selected.");
+    
+    const rec = arr[i];
+    if (!confirm(`Are you sure you want to delete the entry "${rec.title || rec.id}"?`)) return;
+
+    arr.splice(i, 1);
+    writeRootToEditor(arr);
+    
+    const nextIndex = Math.min(i, arr.length - 1);
+    if (arr[nextIndex]) {
+      el.previewSlug.value = arr[nextIndex].id;
+    } else {
+      el.previewSlug.value = "";
+    }
+    updateShapeUi();
+    setStatus("Deleted entry.");
+    scheduleAutosave();
+  }
+
+  function moveSelectedRecord(delta) {
+    const target = el.target.value;
+    if (target !== "projects" && target !== "caseStudies") {
+      return setStatus("Reordering only valid for Projects or Case Studies.");
+    }
+    const parsed = parseJsonSafe(el.editor.value || "[]");
+    if (!parsed.ok || !Array.isArray(parsed.value)) {
+      return setStatus("Invalid JSON array.");
+    }
+    const arr = parsed.value;
+    const i = Number(el.recordSelect?.value);
+    if (i < 0 || i >= arr.length) return setStatus("No record selected.");
+    
+    const nextIdx = i + delta;
+    if (nextIdx < 0 || nextIdx >= arr.length) return;
+    
+    const temp = arr[i];
+    arr[i] = arr[nextIdx];
+    arr[nextIdx] = temp;
+    
+    writeRootToEditor(arr);
+    
+    el.previewSlug.value = temp.id;
+    updateShapeUi();
+    refreshPreview();
+    
+    setStatus(`Moved entry ${delta > 0 ? "down" : "up"}.`);
+    scheduleAutosave();
+  }
+
+  async function handleIframeMessage(e) {
+    if (!e.data || typeof e.data !== "object") return;
+    if (e.origin !== window.location.origin) return;
+
+    if (e.data.type === "inline-edit") {
+      const { pagePath, slug, elementId, html } = e.data;
+      await handleInlineEdit(pagePath, slug, elementId, html);
+    } else if (e.data.type === "reorder-item") {
+      const { target, id, direction } = e.data;
+      handleInlineReorder(target, id, direction);
+    }
+  }
+
+  function handleInlineReorder(target, id, direction) {
+    if (target !== "projects" && target !== "caseStudies") return;
+    const parsed = parseJsonSafe(el.editor.value || "[]");
+    if (!parsed.ok || !Array.isArray(parsed.value)) return;
+    const arr = parsed.value;
+    const i = arr.findIndex((r) => r && r.id === id);
+    if (i < 0) return;
+    
+    const delta = direction === "up" ? -1 : 1;
+    const nextIdx = i + delta;
+    if (nextIdx < 0 || nextIdx >= arr.length) return;
+    
+    const temp = arr[i];
+    arr[i] = arr[nextIdx];
+    arr[nextIdx] = temp;
+    
+    writeRootToEditor(arr);
+    
+    el.previewSlug.value = temp.id;
+    updateShapeUi();
+    refreshPreview();
+    setStatus(`Reordered project card "${temp.title || temp.id}" ${direction}.`);
+    scheduleAutosave();
+  }
+
+  async function handleInlineEdit(pagePath, slug, elementId, html) {
+    let targetType = "unknown";
+    if (pagePath.includes("/about.html")) targetType = "about";
+    else if (pagePath.includes("/resume.html")) targetType = "resume";
+    else if (pagePath.includes("/project.html")) targetType = "projects";
+    else if (pagePath.includes("/case-study.html")) targetType = "caseStudies";
+
+    if (targetType === "unknown") return;
+
+    setStatus(`Capturing changes on ${targetType}...`);
+
+    if (targetType === "about" || targetType === "resume") {
+      const q = new URLSearchParams({ target: targetType, mode: "file" });
+      const out = await apiJson("/api/admin/content/raw?" + q.toString());
+      if (!out.ok) {
+        return setStatus(`Load error for static page ${targetType}: ${out.error || "failed"}`);
+      }
+      
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(out.text || "", "text/html");
+      let found = false;
+
+      if (targetType === "about") {
+        const sections = doc.querySelectorAll(".about-section .content");
+        sections.forEach((sec, idx) => {
+          const paragraphs = sec.querySelectorAll("p, h2, h3");
+          paragraphs.forEach((p, pIdx) => {
+            if (`about-section-${idx}-p-${pIdx}` === elementId) {
+              p.innerHTML = html;
+              found = true;
+            }
+          });
+        });
+      } else if (targetType === "resume") {
+        const headers = doc.querySelectorAll("h2, h3, p:not(embed p)");
+        headers.forEach((h, idx) => {
+          if (`resume-text-${idx}` === elementId) {
+            h.innerHTML = html;
+            found = true;
+          }
+        });
+      }
+
+      if (!found) {
+        return setStatus(`Could not find editable block "${elementId}" in static document.`);
+      }
+
+      const newHtmlText = "<!DOCTYPE HTML>\n" + doc.documentElement.outerHTML;
+
+      const saveOut = await apiJson("/api/admin/content/raw/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target: targetType,
+          mode: "file",
+          text: newHtmlText
+        })
+      });
+
+      if (!saveOut.ok) {
+        setStatus(`Save failed: ${saveOut.error || "unknown"}`);
+      } else {
+        setStatus(saveOut.unchanged ? "No file changes to commit." : "Draft saved on GitHub.");
+      }
+    } else {
+      if (!slug) return setStatus("No project slug provided for inline edit.");
+
+      const q = new URLSearchParams({ target: targetType, slug, mode: "record-html" });
+      const out = await apiJson("/api/admin/content/raw?" + q.toString());
+      if (!out.ok) {
+        return setStatus(`Load error for project section: ${out.error || "failed"}`);
+      }
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(out.text || "", "text/html");
+      const sec = doc.getElementById(elementId);
+      if (!sec) {
+        return setStatus(`Section "${elementId}" not found in project detail snippet.`);
+      }
+
+      sec.innerHTML = html;
+
+      const newHtmlText = Array.from(doc.body.children).map(c => c.outerHTML).join("\n\n");
+
+      const saveOut = await apiJson("/api/admin/content/raw/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target: targetType,
+          slug,
+          mode: "record-html",
+          text: newHtmlText
+        })
+      });
+
+      if (!saveOut.ok) {
+        setStatus(`Save failed: ${saveOut.error || "unknown"}`);
+      } else {
+        setStatus(saveOut.unchanged ? "No changes to section snippet." : "Draft section saved on GitHub.");
+      }
+    }
+    await refreshCommits();
+  }
+
   function getTheme() {
     try {
       return localStorage.getItem(LS_THEME) === "dark" ? "dark" : "light";
@@ -844,6 +1160,11 @@
     el.upBlock?.addEventListener("click", () => moveSelected(-1));
     el.downBlock?.addEventListener("click", () => moveSelected(1));
 
+    el.addRecord?.addEventListener("click", addRecordEntry);
+    el.delRecord?.addEventListener("click", deleteSelectedRecord);
+    el.upRecord?.addEventListener("click", () => moveSelectedRecord(-1));
+    el.downRecord?.addEventListener("click", () => moveSelectedRecord(1));
+
     el.save.addEventListener("click", saveDraft);
     el.savePublish.addEventListener("click", saveAndPublish);
     el.publish.addEventListener("click", publishLive);
@@ -873,6 +1194,8 @@
       if (docShape === "blocks") renderVisualBlocks();
       scheduleAutosave();
     });
+
+    window.addEventListener("message", handleIframeMessage);
   }
 
   async function boot() {

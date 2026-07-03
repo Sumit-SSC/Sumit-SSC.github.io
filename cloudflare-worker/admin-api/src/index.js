@@ -535,6 +535,8 @@
     if (target === "homepage") return "data/homepage-content.json";
     if (target === "homepageUi") return HOMEPAGE_UI_PATH;
     if (target === "siteTheme") return "data/site-theme.json";
+    if (target === "about") return "pages/about.html";
+    if (target === "resume") return "pages/resume.html";
     throw new Error("Unsupported target");
   }
 
@@ -1115,7 +1117,7 @@
     if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
     const body = await request.json();
     const target = body.target;
-    if (!target || !["projects", "caseStudies", "homepage", "homepageUi", "siteTheme"].includes(target)) {
+    if (!target || !["projects", "caseStudies", "homepage", "homepageUi", "siteTheme", "about", "resume"].includes(target)) {
       return json({ ok: false, error: "Invalid or missing target" }, 400);
     }
     const path = mapTargetPath(target);
