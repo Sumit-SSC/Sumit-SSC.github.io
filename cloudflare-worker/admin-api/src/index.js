@@ -205,12 +205,28 @@
     return payload;
   }
 
-  function makeCookie(name, value, maxAgeSeconds) {
-    return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAgeSeconds}`;
+  function makeCookie(name, value, maxAgeSeconds, request) {
+    let domainAttr = "";
+    if (request) {
+      const url = new URL(request.url);
+      const host = url.hostname;
+      if (host.endsWith(".sumit.indevs.in")) {
+        domainAttr = "; Domain=.sumit.indevs.in";
+      }
+    }
+    return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAgeSeconds}${domainAttr}`;
   }
 
-  function clearCookie(name) {
-    return `${name}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+  function clearCookie(name, request) {
+    let domainAttr = "";
+    if (request) {
+      const url = new URL(request.url);
+      const host = url.hostname;
+      if (host.endsWith(".sumit.indevs.in")) {
+        domainAttr = "; Domain=.sumit.indevs.in";
+      }
+    }
+    return `${name}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0${domainAttr}`;
   }
 
   function formatIstTimestamp(ms = Date.now()) {
@@ -243,7 +259,7 @@
 
     const headers = new Headers();
     headers.set("Location", githubUrl.toString());
-    headers.append("set-cookie", makeCookie(COOKIE_STATE, signedState, 600));
+    headers.append("set-cookie", makeCookie(COOKIE_STATE, signedState, 600, request));
     return new Response(null, { status: 302, headers });
   }
 
@@ -296,15 +312,15 @@
     }
     const headers = new Headers();
     headers.set("Location", successRedirect);
-    headers.append("set-cookie", makeCookie(COOKIE_SESSION, sessionToken, SESSION_TTL_SECONDS));
-    headers.append("set-cookie", clearCookie(COOKIE_STATE));
+    headers.append("set-cookie", makeCookie(COOKIE_SESSION, sessionToken, SESSION_TTL_SECONDS, request));
+    headers.append("set-cookie", clearCookie(COOKIE_STATE, request));
     return new Response(null, { status: 302, headers });
   }
 
-  async function logout() {
+  async function logout(request, env) {
     const headers = new Headers(JSON_HEADERS);
-    headers.append("set-cookie", clearCookie(COOKIE_SESSION));
-    headers.append("set-cookie", clearCookie(COOKIE_GATE));
+    headers.append("set-cookie", clearCookie(COOKIE_SESSION, request));
+    headers.append("set-cookie", clearCookie(COOKIE_GATE, request));
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
   }
 
@@ -339,7 +355,7 @@
       env.SESSION_SIGNING_KEY
     );
     const headers = new Headers(JSON_HEADERS);
-    headers.append("set-cookie", makeCookie(COOKIE_GATE, token, GATE_TTL_SECONDS));
+    headers.append("set-cookie", makeCookie(COOKIE_GATE, token, GATE_TTL_SECONDS, request));
     return new Response(JSON.stringify({ ok: true, required: true, verified: true }), { status: 200, headers });
   }
 
