@@ -5395,4 +5395,98 @@ pre code {
   }
 }
 
+/* ==================================================================
+   Medium-Style Article Typography & Elements for Project Details
+   ================================================================== */
+#project-main {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+#project-main p {
+  font-size: 1.125rem !important; /* 18px */
+  line-height: 1.8 !important;
+  margin-bottom: 1.5rem !important;
+  color: var(--text-primary-light) !important;
+}
+body.dark #project-main p {
+  color: var(--text-primary-dark) !important;
+}
+
+#project-main h2 {
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  color: var(--text-primary-light) !important;
+  line-height: 1.3 !important;
+}
+body.dark #project-main h2 {
+  color: var(--text-primary-dark) !important;
+}
+
+#project-main h3 {
+  font-size: 1.4rem !important;
+  font-weight: 600 !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 0.75rem !important;
+  color: var(--text-primary-light) !important;
+}
+body.dark #project-main h3 {
+  color: var(--text-primary-dark) !important;
+}
+
+#project-main ul, #project-main ol {
+  margin-bottom: 1.5rem !important;
+  padding-left: 1.5rem !important;
+}
+#project-main li {
+  font-size: 1.125rem !important;
+  line-height: 1.7 !important;
+  margin-bottom: 0.5rem !important;
+  list-style-type: disc !important;
+}
+
+#project-main pre {
+  background: #1e293b !important; /* Slate 800 */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 1.25rem !important;
+  margin: 1.75rem 0 !important;
+  overflow-x: auto !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+#project-main pre code {
+  color: #cbd5e1 !important; /* Slate 300 */
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+#project-main code:not(pre code) {
+  background: rgba(148, 163, 184, 0.15) !important;
+  color: #ef4444 !important; /* Standout soft red for inline code */
+  padding: 0.2rem 0.4rem !important;
+  border-radius: 4px !important;
+  font-size: 0.9rem !important;
+  font-family: monospace !important;
+}
+body.dark #project-main code:not(pre code) {
+  color: #f87171 !important;
+  background: rgba(148, 163, 184, 0.25) !important;
+}
+
+#project-main blockquote {
+  border-left: 4px solid var(--accent) !important;
+  padding-left: 1.25rem !important;
+  font-style: italic !important;
+  margin: 1.75rem 0 !important;
+  color: var(--text-secondary-light) !important;
+}
+body.dark #project-main blockquote {
+  color: var(--text-secondary-dark) !important;
+}
+
 
