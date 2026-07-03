@@ -389,16 +389,31 @@
       return json({ ok: false, error: "Admin password verification required" }, 401);
     }
     const baseBranch = getContentBaseBranch(env);
+    
+    // Diagnostic tracking
+    const debug = {
+      baseBranch,
+      repoOwner: env.GITHUB_REPO_OWNER,
+      repoName: env.GITHUB_REPO_NAME,
+      hasToken: !!env.GITHUB_TOKEN_FOR_CONTENT_WRITES,
+      tokenLength: env.GITHUB_TOKEN_FOR_CONTENT_WRITES ? env.GITHUB_TOKEN_FOR_CONTENT_WRITES.length : 0
+    };
+
     const pagesRes = await githubApi(
       env,
       `/contents/pages?ref=${encodeURIComponent(baseBranch)}`
     );
+    
+    debug.pagesStatus = pagesRes.status;
+    
     let htmlPages = [];
     if (pagesRes.ok) {
       const arr = await pagesRes.json();
       if (Array.isArray(arr)) {
         htmlPages = arr.filter((f) => f.type === "file" && String(f.name).endsWith(".html"));
       }
+    } else {
+      debug.pagesError = await pagesRes.text().catch(() => "");
     }
 
     const totalHtmlBytes = htmlPages.reduce((sum, f) => sum + Number(f.size || 0), 0);
@@ -407,6 +422,9 @@
       env,
       `/commits?sha=${encodeURIComponent(baseBranch)}&per_page=1`
     );
+    
+    debug.commitsStatus = lastCommitRes.status;
+    
     let lastCommit = null;
     if (lastCommitRes.ok) {
       const rows = await lastCommitRes.json();
@@ -420,6 +438,8 @@
           atIst: iso ? formatIstTimestamp(Date.parse(iso)) : null
         };
       }
+    } else {
+      debug.commitsError = await lastCommitRes.text().catch(() => "");
     }
 
     const traffic = await getCloudflareTrafficLast24h(env);
@@ -437,7 +457,8 @@
         draftBranch: env.CONTENT_DRAFT_BRANCH || "content/drafts",
         lastCommit
       },
-      traffic
+      traffic,
+      debug
     });
   }
 

@@ -188,6 +188,30 @@
         return r.json();
       })
       .then(function (d) {
+        // Show diagnostics block if GitHub responses failed
+        var errBanner = el("admin-js-error");
+        if (d.debug && (d.debug.pagesStatus !== 200 || d.debug.commitsStatus !== 200)) {
+          if (errBanner) {
+            errBanner.innerHTML = `
+              <div class="space-y-1">
+                <p class="font-bold text-rose-200">⚠️ GitHub API Error (Status ${d.debug.pagesStatus || d.debug.commitsStatus})</p>
+                <ul class="list-disc pl-4 text-xs space-y-1 text-rose-300">
+                  <li>Repository: <code>${d.debug.repoOwner}/${d.debug.repoName}</code></li>
+                  <li>Base Branch: <code>${d.debug.baseBranch}</code></li>
+                  <li>Token configured in Cloudflare: <code>${d.debug.hasToken ? 'Yes (length ' + d.debug.tokenLength + ')' : 'No'}</code></li>
+                  <li>Pages Query Status: <strong>${d.debug.pagesStatus}</strong></li>
+                  <li>Commits Query Status: <strong>${d.debug.commitsStatus}</strong></li>
+                  <li>Response details: <code class="bg-rose-950/80 px-1 py-0.5 rounded text-[10px] break-all">${d.debug.pagesError || d.debug.commitsError || 'None'}</code></li>
+                </ul>
+                <p class="text-[11px] text-rose-400 mt-2 font-medium">Please double check that GITHUB_TOKEN_FOR_CONTENT_WRITES is set in your Cloudflare dashboard and has access to this repo.</p>
+              </div>
+            `;
+            errBanner.classList.remove("hidden");
+          }
+        } else if (errBanner) {
+          errBanner.classList.add("hidden");
+        }
+
         if (!d.ok) {
           var lu = el("stat-last-update");
           var lm = el("stat-last-message");
@@ -214,11 +238,11 @@
         var tr = el("stat-traffic");
         if (tr) {
           tr.textContent =
-            d.traffic && d.traffic.cfLast24h != null
-              ? String(d.traffic.cfLast24h)
-              : d.traffic && d.traffic.note
-                ? d.traffic.note
-                : "Not configured";
+              d.traffic && d.traffic.cfLast24h != null
+                  ? String(d.traffic.cfLast24h)
+                  : d.traffic && d.traffic.note
+                      ? d.traffic.note
+                      : "Not configured";
         }
         setCheck("check-stats", true, "Loaded", "Unavailable");
       })
