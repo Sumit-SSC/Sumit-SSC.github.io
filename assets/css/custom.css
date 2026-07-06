@@ -5663,4 +5663,77 @@ body.dark #project-main blockquote {
   }
 }
 
+/* ========================================================
+   Strict Single-Line Mobile Header Layout & Truncation Fix
+   ======================================================== */
+
+@media (max-width: 900px) {
+  /* Force direct parent container to be a strict flex row and NEVER wrap */
+  #nav.nav-single-line .container > div.flex,
+  #nav.nav-single-line .container > div {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Force brand name to wrap vertically to two lines instead of truncating with ellipsis */
+  #nav.nav-single-line .nav-brand {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    white-space: normal !important; /* Allow wraps on small screens */
+    word-wrap: break-word !important;
+    max-width: 48% !important; /* Reserve space for buttons on the right */
+    line-height: 1.2 !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    flex-shrink: 1 !important;
+    margin: 0 !important;
+    padding: 0.25rem 0 !important;
+  }
+
+  /* Place quick buttons side-by-side with the burger menu on the far right */
+  #nav.nav-single-line .site-nav-quick {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    margin-left: auto !important;
+    margin-right: 0.3rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  #nav.nav-single-line .site-nav-burger {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+    border-radius: 0.375rem !important;
+  }
+
+  #nav.nav-single-line .site-nav-quick-link {
+    width: 1.85rem !important;
+    height: 1.85rem !important;
+    border-radius: 0.375rem !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+@media (max-width: 400px) {
+  /* On very narrow viewports, hide some secondary quick links to prevent overlap */
+  #nav.nav-single-line .site-nav-quick a[href="about.html"],
+  #nav.nav-single-line .site-nav-quick a[href="contact.html"] {
+    display: none !important;
+  }
+}
+
+
 
